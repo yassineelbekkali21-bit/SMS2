@@ -31,7 +31,9 @@ export class StudyRoomService {
     const totalLessons = course.lessons?.length || course.totalLessons || 0;
     
     // Vérifier si le pack complet du cours est acheté
-    const hasFullCourse = purchasedItems.includes(courseId) || course.isOwned;
+    // L'accès Study Room nécessite OBLIGATOIREMENT l'achat du cours complet ou d'un pack
+    const hasFullCourse = purchasedItems.includes(courseId) || 
+                         purchasedItems.some(item => item.startsWith('pack-'));
     
     // Compter les leçons possédées individuellement
     const ownedLessons = course.lessons?.filter(lesson => 
