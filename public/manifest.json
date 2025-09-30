@@ -1,0 +1,54 @@
+{
+  "name": "Science Made Simple",
+  "short_name": "SMS",
+  "description": "L'apprentissage scientifique réinventé avec des quiz interactifs et une communauté Web 3.0",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/next.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["education", "science", "learning"],
+  "lang": "fr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Mes Cours",
+      "short_name": "Cours",
+      "description": "Accéder à mes cours favoris",
+      "url": "/courses",
+      "icons": [
+        {
+          "src": "/next.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "Communauté",
+      "short_name": "Community",
+      "description": "Rejoindre la communauté d'apprentissage",
+      "url": "/community",
+      "icons": [
+        {
+          "src": "/next.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ]
+}
+

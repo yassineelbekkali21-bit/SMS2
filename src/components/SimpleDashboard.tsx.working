@@ -1,0 +1,1298 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  BookOpen, 
+  TrendingUp, 
+  Clock, 
+  Target, 
+  Users, 
+  ChevronDown, 
+  ChevronUp, 
+  Menu, 
+  X,
+  Search,
+  Bell,
+  Settings,
+  User,
+  Star,
+  Heart,
+  Award,
+  Brain,
+  Play,
+  MessageCircle,
+  MessageSquare,
+  Plus,
+  Calendar,
+  Home
+} from 'lucide-react';
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CourseCard } from './CourseCard';
+import { GamifiedCourseViewer } from './GamifiedCourseViewer';
+import { MinimalGameCourseViewer } from './MinimalGameCourseViewer';
+import { ImmersiveGameCourseViewer } from './ImmersiveGameCourseViewer';
+import { PreviewModal } from './PreviewModal';
+import { ClientOnly } from './ClientOnly';
+import { SmartPlanning } from './SmartPlanning';
+import { CreditCounter, CreditModal, CourseCard as CreditCourseCard } from './CreditSystem';
+import { SuggestedCourseCard } from './SuggestedCourseCard';
+import { useCreditSystem } from '@/hooks/useCreditSystem';
+import { CreditPacks } from './CreditPacks';
+import { PurchaseSystem } from './PurchaseSystem';
+import { SmartPackOffer } from './SmartPackOffer';
+import { SmartCourseComparison } from './SmartCourseComparison';
+import { Community } from './Community';
+import { getCourseRecommendations } from '@/lib/smart-recommendations';
+import { PremiumCheckout } from './PremiumCheckout';
+import { CourseStaircaseView } from './CourseStaircaseView';
+import { IntegratedCourseViewer } from './IntegratedCourseViewer';
+import { Course, StudentProgress, CourseSuggestion, DashboardData } from '@/types';
+import { PersonalProfileSection } from './PersonalProfileSection';
+import { getPersonalProfile } from '@/lib/mock-data';
+
+interface SimpleDashboardProps {
+  data: DashboardData;
+  onUpdateCourseOrder: (courseId: string, newIndex: number) => void;
+  onToggleCourseFavorite: (courseId: string) => void;
+  onPreviewCourse: (courseId: string) => void;
+  onEnrollCourse: (courseId: string) => void;
+}
+
+// Composant de métrique simple
+const SimpleMetric = ({ 
+  icon: Icon, 
+  value, 
+  label, 
+  accent = false 
+}: { 
+  icon: any;
+  value: string | number;
+  label: string;
+  accent?: boolean;
+}) => (
+  <div className={`p-6 ${accent ? 'bg-black text-white' : 'bg-white border border-gray-200'} rounded-lg`}>
+    <div className="flex items-center gap-4">
+      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+        accent ? 'bg-white/20' : 'bg-gray-100'
+      }`}>
+        <Icon size={20} className={accent ? 'text-white' : 'text-gray-600'} />
+      </div>
+      <div>
+        <div className={`text-2xl font-bold ${accent ? 'text-white' : 'text-gray-900'}`}>
+          {value}
+        </div>
+        <div className={`text-sm ${accent ? 'text-gray-300' : 'text-gray-500'}`}>
+          {label}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Footer moderne et simple
+const ModernFooter = () => (
+  <footer className="bg-white border-t border-gray-200 mt-16">
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* À propos */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Brain size={20} className="text-gray-900" />
+            <span className="font-bold text-gray-900">Science Made Simple</span>
+          </div>
+          <p className="text-gray-600 text-sm mb-4">
+            L'apprentissage scientifique réinventé pour votre réussite
+          </p>
+          <button className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+            <MessageSquare size={16} />
+            Support WhatsApp
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-4">Navigation</h3>
+          <ul className="space-y-2 text-sm">
+            <li><a href="/courses" className="text-gray-600 hover:text-gray-900">Mes cours</a></li>
+            <li><a href="/community" className="text-gray-600 hover:text-gray-900">Communauté</a></li>
+            <li><a href="/planning" className="text-gray-600 hover:text-gray-900">Planification</a></li>
+          </ul>
+        </div>
+
+
+        {/* Support */}
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-4">Support étudiant</h3>
+          <ul className="space-y-2 text-sm">
+            <li><a href="/help" className="text-gray-600 hover:text-gray-900">Centre d'aide</a></li>
+            <li><a href="/contact" className="text-gray-600 hover:text-gray-900">Nous contacter</a></li>
+            <li>
+              <a 
+                href="https://wa.me/33123456789" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                WhatsApp 24/7
+              </a>
+            </li>
+            <li><a href="/accessibility" className="text-gray-600 hover:text-gray-900">Accessibilité</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 mt-8 pt-6 flex flex-col md:flex-row items-center justify-between">
+        <p className="text-gray-500 text-sm">
+          © 2024 Science Made Simple. Révolutionnons l'apprentissage ensemble.
+        </p>
+        <div className="flex items-center gap-6 mt-4 md:mt-0">
+          <a href="/privacy" className="text-gray-500 text-sm hover:text-gray-700">Confidentialité</a>
+          <a href="/terms" className="text-gray-500 text-sm hover:text-gray-700">Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+);
+
+export function SimpleDashboard({ 
+  data,
+  onUpdateCourseOrder,
+  onToggleCourseFavorite,
+  onPreviewCourse,
+  onEnrollCourse 
+}: SimpleDashboardProps) {
+  const [primaryCourses, setPrimaryCourses] = useState(data.primaryCourses);
+  const [suggestedExpanded, setSuggestedExpanded] = useState(true);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [courseViewerOpen, setCourseViewerOpen] = useState(false);
+  const [useGamifiedViewer, setUseGamifiedViewer] = useState(true); // Nouveau viewer par défaut
+  const [showStaircaseView, setShowStaircaseView] = useState(false);
+  const [showIntegratedViewer, setShowIntegratedViewer] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showBackgroundOptions, setShowBackgroundOptions] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  // Options de fond d'écran
+  const BACKGROUND_OPTIONS = [
+    {
+      id: 'default',
+      name: 'Par défaut',
+      description: 'Fond uni standard'
+    },
+    {
+      id: 'course-path-1',
+      name: 'Parcours Montagne',
+      description: 'Chemin avec montagnes'
+    },
+    {
+      id: 'course-path-3',
+      name: 'Forêt Enchantée',
+      description: 'Paysage forestier'
+    },
+    {
+      id: 'course-path-4',
+      name: 'Cosmic Journey',
+      description: 'Voyage cosmique'
+    },
+    {
+      id: 'course-path-5',
+      name: 'Ocean Depths',
+      description: 'Profondeurs océaniques'
+    }
+  ];
+
+  // Fermer le dropdown des paramètres quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setShowSettings(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  const [useMinimalViewer, setUseMinimalViewer] = useState(false); // Viewer minimal épuré
+  const [useImmersiveViewer, setUseImmersiveViewer] = useState(false); // Viewer immersif 
+  const [useIntegratedViewer, setUseIntegratedViewer] = useState(true); // Viewer intégré par défaut
+  const [selectedBackground, setSelectedBackground] = useState<string>('default');
+  const [previewCourse, setPreviewCourse] = useState<Course | null>(null);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [unlockedCourses, setUnlockedCourses] = useState<string[]>([]);
+  const [personalProfile] = useState(getPersonalProfile());
+  const [unlockedPacks, setUnlockedPacks] = useState<string[]>([]);
+  const [showCreditPacks, setShowCreditPacks] = useState(false);
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutItem, setCheckoutItem] = useState<any>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  // États pour la comparaison intelligente de cours (recommandations)
+  const [selectedCourseForComparison, setSelectedCourseForComparison] = useState<Course | null>(null);
+  const [showCourseComparison, setShowCourseComparison] = useState(false);
+  
+  // Système de crédits
+  const {
+    credits,
+    movements,
+    showAnimation,
+    showModal,
+    setShowModal,
+    showLowCreditWarning,
+    setShowLowCreditWarning,
+    spendCredits,
+    gainCredits,
+    getSuggestions,
+    canAfford
+  } = useCreditSystem(12);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = primaryCourses.findIndex(course => course.id === active.id);
+      const newIndex = primaryCourses.findIndex(course => course.id === over.id);
+      const newOrder = arrayMove(primaryCourses, oldIndex, newIndex);
+      setPrimaryCourses(newOrder);
+      onUpdateCourseOrder(active.id as string, newIndex);
+    }
+  };
+
+  const handleToggleFavorite = (courseId: string) => {
+    onToggleCourseFavorite(courseId);
+  };
+
+  const handleOpenCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setActiveSection('lesson');
+    setShowIntegratedViewer(true); // Utiliser le nouveau viewer par défaut
+  };
+
+  const handleOpenStaircaseView = (course: Course) => {
+    setSelectedCourse(course);
+    setActiveSection('staircase');
+    setShowStaircaseView(true);
+  };
+
+  const handleCloseStaircaseView = () => {
+    setShowStaircaseView(false);
+    setSelectedCourse(null);
+    setActiveSection('courses'); // Retour à la section cours
+  };
+
+  const handleSelectLessonFromStaircase = (lesson: any) => {
+    // Fermer la vue escalier et ouvrir la leçon
+    setShowStaircaseView(false);
+    // Ici vous pourriez ouvrir le viewer de leçon spécifique
+    console.log('Leçon sélectionnée:', lesson);
+  };
+
+  const handleOpenIntegratedViewer = (course: Course) => {
+    setSelectedCourse(course);
+    setShowIntegratedViewer(true);
+    setCourseViewerOpen(false); // Fermer l'ancien système
+  };
+
+  const handleCloseIntegratedViewer = () => {
+    setShowIntegratedViewer(false);
+    setSelectedCourse(null);
+    setActiveSection('courses'); // Retour à la section cours
+  };
+
+  const handleCloseCourseViewer = () => {
+    setCourseViewerOpen(false);
+    setSelectedCourse(null);
+  };
+
+  const handlePreviewCourse = (courseId: string) => {
+    const course = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+      .find(c => c.id === courseId);
+    if (course) {
+      setPreviewCourse(course);
+      setPreviewModalOpen(true);
+      // S'assurer que l'IntegratedCourseViewer ne s'ouvre pas en même temps
+      setShowIntegratedViewer(false);
+      setSelectedCourse(null);
+    }
+  };
+
+  const handleClosePreviewModal = () => {
+    setPreviewModalOpen(false);
+    setPreviewCourse(null);
+  };
+
+  // Fonction pour débloquer un cours avec des crédits (interceptée pour déclencher la comparaison)
+  const handleUnlockCourse = (courseId: string) => {
+    const course = data.suggestedCourses.find(s => s.course.id === courseId)?.course;
+    if (!course) return;
+
+    // Au lieu de débloquer directement, on déclenche la comparaison intelligente
+    setSelectedCourseForComparison(course);
+    setShowCourseComparison(true);
+  };
+
+  // Fonction pour débloquer directement un cours (utilisée après confirmation)
+  const handleDirectCourseUnlock = (courseId: string) => {
+    const course = data.suggestedCourses.find(s => s.course.id === courseId)?.course;
+    if (!course) return;
+
+    const creditCost = course.creditCost || 1;
+    const success = spendCredits(creditCost, `Cours "${course.title}" débloqué`, courseId);
+    if (success) {
+      setUnlockedCourses(prev => [...prev, courseId]);
+      
+      // Déplacer le cours en haut des favoris (nouveau cours en premier)
+      const newCourse = { ...course, isPrimary: true };
+      setPrimaryCourses(prev => [newCourse, ...prev]);
+      
+      // Message de succès
+      setSuccessMessage(`🎉 Bravo ! Tu viens de débloquer "${course.title}". Ce parcours est conçu pour t'accompagner jusqu'à ton examen final.`);
+      setTimeout(() => setSuccessMessage(null), 5000);
+      
+      // Bonus: gagner un crédit après avoir terminé 3 cours
+      if (unlockedCourses.length + 1 === 3) {
+        setTimeout(() => {
+          gainCredits(1, 'Bonus progression - 3 cours débloqués !');
+        }, 2000);
+      }
+    }
+  };
+
+  // Fonctions pour gérer la comparaison de cours
+  const handleCloseCourseComparison = () => {
+    setShowCourseComparison(false);
+    setSelectedCourseForComparison(null);
+  };
+
+  const handleSelectCourseFromComparison = () => {
+    if (selectedCourseForComparison) {
+      handleDirectCourseUnlock(selectedCourseForComparison.id);
+      handleCloseCourseComparison();
+    }
+  };
+
+  const handleSelectPackFromComparison = (packId: string) => {
+    handleUnlockPack(packId);
+    handleCloseCourseComparison();
+  };
+
+  // Fonction pour débloquer un pack avec des crédits
+  const handleUnlockPack = (packId: string, courseIds: string[]) => {
+    // Récupérer les cours du pack
+    const packCourses = courseIds.map(courseId => 
+      data.suggestedCourses.find(s => s.course.id === courseId)?.course
+    ).filter(Boolean) as Course[];
+
+    if (packCourses.length === 0) return;
+
+    // Marquer le pack comme débloqué
+    setUnlockedPacks(prev => [...prev, packId]);
+    
+    // Débloquer tous les cours du pack
+    setUnlockedCourses(prev => [...prev, ...courseIds]);
+    
+    // Ajouter tous les cours en haut des favoris avec badge pack
+    const newCourses = packCourses.map(course => ({ 
+      ...course, 
+      isPrimary: true,
+      packBadge: `Inclus dans Pack`
+    }));
+    setPrimaryCourses(prev => [...newCourses, ...prev]);
+    
+    // Message de succès
+    setSuccessMessage(`🚀 Fantastique ! Tu viens de débloquer un pack complet avec ${packCourses.length} cours. Ton parcours d'apprentissage s'enrichit considérablement !`);
+    setTimeout(() => setSuccessMessage(null), 5000);
+  };
+
+  // Gestion des packs de crédits
+  const handlePurchasePack = (type: 'pack' | 'bundle', item: any) => {
+    setCheckoutItem({ 
+      type, 
+      name: item.name, 
+      price: type === 'pack' ? item.price : item.bundlePrice,
+      credits: item.credits,
+      bonusCredits: item.bonusCredits || 0,
+      features: type === 'pack' ? item.features : item.items.map((i: any) => i.name)
+    });
+    setShowCreditPacks(false);
+    setShowCheckout(true);
+  };
+
+  const handleConfirmPurchase = (finalItems: any[]) => {
+    const totalCredits = finalItems.reduce((sum, item) => {
+      return sum + (item.credits || 0) + (item.bonusCredits || 0);
+    }, 0);
+    
+    if (totalCredits > 0) {
+      gainCredits(totalCredits, 'Achat de pack de crédits');
+    }
+    
+    setShowCheckout(false);
+    setCheckoutItem(null);
+  };
+
+  // Calculs de statistiques
+  const totalHours = data.progress.reduce((acc, p) => acc + p.timeSpent, 0) / 60;
+  const averageProgress = primaryCourses.length > 0 
+    ? Math.round(primaryCourses.reduce((acc, course) => acc + course.progress, 0) / primaryCourses.length)
+    : 0;
+  const bestRanking = data.progress.length > 0 
+    ? Math.min(...data.progress.map(p => p.facultyRanking))
+    : null;
+
+  // Navigation items simplifiés
+  const [activeSection, setActiveSection] = useState('dashboard');
+  
+  const navigationItems = [
+    { id: 'dashboard', label: 'Tableau de bord', icon: Home },
+    { id: 'courses', label: 'Mes cours', icon: BookOpen },
+    { id: 'unlock', label: 'Débloquer', icon: Brain },
+    { id: 'planning', label: 'Planification', icon: Calendar },
+    { id: 'community', label: 'Communauté', icon: Users },
+  ];
+
+  return (
+    <>
+      <div className="min-h-screen pt-[73px] relative overflow-hidden">
+          {/* Arrière-plan dynamique */}
+          {selectedBackground !== 'default' ? (
+            <div 
+              className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
+              style={{ 
+                backgroundImage: `url(/course-backgrounds/${selectedBackground}.svg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            />
+          ) : (
+            <div className="fixed inset-0 bg-gray-50 z-0" />
+          )}
+          
+          {/* Overlay pour améliorer la lisibilité */}
+          {selectedBackground !== 'default' && (
+            <div className="fixed inset-0 bg-white/60 backdrop-blur-[1px] z-0" />
+          )}
+          
+          
+          {/* Contenu principal */}
+          <div className="relative z-10">
+        {/* Header épuré bord à bord - pleine largeur */}
+      <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setSidebarOpen(true)}
+                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+              >
+                <Menu size={20} />
+              </button>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                  <Brain className="text-white" size={16} />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-gray-900">Science Made Simple</h1>
+                  <p className="text-xs text-gray-500">Mes cours</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Recherche, crédits et notifications */}
+            <div className="hidden md:flex items-center gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent w-64"
+                />
+              </div>
+              
+              {/* Compteur de crédits */}
+              <CreditCounter
+                credits={credits}
+                onRecharge={() => setShowCreditPacks(true)}
+                onOpenHistory={() => setShowCreditModal(true)}
+                showAnimation={showAnimation}
+              />
+              
+              {/* Bouton WhatsApp */}
+              <a
+                href="https://wa.me/33123456789"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors group"
+                title="Contactez-nous sur WhatsApp"
+              >
+                <MessageSquare size={18} className="text-white" />
+              </a>
+              
+              <button className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors relative">
+                <Bell size={18} className="text-gray-600" />
+                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
+              </button>
+
+              {/* Widget des paramètres */}
+              <div className="relative" ref={settingsRef}>
+                <button 
+                  onClick={() => setShowSettings(!showSettings)}
+                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Settings size={18} className="text-gray-600" />
+                </button>
+
+                {/* Dropdown des paramètres */}
+                <AnimatePresence>
+                  {showSettings && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-12 right-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-6 w-80 z-50"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">Paramètres</h3>
+                        <button 
+                          onClick={() => setShowSettings(false)}
+                          className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <X size={14} className="text-gray-400" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-4">
+                        {/* Mode Sombre */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">Mode sombre</div>
+                            <div className="text-xs text-gray-500">Interface en thème sombre</div>
+                          </div>
+                          <div className="w-10 h-6 bg-gray-200 rounded-full relative cursor-pointer">
+                            <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
+                          </div>
+                        </div>
+
+                        {/* Notifications */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">Notifications</div>
+                            <div className="text-xs text-gray-500">Alertes et rappels</div>
+                          </div>
+                          <div className="w-10 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                            <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
+                          </div>
+                        </div>
+
+                        {/* Sons */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">Sons</div>
+                            <div className="text-xs text-gray-500">Effets sonores</div>
+                          </div>
+                          <div className="w-10 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                            <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
+                          </div>
+                        </div>
+
+                        <hr className="border-gray-100" />
+
+                        {/* Fond d'écran */}
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">Fond d'écran</div>
+                              <div className="text-xs text-gray-500">
+                                {BACKGROUND_OPTIONS.find(bg => bg.id === selectedBackground)?.name || 'Par défaut'}
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => setShowBackgroundOptions(!showBackgroundOptions)}
+                              className="text-sm text-blue-600 font-medium hover:text-blue-700"
+                            >
+                              {showBackgroundOptions ? 'Fermer' : 'Choisir'}
+                            </button>
+                          </div>
+
+                          {/* Options de fond d'écran */}
+                          <AnimatePresence>
+                            {showBackgroundOptions && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="mt-3 space-y-2 overflow-hidden"
+                              >
+                                {BACKGROUND_OPTIONS.map((bg) => (
+                                  <motion.button
+                                    key={bg.id}
+                                    onClick={() => {
+                                      setSelectedBackground(bg.id);
+                                      setShowBackgroundOptions(false);
+                                    }}
+                                    className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+                                      selectedBackground === bg.id
+                                        ? 'border-blue-500 bg-blue-50'
+                                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                    }`}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <div className="text-sm font-medium text-gray-900">{bg.name}</div>
+                                        <div className="text-xs text-gray-500">{bg.description}</div>
+                                      </div>
+                                      {selectedBackground === bg.id && (
+                                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </motion.button>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+
+                        {/* Langue */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">Langue</div>
+                            <div className="text-xs text-gray-500">Français</div>
+                          </div>
+                          <button className="text-sm text-blue-600 font-medium hover:text-blue-700">
+                            Modifier
+                          </button>
+                        </div>
+
+                        {/* Aide */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">Centre d'aide</div>
+                            <div className="text-xs text-gray-500">FAQ et support</div>
+                          </div>
+                          <button className="text-sm text-blue-600 font-medium hover:text-blue-700">
+                            Ouvrir
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* WhatsApp mobile */}
+              <a
+                href="https://wa.me/33123456789"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors"
+                title="Contactez-nous sur WhatsApp"
+              >
+                <MessageSquare size={18} className="text-white" />
+              </a>
+
+              <div className="hidden md:block text-right">
+                <p className="text-sm font-medium text-gray-900">Bonjour, {data.user.name}</p>
+                <p className="text-xs text-gray-500">{data.user.year}</p>
+              </div>
+              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold">
+                {data.user.name.charAt(0)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div className="flex">
+        {/* Sidebar simplifiée pour desktop - fixée sous le header */}
+        <nav className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed left-0 top-[73px] h-[calc(100vh-73px)] z-30">
+          <div className="p-6">
+            <div className="space-y-2">
+              {navigationItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveSection(item.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                      activeSection === item.id
+                        ? 'bg-black text-white' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <IconComponent size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+        </nav>
+
+        {/* Contenu principal bord à bord avec marge pour sidebar fixe */}
+        <main className="flex-1 md:ml-64 pt-0">
+          {activeSection === 'planning' ? (
+            <SmartPlanning />
+          ) : activeSection === 'community' ? (
+            <Community />
+          ) : activeSection === 'staircase' && selectedCourse ? (
+            <CourseStaircaseView
+              course={selectedCourse}
+              lessons={selectedCourse.lessons || []}
+              onSelectLesson={handleSelectLessonFromStaircase}
+              onClose={handleCloseStaircaseView}
+            />
+          ) : activeSection === 'lesson' && selectedCourse ? (
+            <IntegratedCourseViewer
+              course={selectedCourse}
+              isOpen={true}
+              onClose={handleCloseIntegratedViewer}
+            />
+          ) : activeSection === 'unlock' ? (
+            <div className="p-6">
+              <PurchaseSystem
+                data={data}
+                userCredits={credits}
+                onCreditChange={(newCredits) => {
+                  // Cette fonction sera gérée par le système de crédits existant
+                  const difference = newCredits - credits;
+                  if (difference < 0) {
+                    spendCredits(Math.abs(difference), 'Achat effectué');
+                  } else {
+                    gainCredits(difference, 'Crédits ajoutés');
+                  }
+                }}
+                onCourseUnlock={handleUnlockCourse}
+                onPackUnlock={handleUnlockPack}
+                ownedCourses={unlockedCourses}
+                ownedPacks={unlockedPacks}
+              />
+            </div>
+          ) : activeSection === 'dashboard' || activeSection === 'courses' ? (
+            <div className="p-6">
+              {/* Message d'accueil motivant */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Salut {data.user.name.split(' ')[0]} ! {
+                    averageProgress >= 75 ? '🌟 Tu es sur une lancée incroyable !' : 
+                    averageProgress >= 50 ? '🔥 Ta détermination paye vraiment !' : 
+                    averageProgress > 0 ? '💪 Chaque effort compte, tu progresses !' : 
+                    '🚀 Prêt à conquérir de nouveaux savoirs ?'
+                  }
+                </h2>
+                <p className="text-gray-600">
+                  {averageProgress >= 75 ? 'Tu es en train de devenir un expert ! Continue sur cette voie exceptionnelle.' : 
+                   averageProgress >= 50 ? 'Tes efforts se transforment en compétences solides. Tu peux être fier de toi !' : 
+                   averageProgress > 0 ? 'Chaque session d\'étude te rapproche de tes objectifs. Garde cette motivation !' : 
+                   'L\'aventure commence maintenant. Chaque grand parcours débute par un premier pas !'}
+                </p>
+                
+                {/* Action WhatsApp motivante */}
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <MessageSquare className="text-green-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Besoin de motivation ou d'aide ?</p>
+                        <p className="text-sm text-gray-600">Notre équipe est là pour toi 24h/24 sur WhatsApp</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowCreditModal(true)}
+                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
+                      >
+                        Voir historique
+                      </button>
+                      <a
+                        href="https://wa.me/33123456789"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
+                      >
+                        Discuter maintenant
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {/* Métriques simplifiées */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+              <SimpleMetric
+                icon={BookOpen}
+                value={primaryCourses.length}
+                label="Cours actifs"
+                accent={true}
+              />
+              <SimpleMetric
+                icon={TrendingUp}
+                value={bestRanking ? `#${bestRanking}` : 'N/A'}
+                label="Classement"
+              />
+              <SimpleMetric
+                icon={Clock}
+                value={`${Math.round(totalHours)}h`}
+                label="Temps d'étude"
+              />
+              <SimpleMetric
+                icon={Target}
+                value={`${averageProgress}%`}
+                label="Progression"
+              />
+            </div>
+
+            {/* Section Profil Personnalisé */}
+            <section className="mb-12">
+              <PersonalProfileSection 
+                personalProfile={personalProfile}
+                onCourseClick={(courseId) => {
+                  const course = [...primaryCourses, ...suggestedCourses].find(c => c.id === courseId);
+                  if (course) {
+                    handleOpenIntegratedViewer(course);
+                  }
+                }}
+              />
+            </section>
+
+            {/* Section Mes Cours Favoris */}
+            <section className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Star className="text-gray-400" size={20} />
+                    Mes Cours Favoris
+                  </h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    {primaryCourses.length} cours • Réorganisez par glisser-déposer
+                  </p>
+                </div>
+                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                  <Plus size={16} />
+                  <span>Ajouter</span>
+                </button>
+              </div>
+
+              {primaryCourses.length > 0 ? (
+                <ClientOnly fallback={
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {primaryCourses.map((course, index) => (
+                      <motion.div
+                        key={course.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * index }}
+                      >
+                        <CourseCard 
+                          course={course}
+                          progress={data.progress.find(p => p.courseId === course.id)}
+                          isDraggable={false}
+                          onToggleFavorite={handleToggleFavorite}
+                          onPreview={handlePreviewCourse}
+                          onEnroll={handleUnlockCourse}
+                          onOpenCourse={handleOpenCourse}
+                          onOpenStaircaseView={handleOpenStaircaseView}
+                          userCredits={credits}
+                          canAfford={canAfford(course.creditCost || 1)}
+                          isUnlocked={unlockedCourses.includes(course.id)}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                }>
+                  <DndContext 
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext 
+                      items={primaryCourses.map(course => course.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                        {primaryCourses.map((course, index) => (
+                          <motion.div
+                            key={course.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 * index }}
+                          >
+                            <CourseCard 
+                              course={course}
+                              progress={data.progress.find(p => p.courseId === course.id)}
+                              isDraggable={true}
+                              onToggleFavorite={handleToggleFavorite}
+                              onPreview={handlePreviewCourse}
+                              onEnroll={handleUnlockCourse}
+                              onOpenCourse={handleOpenCourse}
+                              onOpenStaircaseView={handleOpenStaircaseView}
+                              userCredits={credits}
+                              canAfford={canAfford(course.creditCost || 1)}
+                              isUnlocked={unlockedCourses.includes(course.id)}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </ClientOnly>
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <BookOpen className="text-gray-400" size={32} />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    Aucun cours favori
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Sélectionnez des cours ci-dessous pour les ajouter à vos favoris
+                  </p>
+                </div>
+              )}
+            </section>
+
+            {/* Section Cours Suggérés */}
+            <section>
+              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                <div 
+                  className="flex items-center justify-between cursor-pointer"
+                  onClick={() => setSuggestedExpanded(!suggestedExpanded)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <Users size={20} className="text-gray-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-gray-900">
+                        Recommandés pour vous
+                      </h2>
+                      <p className="text-gray-500 text-sm">
+                        Basé sur {data.facultyStats.totalStudents} étudiants de {data.user.faculty}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-500">
+                      {data.suggestedCourses.length} suggestions
+                    </span>
+                    {suggestedExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </div>
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {suggestedExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 mb-8 pt-4">
+                      {data.suggestedCourses.map((suggestion, index) => (
+                        <motion.div
+                          key={suggestion.course.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          className="mt-3"
+                        >
+                          <SuggestedCourseCard
+                            course={suggestion.course}
+                            enrolledStudents={suggestion.enrolledStudents}
+                            reason={suggestion.reason}
+                            onUnlock={handleDirectCourseUnlock}
+                            onPreview={handlePreviewCourse}
+                            canAfford={canAfford(suggestion.course.creditCost || 1)}
+                            isUnlocked={unlockedCourses.includes(suggestion.course.id)}
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* CTA Explorer tout le catalogue */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8 text-center border border-gray-200"
+                    >
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <span className="text-2xl">👉</span>
+                        <h3 className="text-xl font-bold text-gray-900">
+                          Explorer tout le catalogue
+                        </h3>
+                      </div>
+                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                        Découvrez tous nos cours, packs et offres spéciales. Plus de choix, plus d'opportunités d'apprentissage.
+                      </p>
+                      <button
+                        onClick={() => setActiveSection('unlock')}
+                        className="inline-flex items-center gap-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-8 py-4 rounded-xl font-medium hover:from-gray-800 hover:to-gray-700 transition-all shadow-lg hover:shadow-xl group"
+                      >
+                        <Brain size={20} />
+                        <span>Accéder au catalogue complet</span>
+                        <motion.div
+                          animate={{ x: [0, 4, 0] }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="group-hover:animate-pulse"
+                        >
+                          →
+                        </motion.div>
+                      </button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </section>
+            
+              {/* Footer moderne */}
+              <ModernFooter />
+            </div>
+          ) : (
+            <div className="p-6">
+              <div className="text-center py-12">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">Section en développement</h2>
+                <p className="text-gray-600">Cette section sera bientôt disponible !</p>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Sidebar mobile */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <motion.div
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              className="fixed left-0 top-0 bottom-0 w-80 bg-white z-50 lg:hidden"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <Brain size={20} />
+                    <span className="font-bold">Science Made Simple</span>
+                  </div>
+                  <button onClick={() => setSidebarOpen(false)}>
+                    <X size={20} />
+                  </button>
+                </div>
+                
+                <div className="space-y-2">
+                  {navigationItems.map((item) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveSection(item.id)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                          activeSection === item.id
+                            ? 'bg-black text-white' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <IconComponent size={20} />
+                        <span className="font-medium">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Modals */}
+
+      <PreviewModal
+        course={previewCourse}
+        isOpen={previewModalOpen}
+        onClose={handleClosePreviewModal}
+        onEnroll={onEnrollCourse}
+      />
+
+      {/* Modale du système de crédits */}
+      <CreditModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        credits={credits}
+        movements={movements}
+        suggestions={getSuggestions()}
+      />
+
+      {/* Modale de l'historique des crédits */}
+      {showCreditModal && (
+        <CreditModal
+          credits={credits}
+          movements={movements}
+          suggestions={getSuggestions()}
+          onClose={() => setShowCreditModal(false)}
+        />
+      )}
+
+      {/* Modale des packs de crédits */}
+      {showCreditPacks && (
+        <CreditPacks
+          onClose={() => setShowCreditPacks(false)}
+          onPurchase={handlePurchasePack}
+        />
+      )}
+
+      {/* Checkout premium */}
+      {showCheckout && checkoutItem && (
+        <PremiumCheckout
+          item={checkoutItem}
+          onClose={() => setShowCheckout(false)}
+          onConfirm={handleConfirmPurchase}
+        />
+      )}
+
+      {/* Notification crédits faibles */}
+      {showLowCreditWarning && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-2xl shadow-2xl max-w-sm z-50"
+        >
+          <div className="flex items-start gap-4">
+            <div className="text-3xl">🧠</div>
+            <div className="flex-1">
+              <h4 className="font-bold text-lg mb-2">Capital cognitif faible !</h4>
+              <p className="text-sm text-white/90 mb-4">
+                Ton capital cognitif diminue 🧠. Recharge-le pour continuer ton parcours en toute sérénité.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowLowCreditWarning(false);
+                    setShowCreditPacks(true);
+                  }}
+                  className="px-4 py-2 bg-white text-orange-600 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                >
+                  Recharger
+                </button>
+                <button
+                  onClick={() => setShowLowCreditWarning(false)}
+                  className="px-4 py-2 bg-white/20 text-white rounded-lg font-medium hover:bg-white/30 transition-colors"
+                >
+                  Plus tard
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowLowCreditWarning(false)}
+              className="text-white/70 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Notification de succès */}
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className="fixed bottom-6 left-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl shadow-2xl max-w-md z-50"
+        >
+          <div className="flex items-start gap-4">
+            <div className="text-2xl">🎉</div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{successMessage}</p>
+            </div>
+            <button
+              onClick={() => setSuccessMessage(null)}
+              className="text-white/70 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Anciens viewers supprimés - maintenant gérés au niveau principal */}
+
+      {/* Preview Modal */}
+      <PreviewModal
+        course={previewCourse}
+        isOpen={previewModalOpen}
+        onClose={handleClosePreviewModal}
+        onEnroll={(courseId) => {
+          handleClosePreviewModal();
+          // Logique d'inscription
+        }}
+      />
+
+      {/* SmartCourseComparison pour les recommandations */}
+      {selectedCourseForComparison && showCourseComparison && (
+        <SmartCourseComparison
+          isVisible={showCourseComparison}
+          onClose={handleCloseCourseComparison}
+          selectedCourse={selectedCourseForComparison}
+          recommendedPack={{} as any}
+          alternativePack={null}
+          onSelectCourse={handleSelectCourseFromComparison}
+          onSelectPack={handleSelectPackFromComparison}
+          canAffordCourse={true}
+          canAffordPack={true}
+          canAffordAlternative={false}
+        />
+      )}
+    </>
+  );
+};
