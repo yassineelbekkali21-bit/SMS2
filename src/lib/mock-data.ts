@@ -1393,7 +1393,7 @@ export const getMockVideoQuizzes = (lessonId: string): VideoQuizQuestion[] => {
 export const mockCoursePacks: CoursePack[] = [
   {
     id: 'pack-electromagnetisme',
-    title: 'Pack Électromagnétisme Complet',
+    title: 'Pack Electrostatique',
     description: 'Maîtrisez l\'électrostatique et l\'électromagnétisme avec ce pack expert',
     courses: ['course-gauss', 'course-forces'], // Loi de Gauss + Forces
     creditCost: 1200, // Prix en euros
