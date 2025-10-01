@@ -1006,7 +1006,20 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             return packCourse ? { ...course, isOwned: true } : course;
           });
           
-          return [...newCourses, ...updatedExisting];
+          const updatedCourses = [...newCourses, ...updatedExisting];
+          
+          // 🔄 SYNC: Mettre à jour localStorage pour useFavorites
+          const favoriteIds = updatedCourses.filter(c => c.isPrimary).map(c => c.id);
+          localStorage.setItem('favoriteCourses', JSON.stringify(favoriteIds));
+          console.log('🔄 SYNC: localStorage mis à jour avec favoris pack:', favoriteIds);
+          
+          // 🔄 SYNC: Dispatcher l'événement après le rendu pour éviter les cycles
+          setTimeout(() => {
+            console.log('🔄 SYNC: Déclenchement événement favoritesChanged pour pack');
+            window.dispatchEvent(new CustomEvent('favoritesChanged'));
+          }, 0);
+          
+          return updatedCourses;
         });
         
         console.log('✅ SYNC: Pack - Tous les cours ajoutés aux favoris:', packCourses.map((c: any) => c.title));
