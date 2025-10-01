@@ -980,24 +980,43 @@ export function getCoursesByPackId(packId: string) {
 /**
  * Génère les options d'upsell pour une leçon donnée
  */
-export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
-  console.log('🔧 generateUpsellOptions called with lessonId:', lessonId);
+export function generateUpsellOptions(lessonId: string, courseId?: string): PurchaseOption[] {
+  console.log('🔧 generateUpsellOptions called with lessonId:', lessonId, 'courseId:', courseId);
   
-  // Déterminer le contenu spécifique selon la leçon
+  // Déterminer le contenu spécifique selon le cours
   let lessonTitle = 'Les fondamentaux essentiels';
   let courseTitle = 'Cours Complet';
-  let courseId = 'course-gauss'; // Par défaut
+  let targetCourseId = courseId || 'course-gauss'; // Utiliser le courseId passé ou défaut
   let packTitle = 'Pack Électrostatique';
   let packId = 'pack-electrostatics';
   let packDescription = 'Formation complète en électrostatique';
   let courseFeatures = ['Toutes les leçons du cours', 'Accès aux Study Rooms', 'Garantie de réussite', 'Support prioritaire'];
   let packFeatures = ['Tous les cours d\'électrostatique', 'Study Rooms premium', 'Coaching personnalisé', 'Planificateur inclus'];
   
-  // Spécialisation pour les mathématiques (Analyse Mathématique I)
-  if (lessonId.includes('math') || lessonId.includes('analyse')) {
+  // 🎯 SPÉCIALISATION PAR COURS (utilise courseId au lieu de lessonId)
+  if (targetCourseId === 'course-equilibres') {
+    // Équilibres Chimiques
+    lessonTitle = 'Équilibres Chimiques : fondamentaux essentiels';
+    courseTitle = 'Cours "Équilibres Chimiques"';
+    packTitle = 'Pack Électrostatique';
+    packId = 'pack-electromagnetisme';
+    packDescription = 'Formation complète en électrostatique et chimie';
+    courseFeatures = [
+      'Toutes les leçons d\'Équilibres Chimiques',
+      'Calculs d\'équilibres avancés',
+      'Applications industrielles',
+      'Accès aux Study Rooms'
+    ];
+    packFeatures = [
+      'Équilibres Chimiques + Loi de Gauss + Forces',
+      'Approche multidisciplinaire',
+      'Study Rooms premium',
+      'Planificateur automatique'
+    ];
+  } else if (targetCourseId.includes('math') || targetCourseId.includes('analyse')) {
     lessonTitle = 'Analyse Mathématique I : fondamentaux essentiels';
     courseTitle = 'Cours "Analyse Mathématique I"';
-    courseId = 'course-math-analyse-1';
+    targetCourseId = 'course-math-analyse-1';
     packTitle = 'Pack Mathématiques Avancées';
     packId = 'pack-mathematiques';
     packDescription = 'Pack complet pour exceller en mathématiques universitaires';
@@ -1052,7 +1071,7 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
     // Option 2: Cours complet
     {
       type: 'course',
-      itemId: courseId,
+      itemId: targetCourseId,
       title: courseTitle,
       description: 'Parcours pédagogique structuré et complet',
       price: 700,

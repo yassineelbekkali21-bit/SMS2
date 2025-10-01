@@ -1145,7 +1145,7 @@ export function IntegratedCourseViewer({
       console.log('🔥 Lesson not owned, opening upsell modal...');
       // La leçon n'est pas achetée, ouvrir l'upsell modal
       setSelectedLessonForPurchase(lesson);
-      const options = generateUpsellOptions(lesson.id);
+      const options = generateUpsellOptions(lesson.id, lesson.courseId);
       console.log('🔥 Generated upsell options:', options);
       setUpsellOptions(options);
       setShowPurchaseUpsell(true);
