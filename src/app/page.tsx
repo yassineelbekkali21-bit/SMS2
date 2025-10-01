@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { SimpleLanding } from '@/components/SimpleLanding';
 import { SimpleDashboard } from '@/components/SimpleDashboard';
-import { CourseMapView } from '@/components/CourseMapView';
+import { IntegratedCourseViewer } from '@/components/IntegratedCourseViewer';
 import { LoginScreen } from '@/components/LoginScreen';
 import { useAuth } from '@/hooks/useAuth';
 import { mockDashboardData, toggleCourseFavorite, reorderPrimaryCourses, enrollInCourse, mockUser } from '@/lib/mock-data';
@@ -183,7 +183,7 @@ export default function Home() {
 
   if (selectedCourse) {
     return (
-      <CourseMapView
+      <IntegratedCourseViewer
         course={selectedCourse}
         user={user}
         onBack={() => setSelectedCourse(null)}
