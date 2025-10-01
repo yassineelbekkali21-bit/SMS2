@@ -868,8 +868,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           // 🔄 SYNC: Mettre à jour localStorage pour useFavorites
           const favoriteIds = updatedCourses.filter(c => c.isPrimary).map(c => c.id);
           localStorage.setItem('favoriteCourses', JSON.stringify(favoriteIds));
-          window.dispatchEvent(new Event('favoritesChanged'));
           console.log('🔄 SYNC: localStorage mis à jour avec favoris:', favoriteIds);
+          
+          // 🔄 SYNC: Dispatcher l'événement après le rendu pour éviter les cycles
+          setTimeout(() => {
+            window.dispatchEvent(new Event('favoritesChanged'));
+          }, 0);
           
           return updatedCourses;
         });
