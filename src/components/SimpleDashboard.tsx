@@ -1424,7 +1424,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   };
 
   // Fonction pour créer un cours mock basé sur l'ID (pour les cours de l'année prochaine)
-  const createMockCourseFromId = (courseId: string): Course | null => {
+  const createMockCourseFromId_UNUSED = (courseId: string): Course | null => {
     // Interface temporaire pour le mapping
     interface MockCourseData {
       id: string;
