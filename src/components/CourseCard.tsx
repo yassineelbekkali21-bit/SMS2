@@ -226,15 +226,15 @@ export function CourseCard({
       )}
     >
       {/* 🎨 Header avec Pattern Génératif ou Image personnalisée */}
-      <div className={cn(
-        "relative h-52 overflow-hidden transition-all duration-300",
-        // Effet visuel pour favoris non débloqués
-        course.isPrimary && !course.isOwned && "grayscale-[0.5] opacity-60"
-      )}>
+      <div className="relative h-52 overflow-hidden transition-all duration-300">
         {finalThumbnail ? (
           /* Image personnalisée */
           <div 
-            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            className={cn(
+              "w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300",
+              // Effet visuel seulement sur l'image pour favoris non débloqués
+              course.isPrimary && !course.isOwned && "grayscale-[0.5] opacity-60"
+            )}
             style={{ backgroundImage: `url(${finalThumbnail})` }}
           >
             {/* Overlay subtil pour préserver la lisibilité */}
@@ -243,7 +243,11 @@ export function CourseCard({
         ) : (
           /* Pattern génératif unique */
           <div 
-            className="w-full h-full relative"
+            className={cn(
+              "w-full h-full relative transition-all duration-300",
+              // Effet visuel seulement sur le pattern pour favoris non débloqués
+              course.isPrimary && !course.isOwned && "grayscale-[0.5] opacity-60"
+            )}
             style={{
               background: `linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%), ${pattern}`,
             }}
