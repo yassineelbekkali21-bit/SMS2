@@ -1006,14 +1006,15 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   // Fonction utilitaire pour obtenir le nom d'un cours depuis son ID
   const getCourseNameFromId = (courseId: string): string => {
     const courseNames: Record<string, string> = {
-      'loi-gauss': 'Loi de Gauss',
-      'integrales-applications': 'Intégrales et Applications',
-      'forces-mouvement': 'Forces et Mouvement',
-      'suites-limites': 'Suites et Limites',
-      'champs-electriques': 'Champs Électriques, Potentiels et Énergie',
-      'calcul-avance': 'Calcul Avancé',
-      'mecanique-classique': 'Mécanique Classique',
-      'chimie-generale': 'Chimie Générale'
+      'course-gauss': 'Loi de Gauss',
+      'course-forces': 'Forces et Mouvement',
+      'course-equilibres': 'Équilibres Chimiques',
+      'course-integrales': 'Intégrales et Applications',
+      'course-suites': 'Suites et Limites',
+      'course-einstein-relativity': 'Théorie de la Relativité',
+      'course-fisher-statistics': 'Tests Statistiques de Fisher',
+      'course-curie-radioactivity': 'Radioactivité et Éléments',
+      'course-franklin-dna': 'Structure de l\'ADN'
     };
     return courseNames[courseId] || courseId;
   };

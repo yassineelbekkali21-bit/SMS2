@@ -1056,8 +1056,6 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
         '– Loi de Gauss',
         '– Forces et Mouvement',
         '– Équilibres Chimiques',
-        '– Intégrales et Applications', 
-        '– Suites et Limites',
         'Vidéos FullHD',
         'Quiz d\'auto-évaluation',
         'Slides PDF disponibles pour tous les cours du pack',
