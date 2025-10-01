@@ -331,10 +331,10 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     // Nettoyer les favoris incohérents (cours qui ne devraient pas être favoris par défaut)
     const invalidFavorites = favorites.filter(favoriteId => {
       const course = data.primaryCourses.find(c => c.id === favoriteId);
-      const isPurchased = purchasedItems.has(favoriteId);
       
-      // Supprimer si : cours trouvé mais pas primaire OU cours non acheté
-      return (course && !course.isPrimary) || !isPurchased;
+      // Supprimer seulement si : cours trouvé mais pas primaire ET cours était marqué comme favori par défaut
+      // (Ne pas supprimer les favoris ajoutés manuellement par l'utilisateur)
+      return course && !course.isPrimary && course.isOwned === true;
     });
     
     if (invalidFavorites.length > 0) {
@@ -342,7 +342,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       invalidFavorites.forEach(courseId => {
         const course = data.primaryCourses.find(c => c.id === courseId);
         const isPurchased = purchasedItems.has(courseId);
-        console.log(`🧹 CLEANUP: Suppression ${courseId} - isPrimary: ${course?.isPrimary}, isPurchased: ${isPurchased}`);
+        console.log(`🧹 CLEANUP: Suppression ${courseId} - isPrimary: ${course?.isPrimary}, isOwned: ${course?.isOwned}`);
         removeFavorite(courseId, course?.title);
       });
       return; // L'effet sera re-déclenché après la suppression
@@ -385,8 +385,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       }
       
       if (course) {
-        // Les cours favoris sont forcément achetés (vérification faite plus haut)
-        favoriteCourses.push({ ...course, isPrimary: true, isOwned: true });
+        // Définir isOwned selon le statut d'achat réel
+        const isPurchased = purchasedItems.has(favoriteId);
+        favoriteCourses.push({ 
+          ...course, 
+          isPrimary: true, 
+          isOwned: isPurchased 
+        });
       }
     });
     
