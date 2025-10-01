@@ -460,7 +460,7 @@ export const mockCourses: Course[] = [
     previewDuration: '5-10 min',
     tags: ['chimie', 'équilibres', 'thermodynamique'],
     difficulty: 'intermediate',
-    packId: 'pack-chimie-q1'
+    packId: 'pack-electromagnetisme'
   },
   {
     id: 'course-einstein-relativity',
@@ -1054,10 +1054,10 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
       features: [
         'Accès à l\'ensemble des cours d\'électrostatique :',
         '– Loi de Gauss',
-        '– Intégrales et Applications', 
         '– Forces et Mouvement',
+        '– Équilibres Chimiques',
+        '– Intégrales et Applications', 
         '– Suites et Limites',
-        '– Champs Électriques, Potentiels et Énergie',
         'Vidéos FullHD',
         'Quiz d\'auto-évaluation',
         'Slides PDF disponibles pour tous les cours du pack',
@@ -1395,7 +1395,7 @@ export const mockCoursePacks: CoursePack[] = [
     id: 'pack-electromagnetisme',
     title: 'Pack Electrostatique',
     description: 'Maîtrisez l\'électrostatique et l\'électromagnétisme avec ce pack expert',
-    courses: ['course-gauss', 'course-forces'], // Loi de Gauss + Forces
+    courses: ['course-gauss', 'course-forces', 'course-equilibres'], // Loi de Gauss + Forces + Équilibres Chimiques
     creditCost: 1200, // Prix en euros
     originalCreditCost: 1400, // Prix séparé
     badge: 'Populaire',
@@ -1404,6 +1404,7 @@ export const mockCoursePacks: CoursePack[] = [
     features: [
       'Loi de Gauss complète',
       'Forces et champs électriques',
+      'Équilibres chimiques',
       'Exercices pratiques inclus',
       'Support WhatsApp prioritaire',
       'Planificateur stratégique inclus'

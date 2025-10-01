@@ -753,37 +753,62 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       // CAS 3: Déblocage pack → Tous les cours et leçons du pack aux favoris
       console.log('🔄 SYNC: Achat d\'un pack complet, ajout de tous les cours');
       
-      // Pour ce MVP, nous ajoutons le cours actuel comme exemple
-      // Dans la version complète, il faudrait itérer sur tous les cours du pack
-      if (selectedCourse) {
-        const courseToUpdate = { 
-          ...selectedCourse, 
-          isPrimary: true,
-          isOwned: true 
-        };
+      // Récupérer les informations du pack acheté
+      const packs = getCoursePacks();
+      const purchasedPack = packs.find((p: any) => p.id === option.itemId || p.id === 'pack-electromagnetisme');
+      
+      if (purchasedPack && purchasedPack.courses) {
+        console.log('🔄 SYNC: Pack trouvé:', purchasedPack.title, 'avec cours:', purchasedPack.courses);
         
+        // Récupérer tous les cours du pack depuis les données
+        const allCourses = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)];
+        const packCourses = purchasedPack.courses
+          .map((courseId: string) => allCourses.find(c => c.id === courseId))
+          .filter(Boolean)
+          .map((course: any) => ({ 
+            ...course, 
+            isPrimary: true,
+            isOwned: true 
+          }));
+        
+        console.log('🔄 SYNC: Cours du pack à ajouter:', packCourses.map((c: any) => c.title));
+        
+        // Ajouter tous les cours du pack aux favoris
         setPrimaryCourses(prev => {
-          const existingIndex = prev.findIndex(c => c.id === selectedCourse.id);
-          if (existingIndex >= 0) {
-            const updated = [...prev];
-            updated[existingIndex] = courseToUpdate;
-            return updated;
-          } else {
-            return [courseToUpdate, ...prev];
-          }
+          const existingIds = new Set(prev.map(c => c.id));
+          const newCourses = packCourses.filter((course: any) => !existingIds.has(course.id));
+          const updatedExisting = prev.map(course => {
+            const packCourse = packCourses.find((pc: any) => pc.id === course.id);
+            return packCourse ? { ...course, isOwned: true } : course;
+          });
+          
+          return [...newCourses, ...updatedExisting];
         });
-        console.log('✅ SYNC: Pack - Cours ajouté aux favoris:', selectedCourse.title);
-      }
-      
-      // Ajouter d'autres cours du pack depuis les suggestions si disponibles
-      const additionalCourses = data.suggestedCourses
-        .filter(s => s.course.faculty === selectedCourse?.faculty && s.course.id !== selectedCourse?.id)
-        .slice(0, 2) // Limiter à 2 cours supplémentaires pour la demo
-        .map(s => ({ ...s.course, isPrimary: true, isOwned: true }));
-      
-      if (additionalCourses.length > 0) {
-        setPrimaryCourses(prev => [...additionalCourses, ...prev]);
-        console.log('✅ SYNC: Pack - Cours supplémentaires ajoutés:', additionalCourses.map(c => c.title));
+        
+        console.log('✅ SYNC: Pack - Tous les cours ajoutés aux favoris:', packCourses.map((c: any) => c.title));
+      } else {
+        console.log('⚠️ SYNC: Pack non trouvé pour:', option.itemId);
+        
+        // Fallback: ajouter au moins le cours actuel
+        if (selectedCourse) {
+          const courseToUpdate = { 
+            ...selectedCourse, 
+            isPrimary: true,
+            isOwned: true 
+          };
+          
+          setPrimaryCourses(prev => {
+            const existingIndex = prev.findIndex(c => c.id === selectedCourse.id);
+            if (existingIndex >= 0) {
+              const updated = [...prev];
+              updated[existingIndex] = courseToUpdate;
+              return updated;
+            } else {
+              return [courseToUpdate, ...prev];
+            }
+          });
+          console.log('✅ SYNC: Pack - Cours actuel ajouté aux favoris (fallback):', selectedCourse.title);
+        }
       }
     }
 
@@ -797,26 +822,40 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       console.log('🎯 ONBOARDING: Déclenchement planification pour', option.type);
       
       let courseName = 'Cours complet';
+      let planningItemId = option.itemId;
       
-      // Essayer d'abord avec selectedCourse
-      if (selectedCourse) {
-        courseName = selectedCourse.title;
-        console.log('🎯 ONBOARDING: Utilisation selectedCourse:', courseName);
-      } else {
-        // Sinon rechercher dans la liste des cours
-        const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
-          .find(course => course.id === option.itemId);
+      if (option.type === 'pack') {
+        // Pour un pack, utiliser le nom du pack et proposer tous les cours
+        const packs = getCoursePacks();
+        const purchasedPack = packs.find((p: any) => p.id === option.itemId || p.id === 'pack-electromagnetisme');
         
-        if (purchasedCourse) {
-          courseName = purchasedCourse.title;
-          console.log('🎯 ONBOARDING: Cours trouvé dans la liste:', courseName);
+        if (purchasedPack) {
+          courseName = purchasedPack.title;
+          console.log('🎯 ONBOARDING: Pack trouvé pour planification:', courseName, 'avec', purchasedPack.courses.length, 'cours');
         } else {
-          console.log('🎯 ONBOARDING: Cours non trouvé, utilisation nom générique');
+          courseName = 'Pack Electrostatique';
+        }
+      } else {
+        // Pour un cours individuel
+        if (selectedCourse) {
+          courseName = selectedCourse.title;
+          console.log('🎯 ONBOARDING: Utilisation selectedCourse:', courseName);
+        } else {
+          // Sinon rechercher dans la liste des cours
+          const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+            .find(course => course.id === option.itemId);
+          
+          if (purchasedCourse) {
+            courseName = purchasedCourse.title;
+            console.log('🎯 ONBOARDING: Cours trouvé dans la liste:', courseName);
+          } else {
+            console.log('🎯 ONBOARDING: Cours non trouvé, utilisation nom générique');
+          }
         }
       }
       
-      console.log('🎯 ONBOARDING: DÉCLENCHEMENT FINAL pour:', courseName, 'ID:', option.itemId);
-      triggerPlannerOnboarding(courseName, option.itemId);
+      console.log('🎯 ONBOARDING: DÉCLENCHEMENT FINAL pour:', courseName, 'ID:', planningItemId);
+      triggerPlannerOnboarding(courseName, planningItemId);
     } else {
       console.log('🎯 ONBOARDING: Pas un achat de cours complet, pas d\'onboarding');
     }
