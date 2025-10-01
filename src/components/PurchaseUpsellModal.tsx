@@ -39,6 +39,7 @@ export function PurchaseUpsellModal({
   const [userBalance, setUserBalance] = useState<number>(0);
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
   const [topUpSource, setTopUpSource] = useState<'lesson' | 'course' | 'pack' | 'general'>('general');
+  const [pendingPurchaseOption, setPendingPurchaseOption] = useState<PurchaseOption | null>(null);
 
   // Charger le solde au montage et quand la modale s'ouvre
   useEffect(() => {
@@ -79,13 +80,19 @@ export function PurchaseUpsellModal({
       console.log('❌ Achat échoué:', result.error);
       // Déclencher la recharge avec la source appropriée
       const source = option.type === 'lesson' ? 'lesson' : option.type === 'course' ? 'course' : 'pack';
-      handleTopUpRequest(source);
+      handleTopUpRequest(source, option);
     }
   };
 
-  const handleTopUpRequest = (source: 'lesson' | 'course' | 'pack' | 'general') => {
+  const handleTopUpRequest = (source: 'lesson' | 'course' | 'pack' | 'general', option?: PurchaseOption) => {
     console.log(`💳 UPSELL MODAL: Demande de recharge depuis ${source}`);
     setTopUpSource(source);
+    
+    // Mémoriser l'option pour l'achat automatique après recharge
+    if (option) {
+      setPendingPurchaseOption(option);
+      console.log(`💳 UPSELL MODAL: Option mémorisée pour achat automatique:`, option.title);
+    }
     
     if (onAddFunds) {
       onAddFunds();
@@ -103,6 +110,15 @@ export function PurchaseUpsellModal({
     if (result.success) {
       setUserBalance(result.newBalance);
       
+      // Si on a une option en attente et que le solde est suffisant, acheter automatiquement
+      if (pendingPurchaseOption && result.newBalance >= pendingPurchaseOption.price && onPurchase) {
+        console.log('💳 UPSELL MODAL: Achat automatique après recharge:', pendingPurchaseOption.title);
+        onPurchase(pendingPurchaseOption);
+        setPendingPurchaseOption(null);
+        onClose();
+        return;
+      }
+      
       // Afficher un message de succès
       const message = bonus > 0
         ? `🎉 Recharge réussie !\n\n+${amount}€ + bonus ${bonus}€\nNouveau solde: ${result.newBalance.toFixed(2)}€`
@@ -111,6 +127,7 @@ export function PurchaseUpsellModal({
       alert(message);
     }
     setShowTopUpModal(false);
+    setPendingPurchaseOption(null);
   };
 
   return (
@@ -276,7 +293,7 @@ export function PurchaseUpsellModal({
 
                         {/* Bouton d'action */}
                         <button
-                          onClick={() => canAfford ? handlePurchase(option) : handleTopUpRequest(option.type as 'lesson' | 'course' | 'pack')}
+                          onClick={() => canAfford ? handlePurchase(option) : handleTopUpRequest(option.type as 'lesson' | 'course' | 'pack', option)}
                           className={`
                             w-full py-2.5 px-3 rounded-lg font-medium transition-all flex items-center justify-center space-x-1.5
                             ${canAfford

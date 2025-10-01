@@ -79,7 +79,7 @@ import { CourseStaircaseView } from './CourseStaircaseView';
 import { IntegratedCourseViewer } from './IntegratedCourseViewer';
 import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, PurchaseOption, CourseStudyRoom, BuddySystem } from '@/types';
 import { PersonalProfileSection } from './PersonalProfileSection';
-import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks } from '@/lib/mock-data';
+import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId } from '@/lib/mock-data';
 import { StudyRoomButton } from './StudyRoomButton';
 import { StudyRoomModal } from './StudyRoomModal';
 import { StrategicPlanner } from './StrategicPlanner';
@@ -815,13 +815,20 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           
           // Débloquer les leçons pour chaque cours du pack
           pack.courses.forEach(courseId => {
-            if (updated[courseId]) {
-              updated[courseId] = updated[courseId].map(lesson => ({
-                ...lesson,
-                isOwned: true
-              }));
-              console.log('🔑 DÉBLOCAGE PACK: Leçons débloquées pour', courseId, updated[courseId].length);
+            // Si les leçons ne sont pas encore chargées, les charger d'abord
+            if (!updated[courseId]) {
+              // Charger les leçons du cours depuis les données mock
+              const mockLessons = getLessonsByCourseId(courseId);
+              updated[courseId] = mockLessons;
+              console.log('🔑 DÉBLOCAGE PACK: Leçons chargées pour', courseId, mockLessons.length);
             }
+            
+            // Débloquer toutes les leçons du cours
+            updated[courseId] = updated[courseId].map(lesson => ({
+              ...lesson,
+              isOwned: true
+            }));
+            console.log('🔑 DÉBLOCAGE PACK: Leçons débloquées pour', courseId, updated[courseId].length);
           });
           
           return updated;
