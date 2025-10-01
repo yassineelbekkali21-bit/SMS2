@@ -15,6 +15,7 @@ import {
 } from '@/types';
 import { PlannerCoachingService } from './planner-coaching-service';
 import { AdvancedPlannerService } from './advanced-planner-service';
+import { getCoursePacks } from './mock-data';
 
 /**
  * Service de gestion du planificateur stratégique
@@ -43,9 +44,21 @@ export class PlannerService {
 
     // Analyser chaque cours
     courses.forEach(course => {
-      // Vérifier si le cours complet est acheté (pack)
+      // Vérifier si le cours complet est acheté (cours individuel ou pack)
       // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
-      if (course.isOwned || purchasedItems.includes(`course-${course.id}`) || purchasedItems.includes(course.id)) {
+      
+      // 1. Vérifier achat direct du cours
+      const hasDirectCourse = course.isOwned || 
+                             purchasedItems.includes(`course-${course.id}`) || 
+                             purchasedItems.includes(course.id);
+      
+      // 2. Vérifier si un pack contenant ce cours a été acheté
+      const coursePacks = getCoursePacks();
+      const hasPackWithCourse = coursePacks.some(pack => 
+        pack.courses.includes(course.id) && purchasedItems.includes(pack.id)
+      );
+      
+      if (hasDirectCourse || hasPackWithCourse) {
         ownedCourses.push(course.id);
         completeCourses.push(course.id);
         return;
