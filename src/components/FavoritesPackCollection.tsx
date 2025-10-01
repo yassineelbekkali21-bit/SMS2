@@ -43,6 +43,7 @@ interface PackWithCourses {
   color: string;
   icon: string;
   lessonProgress: number;
+  purchasedCoursesCount: number;
 }
 
 export function FavoritesPackCollection({
@@ -121,7 +122,8 @@ export function FavoritesPackCollection({
           isCompleted: purchasedCoursesInPack.length === pack.courses.length,
           color: pack.color || 'blue',
           icon: pack.icon || '📚',
-          lessonProgress: averageLessonProgress
+          lessonProgress: averageLessonProgress,
+          purchasedCoursesCount: purchasedCoursesInPack.length
         });
       }
     });
@@ -266,7 +268,7 @@ export function FavoritesPackCollection({
                       <div className="flex items-center gap-2">
                         <Package size={14} className="text-gray-500 flex-shrink-0" />
                         <span className="text-sm font-medium text-gray-700">
-                          {pack.ownedCourses.length}/{pack.courses.length} cours débloqués
+                          {pack.purchasedCoursesCount}/{pack.courses.length} cours débloqués
                         </span>
                       </div>
                       
