@@ -28,6 +28,7 @@ interface FavoritesPackCollectionProps {
   progressData: any[];
   getStudyRoomProps: (course: Course) => any;
   onCompletePack?: (packId: string) => void;
+  purchasedItems?: Set<string>;
 }
 
 interface PackWithCourses {
@@ -53,7 +54,8 @@ export function FavoritesPackCollection({
   onOpenStaircaseView,
   progressData,
   getStudyRoomProps,
-  onCompletePack
+  onCompletePack,
+  purchasedItems = new Set()
 }: FavoritesPackCollectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isIndividualCoursesCollapsed, setIsIndividualCoursesCollapsed] = useState(false);
@@ -95,6 +97,11 @@ export function FavoritesPackCollection({
       );
 
       if (ownedCourses.length > 0) {
+        // Calculer combien de cours du pack sont réellement achetés
+        const purchasedCoursesInPack = pack.courses.filter(courseId => 
+          purchasedItems.has(courseId)
+        );
+        
         // Calculer la progression moyenne des leçons dans les cours débloqués
         const totalLessonProgress = ownedCourses.reduce((sum, course) => {
           return sum + calculateLessonProgress(course.id);
@@ -109,8 +116,9 @@ export function FavoritesPackCollection({
           courses: pack.courses,
           ownedCourses,
           missingCourses,
-          completionRate: Math.round((ownedCourses.length / pack.courses.length) * 100),
-          isCompleted: ownedCourses.length === pack.courses.length,
+          // Completion basée sur les ACHATS, pas les favoris
+          completionRate: Math.round((purchasedCoursesInPack.length / pack.courses.length) * 100),
+          isCompleted: purchasedCoursesInPack.length === pack.courses.length,
           color: pack.color || 'blue',
           icon: pack.icon || '📚',
           lessonProgress: averageLessonProgress
@@ -119,7 +127,7 @@ export function FavoritesPackCollection({
     });
 
     return packs;
-  }, [favoriteCourses, availablePacks, progressData]);
+  }, [favoriteCourses, availablePacks, progressData, purchasedItems]);
 
   // Cours favoris qui n'appartiennent à aucun pack
   const unpackagedCourses = useMemo(() => {

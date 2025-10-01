@@ -2356,6 +2356,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 progressData={data.progress}
                 getStudyRoomProps={getStudyRoomProps}
                 onCompletePack={handleCompletePack}
+                purchasedItems={purchasedItems}
               />
             </section>
 
