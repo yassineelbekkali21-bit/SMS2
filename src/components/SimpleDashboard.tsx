@@ -2234,11 +2234,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               }))}
               focusedCourse={focusedCourseForPlanning}
               onNavigateToCourse={handleNavigateToCourse}
-              onBackToCourses={() => {
-                console.log('🎯 NAVIGATION: Retour aux cours depuis planificateur');
-                setActiveSection('courses');
-                setForceShowPlanner(false);
-              }}
             />
           ) : activeSection === 'community' ? (
             <Community />
