@@ -214,11 +214,16 @@ export function CourseCard({
         }
       }}
       className={cn(
-        "group relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl cursor-pointer transition-all duration-500 border border-white/20",
+        "group relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl cursor-pointer transition-all duration-500",
         "focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500/40",
         isDragging && "opacity-50 scale-95 rotate-1",
         isAnimating && "animate-pulse",
-        "hover:border-white/40"
+        // Bordure dynamique selon l'état
+        course.isPrimary && !course.isOwned 
+          ? "border-2 border-dashed border-orange-400 hover:border-orange-500" // Favori non débloqué
+          : course.isPrimary && course.isOwned
+          ? "border-2 border-solid border-green-400 hover:border-green-500" // Favori débloqué
+          : "border border-white/20 hover:border-white/40" // Normal
       )}
     >
       {/* 🎨 Header avec Pattern Génératif ou Image personnalisée */}
@@ -320,6 +325,20 @@ export function CourseCard({
             className={course.isPrimary ? 'text-red-500' : ''} 
           />
         </motion.button>
+
+        {/* Overlay pour favori non débloqué */}
+        {course.isPrimary && !course.isOwned && (
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white/90 backdrop-blur-sm rounded-full p-4 shadow-lg"
+            >
+              <Lock size={24} className="text-orange-500" />
+            </motion.div>
+          </div>
+        )}
       </div>
 
       {/* 📚 Contenu Principal - Approche Bienveillante */}
@@ -443,8 +462,54 @@ export function CourseCard({
               <BookOpen size={16} />
               Continuer
             </motion.button>
+          ) : course.isPrimary ? (
+            /* Si favori non débloqué : Aperçu + Se tester + Débloquer */
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPreview?.(course.id);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
+                >
+                  <Eye size={16} />
+                  Aperçu
+                </motion.button>
+
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMiniQuiz(true);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  aria-label={`Tester mes connaissances sur le cours ${course.title}`}
+                  className="flex-1 py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
+                >
+                  <Brain size={16} />
+                  Se tester
+                </motion.button>
+              </div>
+              
+              {/* Bouton Débloquer pour favoris */}
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEnroll?.(course.id);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-orange-500/20"
+              >
+                <Lock size={16} />
+                Débloquer ce cours
+              </motion.button>
+            </div>
           ) : (
-            /* Si cours non débloqué : Aperçu + Se tester */
+            /* Si cours normal non débloqué : Aperçu + Se tester */
             <>
               <motion.button
                 onClick={(e) => {
