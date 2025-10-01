@@ -216,6 +216,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     onStartCourse,
     onUpdateUser,
     purchasedItems: propsPurchasedItems,
+    onPurchase,
     onLogout
   } = props;
   const [primaryCourses, setPrimaryCourses] = useState(data.primaryCourses);
