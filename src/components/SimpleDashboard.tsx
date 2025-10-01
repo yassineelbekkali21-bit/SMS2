@@ -221,8 +221,8 @@ function createMockCourseFromId(courseId: string): Course | null {
       totalLessons: 5,
       completedLessons: 0,
       progress: 0,
-      isOwned: true,
-      isPrimary: true
+      isOwned: false,
+      isPrimary: false
     },
     'course-equilibres': {
       id: 'course-equilibres',
@@ -331,13 +331,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     // Nettoyer les favoris incohérents (cours qui ne devraient pas être favoris par défaut)
     const invalidFavorites = favorites.filter(favoriteId => {
       const course = data.primaryCourses.find(c => c.id === favoriteId);
-      return course && !course.isPrimary; // Cours trouvé mais pas marqué comme primaire
+      const isPurchased = purchasedItems.has(favoriteId);
+      
+      // Supprimer si : cours trouvé mais pas primaire OU cours non acheté
+      return (course && !course.isPrimary) || !isPurchased;
     });
     
     if (invalidFavorites.length > 0) {
       console.log('🧹 SYNC: Nettoyage favoris incohérents:', invalidFavorites);
       invalidFavorites.forEach(courseId => {
         const course = data.primaryCourses.find(c => c.id === courseId);
+        const isPurchased = purchasedItems.has(courseId);
+        console.log(`🧹 CLEANUP: Suppression ${courseId} - isPrimary: ${course?.isPrimary}, isPurchased: ${isPurchased}`);
         removeFavorite(courseId, course?.title);
       });
       return; // L'effet sera re-déclenché après la suppression
@@ -380,7 +385,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       }
       
       if (course) {
-        favoriteCourses.push({ ...course, isPrimary: true });
+        // Les cours favoris sont forcément achetés (vérification faite plus haut)
+        favoriteCourses.push({ ...course, isPrimary: true, isOwned: true });
       }
     });
     
