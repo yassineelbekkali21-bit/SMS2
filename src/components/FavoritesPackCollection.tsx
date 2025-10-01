@@ -95,13 +95,21 @@ export function FavoritesPackCollection({
         pack.courses.includes(course.id)
       );
       
+      // Vérifier si le pack complet a été acheté
+      const isPackPurchased = purchasedItems.has(pack.id);
+      
       // Séparer les cours selon leur statut
       const unlockedCourses = ownedCourses.filter(course => 
-        course.isOwned && purchasedItems.has(course.id)
-      );
+        // Cours débloqué si : acheté individuellement OU pack complet acheté OU course.isOwned
+        course.isOwned || purchasedItems.has(course.id) || isPackPurchased
+      ).map(course => ({
+        ...course,
+        isOwned: true // Forcer isOwned à true pour les cours débloqués
+      }));
       
       const favoritesNotUnlocked = ownedCourses.filter(course => 
-        !course.isOwned || !purchasedItems.has(course.id)
+        // Cours favori non débloqué si : pas acheté individuellement ET pack pas acheté ET pas isOwned
+        !course.isOwned && !purchasedItems.has(course.id) && !isPackPurchased
       );
       
       const missingCourses = pack.courses.filter(courseId => 
@@ -114,9 +122,6 @@ export function FavoritesPackCollection({
         const purchasedCoursesInPack = pack.courses.filter(courseId => 
           purchasedItems.has(courseId)
         );
-        
-        // Vérifier si le pack complet a été acheté
-        const isPackPurchased = purchasedItems.has(pack.id);
         
         // Si le pack est acheté, tous les cours sont considérés comme achetés
         const effectivePurchasedCount = isPackPurchased ? pack.courses.length : purchasedCoursesInPack.length;
