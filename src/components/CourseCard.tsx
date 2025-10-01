@@ -453,9 +453,9 @@ export function CourseCard({
             </motion.button>
           ) : course.isPrimary ? (
             /* Si favori non débloqué : Aperçu + Se tester (toute la largeur) + Débloquer */
-            <div className="space-y-3">
+            <div className="space-y-3 -mx-4 md:-mx-6">
               {/* Aperçu et Se tester - toute la largeur */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 px-4 md:px-6">
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -485,18 +485,20 @@ export function CourseCard({
               </div>
               
               {/* Bouton Débloquer pour favoris */}
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEnroll?.(course.id);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-orange-500/20"
-              >
-                <Lock size={16} />
-                Débloquer ce cours
-              </motion.button>
+              <div className="px-4 md:px-6">
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEnroll?.(course.id);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-orange-500/20"
+                >
+                  <Lock size={16} />
+                  Débloquer ce cours
+                </motion.button>
+              </div>
             </div>
           ) : (
             /* Si cours normal non débloqué : Aperçu + Se tester */
