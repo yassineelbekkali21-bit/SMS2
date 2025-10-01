@@ -1413,6 +1413,15 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         difficulty: 'advanced',
         duration: '55h',
         creditCost: 4
+      },
+      'course-equilibres': {
+        id: 'course-equilibres',
+        title: 'Équilibres Chimiques',
+        description: 'Étude complète des équilibres chimiques : calculs, déplacements d\'équilibre, applications industrielles.',
+        category: 'Chimie',
+        difficulty: 'intermediate',
+        duration: '25h',
+        creditCost: 2
       }
     };
 
