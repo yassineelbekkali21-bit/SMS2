@@ -244,6 +244,21 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       primaryCoursesCount: primaryCourses.length 
     });
     
+    // Nettoyer les favoris incohérents (cours qui ne devraient pas être favoris par défaut)
+    const invalidFavorites = favorites.filter(favoriteId => {
+      const course = data.primaryCourses.find(c => c.id === favoriteId);
+      return course && !course.isPrimary; // Cours trouvé mais pas marqué comme primaire
+    });
+    
+    if (invalidFavorites.length > 0) {
+      console.log('🧹 SYNC: Nettoyage favoris incohérents:', invalidFavorites);
+      invalidFavorites.forEach(courseId => {
+        const course = data.primaryCourses.find(c => c.id === courseId);
+        removeFavorite(courseId, course?.title);
+      });
+      return; // L'effet sera re-déclenché après la suppression
+    }
+    
     // Si pas de favoris, vider primaryCourses
     if (favorites.length === 0) {
       console.log('🔄 SYNC: Aucun favori, vidage primaryCourses');
@@ -450,9 +465,16 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     // Forcer la redirection avec un délai pour s'assurer que tout se ferme d'abord
     setTimeout(() => {
       console.log('🎯 ONBOARDING: Tentative setActiveSection(planning)');
+      setIsNavigationLocked(true); // Verrouiller la navigation pendant la transition
       setActiveSection('planning');
       setForceShowPlanner(true); // Force l'affichage du planificateur
       console.log('🎯 ONBOARDING: setActiveSection(planning) exécuté');
+      
+      // Déverrouiller la navigation après un délai
+      setTimeout(() => {
+        setIsNavigationLocked(false);
+        console.log('🎯 ONBOARDING: Navigation déverrouillée');
+      }, 1000);
     }, 200);
     
     console.log('🎯 ONBOARDING: Redirection vers planning demandée');
@@ -614,6 +636,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     
     // Note: L'achat a déjà été traité par WalletService dans PurchaseUpsellModal
     // Cette fonction se contente de mettre à jour l'état local et déclencher la planification
+    
+    // 🔑 CRUCIAL: Informer le parent pour mettre à jour purchasedItems
+    if (onPurchase) {
+      onPurchase(option.type, option.itemId, option.price);
+      console.log('🔑 PURCHASE: Informé le parent de l\'achat:', option.type, option.itemId);
+    }
 
     // Ajouter notifications de paiement et déblocage
     import('@/lib/notification-service').then(({ NotificationService }) => {
@@ -1518,14 +1546,17 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     return 'courses';
   });
   
+  // État pour éviter les changements de section non désirés
+  const [isNavigationLocked, setIsNavigationLocked] = useState(false);
+  
   // Debug: surveiller les changements d'activeSection
   useEffect(() => {
     console.log('🎯 EFFECT: activeSection changé vers:', activeSection);
-    // Sauvegarder dans localStorage
-    if (typeof window !== 'undefined') {
+    // Sauvegarder dans localStorage seulement si la navigation n'est pas verrouillée
+    if (typeof window !== 'undefined' && !isNavigationLocked) {
       localStorage.setItem('activeSection', activeSection);
     }
-  }, [activeSection]);
+  }, [activeSection, isNavigationLocked]);
   
   const navigationItems = [
     { id: 'courses', label: 'Mes cours', icon: BookOpen, hasAccess: true },
@@ -2086,6 +2117,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               }))}
               focusedCourse={focusedCourseForPlanning}
               onNavigateToCourse={handleNavigateToCourse}
+              onBackToCourses={() => {
+                console.log('🎯 NAVIGATION: Retour aux cours depuis planificateur');
+                setActiveSection('courses');
+                setForceShowPlanner(false);
+              }}
             />
           ) : activeSection === 'community' ? (
             <Community />

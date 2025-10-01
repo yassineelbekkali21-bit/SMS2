@@ -1389,8 +1389,8 @@ export function IntegratedCourseViewer({
                             size={24} 
                             className={`transition-colors ${
                               isFavorite(course.id) 
-                                ? 'text-purple-600 fill-current' 
-                                : 'text-gray-400 hover:text-purple-400'
+                                ? 'text-red-500 fill-current' 
+                                : 'text-gray-400 hover:text-red-400'
                             }`}
                           />
                         </motion.button>
@@ -1625,8 +1625,8 @@ export function IntegratedCourseViewer({
                             size={20} 
                             className={`transition-colors ${
                               isFavorite(course.id) 
-                                ? 'text-purple-600 fill-current' 
-                                : 'text-gray-400 hover:text-purple-400'
+                                ? 'text-red-500 fill-current' 
+                                : 'text-gray-400 hover:text-red-400'
                             }`}
                           />
                         </motion.button>

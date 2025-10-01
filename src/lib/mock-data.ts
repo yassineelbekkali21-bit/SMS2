@@ -428,7 +428,7 @@ export const mockCourses: Course[] = [
     completedLessons: 0,
     duration: '3h 15m',
     isOwned: false,
-    isPrimary: true,
+    isPrimary: false,
     progress: 0,
     lastAccessed: undefined,
     examDate: new Date('2024-01-15'),
@@ -986,13 +986,37 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
   // Déterminer le contenu spécifique selon la leçon
   let lessonTitle = 'Les fondamentaux essentiels';
   let courseTitle = 'Cours Complet';
+  let courseId = 'course-gauss'; // Par défaut
   let packTitle = 'Pack Électrostatique';
+  let packId = 'pack-electrostatics';
   let packDescription = 'Formation complète en électrostatique';
   let courseFeatures = ['Toutes les leçons du cours', 'Accès aux Study Rooms', 'Garantie de réussite', 'Support prioritaire'];
   let packFeatures = ['Tous les cours d\'électrostatique', 'Study Rooms premium', 'Coaching personnalisé', 'Planificateur inclus'];
   
+  // Spécialisation pour les mathématiques (Analyse Mathématique I)
+  if (lessonId.includes('math') || lessonId.includes('analyse')) {
+    lessonTitle = 'Analyse Mathématique I : fondamentaux essentiels';
+    courseTitle = 'Cours "Analyse Mathématique I"';
+    courseId = 'course-math-analyse-1';
+    packTitle = 'Pack Mathématiques Avancées';
+    packId = 'pack-mathematiques';
+    packDescription = 'Pack complet pour exceller en mathématiques universitaires';
+    courseFeatures = [
+      'Toutes les leçons d\'Analyse Mathématique I',
+      'Méthodes de calcul avancées',
+      'Exercices d\'application',
+      'Accès aux Study Rooms'
+    ];
+    packFeatures = [
+      'Analyse I & Intégrales',
+      'Méthodes avancées incluses',
+      'Coaching personnalisé',
+      'Planificateur stratégique',
+      'Garantie satisfaction 100%'
+    ];
+  }
   // Spécialisation pour la Loi de Gauss (le cas principal demandé)
-  if (lessonId.includes('gauss') || lessonId.includes('electrostatique')) {
+  else if (lessonId.includes('gauss') || lessonId.includes('electrostatique')) {
     lessonTitle = 'Loi de Gauss : calcul de champ pour points, fils, plaques et sphères';
     courseTitle = 'Cours "Loi de Gauss"';
     packTitle = 'Pack Électrostatique';
@@ -1028,34 +1052,28 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
     // Option 2: Cours complet
     {
       type: 'course',
-      itemId: 'course-gauss',
-      title: 'Cours Complet',
+      itemId: courseId,
+      title: courseTitle,
       description: 'Parcours pédagogique structuré et complet',
       price: 700,
-      features: [
-        'Toutes les leçons du cours choisi',
+      features: courseFeatures.concat([
         'Vidéos FullHD',
         'Quiz d\'auto-évaluation',
-        'Accès aux Study Rooms liées à ce cours',
         'Accès au groupe WhatsApp du cours',
         'Garantie de réussite',
         'Support prioritaire',
         'Planificateur inclus'
-      ],
+      ]),
       badge: null
     },
     // Option 1: Pack complet (meilleur investissement)
     {
       type: 'pack',
-      itemId: 'pack-electrostatics',
-      title: 'Pack Électrostatique',
-      description: 'Formation complète en électrostatique',
+      itemId: packId,
+      title: packTitle,
+      description: packDescription,
       price: 1200,
-      features: [
-        'Accès à l\'ensemble des cours d\'électrostatique :',
-        '– Loi de Gauss',
-        '– Forces et Mouvement',
-        '– Équilibres Chimiques',
+      features: packFeatures.concat([
         'Vidéos FullHD',
         'Quiz d\'auto-évaluation',
         'Slides PDF disponibles pour tous les cours du pack',
@@ -1064,7 +1082,7 @@ export function generateUpsellOptions(lessonId: string): PurchaseOption[] {
         'Garantie de réussite (globale)',
         'Support prioritaire',
         'Planificateur inclus'
-      ],
+      ]),
       badge: 'Pack Premium',
       walletHint: 'Astuce : Recharge ton portefeuille et profite d\'un bonus offert (quantité limitée).'
     }

@@ -32,7 +32,9 @@ export class StudyRoomService {
     
     // Vérifier si le pack complet du cours est acheté
     // L'accès Study Room nécessite OBLIGATOIREMENT l'achat du cours complet ou d'un pack
-    const hasFullCourse = purchasedItems.includes(courseId) || 
+    // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
+    const hasFullCourse = purchasedItems.includes(`course-${courseId}`) || 
+                         purchasedItems.includes(courseId) || // Fallback pour l'ancien format
                          purchasedItems.some(item => item.startsWith('pack-'));
     
     // Compter les leçons possédées individuellement
