@@ -359,7 +359,7 @@ export function FavoritesPackCollection({
                         onOpenCourse={onOpenCourse}
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
-                        isUnlocked={false}
+                        isUnlocked={course.isOwned}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>
@@ -440,7 +440,7 @@ export function FavoritesPackCollection({
                         onOpenCourse={onOpenCourse}
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
-                        isUnlocked={false}
+                        isUnlocked={course.isOwned}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>

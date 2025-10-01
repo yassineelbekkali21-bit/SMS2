@@ -159,12 +159,15 @@ export function CourseCard({
 
   const IconComponent = getContextualIcon();
 
+  // Calculer la progression réelle
+  const courseProgress = progress?.progress ?? course.progress ?? 0;
+
   // 💬 Messages encourageants contextuels
   const getEncouragingMessage = () => {
     if (course.isOwned) {
-      if (course.progress >= 80) return "🎉 Presque au bout ! Vous êtes formidable";
-      if (course.progress >= 50) return "💪 Excellent progrès ! Continuez ainsi";
-      if (course.progress >= 20) return "✨ Bon début ! On continue ensemble";
+      if (courseProgress >= 80) return "🎉 Presque au bout ! Vous êtes formidable";
+      if (courseProgress >= 50) return "💪 Excellent progrès ! Continuez ainsi";
+      if (courseProgress >= 20) return "✨ Bon début ! On continue ensemble";
       return "🌱 Votre parcours commence ici";
     }
     return "👋 Découvrir ce cours";
@@ -337,7 +340,7 @@ export function CourseCard({
                 studyRoomParticipants={studyRoomParticipants}
               />
               {/* Indicateur de cours terminé */}
-              {course.isOwned && course.progress === 100 && (
+              {course.isOwned && courseProgress === 100 && (
                 <CheckCircle size={20} className="text-emerald-500" />
               )}
             </div>
@@ -369,9 +372,9 @@ export function CourseCard({
               <span className="text-sm font-semibold text-gray-700">Votre progression</span>
               <div className="flex items-center gap-2">
                 <span className={`text-sm font-bold ${colors.hover.replace('group-hover:', '')}`}>
-                  {course.progress}%
+                  {courseProgress}%
                 </span>
-                {course.progress >= 75 && <Zap size={14} className="text-amber-500" />}
+                {courseProgress >= 75 && <Zap size={14} className="text-amber-500" />}
               </div>
             </div>
             
@@ -379,7 +382,7 @@ export function CourseCard({
               <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${course.progress}%` }}
+                  animate={{ width: `${courseProgress}%` }}
                   transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 }}
                   className={`h-full bg-gradient-to-r ${colors.primary} rounded-full relative`}
                 >
@@ -389,7 +392,7 @@ export function CourseCard({
               </div>
               
               {/* Indicateur de milestone */}
-              {course.progress >= 50 && (
+              {courseProgress >= 50 && (
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -426,35 +429,50 @@ export function CourseCard({
 
         {/* Actions principales - Design cohérent */}
         <div className="flex gap-3 pt-4">
-          {/* Bouton Aperçu */}
-          <motion.button
-            onClick={(e) => {
-              e.stopPropagation();
-              onPreview?.(course.id);
-            }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
-          >
-            <Eye size={16} />
-            Aperçu
-          </motion.button>
-
-          {/* Bouton Je me teste */}
-          {course.isOwned && (
+          {course.isOwned ? (
+            /* Si cours débloqué : bouton Continuer unique */
             <motion.button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowMiniQuiz(true);
+                onOpenCourse?.(course);
               }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              aria-label={`Tester mes connaissances sur le cours ${course.title}`}
-              className="flex-1 py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
+              className="w-full py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-xl focus:ring-blue-600/20 hover:from-blue-700 hover:to-blue-800"
             >
-              <Brain size={16} />
-              Je me teste
+              <BookOpen size={16} />
+              Continuer
             </motion.button>
+          ) : (
+            /* Si cours non débloqué : Aperçu + Se tester */
+            <>
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPreview?.(course.id);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
+              >
+                <Eye size={16} />
+                Aperçu
+              </motion.button>
+
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMiniQuiz(true);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                aria-label={`Tester mes connaissances sur le cours ${course.title}`}
+                className="flex-1 py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
+              >
+                <Brain size={16} />
+                Se tester
+              </motion.button>
+            </>
           )}
         </div>
       </div>

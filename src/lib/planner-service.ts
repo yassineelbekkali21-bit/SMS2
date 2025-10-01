@@ -44,7 +44,8 @@ export class PlannerService {
     // Analyser chaque cours
     courses.forEach(course => {
       // Vérifier si le cours complet est acheté (pack)
-      if (course.isOwned || purchasedItems.includes(course.id)) {
+      // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
+      if (course.isOwned || purchasedItems.includes(`course-${course.id}`) || purchasedItems.includes(course.id)) {
         ownedCourses.push(course.id);
         completeCourses.push(course.id);
         return;

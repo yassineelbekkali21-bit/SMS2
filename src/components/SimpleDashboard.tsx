@@ -331,6 +331,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [selectedLessonForPurchase, setSelectedLessonForPurchase] = useState<any>(null);
   // Utiliser les purchasedItems des props ou un Set par défaut
   const purchasedItems = propsPurchasedItems || new Set(['course-suites']);
+  
+  // 🔍 DEBUG: Vérifier purchasedItems après achat
+  console.log('🔍 PURCHASED ITEMS:', Array.from(purchasedItems));
   const settingsRef = useRef<HTMLDivElement>(null);
 
   // Options de fond d'écran
