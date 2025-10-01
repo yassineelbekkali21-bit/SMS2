@@ -79,7 +79,7 @@ import { CourseStaircaseView } from './CourseStaircaseView';
 import { IntegratedCourseViewer } from './IntegratedCourseViewer';
 import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, PurchaseOption, CourseStudyRoom, BuddySystem } from '@/types';
 import { PersonalProfileSection } from './PersonalProfileSection';
-import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId } from '@/lib/mock-data';
+import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons } from '@/lib/mock-data';
 import { StudyRoomButton } from './StudyRoomButton';
 import { StudyRoomModal } from './StudyRoomModal';
 import { StrategicPlanner } from './StrategicPlanner';
@@ -818,7 +818,16 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             // Si les leçons ne sont pas encore chargées, les charger d'abord
             if (!updated[courseId]) {
               // Charger les leçons du cours depuis les données mock
-              const mockLessons = getLessonsByCourseId(courseId);
+              let mockLessons = getLessonsByCourseId(courseId);
+              
+              // Si pas de leçons trouvées, générer des leçons automatiquement
+              if (mockLessons.length === 0) {
+                const course = getCoursePacks().find(p => p.courses.includes(courseId));
+                const courseName = course ? `Cours ${courseId.replace('course-', '')}` : `Cours ${courseId}`;
+                mockLessons = generateMockLessons(courseId, courseName);
+                console.log('🔑 DÉBLOCAGE PACK: Leçons générées automatiquement pour', courseId, mockLessons.length);
+              }
+              
               updated[courseId] = mockLessons;
               console.log('🔑 DÉBLOCAGE PACK: Leçons chargées pour', courseId, mockLessons.length);
             }
@@ -954,7 +963,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           
           // 🔄 SYNC: Dispatcher l'événement après le rendu pour éviter les cycles
           setTimeout(() => {
-            window.dispatchEvent(new Event('favoritesChanged'));
+            console.log('🔄 SYNC: Déclenchement événement favoritesChanged');
+            window.dispatchEvent(new CustomEvent('favoritesChanged'));
           }, 0);
           
           return updatedCourses;
