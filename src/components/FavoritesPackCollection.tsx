@@ -37,7 +37,9 @@ interface PackWithCourses {
   description: string;
   courses: string[];
   ownedCourses: Course[];
-  missingCourses: string[];
+  unlockedCourses: Course[];      // Cours débloqués (achetés)
+  favoritesNotUnlocked: Course[]; // Favoris non débloqués
+  missingCourses: string[];       // Emplacements vides
   completionRate: number;
   isCompleted: boolean;
   color: string;
@@ -93,22 +95,32 @@ export function FavoritesPackCollection({
         pack.courses.includes(course.id)
       );
       
+      // Séparer les cours selon leur statut
+      const unlockedCourses = ownedCourses.filter(course => 
+        course.isOwned && purchasedItems.has(course.id)
+      );
+      
+      const favoritesNotUnlocked = ownedCourses.filter(course => 
+        !course.isOwned || !purchasedItems.has(course.id)
+      );
+      
       const missingCourses = pack.courses.filter(courseId => 
         !favoriteCourses.some(course => course.id === courseId)
       );
 
-      if (ownedCourses.length > 0) {
+      // Afficher le pack s'il y a au moins un cours favori OU un cours débloqué
+      if (ownedCourses.length > 0 || unlockedCourses.length > 0) {
         // Calculer combien de cours du pack sont réellement achetés
         const purchasedCoursesInPack = pack.courses.filter(courseId => 
           purchasedItems.has(courseId)
         );
         
         // Calculer la progression moyenne des leçons dans les cours débloqués
-        const totalLessonProgress = ownedCourses.reduce((sum, course) => {
+        const totalLessonProgress = unlockedCourses.reduce((sum, course) => {
           return sum + calculateLessonProgress(course.id);
         }, 0);
-        const averageLessonProgress = ownedCourses.length > 0 ? 
-          Math.round(totalLessonProgress / ownedCourses.length) : 0;
+        const averageLessonProgress = unlockedCourses.length > 0 ? 
+          Math.round(totalLessonProgress / unlockedCourses.length) : 0;
 
         packs.push({
           id: pack.id,
@@ -116,6 +128,8 @@ export function FavoritesPackCollection({
           description: pack.description,
           courses: pack.courses,
           ownedCourses,
+          unlockedCourses,
+          favoritesNotUnlocked,
           missingCourses,
           // Completion basée sur les ACHATS, pas les favoris
           completionRate: Math.round((purchasedCoursesInPack.length / pack.courses.length) * 100),
@@ -351,10 +365,10 @@ export function FavoritesPackCollection({
                 className="px-6 pb-6"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {/* Cours possédés */}
-                  {pack.ownedCourses.map((course, index) => (
+                  {/* 1. Cours débloqués (achetés) - PRIORITÉ 1 */}
+                  {pack.unlockedCourses.map((course, index) => (
                     <motion.div
-                      key={course.id}
+                      key={`unlocked-${course.id}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -369,15 +383,39 @@ export function FavoritesPackCollection({
                         onOpenCourse={onOpenCourse}
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
-                        isUnlocked={course.isOwned}
+                        isUnlocked={true}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>
                   ))}
                   
-                  {/* Emplacements vides (style Panini) */}
+                  {/* 2. Favoris non débloqués - PRIORITÉ 2 */}
+                  {pack.favoritesNotUnlocked.map((course, index) => (
+                    <motion.div
+                      key={`favorite-${course.id}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (pack.unlockedCourses.length + index) * 0.1 }}
+                    >
+                      <CourseCard 
+                        course={course}
+                        progress={progressData.find(p => p.courseId === course.id)}
+                        isDraggable={false}
+                        onToggleFavorite={onToggleFavorite}
+                        onPreview={onPreview}
+                        onEnroll={onEnroll}
+                        onOpenCourse={onOpenCourse}
+                        onOpenStaircaseView={onOpenStaircaseView}
+                        canAfford={true}
+                        isUnlocked={false}
+                        {...getStudyRoomProps(course)}
+                      />
+                    </motion.div>
+                  ))}
+                  
+                  {/* 3. Emplacements vides (style Panini) - PRIORITÉ 3 */}
                   {pack.missingCourses.map((courseId, index) => 
-                    renderPlaceholderCard(courseId, pack.ownedCourses.length + index)
+                    renderPlaceholderCard(courseId, pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index)
                   )}
                 </div>
               </motion.div>
