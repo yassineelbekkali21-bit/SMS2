@@ -225,7 +225,11 @@ export function CourseCard({
       )}
     >
       {/* 🎨 Header avec Pattern Génératif ou Image personnalisée */}
-      <div className="relative h-52 overflow-hidden">
+      <div className={cn(
+        "relative h-52 overflow-hidden transition-all duration-300",
+        // Effet visuel pour favoris non débloqués
+        course.isPrimary && !course.isOwned && "grayscale-[0.3] opacity-80"
+      )}>
         {finalThumbnail ? (
           /* Image personnalisée */
           <div 
@@ -448,9 +452,10 @@ export function CourseCard({
               Continuer
             </motion.button>
           ) : course.isPrimary ? (
-            /* Si favori non débloqué : Aperçu + Se tester + Débloquer */
-            <div className="space-y-2">
-              <div className="flex gap-2">
+            /* Si favori non débloqué : Aperçu + Se tester (toute la largeur) + Débloquer */
+            <div className="space-y-3">
+              {/* Aperçu et Se tester - toute la largeur */}
+              <div className="flex gap-3">
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
