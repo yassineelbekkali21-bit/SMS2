@@ -805,56 +805,79 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
     // 🔑 MISE À JOUR CENTRALISÉE DES LEÇONS (POINT CRITIQUE)
     
-    // Mettre à jour courseLessons (pour IntegratedCourseViewer)
-    if (selectedCourse && courseLessons[selectedCourse.id]) {
-      console.log('🔑 DÉBLOCAGE: Mise à jour courseLessons pour', selectedCourse.id);
-      setCourseLessons(prev => {
-        const currentLessons = prev[selectedCourse.id] || [];
-        let updatedLessons;
-        
-        if (option.type === 'lesson') {
-          // Débloquer uniquement la leçon spécifiée
-          updatedLessons = currentLessons.map(lesson => 
-            lesson.id === option.itemId 
-              ? { ...lesson, isOwned: true }
-              : lesson
-          );
-          console.log('🔑 DÉBLOCAGE: Leçon débloquée:', option.itemId);
-        } else if (option.type === 'course') {
-          // Débloquer toutes les leçons du cours
-          updatedLessons = currentLessons.map(lesson => ({ 
-            ...lesson, 
-            isOwned: true 
-          }));
-          console.log('🔑 DÉBLOCAGE: TOUTES les leçons du cours débloquées:', updatedLessons.length);
-        } else if (option.type === 'pack') {
-          // Débloquer toutes les leçons (pack complet)
-          updatedLessons = currentLessons.map(lesson => ({ 
-            ...lesson, 
-            isOwned: true 
-          }));
-          console.log('🔑 DÉBLOCAGE: TOUTES les leçons du pack débloquées:', updatedLessons.length);
-        } else {
-          updatedLessons = currentLessons;
-        }
-        
-        return {
-          ...prev,
-          [selectedCourse.id]: updatedLessons
-        };
-      });
+    if (option.type === 'pack') {
+      // Pour un pack, débloquer les leçons de TOUS les cours du pack
+      const pack = getCoursePacks().find(p => p.id === option.itemId);
+      if (pack) {
+        console.log('🔑 DÉBLOCAGE PACK: Déblocage des cours du pack:', pack.courses);
+        setCourseLessons(prev => {
+          const updated = { ...prev };
+          
+          // Débloquer les leçons pour chaque cours du pack
+          pack.courses.forEach(courseId => {
+            if (updated[courseId]) {
+              updated[courseId] = updated[courseId].map(lesson => ({
+                ...lesson,
+                isOwned: true
+              }));
+              console.log('🔑 DÉBLOCAGE PACK: Leçons débloquées pour', courseId, updated[courseId].length);
+            }
+          });
+          
+          return updated;
+        });
+      }
+    } else {
+      // Mettre à jour courseLessons (pour IntegratedCourseViewer)
+      if (selectedCourse && courseLessons[selectedCourse.id]) {
+        console.log('🔑 DÉBLOCAGE: Mise à jour courseLessons pour', selectedCourse.id);
+        setCourseLessons(prev => {
+          const currentLessons = prev[selectedCourse.id] || [];
+          let updatedLessons;
+          
+          if (option.type === 'lesson') {
+            // Débloquer uniquement la leçon spécifiée
+            updatedLessons = currentLessons.map(lesson => 
+              lesson.id === option.itemId 
+                ? { ...lesson, isOwned: true }
+                : lesson
+            );
+            console.log('🔑 DÉBLOCAGE: Leçon débloquée:', option.itemId);
+          } else if (option.type === 'course') {
+            // Débloquer toutes les leçons du cours
+            updatedLessons = currentLessons.map(lesson => ({ 
+              ...lesson, 
+              isOwned: true 
+            }));
+            console.log('🔑 DÉBLOCAGE: TOUTES les leçons du cours débloquées:', updatedLessons.length);
+          } else {
+            updatedLessons = currentLessons;
+          }
+          
+          return {
+            ...prev,
+            [selectedCourse.id]: updatedLessons
+          };
+        });
+      }
     }
     
     // Mettre à jour les cours primaires avec leurs leçons (pour la cohérence globale)
     if (option.type === 'course' || option.type === 'pack') {
       console.log('🔑 DÉBLOCAGE: Mise à jour des cours primaires avec isOwned=true');
       setPrimaryCourses(prev => prev.map(course => {
-        // Pour un cours : vérifier l'ID exact
-        const isTargetCourse = option.type === 'course' && course.id === option.itemId;
-        // Pour un pack : vérifier si le cours appartient au pack
-        const isInPack = option.type === 'pack' && course.packId === option.itemId;
+        let shouldUpdate = false;
         
-        if (isTargetCourse || isInPack) {
+        if (option.type === 'course') {
+          // Pour un cours : vérifier l'ID exact
+          shouldUpdate = course.id === option.itemId;
+        } else if (option.type === 'pack') {
+          // Pour un pack : vérifier si le cours appartient au pack
+          const pack = getCoursePacks().find(p => p.id === option.itemId);
+          shouldUpdate = pack ? pack.courses.includes(course.id) : false;
+        }
+        
+        if (shouldUpdate) {
           // Marquer le cours comme possédé et toutes ses leçons
           const updatedCourse = { 
             ...course, 
@@ -1147,7 +1170,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       // Pack par défaut si non trouvé
       return [{
         type: 'pack',
-        itemId: 'pack-electrostatics',
+        itemId: 'pack-electromagnetisme',
         title: 'Pack Électrostatique',
         description: 'Formation complète en électrostatique',
         price: 1200,

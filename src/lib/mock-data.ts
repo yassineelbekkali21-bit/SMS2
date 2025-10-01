@@ -988,7 +988,7 @@ export function generateUpsellOptions(lessonId: string, courseId?: string): Purc
   let courseTitle = 'Cours Complet';
   let targetCourseId = courseId || 'course-gauss'; // Utiliser le courseId passé ou défaut
   let packTitle = 'Pack Électrostatique';
-  let packId = 'pack-electrostatics';
+  let packId = 'pack-electromagnetisme';
   let packDescription = 'Formation complète en électrostatique';
   let courseFeatures = ['Toutes les leçons du cours', 'Accès aux Study Rooms', 'Garantie de réussite', 'Support prioritaire'];
   let packFeatures = ['Tous les cours d\'électrostatique', 'Study Rooms premium', 'Coaching personnalisé', 'Planificateur inclus'];
