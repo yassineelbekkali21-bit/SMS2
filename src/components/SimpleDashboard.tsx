@@ -251,6 +251,48 @@ function createMockCourseFromId(courseId: string): Course | null {
       progress: 0,
       isOwned: true,
       isPrimary: true
+    },
+    'course-forces': {
+      id: 'course-forces',
+      title: 'Forces et Mouvement',
+      description: 'Étude des forces et du mouvement en mécanique classique',
+      faculty: 'Solvay Brussels School',
+      year: '2024-2025',
+      difficulty: 'intermediate',
+      duration: '100 min',
+      totalLessons: 5,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: true,
+      isPrimary: true
+    },
+    'course-franklin-dna': {
+      id: 'course-franklin-dna',
+      title: 'Structure de l\'ADN',
+      description: 'Découverte de la structure de l\'ADN et ses implications biologiques',
+      faculty: 'Solvay Brussels School',
+      year: '2024-2025',
+      difficulty: 'intermediate',
+      duration: '80 min',
+      totalLessons: 4,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: true,
+      isPrimary: true
+    },
+    'course-physique-mecanique': {
+      id: 'course-physique-mecanique',
+      title: 'Mécanique Classique',
+      description: 'Principes fondamentaux de la mécanique classique',
+      faculty: 'Solvay Brussels School',
+      year: '2024-2025',
+      difficulty: 'intermediate',
+      duration: '110 min',
+      totalLessons: 5,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: false,
+      isPrimary: false
     }
   };
   
@@ -280,7 +322,10 @@ function createMockCourseFromId(courseId: string): Course | null {
            courseData.difficulty === 'advanced' ? 'Mathématiques' : 'Chimie'],
     packId: courseId === 'course-equilibres' ? 'pack-electromagnetisme' : 
             courseId === 'course-gauss' ? 'pack-electromagnetisme' :
-            courseId === 'course-integrales' ? 'pack-mathematiques' : undefined
+            courseId === 'course-forces' ? 'pack-electromagnetisme' :
+            courseId === 'course-integrales' ? 'pack-mathematiques' :
+            courseId === 'course-franklin-dna' ? 'pack-biologie' :
+            courseId === 'course-physique-mecanique' ? 'pack-physique' : undefined
   };
   
   console.log('✅ createMockCourseFromId: Cours mock créé:', mockCourse.title);
