@@ -52,7 +52,7 @@ export default function Home() {
     
     // 🔄 SYNC: Retirer le cours des suggestions s'il est acheté
     if (itemType === 'course') {
-      setData(prevData => ({
+      setDashboardData(prevData => ({
         ...prevData,
         suggestedCourses: prevData.suggestedCourses.filter(suggestion => suggestion.course.id !== itemId)
       }));
