@@ -115,6 +115,13 @@ export function FavoritesPackCollection({
           purchasedItems.has(courseId)
         );
         
+        // Vérifier si le pack complet a été acheté
+        const isPackPurchased = purchasedItems.has(pack.id);
+        
+        // Si le pack est acheté, tous les cours sont considérés comme achetés
+        const effectivePurchasedCount = isPackPurchased ? pack.courses.length : purchasedCoursesInPack.length;
+        const isPackCompleted = isPackPurchased || purchasedCoursesInPack.length === pack.courses.length;
+        
         // Calculer la progression moyenne des leçons dans les cours débloqués
         const totalLessonProgress = unlockedCourses.reduce((sum, course) => {
           return sum + calculateLessonProgress(course.id);
@@ -131,13 +138,13 @@ export function FavoritesPackCollection({
           unlockedCourses,
           favoritesNotUnlocked,
           missingCourses,
-          // Completion basée sur les ACHATS, pas les favoris
-          completionRate: Math.round((purchasedCoursesInPack.length / pack.courses.length) * 100),
-          isCompleted: purchasedCoursesInPack.length === pack.courses.length,
+          // Completion basée sur les ACHATS (cours individuels + pack complet)
+          completionRate: Math.round((effectivePurchasedCount / pack.courses.length) * 100),
+          isCompleted: isPackCompleted,
           color: pack.color || 'blue',
           icon: pack.icon || '📚',
           lessonProgress: averageLessonProgress,
-          purchasedCoursesCount: purchasedCoursesInPack.length
+          purchasedCoursesCount: effectivePurchasedCount
         });
       }
     });
