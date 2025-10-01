@@ -334,6 +334,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   
   // 🔍 DEBUG: Vérifier purchasedItems après achat
   console.log('🔍 PURCHASED ITEMS:', Array.from(purchasedItems));
+  console.log('🔍 PURCHASED ITEMS DETAILS:', purchasedItems);
   const settingsRef = useRef<HTMLDivElement>(null);
 
   // Options de fond d'écran
@@ -709,16 +710,22 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     if (option.type === 'course' || option.type === 'pack') {
       console.log('🔑 DÉBLOCAGE: Mise à jour des cours primaires avec isOwned=true');
       setPrimaryCourses(prev => prev.map(course => {
-        if (course.id === option.itemId || (option.type === 'pack' && course.packId === option.itemId)) {
+        // Pour un cours : vérifier l'ID exact
+        const isTargetCourse = option.type === 'course' && course.id === option.itemId;
+        // Pour un pack : vérifier si le cours appartient au pack
+        const isInPack = option.type === 'pack' && course.packId === option.itemId;
+        
+        if (isTargetCourse || isInPack) {
           // Marquer le cours comme possédé et toutes ses leçons
           const updatedCourse = { 
             ...course, 
             isOwned: true,
             lessons: course.lessons?.map(lesson => ({ ...lesson, isOwned: true })) || []
           };
-          console.log('🔑 DÉBLOCAGE: Cours primaire mis à jour:', updatedCourse.id, 'leçons:', updatedCourse.lessons.length);
+          console.log('🔑 DÉBLOCAGE: Cours primaire mis à jour:', updatedCourse.id, 'isOwned:', updatedCourse.isOwned);
           return updatedCourse;
         }
+        console.log('🔑 DÉBLOCAGE: Cours non concerné:', course.id, 'isOwned reste:', course.isOwned);
         return course;
       }));
       
@@ -868,21 +875,20 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           courseName = 'Pack Electrostatique';
         }
       } else {
-        // Pour un cours individuel
-        if (selectedCourse) {
+        // Pour un cours individuel - toujours chercher par option.itemId pour éviter les confusions
+        const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+          .find(course => course.id === option.itemId);
+        
+        if (purchasedCourse) {
+          courseName = purchasedCourse.title;
+          console.log('🎯 ONBOARDING: Cours trouvé par itemId:', courseName, '(', option.itemId, ')');
+        } else if (selectedCourse) {
           courseName = selectedCourse.title;
-          console.log('🎯 ONBOARDING: Utilisation selectedCourse:', courseName);
+          console.log('🎯 ONBOARDING: Fallback selectedCourse:', courseName);
+          console.log('🎯 ONBOARDING: selectedCourse.id:', selectedCourse.id, 'vs option.itemId:', option.itemId);
         } else {
-          // Sinon rechercher dans la liste des cours
-          const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
-            .find(course => course.id === option.itemId);
-          
-          if (purchasedCourse) {
-            courseName = purchasedCourse.title;
-            console.log('🎯 ONBOARDING: Cours trouvé dans la liste:', courseName);
-          } else {
-            console.log('🎯 ONBOARDING: Cours non trouvé, utilisation nom générique');
-          }
+          console.log('🎯 ONBOARDING: Aucun cours trouvé, utilisation nom générique');
+          courseName = 'Cours acheté';
         }
       }
       
@@ -1210,6 +1216,14 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     const courseRooms = studyRoomState.accessibleRooms.filter(room => room.courseId === course.id);
     const hasActiveRoom = courseRooms.length > 0;
     const totalParticipants = courseRooms.reduce((sum, room) => sum + room.currentUsers.length, 0);
+    
+    // 🔍 DEBUG: Vérifier l'accès Study Room
+    console.log('🔍 STUDY ROOM ACCESS pour', course.id, ':', {
+      courseAccess,
+      hasFullAccess: courseAccess?.hasFullAccess,
+      purchasedItems: Array.from(purchasedItems),
+      courseIsOwned: course.isOwned
+    });
     
     return {
       studyRoomAccess: courseAccess ? {
