@@ -49,6 +49,15 @@ export default function Home() {
     const purchaseKey = itemId.startsWith(itemType) ? itemId : `${itemType}-${itemId}`;
     console.log('🔑 PURCHASE: Ajout à purchasedItems:', purchaseKey, '(itemType:', itemType, 'itemId:', itemId, ')');
     setPurchasedItems(prev => new Set([...prev, purchaseKey]));
+    
+    // 🔄 SYNC: Retirer le cours des suggestions s'il est acheté
+    if (itemType === 'course') {
+      setData(prevData => ({
+        ...prevData,
+        suggestedCourses: prevData.suggestedCourses.filter(suggestion => suggestion.course.id !== itemId)
+      }));
+      console.log('🔄 PURCHASE: Cours retiré des suggestions:', itemId);
+    }
   };
 
   const handleUpdateUser = (updatedUser: User) => {

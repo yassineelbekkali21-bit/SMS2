@@ -767,15 +767,24 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         // Remplacer s'il existe déjà, sinon ajouter
         setPrimaryCourses(prev => {
           const existingIndex = prev.findIndex(c => c.id === option.itemId);
+          let updatedCourses;
           if (existingIndex >= 0) {
             const updated = [...prev];
             updated[existingIndex] = courseToUpdate;
             console.log('✅ SYNC: Cours existant mis à jour dans favoris:', purchasedCourse.title);
-            return updated;
+            updatedCourses = updated;
           } else {
             console.log('✅ SYNC: Nouveau cours ajouté aux favoris:', purchasedCourse.title);
-            return [courseToUpdate, ...prev];
+            updatedCourses = [courseToUpdate, ...prev];
           }
+          
+          // 🔄 SYNC: Mettre à jour localStorage pour useFavorites
+          const favoriteIds = updatedCourses.filter(c => c.isPrimary).map(c => c.id);
+          localStorage.setItem('favoriteCourses', JSON.stringify(favoriteIds));
+          window.dispatchEvent(new Event('favoritesChanged'));
+          console.log('🔄 SYNC: localStorage mis à jour avec favoris:', favoriteIds);
+          
+          return updatedCourses;
         });
       } else {
         console.log('❌ SYNC: Cours non trouvé pour itemId:', option.itemId);
