@@ -862,6 +862,16 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     if (option.type === 'course' || option.type === 'pack') {
       console.log('🎯 ONBOARDING: Déclenchement planification pour', option.type);
       
+      // 🔄 SYNC: Mettre à jour selectedCourse pour correspondre au cours acheté
+      if (option.type === 'course') {
+        const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+          .find(course => course.id === option.itemId);
+        if (purchasedCourse && purchasedCourse.id !== selectedCourse?.id) {
+          console.log('🔄 SYNC: Redirection vers le cours acheté:', purchasedCourse.title, '(était:', selectedCourse?.title, ')');
+          setSelectedCourse(purchasedCourse);
+        }
+      }
+      
       let courseName = 'Cours complet';
       let planningItemId = option.itemId;
       
