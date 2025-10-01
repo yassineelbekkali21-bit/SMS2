@@ -753,39 +753,32 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       // CAS 2: Déblocage cours complet → Toutes les leçons débloquées + cours en favori
       console.log('🔄 SYNC: Achat d\'un cours complet, mise à jour favoris');
       
-      if (selectedCourse) {
+      // Toujours chercher le cours par option.itemId pour éviter les confusions
+      const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+        .find(course => course.id === option.itemId);
+      
+      if (purchasedCourse) {
         const courseToUpdate = { 
-          ...selectedCourse, 
+          ...purchasedCourse, 
           isPrimary: true,
           isOwned: true // Cours complet possédé
         };
         
         // Remplacer s'il existe déjà, sinon ajouter
         setPrimaryCourses(prev => {
-          const existingIndex = prev.findIndex(c => c.id === selectedCourse.id);
+          const existingIndex = prev.findIndex(c => c.id === option.itemId);
           if (existingIndex >= 0) {
             const updated = [...prev];
             updated[existingIndex] = courseToUpdate;
+            console.log('✅ SYNC: Cours existant mis à jour dans favoris:', purchasedCourse.title);
             return updated;
           } else {
+            console.log('✅ SYNC: Nouveau cours ajouté aux favoris:', purchasedCourse.title);
             return [courseToUpdate, ...prev];
           }
         });
-        console.log('✅ SYNC: Cours complet ajouté/mis à jour dans favoris:', selectedCourse.title);
       } else {
-        // Rechercher le cours dans les suggestions pour l'ajouter
-        const courseFromSuggestions = data.suggestedCourses
-          .find(s => s.course.id === option.itemId)?.course;
-        
-        if (courseFromSuggestions) {
-          const courseToAdd = { 
-            ...courseFromSuggestions, 
-            isPrimary: true,
-            isOwned: true 
-          };
-          setPrimaryCourses(prev => [courseToAdd, ...prev]);
-          console.log('✅ SYNC: Cours depuis suggestions ajouté aux favoris:', courseFromSuggestions.title);
-        }
+        console.log('❌ SYNC: Cours non trouvé pour itemId:', option.itemId);
       }
       
     } else if (option.type === 'pack') {

@@ -45,7 +45,9 @@ export default function Home() {
   };
 
   const handlePurchase = (itemType: string, itemId: string, price: number) => {
-    const purchaseKey = `${itemType}-${itemId}`;
+    // itemId contient déjà le préfixe (ex: "course-gauss"), pas besoin de le redoubler
+    const purchaseKey = itemId.startsWith(itemType) ? itemId : `${itemType}-${itemId}`;
+    console.log('🔑 PURCHASE: Ajout à purchasedItems:', purchaseKey, '(itemType:', itemType, 'itemId:', itemId, ')');
     setPurchasedItems(prev => new Set([...prev, purchaseKey]));
   };
 
