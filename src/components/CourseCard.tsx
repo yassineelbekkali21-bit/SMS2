@@ -220,10 +220,8 @@ export function CourseCard({
         isAnimating && "animate-pulse",
         // Bordure dynamique selon l'état
         course.isPrimary && !course.isOwned 
-          ? "border-2 border-dashed border-orange-400 hover:border-orange-500" // Favori non débloqué
-          : course.isPrimary && course.isOwned
-          ? "border-2 border-solid border-green-400 hover:border-green-500" // Favori débloqué
-          : "border border-white/20 hover:border-white/40" // Normal
+          ? "border-2 border-dashed border-black hover:border-gray-800" // Favori non débloqué
+          : "border border-white/20 hover:border-white/40" // Normal et débloqué
       )}
     >
       {/* 🎨 Header avec Pattern Génératif ou Image personnalisée */}
@@ -326,19 +324,6 @@ export function CourseCard({
           />
         </motion.button>
 
-        {/* Overlay pour favori non débloqué */}
-        {course.isPrimary && !course.isOwned && (
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white/90 backdrop-blur-sm rounded-full p-4 shadow-lg"
-            >
-              <Lock size={24} className="text-orange-500" />
-            </motion.div>
-          </div>
-        )}
       </div>
 
       {/* 📚 Contenu Principal - Approche Bienveillante */}
