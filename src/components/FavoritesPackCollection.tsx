@@ -98,18 +98,31 @@ export function FavoritesPackCollection({
       // Vérifier si le pack complet a été acheté
       const isPackPurchased = purchasedItems.has(pack.id);
       
-      // Séparer les cours selon leur statut
+      // Fonction pour vérifier si un cours est débloqué globalement (via n'importe quel pack ou achat individuel)
+      const isCourseUnlockedGlobally = (courseId: string) => {
+        // 1. Achat individuel du cours
+        if (purchasedItems.has(courseId) || purchasedItems.has(`course-${courseId}`)) {
+          return true;
+        }
+        
+        // 2. Vérifier si un pack contenant ce cours a été acheté
+        return availablePacks.some(otherPack => 
+          otherPack.courses.includes(courseId) && purchasedItems.has(otherPack.id)
+        );
+      };
+      
+      // Séparer les cours selon leur statut GLOBAL
       const unlockedCourses = ownedCourses.filter(course => 
-        // Cours débloqué si : acheté individuellement OU pack complet acheté OU course.isOwned
-        course.isOwned || purchasedItems.has(course.id) || isPackPurchased
+        // Cours débloqué si : course.isOwned OU débloqué globalement
+        course.isOwned || isCourseUnlockedGlobally(course.id)
       ).map(course => ({
         ...course,
         isOwned: true // Forcer isOwned à true pour les cours débloqués
       }));
       
       const favoritesNotUnlocked = ownedCourses.filter(course => 
-        // Cours favori non débloqué si : pas acheté individuellement ET pack pas acheté ET pas isOwned
-        !course.isOwned && !purchasedItems.has(course.id) && !isPackPurchased
+        // Cours favori non débloqué si : pas isOwned ET pas débloqué globalement
+        !course.isOwned && !isCourseUnlockedGlobally(course.id)
       );
       
       const missingCourses = pack.courses.filter(courseId => 
@@ -118,14 +131,15 @@ export function FavoritesPackCollection({
 
       // Afficher le pack s'il y a au moins un cours favori OU un cours débloqué
       if (ownedCourses.length > 0 || unlockedCourses.length > 0) {
-        // Calculer combien de cours du pack sont réellement achetés
-        const purchasedCoursesInPack = pack.courses.filter(courseId => 
-          purchasedItems.has(courseId)
+        // Calculer combien de cours du pack sont réellement débloqués (globalement)
+        const unlockedCoursesInPack = pack.courses.filter(courseId => 
+          isCourseUnlockedGlobally(courseId)
         );
         
-        // Si le pack est acheté, tous les cours sont considérés comme achetés
-        const effectivePurchasedCount = isPackPurchased ? pack.courses.length : purchasedCoursesInPack.length;
-        const isPackCompleted = isPackPurchased || purchasedCoursesInPack.length === pack.courses.length;
+        // Si le pack est acheté directement, tous les cours sont considérés comme achetés
+        // Sinon, compter les cours débloqués globalement
+        const effectivePurchasedCount = isPackPurchased ? pack.courses.length : unlockedCoursesInPack.length;
+        const isPackCompleted = isPackPurchased || unlockedCoursesInPack.length === pack.courses.length;
         
         // Calculer la progression moyenne des leçons dans les cours débloqués
         const totalLessonProgress = unlockedCourses.reduce((sum, course) => {
