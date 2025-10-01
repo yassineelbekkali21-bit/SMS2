@@ -204,6 +204,93 @@ const ModernFooter = () => (
   </footer>
 );
 
+// Fonction utilitaire pour créer un cours mock à partir d'un ID
+function createMockCourseFromId(courseId: string): Course | null {
+  console.log('🔧 createMockCourseFromId called with:', courseId);
+  
+  // Mapping des cours connus
+  const courseMapping: Record<string, Partial<Course>> = {
+    'course-gauss': {
+      id: 'course-gauss',
+      title: 'Loi de Gauss',
+      description: 'Maîtrisez la loi de Gauss et ses applications en électrostatique',
+      faculty: 'Solvay Brussels School',
+      subject: 'Physique',
+      level: 'Intermédiaire',
+      duration: 120,
+      totalLessons: 5,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: true,
+      isPrimary: true
+    },
+    'course-equilibres': {
+      id: 'course-equilibres',
+      title: 'Équilibres Chimiques',
+      description: 'Étude complète des équilibres chimiques : calculs, déplacements d\'équilibre, applications industrielles',
+      faculty: 'Solvay Brussels School',
+      subject: 'Chimie',
+      level: 'Intermédiaire',
+      duration: 90,
+      totalLessons: 4,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: true,
+      isPrimary: true
+    },
+    'course-integrales': {
+      id: 'course-integrales',
+      title: 'Intégrales et Applications',
+      description: 'Techniques d\'intégration et applications pratiques',
+      faculty: 'Solvay Brussels School',
+      subject: 'Mathématiques',
+      level: 'Avancé',
+      duration: 150,
+      totalLessons: 6,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: true,
+      isPrimary: true
+    }
+  };
+  
+  const courseData = courseMapping[courseId];
+  if (!courseData) {
+    console.warn('❌ createMockCourseFromId: Cours inconnu:', courseId);
+    return null;
+  }
+  
+  // Créer le cours complet avec des valeurs par défaut
+  const mockCourse: Course = {
+    id: courseData.id!,
+    title: courseData.title!,
+    description: courseData.description!,
+    faculty: courseData.faculty!,
+    subject: courseData.subject!,
+    level: courseData.level!,
+    duration: courseData.duration!,
+    totalLessons: courseData.totalLessons!,
+    completedLessons: courseData.completedLessons!,
+    progress: courseData.progress!,
+    isOwned: courseData.isOwned!,
+    isPrimary: courseData.isPrimary!,
+    lessons: [], // Sera rempli si nécessaire
+    enrolledStudents: 0,
+    averageRating: 4.5,
+    instructor: 'Dr. Expert',
+    tags: [courseData.subject!],
+    difficulty: courseData.level!,
+    lastUpdated: new Date().toISOString(),
+    thumbnail: `/course-thumbnails/${courseData.subject!.toLowerCase()}.jpg`,
+    packId: courseId === 'course-equilibres' ? 'pack-electromagnetisme' : 
+            courseId === 'course-gauss' ? 'pack-electromagnetisme' :
+            courseId === 'course-integrales' ? 'pack-mathematiques' : undefined
+  };
+  
+  console.log('✅ createMockCourseFromId: Cours mock créé:', mockCourse.title);
+  return mockCourse;
+}
+
 export function SimpleDashboard(props: SimpleDashboardProps) {
   const { favorites, toggleFavorite, addFavorite, removeFavorite } = useFavorites();
   const {
@@ -1413,15 +1500,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         difficulty: 'advanced',
         duration: '55h',
         creditCost: 4
-      },
-      'course-equilibres': {
-        id: 'course-equilibres',
-        title: 'Équilibres Chimiques',
-        description: 'Étude complète des équilibres chimiques : calculs, déplacements d\'équilibre, applications industrielles.',
-        category: 'Chimie',
-        difficulty: 'intermediate',
-        duration: '25h',
-        creditCost: 2
       }
     };
 
