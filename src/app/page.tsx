@@ -98,17 +98,10 @@ export default function Home() {
         if (course.id === courseId) {
           const updated = { 
             ...course, 
-            isPrimary: desiredState,
-            // Si on ajoute aux favoris, ajouter les propriétés manquantes
-            ...(desiredState && !course.isOwned ? {
-              isOwned: true,
-              progress: 0, // Commencer à 0%
-              completedLessons: 0,
-              lastAccessed: new Date(),
-              previewAvailable: false, // Plus besoin de preview si possédé
-            } : {})
+            isPrimary: desiredState
+            // NE PAS modifier isOwned - ajouter aux favoris ne donne pas la propriété du cours
           };
-          console.log(`✨ Updating course ${courseId}: isPrimary ${course.isPrimary} -> ${updated.isPrimary}${desiredState ? ', isOwned: true, progress: 0' : ''}`);
+          console.log(`✨ Updating course ${courseId}: isPrimary ${course.isPrimary} -> ${updated.isPrimary} (isOwned unchanged: ${course.isOwned})`);
           return updated;
         }
         return course;
