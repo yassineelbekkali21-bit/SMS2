@@ -6,7 +6,6 @@ import {
   Search, 
   ChevronDown, 
   ChevronUp, 
-  Package, 
   Star, 
   Trophy,
   Sparkles,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Course } from '@/types';
 import { CourseCard } from './CourseCard';
+import { CourseCardPaniniEmpty } from './CourseCardPaniniEmpty';
 import { getCoursePacks } from '@/lib/mock-data';
 
 interface FavoritesPackCollectionProps {
@@ -39,7 +39,8 @@ interface PackWithCourses {
   ownedCourses: Course[];
   unlockedCourses: Course[];      // Cours débloqués (achetés)
   favoritesNotUnlocked: Course[]; // Favoris non débloqués
-  missingCourses: string[];       // Emplacements vides
+  nonFavoriteNonUnlocked: string[]; // Cours non favoris/non débloqués (état Panini gris)
+  missingCourses: string[];       // Emplacements vides (ancienne logique, maintenant vide)
   completionRate: number;
   isCompleted: boolean;
   color: string;
@@ -60,6 +61,21 @@ export function FavoritesPackCollection({
   onCompletePack,
   purchasedItems = new Set()
 }: FavoritesPackCollectionProps) {
+  
+  // 🔍 DEBUG: Vérifier les cours favoris et leurs leçons
+  console.log('🎯 FAVORITES COLLECTION DEBUG:', {
+    favoriteCourses: favoriteCourses.map(course => ({
+      id: course.id,
+      title: course.title,
+      hasLessons: !!(course.lessons && course.lessons.length > 0),
+      lessonsCount: course.lessons?.length || 0,
+      totalLessons: course.totalLessons,
+      isOwned: course.isOwned,
+      isPrimary: course.isPrimary
+    })),
+    purchasedItems: Array.from(purchasedItems)
+  });
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [isIndividualCoursesCollapsed, setIsIndividualCoursesCollapsed] = useState(false);
 
@@ -111,7 +127,7 @@ export function FavoritesPackCollection({
         );
       };
       
-      // Séparer les cours selon leur statut GLOBAL
+      // 🔧 CORRECTION : Séparer les cours selon leur statut GLOBAL de manière mutuellement exclusive
       const unlockedCourses = ownedCourses.filter(course => 
         // Cours débloqué si : course.isOwned OU débloqué globalement
         course.isOwned || isCourseUnlockedGlobally(course.id)
@@ -120,52 +136,63 @@ export function FavoritesPackCollection({
         isOwned: true // Forcer isOwned à true pour les cours débloqués
       }));
       
+      // Les favoris non débloqués sont EXCLUSIVEMENT ceux qui ne sont pas dans unlockedCourses
+      const unlockedCourseIds = new Set(unlockedCourses.map(course => course.id));
       const favoritesNotUnlocked = ownedCourses.filter(course => 
-        // Cours favori non débloqué si : pas isOwned ET pas débloqué globalement
-        !course.isOwned && !isCourseUnlockedGlobally(course.id)
+        // Cours favori non débloqué SEULEMENT s'il n'est pas déjà dans les débloqués
+        !unlockedCourseIds.has(course.id) && !course.isOwned && !isCourseUnlockedGlobally(course.id)
       );
       
-      const missingCourses = pack.courses.filter(courseId => 
-        !favoriteCourses.some(course => course.id === courseId)
+      // 🎯 NOUVEAU : Cours non favoris ET non débloqués (état Panini gris) - EXCLUSIFS
+      const allFavoriteCourseIds = new Set(ownedCourses.map(course => course.id));
+      const nonFavoriteNonUnlocked = pack.courses.filter(courseId => {
+        // Pas dans les favoris ET pas débloqué globalement ET pas déjà dans une autre catégorie
+        const isFavorite = allFavoriteCourseIds.has(courseId);
+        const isUnlocked = isCourseUnlockedGlobally(courseId);
+        return !isFavorite && !isUnlocked;
+      });
+      
+      // Ancienne logique de missingCourses - maintenant vide car remplacée par nonFavoriteNonUnlocked
+      const missingCourses: string[] = [];
+
+      // 🎯 NOUVEAU : Afficher TOUS les packs pour montrer la collection complète (style album Panini)
+      // Même les packs entièrement vides sont affichés pour donner une vue d'ensemble
+      
+      // Calculer combien de cours du pack sont réellement débloqués (globalement)
+      const unlockedCoursesInPack = pack.courses.filter(courseId => 
+        isCourseUnlockedGlobally(courseId)
       );
+      
+      // Si le pack est acheté directement, tous les cours sont considérés comme achetés
+      // Sinon, compter les cours débloqués globalement
+      const effectivePurchasedCount = isPackPurchased ? pack.courses.length : unlockedCoursesInPack.length;
+      const isPackCompleted = isPackPurchased || unlockedCoursesInPack.length === pack.courses.length;
+      
+      // Calculer la progression moyenne des leçons dans les cours débloqués
+      const totalLessonProgress = unlockedCourses.reduce((sum, course) => {
+        return sum + calculateLessonProgress(course.id);
+      }, 0);
+      const averageLessonProgress = unlockedCourses.length > 0 ? 
+        Math.round(totalLessonProgress / unlockedCourses.length) : 0;
 
-      // Afficher le pack s'il y a au moins un cours favori OU un cours débloqué
-      if (ownedCourses.length > 0 || unlockedCourses.length > 0) {
-        // Calculer combien de cours du pack sont réellement débloqués (globalement)
-        const unlockedCoursesInPack = pack.courses.filter(courseId => 
-          isCourseUnlockedGlobally(courseId)
-        );
-        
-        // Si le pack est acheté directement, tous les cours sont considérés comme achetés
-        // Sinon, compter les cours débloqués globalement
-        const effectivePurchasedCount = isPackPurchased ? pack.courses.length : unlockedCoursesInPack.length;
-        const isPackCompleted = isPackPurchased || unlockedCoursesInPack.length === pack.courses.length;
-        
-        // Calculer la progression moyenne des leçons dans les cours débloqués
-        const totalLessonProgress = unlockedCourses.reduce((sum, course) => {
-          return sum + calculateLessonProgress(course.id);
-        }, 0);
-        const averageLessonProgress = unlockedCourses.length > 0 ? 
-          Math.round(totalLessonProgress / unlockedCourses.length) : 0;
-
-        packs.push({
-          id: pack.id,
-          title: pack.title,
-          description: pack.description,
-          courses: pack.courses,
-          ownedCourses,
-          unlockedCourses,
-          favoritesNotUnlocked,
-          missingCourses,
-          // Completion basée sur les ACHATS (cours individuels + pack complet)
-          completionRate: Math.round((effectivePurchasedCount / pack.courses.length) * 100),
-          isCompleted: isPackCompleted,
-          color: pack.color || 'blue',
-          icon: pack.icon || '📚',
-          lessonProgress: averageLessonProgress,
-          purchasedCoursesCount: effectivePurchasedCount
-        });
-      }
+      packs.push({
+        id: pack.id,
+        title: pack.title,
+        description: pack.description,
+        courses: pack.courses,
+        ownedCourses,
+        unlockedCourses,
+        favoritesNotUnlocked,
+        nonFavoriteNonUnlocked, // 🎯 NOUVEAU : Cours non favoris/non débloqués
+        missingCourses,
+        // Completion basée sur les ACHATS (cours individuels + pack complet)
+        completionRate: Math.round((effectivePurchasedCount / pack.courses.length) * 100),
+        isCompleted: isPackCompleted,
+        color: pack.color || 'blue',
+        icon: pack.icon || '📚',
+        lessonProgress: averageLessonProgress,
+        purchasedCoursesCount: effectivePurchasedCount
+      });
     });
 
     return packs;
@@ -252,9 +279,6 @@ export function FavoritesPackCollection({
           <Star className="text-gray-400" size={20} />
           <div>
             <h2 className="text-xl font-bold text-gray-900">Mes Cours Favoris</h2>
-            <p className="text-gray-500 text-sm">
-              {favoriteCourses.length} cours • {packsWithCourses.length} packs
-            </p>
           </div>
         </div>
         
@@ -286,10 +310,6 @@ export function FavoritesPackCollection({
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${getPackColorClasses(pack.color)} rounded-xl flex items-center justify-center text-white text-xl shadow-lg`}>
-                  {pack.icon}
-                </div>
-                
                 <div>
                   <div className="flex items-center gap-3">
                     <h3 className="text-lg font-bold text-gray-900">{pack.title}</h3>
@@ -300,16 +320,31 @@ export function FavoritesPackCollection({
                       </div>
                     )}
                   </div>
-                  <p className="text-gray-600 text-sm">{pack.description}</p>
-                  <div className="mt-3">
+                  <div className="mt-2">
                     {/* Informations de progression */}
                     <div className="flex items-center gap-6">
                       {/* Ratio des cours débloqués */}
                       <div className="flex items-center gap-2">
-                        <Package size={14} className="text-gray-500 flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-700">
+                        <BookOpen size={14} className="text-gray-500 flex-shrink-0" />
+                        <span className="text-xs font-medium text-gray-600">
                           {pack.purchasedCoursesCount}/{pack.courses.length} cours débloqués
                         </span>
+                      </div>
+                      
+                      {/* Avatars des buddies */}
+                      <div className="flex items-center -space-x-1">
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium text-white">M</span>
+                        </div>
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-green-400 to-green-600 border border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium text-white">A</span>
+                        </div>
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium text-white">L</span>
+                        </div>
+                        <div className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 border border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium">+2</span>
+                        </div>
                       </div>
                       
                       {/* Progression des leçons lues avec barre */}
@@ -324,8 +359,11 @@ export function FavoritesPackCollection({
                               transition={{ duration: 1, delay: 0.7 }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-green-700">
-                            {pack.lessonProgress}% des leçons terminées
+                          <span className="text-xs font-medium text-green-600">
+                            {pack.lessonProgress > 0 
+                              ? `${pack.lessonProgress}% des leçons terminées`
+                              : "Pas encore commencé 🚀"
+                            }
                           </span>
                         </div>
                       )}
@@ -354,7 +392,7 @@ export function FavoritesPackCollection({
                           e.stopPropagation();
                           onCompletePack?.(pack.id);
                         }}
-                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-slate-600"
+                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-blue-500"
                       >
                         Compléter le pack
                       </motion.button>
@@ -394,7 +432,7 @@ export function FavoritesPackCollection({
                   {/* 1. Cours débloqués (achetés) - PRIORITÉ 1 */}
                   {pack.unlockedCourses.map((course, index) => (
                     <motion.div
-                      key={`unlocked-${course.id}`}
+                      key={`${pack.id}-unlocked-${course.id}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -410,6 +448,7 @@ export function FavoritesPackCollection({
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
                         isUnlocked={true}
+                        purchasedItems={purchasedItems}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>
@@ -418,7 +457,7 @@ export function FavoritesPackCollection({
                   {/* 2. Favoris non débloqués - PRIORITÉ 2 */}
                   {pack.favoritesNotUnlocked.map((course, index) => (
                     <motion.div
-                      key={`favorite-${course.id}`}
+                      key={`${pack.id}-favorite-${course.id}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: (pack.unlockedCourses.length + index) * 0.1 }}
@@ -434,15 +473,34 @@ export function FavoritesPackCollection({
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
                         isUnlocked={false}
+                        purchasedItems={purchasedItems}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>
                   ))}
                   
-                  {/* 3. Emplacements vides (style Panini) - PRIORITÉ 3 */}
-                  {pack.missingCourses.map((courseId, index) => 
-                    renderPlaceholderCard(courseId, pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index)
-                  )}
+                  {/* 3. Cours non favoris/non débloqués (état Panini gris) - PRIORITÉ 3 */}
+                  {pack.nonFavoriteNonUnlocked.map((courseId, index) => (
+                    <motion.div
+                      key={`${pack.id}-panini-empty-${courseId}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index) * 0.1 }}
+                    >
+                      <CourseCardPaniniEmpty 
+                        courseId={courseId}
+                        animationDelay={(pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index) * 0.1}
+                        onToggleFavorite={onToggleFavorite}
+                        onPreview={onPreview}
+                        onTest={(courseId) => {
+                          // Pour l'instant, on peut rediriger vers le preview ou implémenter une modale de test
+                          console.log('Test course:', courseId);
+                          onPreview(courseId); // Temporaire
+                        }}
+                        onOpenCourse={onOpenCourse}
+                      />
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
             )}
@@ -466,7 +524,7 @@ export function FavoritesPackCollection({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-xl flex items-center justify-center text-white">
-                  <Package size={20} />
+                  <BookOpen size={20} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Cours Individuels</h3>
@@ -515,6 +573,7 @@ export function FavoritesPackCollection({
                         onOpenStaircaseView={onOpenStaircaseView}
                         canAfford={true}
                         isUnlocked={course.isOwned}
+                        purchasedItems={purchasedItems}
                         {...getStudyRoomProps(course)}
                       />
                     </motion.div>

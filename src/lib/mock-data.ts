@@ -589,7 +589,7 @@ export const mockCourses: Course[] = [
 export const mockPacks = [
   {
     id: 'pack-physique-q1',
-    title: 'Pack Physique Q1',
+    title: 'Physique Q1',
     description: 'Maîtrise complète de la physique du premier quadrimestre : électrostatique et mécanique.',
     courses: ['course-gauss', 'course-forces'], // IDs des cours inclus
     totalPrice: 520, // Prix individuel total des cours
@@ -610,7 +610,7 @@ export const mockPacks = [
   },
   {
     id: 'pack-math-q1',
-    title: 'Pack Mathématiques Q1',
+    title: 'Mathématiques Q1',
     description: 'Fondations solides en analyse mathématique : suites, limites et intégrales.',
     courses: ['course-suites', 'course-integrales'],
     totalPrice: 560, // 180 + 380
@@ -631,7 +631,7 @@ export const mockPacks = [
   },
   {
     id: 'pack-chimie-q1',
-    title: 'Pack Chimie Q1',
+    title: 'Chimie Q1',
     description: 'Bases essentielles de la chimie générale et des équilibres chimiques.',
     courses: ['course-equilibres'],
     totalPrice: 320,
@@ -651,7 +651,7 @@ export const mockPacks = [
   },
   {
     id: 'pack-excellence',
-    title: 'Pack Excellence Sciences',
+    title: 'Excellence Sciences',
     description: 'Le pack complet pour exceller en sciences fondamentales au Q1.',
     courses: ['course-suites', 'course-integrales', 'course-gauss', 'course-forces', 'course-equilibres'],
     totalPrice: 1400, // Somme de tous les cours
@@ -987,7 +987,7 @@ export function generateUpsellOptions(lessonId: string, courseId?: string): Purc
   let lessonTitle = 'Les fondamentaux essentiels';
   let courseTitle = 'Cours Complet';
   let targetCourseId = courseId || 'course-gauss'; // Utiliser le courseId passé ou défaut
-  let packTitle = 'Pack Électrostatique';
+  let packTitle = 'Électrostatique';
   let packId = 'pack-electromagnetisme';
   let packDescription = 'Formation complète en électrostatique';
   let courseFeatures = ['Toutes les leçons du cours', 'Accès aux Study Rooms', 'Garantie de réussite', 'Support prioritaire'];
@@ -998,7 +998,7 @@ export function generateUpsellOptions(lessonId: string, courseId?: string): Purc
     // Équilibres Chimiques
     lessonTitle = 'Équilibres Chimiques : fondamentaux essentiels';
     courseTitle = 'Cours "Équilibres Chimiques"';
-    packTitle = 'Pack Électrostatique';
+    packTitle = 'Électrostatique';
     packId = 'pack-electromagnetisme';
     packDescription = 'Formation complète en électrostatique et chimie';
     courseFeatures = [
@@ -1038,7 +1038,7 @@ export function generateUpsellOptions(lessonId: string, courseId?: string): Purc
   else if (lessonId.includes('gauss') || lessonId.includes('electrostatique')) {
     lessonTitle = 'Loi de Gauss : calcul de champ pour points, fils, plaques et sphères';
     courseTitle = 'Cours "Loi de Gauss"';
-    packTitle = 'Pack Électrostatique';
+    packTitle = 'Électrostatique';
     packDescription = 'Formation complète : de la loi de Coulomb aux applications avancées';
     courseFeatures = [
       'Toutes les leçons du cours Loi de Gauss',
@@ -1428,7 +1428,7 @@ export const getMockVideoQuizzes = (lessonId: string): VideoQuizQuestion[] => {
 export const mockCoursePacks: CoursePack[] = [
   {
     id: 'pack-electromagnetisme',
-    title: 'Pack Electrostatique',
+    title: 'Électrostatique',
     description: 'Maîtrisez l\'électrostatique et l\'électromagnétisme avec ce pack expert',
     courses: ['course-gauss', 'course-forces', 'course-equilibres'], // Loi de Gauss + Forces + Équilibres Chimiques
     creditCost: 1200, // Prix en euros
@@ -1447,7 +1447,7 @@ export const mockCoursePacks: CoursePack[] = [
   },
   {
     id: 'pack-mathematiques',
-    title: 'Pack Mathématiques Avancées',
+    title: 'Mathématiques Avancées',
     description: 'Pack complet pour exceller en mathématiques universitaires',
     courses: ['course-integrales', 'course-math-analyse-1'], // Intégrales + Analyse
     creditCost: 1200,
@@ -1465,7 +1465,7 @@ export const mockCoursePacks: CoursePack[] = [
   },
   {
     id: 'pack-sciences',
-    title: 'Pack Sciences Expérimentales',
+    title: 'Sciences Expérimentales',
     description: 'Physique et chimie réunies pour une approche complète des sciences',
     courses: ['course-physique-mecanique', 'course-chimie-generale'], // Mécanique + Chimie
     creditCost: 1200,
@@ -1483,7 +1483,7 @@ export const mockCoursePacks: CoursePack[] = [
   },
   {
     id: 'pack-premium-all',
-    title: 'Pack Premium Excellence',
+    title: 'Premium Excellence',
     description: 'L\'excellence académique avec un accompagnement VIP complet',
     courses: [
       'course-gauss', 

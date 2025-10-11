@@ -198,8 +198,8 @@ const LessonDetailBlock: React.FC<{
     return 'text-gray-600 bg-gray-50';
   };
 
-  // Vérifier si l'utilisateur a le pack complet (mock - en production, vérifier les achats)
-  const hasFullPack = false; // TODO: Remplacer par la vraie logique d'achat
+  // Vérifier si l'utilisateur a le pack complet (basé sur les achats réels)
+  const hasFullPack = false; // TODO: Connecter aux props purchasedItems quand disponible
   
   // Vérifier si c'est une des 2 premières leçons (aperçu gratuit)
   const isPreviewLesson = lesson.order <= 2;

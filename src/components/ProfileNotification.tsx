@@ -58,3 +58,5 @@ export function ProfileNotification({ type, message, onClose }: ProfileNotificat
     </AnimatePresence>
   );
 }
+
+

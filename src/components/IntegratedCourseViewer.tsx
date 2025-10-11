@@ -464,13 +464,15 @@ const BackgroundSelector: React.FC<{
 const LessonDetailBlock: React.FC<{
   lesson: Lesson | null;
   lessons: Lesson[];
+  course?: Course;
+  purchasedItems?: Set<string>;
   onStartLesson: () => void;
   onClose: () => void;
   onLessonPurchaseCheck: (lesson: Lesson) => void;
   onShowQuiz: () => void;
   onShowPreview: () => void;
   onOpenUpsell: () => void;
-}> = ({ lesson, lessons, onStartLesson, onClose, onLessonPurchaseCheck, onShowQuiz, onShowPreview, onOpenUpsell }) => {
+}> = ({ lesson, lessons, course, purchasedItems, onStartLesson, onClose, onLessonPurchaseCheck, onShowQuiz, onShowPreview, onOpenUpsell }) => {
   if (!lesson) return null;
   
   const getStatusInfo = () => {
@@ -569,8 +571,11 @@ const LessonDetailBlock: React.FC<{
     return defaultObjectives;
   };
 
-  // Vérifier si l'utilisateur a le pack complet (mock - en production, vérifier les achats)
-  const hasFullPack = false; // TODO: Remplacer par la vraie logique d'achat
+  // Vérifier si l'utilisateur a le pack complet (basé sur les achats réels)
+  const hasFullPack = course?.isOwned || 
+                     (course?.packId && purchasedItems?.has(`pack-${course.packId}`)) ||
+                     (course && purchasedItems?.has(`course-${course.id}`)) ||
+                     false;
   
   // Vérifier si c'est une des 2 premières leçons (aperçu gratuit)
   const isPreviewLesson = lesson.order <= 2;
@@ -1457,6 +1462,8 @@ export function IntegratedCourseViewer({
                             key={selectedLessonForDetail.id}
                             lesson={currentLesson}
                             lessons={lessons}
+                            course={course}
+                            purchasedItems={purchasedItems}
                           onStartLesson={handleStartLesson}
                           onLessonPurchaseCheck={handleLessonPurchaseCheck}
                           onShowQuiz={() => {

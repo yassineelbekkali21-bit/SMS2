@@ -30,6 +30,8 @@ import { getMiniQuizForCourse } from '@/lib/mock-data';
 import { cn, formatDuration, getProgressColor, getMotivationMessage } from '@/lib/utils';
 import { getCourseThumbnail } from '@/lib/course-thumbnails';
 import { StudyRoomButton } from './StudyRoomButton';
+import { BuddyAvatars } from './BuddyAvatars';
+import { getBuddiesForCourse } from '@/lib/buddy-data';
 
 interface CourseCardProps {
   course: Course;
@@ -42,6 +44,7 @@ interface CourseCardProps {
   onOpenStaircaseView?: (course: Course) => void;
   canAfford?: boolean;
   isUnlocked?: boolean;
+  purchasedItems?: Set<string>;
   // Study Room props
   studyRoomAccess?: {
     hasFullAccess: boolean;
@@ -63,6 +66,7 @@ export function CourseCard({
   onOpenStaircaseView,
   canAfford = true,
   isUnlocked = false,
+  purchasedItems = new Set(),
   studyRoomAccess,
   onJoinStudyRoom,
   hasActiveStudyRoom,
@@ -71,6 +75,118 @@ export function CourseCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showMiniQuiz, setShowMiniQuiz] = useState(false);
+
+  // 🔍 Fonction pour calculer les leçons débloquées
+  const calculateUnlockedLessons = (course: Course, purchasedItems: Set<string>) => {
+    if (course.lessons && course.lessons.length > 0) {
+      // Si le cours a des leçons détaillées, utiliser la logique normale
+      const unlockedCount = course.lessons.filter(lesson => {
+        // Leçon explicitement possédée
+        if (lesson.isOwned) return true;
+        
+        // Vérifier les achats via le système d'achat
+        // Format 1: lesson-1, lesson-2, etc. (ancien format)
+        const lessonNumber = lesson.id.split('-lesson-')[1];
+        const isLessonPurchasedOldFormat = lessonNumber && purchasedItems.has(`lesson-${lessonNumber}`);
+        
+        // Format 2: course-equilibres-lesson-1, etc. (nouveau format)
+        const isLessonPurchasedNewFormat = purchasedItems.has(lesson.id);
+        
+        const isCoursePurchased = purchasedItems.has(`course-${course.id}`) || purchasedItems.has(course.id);
+        const isPackPurchased = course.packId && purchasedItems.has(`pack-${course.packId}`);
+        
+        return isLessonPurchasedOldFormat || isLessonPurchasedNewFormat || isCoursePurchased || isPackPurchased;
+      }).length;
+
+      return { unlockedCount, totalCount: course.lessons.length };
+    } else {
+      // Si pas de leçons détaillées, utiliser une logique simplifiée
+      const totalCount = course.totalLessons || 0;
+      
+      // Vérifier si le cours complet est acheté
+      const isCoursePurchased = purchasedItems.has(`course-${course.id}`) || purchasedItems.has(course.id);
+      const isPackPurchased = course.packId && purchasedItems.has(`pack-${course.packId}`);
+      
+      if (isCoursePurchased || isPackPurchased) {
+        // Si le cours complet est acheté, toutes les leçons sont débloquées
+        return { unlockedCount: totalCount, totalCount };
+      }
+      
+      // Pour les leçons individuelles, nous avons un problème : 
+      // lesson-1, lesson-2, etc. ne spécifient pas le cours
+      // Pour l'instant, on considère qu'il n'y a pas de leçons partiellement débloquées
+      // sauf si on peut déterminer le cours d'origine
+      
+      // HACK TEMPORAIRE : Gérer les leçons génériques lesson-1, lesson-2, etc.
+      // Ces leçons ne spécifient pas le cours, donc on utilise une heuristique
+      let potentialUnlockedCount = 0;
+      
+      // Vérifier les leçons génériques (lesson-1, lesson-2, etc.)
+      for (let i = 1; i <= totalCount; i++) {
+        if (purchasedItems.has(`lesson-${i}`)) {
+          potentialUnlockedCount++;
+        }
+      }
+      
+      // Si on a des leçons génériques et que ce cours est en favoris, 
+      // on assume que ces leçons lui appartiennent
+      if (potentialUnlockedCount > 0 && course.isPrimary) {
+        return { unlockedCount: potentialUnlockedCount, totalCount };
+      }
+      
+      return { unlockedCount: 0, totalCount };
+    }
+  };
+
+  // 🎯 Déterminer l'état de la carte
+  const getCardState = (course: Course, isUnlocked: boolean, purchasedItems: Set<string>) => {
+    // Si explicitement débloqué ou possédé
+    if (isUnlocked || course.isOwned) {
+      return 'unlocked';
+    }
+
+    // Si favori mais pas débloqué
+    if (course.isPrimary && !course.isOwned) {
+      // Vérifier s'il y a des leçons partiellement débloquées
+      const { unlockedCount, totalCount } = calculateUnlockedLessons(course, purchasedItems);
+      
+      if (unlockedCount > 0 && unlockedCount < totalCount) {
+        return 'partiallyUnlocked';
+      }
+      
+      return 'favoriteNotUnlocked';
+    }
+
+    return 'normal';
+  };
+
+  // Récupérer purchasedItems depuis la prop
+  const cardState = getCardState(course, isUnlocked, purchasedItems);
+  const { unlockedCount, totalCount } = calculateUnlockedLessons(course, purchasedItems);
+
+  // 🔍 DEBUG: Afficher les informations de debug pour les cours avec des leçons
+  if (course.lessons && course.lessons.length > 0) {
+    console.log('🎯 COURSE CARD DEBUG:', {
+      courseId: course.id,
+      courseTitle: course.title,
+      cardState,
+      unlockedCount,
+      totalCount,
+      purchasedItems: Array.from(purchasedItems),
+      isUnlocked,
+      isOwned: course.isOwned,
+      isPrimary: course.isPrimary,
+      lessonsInfo: course.lessons.map(l => ({ id: l.id, isOwned: l.isOwned }))
+    });
+  } else {
+    // Debug pour les cours sans leçons détaillées
+    console.log('⚠️ COURSE CARD: Cours sans leçons détaillées:', {
+      courseId: course.id,
+      courseTitle: course.title,
+      totalLessons: course.totalLessons,
+      purchasedItems: Array.from(purchasedItems)
+    });
+  }
 
   // Drag and drop
   const {
@@ -220,9 +336,9 @@ export function CourseCard({
         isDragging && "opacity-50 scale-95 rotate-1",
         isAnimating && "animate-pulse",
         // Bordure dynamique selon l'état
-        course.isPrimary && !course.isOwned 
+        cardState === 'favoriteNotUnlocked'
           ? "border-2 border-dashed border-black hover:border-gray-800" // Favori non débloqué
-          : "border border-white/20 hover:border-white/40" // Normal et débloqué
+          : "border border-white/20 hover:border-white/40" // Normal, débloqué et partiellement débloqué
       )}
     >
       {/* 🎨 Header avec Pattern Génératif ou Image personnalisée */}
@@ -232,8 +348,8 @@ export function CourseCard({
           <div 
             className={cn(
               "w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300",
-              // Effet visuel seulement sur l'image pour favoris non débloqués
-              course.isPrimary && !course.isOwned && "grayscale-[0.5] opacity-60"
+              // Effet visuel seulement pour favoris non débloqués (pas partiellement débloqués)
+              cardState === 'favoriteNotUnlocked' && "grayscale-[0.5] opacity-60"
             )}
             style={{ backgroundImage: `url(${finalThumbnail})` }}
           >
@@ -245,8 +361,8 @@ export function CourseCard({
           <div 
             className={cn(
               "w-full h-full relative transition-all duration-300",
-              // Effet visuel seulement sur le pattern pour favoris non débloqués
-              course.isPrimary && !course.isOwned && "grayscale-[0.5] opacity-60"
+              // Effet visuel seulement pour favoris non débloqués (pas partiellement débloqués)
+              cardState === 'favoriteNotUnlocked' && "grayscale-[0.5] opacity-60"
             )}
             style={{
               background: `linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%), ${pattern}`,
@@ -308,12 +424,21 @@ export function CourseCard({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 ${colors.accent} backdrop-blur-sm text-xs font-semibold rounded-full border border-white/20`}
+            className={cn(
+              "inline-flex items-center gap-2 px-3 py-1.5 backdrop-blur-sm text-xs font-semibold rounded-full border border-white/20",
+              cardState === 'partiallyUnlocked' 
+                ? "bg-yellow-100/90 text-yellow-800" // Partiellement débloqué
+                : course.isPrimary && !course.isOwned 
+                  ? "bg-gray-100/90 text-gray-500" // À débloquer - adouci
+                  : colors.accent // Couleurs normales
+            )}
           >
             {getTrustLevel() >= 3 && <Award size={12} />}
-            {course.isPrimary && !course.isOwned 
-              ? 'À débloquer' 
-              : getTrustLevel() >= 3 ? 'Excellence' : getTrustLevel() >= 2 ? 'Qualité' : 'Nouveau'}
+            {cardState === 'partiallyUnlocked' 
+              ? 'Partiellement débloqué'
+              : course.isPrimary && !course.isOwned 
+                ? 'À débloquer' 
+                : getTrustLevel() >= 3 ? 'Excellence' : getTrustLevel() >= 2 ? 'Qualité' : 'Nouveau'}
           </motion.div>
         </div>
 
@@ -334,6 +459,13 @@ export function CourseCard({
             className={course.isPrimary ? 'text-red-500' : ''} 
           />
         </motion.button>
+
+        {/* Avatars des buddies - Engagement social */}
+        <BuddyAvatars 
+          courseId={course.id}
+          buddies={getBuddiesForCourse(course.id)}
+          cardState={cardState}
+        />
 
       </div>
 
@@ -376,7 +508,7 @@ export function CourseCard({
         </div>
 
         {/* Section progression - Design amélioré */}
-        {course.isOwned && (
+        {(course.isOwned || cardState === 'partiallyUnlocked') && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -384,12 +516,18 @@ export function CourseCard({
             className="space-y-3"
           >
             <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-700">Votre progression</span>
+              <span className="text-sm text-gray-600">
+                {cardState === 'partiallyUnlocked' ? 'Progression en cours' : 'Votre progression'}
+              </span>
               <div className="flex items-center gap-2">
-                <span className={`text-sm font-bold ${colors.hover.replace('group-hover:', '')}`}>
-                  {courseProgress}%
+                <span className="text-sm font-medium text-gray-800">
+                  {cardState === 'partiallyUnlocked' 
+                    ? Math.round((unlockedCount / totalCount) * 100) 
+                    : courseProgress}%
                 </span>
-                {courseProgress >= 75 && <Zap size={14} className="text-amber-500" />}
+                {((cardState === 'partiallyUnlocked' && (unlockedCount / totalCount) >= 0.75) || 
+                  (cardState !== 'partiallyUnlocked' && courseProgress >= 75)) && 
+                  <Zap size={14} className="text-amber-500" />}
               </div>
             </div>
             
@@ -397,7 +535,11 @@ export function CourseCard({
               <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${courseProgress}%` }}
+                  animate={{ 
+                    width: cardState === 'partiallyUnlocked' 
+                      ? `${Math.round((unlockedCount / totalCount) * 100)}%`
+                      : `${courseProgress}%`
+                  }}
                   transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 }}
                   className={`h-full bg-gradient-to-r ${colors.primary} rounded-full relative`}
                 >
@@ -407,14 +549,15 @@ export function CourseCard({
               </div>
               
               {/* Indicateur de milestone */}
-              {courseProgress >= 50 && (
+              {((cardState === 'partiallyUnlocked' && (unlockedCount / totalCount) >= 0.5) ||
+                (cardState !== 'partiallyUnlocked' && courseProgress >= 50)) && (
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 1.5, type: "spring" }}
                   className="absolute right-0 -top-8 bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full font-medium"
                 >
-                  🎯 À mi-parcours !
+                  🎯 {cardState === 'partiallyUnlocked' ? 'Continue ton élan !' : 'À mi-parcours !'}
                 </motion.div>
               )}
             </div>
@@ -426,7 +569,16 @@ export function CourseCard({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <BookOpen size={14} />
-              <span>{course.totalLessons} leçons</span>
+              {cardState === 'partiallyUnlocked' ? (
+                <motion.span 
+                  className="text-gray-700 font-medium transition-colors duration-200 group-hover:text-purple-600"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {unlockedCount}/{totalCount} leçons
+                </motion.span>
+              ) : (
+                <span>{course.totalLessons} leçons</span>
+              )}
             </div>
             <div className="flex items-center gap-1">
               <Users size={14} />
@@ -442,8 +594,8 @@ export function CourseCard({
 
         {/* Actions principales - Design cohérent */}
         <div className="flex gap-3 pt-4">
-          {course.isOwned ? (
-            /* Si cours débloqué : bouton Continuer unique */
+          {course.isOwned || cardState === 'partiallyUnlocked' ? (
+            /* Si cours débloqué ou partiellement débloqué : bouton Continuer unique */
             <motion.button
               onClick={(e) => {
                 e.stopPropagation();
@@ -493,7 +645,7 @@ export function CourseCard({
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="py-3 px-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-600/20"
+                className="py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-blue-600/20 hover:shadow-xl hover:from-blue-700 hover:to-blue-800"
               >
                 <Lock size={14} />
                 <span className="text-xs">Débloquer</span>

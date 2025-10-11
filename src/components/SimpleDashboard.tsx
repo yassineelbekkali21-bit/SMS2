@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, 
@@ -81,6 +81,14 @@ import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, Purch
 import { PersonalProfileSection } from './PersonalProfileSection';
 import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons } from '@/lib/mock-data';
 import { StudyRoomButton } from './StudyRoomButton';
+import { TrendBadgeComponent } from './TrendBadge';
+import { smartSortFacultyCourses, CourseWithTrend } from '@/lib/faculty-sorting';
+import { FilterBar } from './FilterBar';
+import { 
+  FilterState, 
+  filterAndSortCourses, 
+  getFilterCounts 
+} from '@/lib/course-filtering';
 import { StudyRoomModal } from './StudyRoomModal';
 import { StrategicPlanner } from './StrategicPlanner';
 import { PlannerOnboardingModal } from './PlannerOnboardingModal';
@@ -316,7 +324,7 @@ function createMockCourseFromId(courseId: string): Course | null {
     progress: courseData.progress!,
     isOwned: courseData.isOwned!,
     isPrimary: courseData.isPrimary!,
-    lessons: [], // Sera rempli si nécessaire
+    lessons: generateMockLessons(courseData.id!, courseData.title!), // Générer les leçons
     previewAvailable: true,
     tags: [courseData.difficulty === 'intermediate' ? 'Physique' : 
            courseData.difficulty === 'advanced' ? 'Mathématiques' : 'Chimie'],
@@ -349,6 +357,34 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   } = props;
   const [primaryCourses, setPrimaryCourses] = useState(data.primaryCourses);
   const [suggestedExpanded, setSuggestedExpanded] = useState(true);
+
+  // État des filtres pour la section faculté
+  const [facultyFilters, setFacultyFilters] = useState<FilterState>({
+    subjects: ['all'],
+    trends: [],
+    social: [],
+    sortBy: 'students',
+    sortOrder: 'desc'
+  });
+
+  // Tri intelligent des cours de la faculté
+  const smartSortedCourses = useMemo(() => {
+    const coursesToSort = data.suggestedCourses
+      .filter(suggestion => !favorites.includes(suggestion.course.id)) // Filtrer les cours déjà favoris
+      .map(suggestion => suggestion.course);
+    
+    return smartSortFacultyCourses(coursesToSort);
+  }, [data.suggestedCourses, favorites]);
+
+  // Filtrage et tri final des cours de la faculté
+  const filteredFacultyCourses = useMemo(() => {
+    return filterAndSortCourses(smartSortedCourses, facultyFilters);
+  }, [smartSortedCourses, facultyFilters]);
+
+  // Comptes pour les filtres
+  const filterCounts = useMemo(() => {
+    return getFilterCounts(smartSortedCourses);
+  }, [smartSortedCourses]);
 
   // États du composant
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -648,7 +684,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [previewCourse, setPreviewCourse] = useState<Course | null>(null);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [unlockedCourses, setUnlockedCourses] = useState<string[]>([]);
   const [personalProfile] = useState(getPersonalProfile());
   const [unlockedPacks, setUnlockedPacks] = useState<string[]>([]);
@@ -1876,19 +1911,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               </div>
             </div>
             
-            {/* Recherche, crédits et notifications */}
+            {/* Crédits et notifications */}
             <div className="hidden md:flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent w-64"
-                />
-              </div>
-              
               {/* Portefeuille */}
               {(user?.wallet || data.user?.wallet) && (
                 <div data-tour="wallet">
@@ -1968,11 +1992,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 <MessageSquare size={18} className="text-white" />
               </a>
 
-              <div className="hidden md:block text-right">
-                <p className="text-sm font-medium text-gray-900">Bonjour, {data.user.name}</p>
-                <p className="text-xs text-gray-500">{data.user.year}</p>
-              </div>
-              
               {/* Profil utilisateur avec paramètres */}
               <div className="relative" ref={settingsRef}>
                 <button 
@@ -2480,7 +2499,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-500">
-                      {data.suggestedCourses.length} suggestions
+                      {filteredFacultyCourses.length} cours affichés sur {smartSortedCourses.length} disponibles
                     </span>
                     {suggestedExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
@@ -2495,36 +2514,88 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 pt-6">
-                      {data.suggestedCourses
-                        .filter(suggestion => !favorites.includes(suggestion.course.id)) // Filtrer les cours déjà favoris
-                        .map((suggestion, index) => (
-                        <motion.div
-                          key={suggestion.course.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          className="mt-3"
+                    {/* Barre de filtres */}
+                    <FilterBar
+                      filters={facultyFilters}
+                      onFiltersChange={setFacultyFilters}
+                      filterCounts={filterCounts}
+                    />
+
+                    {/* Grille des cours filtrés */}
+                    {filteredFacultyCourses.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 pt-6">
+                        <AnimatePresence mode="popLayout">
+                          {filteredFacultyCourses.map((course: CourseWithTrend, index: number) => (
+                            <motion.div
+                              key={course.id}
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -20 }}
+                              transition={{ 
+                                layout: { duration: 0.3 },
+                                opacity: { duration: 0.2 },
+                                y: { duration: 0.2, delay: 0.05 * Math.min(index, 12) }
+                              }}
+                              className="mt-3 relative"
+                            >
+                              {/* Badge de tendance */}
+                              <TrendBadgeComponent 
+                                badge={course.trendBadge || null} 
+                                animationDelay={0.1 + 0.05 * Math.min(index, 12)}
+                              />
+                              
+                              <SuggestedCourseCard
+                                course={course}
+                                enrolledStudents={course.studentCount || 0}
+                                reason={`${course.studentCount || 0} étudiants de ${data.user.faculty}`}
+                                onUnlock={handleDirectCourseUnlock}
+                                onPreview={handlePreviewCourse}
+                                onToggleFavorite={handleToggleFavorite}
+                                onClick={(courseId) => {
+                                  const foundCourse = filteredFacultyCourses.find((c: CourseWithTrend) => c.id === courseId);
+                                  if (foundCourse) {
+                                    handleOpenIntegratedViewer(foundCourse);
+                                  }
+                                }}
+                                canAfford={true}
+                                isUnlocked={unlockedCourses.includes(course.id)}
+                              />
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      /* Message de feedback pour zéro résultat */
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-center py-16 px-8"
+                      >
+                        <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                          <span className="text-2xl">🔍</span>
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                          Aucun cours ne correspond à vos filtres
+                        </h3>
+                        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                          Essayez d'élargir vos critères de recherche ou revenez plus tard pour découvrir de nouveaux cours !
+                        </p>
+                        <button
+                          onClick={() => setFacultyFilters({
+                            subjects: ['all'],
+                            trends: [],
+                            social: [],
+                            sortBy: 'students',
+                            sortOrder: 'desc'
+                          })}
+                          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                         >
-                          <SuggestedCourseCard
-                            course={suggestion.course}
-                            enrolledStudents={suggestion.enrolledStudents}
-                            reason={suggestion.reason}
-                            onUnlock={handleDirectCourseUnlock}
-                            onPreview={handlePreviewCourse}
-                            onToggleFavorite={handleToggleFavorite}
-                            onClick={(courseId) => {
-                              const course = data.suggestedCourses.find(s => s.course.id === courseId)?.course;
-                              if (course) {
-                                handleOpenIntegratedViewer(course);
-                              }
-                            }}
-                            canAfford={true}
-                            isUnlocked={unlockedCourses.includes(suggestion.course.id)}
-                          />
-                        </motion.div>
-                      ))}
-                    </div>
+                          Réinitialiser les filtres
+                        </button>
+                      </motion.div>
+                    )}
 
                     {/* CTA Explorer tout le catalogue */}
                     <motion.div

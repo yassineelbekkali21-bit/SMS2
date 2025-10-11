@@ -1,0 +1,14 @@
+__turbopack_load_page_chunks__("/_app", [
+  "static/chunks/da04c_next_dist_compiled_next-devtools_index_3f068afa.js",
+  "static/chunks/da04c_next_dist_compiled_87525736._.js",
+  "static/chunks/da04c_next_dist_shared_lib_232b4876._.js",
+  "static/chunks/da04c_next_dist_client_ecf867de._.js",
+  "static/chunks/da04c_next_dist_f5a75034._.js",
+  "static/chunks/da04c_next_app_bdc71f6d.js",
+  "static/chunks/[next]_entry_page-loader_ts_517e7567._.js",
+  "static/chunks/da04c_react-dom_5c4a0440._.js",
+  "static/chunks/da04c_bd814287._.js",
+  "static/chunks/[root-of-the-server]__5bee08ed._.js",
+  "static/chunks/Science-Made-Simple-Kiro_pages__app_2da965e7._.js",
+  "static/chunks/turbopack-Science-Made-Simple-Kiro_pages__app_0fa04427._.js"
+])

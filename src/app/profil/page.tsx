@@ -6,3 +6,5 @@ import { StudentProfilePage } from '@/components/StudentProfilePage';
 export default function ProfilPage() {
   return <StudentProfilePage />;
 }
+
+

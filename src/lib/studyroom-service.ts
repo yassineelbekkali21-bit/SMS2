@@ -31,11 +31,11 @@ export class StudyRoomService {
     const totalLessons = course.lessons?.length || course.totalLessons || 0;
     
     // Vérifier si le pack complet du cours est acheté
-    // L'accès Study Room nécessite OBLIGATOIREMENT l'achat du cours complet ou d'un pack
+    // L'accès Study Room nécessite OBLIGATOIREMENT l'achat du cours complet ou d'un pack contenant ce cours
     // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
     const hasFullCourse = purchasedItems.includes(`course-${courseId}`) || 
                          purchasedItems.includes(courseId) || // Fallback pour l'ancien format
-                         purchasedItems.some(item => item.startsWith('pack-'));
+                         (course.packId && purchasedItems.includes(`pack-${course.packId}`)); // Pack spécifique du cours
     
     // Compter les leçons possédées individuellement
     const ownedLessons = course.lessons?.filter(lesson => 

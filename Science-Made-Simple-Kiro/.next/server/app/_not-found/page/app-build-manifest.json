@@ -1,0 +1,20 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/da04c_next_dist_f19d79a2._.js",
+      "static/chunks/Science-Made-Simple-Kiro_src_app_favicon_ico_mjs_9cff79a0._.js",
+      "static/chunks/[root-of-the-server]__80d5c573._.css",
+      "static/chunks/Science-Made-Simple-Kiro_e2924dd6._.js",
+      "static/chunks/Science-Made-Simple-Kiro_src_app_layout_tsx_74fe0e65._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_14697859._.js",
+      "static/chunks/da04c_next_dist_compiled_react-dom_4efbbd14._.js",
+      "static/chunks/da04c_next_dist_compiled_next-devtools_index_bac1f771.js",
+      "static/chunks/da04c_next_dist_compiled_ac4950f4._.js",
+      "static/chunks/da04c_next_dist_client_a2359511._.js",
+      "static/chunks/da04c_next_dist_f0464be2._.js",
+      "static/chunks/da04c_@swc_helpers_cjs_6ee37cb9._.js",
+      "static/chunks/Science-Made-Simple-Kiro_a0ff3932._.js",
+      "static/chunks/turbopack-Science-Made-Simple-Kiro_3b3a4087._.js"
+    ]
+  }
+}
