@@ -13,12 +13,15 @@ import {
   Zap,
   BookOpen,
   ArrowRight,
-  Heart
+  Heart,
+  Lock
 } from 'lucide-react';
 import { Course, MiniQuizQuestion } from '@/types';
 import { getCourseThumbnail } from '@/lib/course-thumbnails';
 import { MiniQuiz } from './MiniQuiz';
 import { getMiniQuizForCourse } from '@/lib/mock-data';
+import { BuddyAvatars } from './BuddyAvatars';
+import { getBuddiesForCourse } from '@/lib/buddy-data';
 
 interface SuggestedCourseCardProps {
   course: Course;
@@ -31,6 +34,7 @@ interface SuggestedCourseCardProps {
   canAfford: boolean;
   isUnlocked: boolean;
   thumbnailImage?: string; // Image de fond personnalisée pour le thumbnail
+  isCompactMode?: boolean; // Mode compact après scroll
 }
 
 export function SuggestedCourseCard({ 
@@ -43,9 +47,11 @@ export function SuggestedCourseCard({
   onClick,
   canAfford, 
   isUnlocked,
-  thumbnailImage
+  thumbnailImage,
+  isCompactMode = false
 }: SuggestedCourseCardProps) {
   const [showMiniQuiz, setShowMiniQuiz] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   
   // Détection automatique de l'illustration selon la matière
   const autoThumbnail = getCourseThumbnail(course.title, course.faculty, course.id);
@@ -175,11 +181,16 @@ export function SuggestedCourseCard({
     );
   }
 
+  // Déterminer si on doit afficher en mode compact (uniquement si scrolled ET pas en hover)
+  const showCompact = isCompactMode && !isHovered;
+
   return (
     <motion.div
       whileHover={{ y: -2 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
       onClick={() => onClick?.(course.id)}
-      className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-200 overflow-hidden cursor-pointer"
+      className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer"
     >
       {/* Badge de recommandation amélioré */}
       <div className="relative">
@@ -230,6 +241,13 @@ export function SuggestedCourseCard({
             />
           </motion.button>
         )}
+
+        {/* Avatars des buddies - Engagement social */}
+        <BuddyAvatars 
+          courseId={course.id}
+          buddies={getBuddiesForCourse(course.id)}
+          cardState="normal"
+        />
       </div>
 
       <div className="p-6">
@@ -238,9 +256,20 @@ export function SuggestedCourseCard({
           <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
             {course.title}
           </h3>
-          <p className="text-gray-600 text-sm line-clamp-3 mb-3">
-            {course.description}
-          </p>
+          {/* Description : 2 lignes max (Option 1), cachée en mode compact sauf hover (Option 4) */}
+          <AnimatePresence>
+            {!showCompact && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="text-gray-600 text-sm line-clamp-2 mb-3"
+              >
+                {course.description}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Métadonnées */}
@@ -290,83 +319,104 @@ export function SuggestedCourseCard({
         )}
 
 
-        {/* Actions - Aperçu et Se tester toujours disponibles */}
+        {/* Actions - Adaptation selon mode compact */}
         <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            {/* Aperçu - TOUJOURS disponible */}
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('🔍 Aperçu cliqué pour:', course.title);
-                onPreview(course.id);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
-            >
-              <Eye size={14} />
-              Aperçu
-            </motion.button>
+          <AnimatePresence mode="wait">
+            {showCompact ? (
+              /* Mode Compact : 2 boutons seulement */
+              <motion.div
+                key="compact"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="grid grid-cols-2 gap-2"
+              >
+                {/* Se tester */}
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('🧠 Test cliqué pour:', course.title);
+                    setShowMiniQuiz(true);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
+                >
+                  <Brain size={14} />
+                  <span className="text-xs">Tester</span>
+                </motion.button>
 
-            {/* Action principale selon l'état du cours */}
-            {isUnlocked ? (
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // onOpenCourse?.(course.id);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                <Play size={14} />
-                Commencer
-              </motion.button>
-            ) : hasMiniQuiz && !quizCompleted ? (
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMiniQuiz(true);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
-              >
-                <Zap size={14} />
-                Se tester
-              </motion.button>
+                {/* Débloquer */}
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUnlock(course.id);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-blue-700 hover:to-blue-800"
+                >
+                  <Lock size={14} />
+                  <span className="text-xs">Débloquer</span>
+                </motion.button>
+              </motion.div>
             ) : (
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('🧠 Quiz cliqué pour:', course.title);
-                  setShowMiniQuiz(true);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
+              /* Mode Normal : 3 boutons */
+              <motion.div
+                key="full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="grid grid-cols-3 gap-2"
               >
-                <Brain size={14} />
-                Je me teste
-              </motion.button>
+                {/* Aperçu */}
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('🔍 Aperçu cliqué pour:', course.title);
+                    onPreview(course.id);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                >
+                  <Eye size={14} />
+                  <span className="text-xs">Aperçu</span>
+                </motion.button>
+
+                {/* Se tester */}
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('🧠 Test cliqué pour:', course.title);
+                    setShowMiniQuiz(true);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
+                >
+                  <Brain size={14} />
+                  <span className="text-xs">Tester</span>
+                </motion.button>
+
+                {/* Débloquer */}
+                <motion.button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUnlock(course.id);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-blue-700 hover:to-blue-800"
+                >
+                  <Lock size={14} />
+                  <span className="text-xs">Débloquer</span>
+                </motion.button>
+              </motion.div>
             )}
-          </div>
-          
-          {/* Bouton de déblocage après quiz */}
-          {quizCompleted && (
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnlock(course.id);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              <ArrowRight size={16} />
-              Débloquer maintenant
-            </motion.button>
-          )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.div>

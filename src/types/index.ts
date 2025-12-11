@@ -1043,7 +1043,8 @@ export interface ProposeExamDateData {
 // SYSTÈME BUDDIES - ÉCOSYSTÈME SOCIAL D'APPRENTISSAGE
 // ========================================================================
 
-export type BuddyType = 'parent' | 'friend' | 'closeFriend';
+// Distinction Buddy (autre étudiant) vs Tuteur (accès suivi/progression)
+export type BuddyType = 'buddy' | 'tutor';
 export type BuddyStatus = 'pending' | 'accepted' | 'blocked' | 'declined';
 export type UserStatus = 'online' | 'in-study-room' | 'offline';
 
@@ -1051,7 +1052,9 @@ export interface BuddyConsents {
   activity: boolean; // Voir dernière connexion, progression
   notifications: boolean; // Recevoir alertes motivation
   studyRoomInvites: boolean; // Invitations Study Rooms
-  planningAlerts: boolean; // Alertes planning non respecté (parents/tuteurs)
+  planningAlerts: boolean; // Alertes planning non respecté (tuteurs uniquement)
+  progressTracking: boolean; // Suivi détaillé de progression (tuteurs uniquement)
+  analytics: boolean; // Accès aux analytics et rapports (tuteurs uniquement)
 }
 
 export interface BuddyRelation {
@@ -1085,13 +1088,17 @@ export interface BuddyInvitation {
   id: string;
   inviterId: string;
   inviterName: string;
-  phone: string;
+  phone?: string; // Optionnel, pour WhatsApp
+  email?: string; // Optionnel, pour invitation email
   token: string;
-  type: BuddyType;
+  type: BuddyType; // 'buddy' ou 'tutor'
   expiresAt: Date;
   acceptedAt?: Date;
   createdAt: Date;
   message?: string;
+  // Métadonnées d'invitation
+  role: BuddyType; // Explicite le rôle demandé
+  roleDescription?: string; // Description du rôle pour le destinataire
 }
 
 export interface BuddyDiscovery {

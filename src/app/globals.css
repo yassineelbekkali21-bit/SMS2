@@ -40,6 +40,13 @@
   --shadow-black-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
+/* Global scale at 90% (zoom out) */
+html {
+  font-size: 90%;
+  -webkit-text-size-adjust: 90%;
+  text-size-adjust: 90%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -50,6 +57,53 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   line-height: 1.6;
+  font-synthesis: none;
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+}
+
+/* Ensure consistent box-sizing across browsers */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+/* Fix Safari font rendering - apply to all browsers for consistency */
+input, textarea, select, button, a {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+}
+
+/* Ensure consistent line-height in all browsers */
+p, span, div, h1, h2, h3, h4, h5, h6 {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force consistent rendering for Chrome to match Safari */
+@supports not (-webkit-touch-callout: none) {
+  /* This targets Chrome/Firefox but not Safari */
+  html {
+    font-size: 80%; /* Chrome set to 80% */
+  }
+  
+  body {
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures;
+    zoom: 1;
+  }
+  
+  * {
+    letter-spacing: -0.01em;
+  }
 }
 
 /* ========================================================================
@@ -426,3 +480,203 @@ p {
     height: 1.25rem;
   }
 }
+
+/* ========================================================================
+   LANDING PAGE - MARKETING SPECIFIC STYLES
+   ======================================================================== */
+
+/* Hide scrollbar for carousel */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom gradient backgrounds */
+.gradient-blue-purple {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.gradient-green-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Responsive video container */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+/* Animation delays for staggered effects */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+/* Enhanced box shadows for marketing */
+.shadow-soft {
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-glow-blue {
+  box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-glow-green {
+  box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.3);
+}
+
+/* Gradient text */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button hover effects */
+.btn-hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Card hover effects */
+.card-hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-scale:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================================================
+   THEME OVERRIDES FOR PREVIEWER
+   ======================================================================== */
+
+/* PURPLE THEME (Revolut-like) */
+body.theme-purple .text-blue-600 { color: #7c3aed !important; }
+body.theme-purple .bg-blue-600 { background-color: #7c3aed !important; }
+body.theme-purple .border-blue-600 { border-color: #7c3aed !important; }
+body.theme-purple .hover\:bg-blue-700:hover { background-color: #6d28d9 !important; }
+body.theme-purple .bg-blue-50 { background-color: #f5f3ff !important; }
+body.theme-purple .bg-blue-100 { background-color: #ede9fe !important; }
+body.theme-purple .border-blue-100 { border-color: #ede9fe !important; }
+body.theme-purple .text-blue-700 { color: #6d28d9 !important; }
+body.theme-purple .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3) !important; }
+body.theme-purple .from-blue-600 { --tw-gradient-from: #7c3aed !important; }
+body.theme-purple .to-blue-600 { --tw-gradient-to: #7c3aed !important; }
+body.theme-purple .from-blue-100 { --tw-gradient-from: #ede9fe !important; }
+body.theme-purple .to-purple-100 { --tw-gradient-to: #fae8ff !important; }
+
+/* TURQUOISE THEME */
+body.theme-turquoise .text-blue-600 { color: #0891b2 !important; }
+body.theme-turquoise .bg-blue-600 { background-color: #0891b2 !important; }
+body.theme-turquoise .border-blue-600 { border-color: #0891b2 !important; }
+body.theme-turquoise .hover\:bg-blue-700:hover { background-color: #0e7490 !important; }
+body.theme-turquoise .bg-blue-50 { background-color: #ecfeff !important; }
+body.theme-turquoise .bg-blue-100 { background-color: #cffafe !important; }
+body.theme-turquoise .border-blue-100 { border-color: #cffafe !important; }
+body.theme-turquoise .text-blue-700 { color: #0e7490 !important; }
+body.theme-turquoise .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(8, 145, 178, 0.3) !important; }
+body.theme-turquoise .from-blue-600 { --tw-gradient-from: #0891b2 !important; }
+body.theme-turquoise .to-blue-600 { --tw-gradient-to: #0891b2 !important; }
+body.theme-turquoise .from-blue-100 { --tw-gradient-from: #cffafe !important; }
+body.theme-turquoise .to-purple-100 { --tw-gradient-to: #e0f2fe !important; }
+
+/* CORAL THEME */
+body.theme-coral .text-blue-600 { color: #FF6B6B !important; }
+body.theme-coral .bg-blue-600 { background-color: #FF6B6B !important; }
+body.theme-coral .border-blue-600 { border-color: #FF6B6B !important; }
+body.theme-coral .hover\:bg-blue-700:hover { background-color: #EE5253 !important; }
+body.theme-coral .bg-blue-50 { background-color: #FFF0F0 !important; }
+body.theme-coral .bg-blue-100 { background-color: #FFD3D3 !important; }
+body.theme-coral .border-blue-100 { border-color: #FFD3D3 !important; }
+body.theme-coral .text-blue-700 { color: #EE5253 !important; }
+body.theme-coral .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(255, 107, 107, 0.3) !important; }
+body.theme-coral .from-blue-600 { --tw-gradient-from: #FF6B6B !important; }
+body.theme-coral .to-blue-600 { --tw-gradient-to: #FF6B6B !important; }
+body.theme-coral .from-blue-100 { --tw-gradient-from: #FFD3D3 !important; }
+body.theme-coral .to-purple-100 { --tw-gradient-to: #FFE3E3 !important; }
+
+/* MAUVE PREMIUM THEME */
+body.theme-mauve .text-blue-600 { color: #6d28d9 !important; }
+body.theme-mauve .bg-blue-600 { background-color: #6d28d9 !important; }
+body.theme-mauve .border-blue-600 { border-color: #6d28d9 !important; }
+body.theme-mauve .hover\:bg-blue-700:hover { background-color: #5b21b6 !important; }
+body.theme-mauve .bg-blue-50 { background-color: #f5f3ff !important; }
+body.theme-mauve .bg-blue-100 { background-color: #ddd6fe !important; }
+body.theme-mauve .border-blue-100 { border-color: #ddd6fe !important; }
+body.theme-mauve .text-blue-700 { color: #5b21b6 !important; }
+body.theme-mauve .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(109, 40, 217, 0.3) !important; }
+body.theme-mauve .from-blue-600 { --tw-gradient-from: #6d28d9 !important; }
+body.theme-mauve .to-blue-600 { --tw-gradient-to: #6d28d9 !important; }
+body.theme-mauve .from-blue-100 { --tw-gradient-from: #ddd6fe !important; }
+body.theme-mauve .to-purple-100 { --tw-gradient-to: #e9d5ff !important; }
+
+/* BLUE PREMIUM THEME */
+body.theme-bluepremium .text-blue-600 { color: #1e40af !important; }
+body.theme-bluepremium .bg-blue-600 { background-color: #1e40af !important; }
+body.theme-bluepremium .border-blue-600 { border-color: #1e40af !important; }
+body.theme-bluepremium .hover\:bg-blue-700:hover { background-color: #1e3a8a !important; }
+body.theme-bluepremium .bg-blue-50 { background-color: #eff6ff !important; }
+body.theme-bluepremium .bg-blue-100 { background-color: #dbeafe !important; }
+body.theme-bluepremium .border-blue-100 { border-color: #dbeafe !important; }
+body.theme-bluepremium .text-blue-700 { color: #1e3a8a !important; }
+body.theme-bluepremium .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.3) !important; }
+body.theme-bluepremium .from-blue-600 { --tw-gradient-from: #1e40af !important; }
+body.theme-bluepremium .to-blue-600 { --tw-gradient-to: #1e40af !important; }
+body.theme-bluepremium .from-blue-100 { --tw-gradient-from: #dbeafe !important; }
+body.theme-bluepremium .to-purple-100 { --tw-gradient-to: #e0e7ff !important; }
+
+/* ORANGE THEME */
+body.theme-orange .text-blue-600 { color: #f97316 !important; }
+body.theme-orange .bg-blue-600 { background-color: #f97316 !important; }
+body.theme-orange .border-blue-600 { border-color: #f97316 !important; }
+body.theme-orange .hover\:bg-blue-700:hover { background-color: #ea580c !important; }
+body.theme-orange .bg-blue-50 { background-color: #fff7ed !important; }
+body.theme-orange .bg-blue-100 { background-color: #ffedd5 !important; }
+body.theme-orange .border-blue-100 { border-color: #ffedd5 !important; }
+body.theme-orange .text-blue-700 { color: #c2410c !important; }
+body.theme-orange .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3) !important; }
+body.theme-orange .from-blue-600 { --tw-gradient-from: #f97316 !important; }
+body.theme-orange .to-blue-600 { --tw-gradient-to: #f97316 !important; }
+body.theme-orange .from-blue-100 { --tw-gradient-from: #ffedd5 !important; }
+body.theme-orange .to-purple-100 { --tw-gradient-to: #ffe4e6 !important; }
+
+/* GREEN THEME */
+body.theme-green .text-blue-600 { color: #16a34a !important; }
+body.theme-green .bg-blue-600 { background-color: #16a34a !important; }
+body.theme-green .border-blue-600 { border-color: #16a34a !important; }
+body.theme-green .hover\:bg-blue-700:hover { background-color: #15803d !important; }
+body.theme-green .bg-blue-50 { background-color: #f0fdf4 !important; }
+body.theme-green .bg-blue-100 { background-color: #dcfce7 !important; }
+body.theme-green .border-blue-100 { border-color: #dcfce7 !important; }
+body.theme-green .text-blue-700 { color: #15803d !important; }
+body.theme-green .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.3) !important; }
+body.theme-green .from-blue-600 { --tw-gradient-from: #16a34a !important; }
+body.theme-green .to-blue-600 { --tw-gradient-to: #16a34a !important; }
+body.theme-green .from-blue-100 { --tw-gradient-from: #dcfce7 !important; }
+body.theme-green .to-purple-100 { --tw-gradient-to: #d1fae5 !important; }

@@ -43,14 +43,16 @@ export class PlannerService {
     const completeCourses: string[] = [];
 
     // Analyser chaque cours
-    courses.forEach(course => {
-      // Vérifier si le cours complet est acheté (cours individuel ou pack)
-      // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
-      
-      // 1. Vérifier achat direct du cours
-      const hasDirectCourse = course.isOwned || 
-                             purchasedItems.includes(`course-${course.id}`) || 
-                             purchasedItems.includes(course.id);
+    courses
+      .filter(course => course && course.id) // Filtrer les cours invalides
+      .forEach(course => {
+        // Vérifier si le cours complet est acheté (cours individuel ou pack)
+        // Format des purchasedItems: "course-{courseId}" ou "pack-{packId}"
+        
+        // 1. Vérifier achat direct du cours
+        const hasDirectCourse = course.isOwned || 
+                               purchasedItems.includes(`course-${course.id}`) || 
+                               purchasedItems.includes(course.id);
       
       // 2. Vérifier si un pack contenant ce cours a été acheté
       const coursePacks = getCoursePacks();

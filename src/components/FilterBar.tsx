@@ -137,90 +137,20 @@ export function FilterBar({
   const activeChips = getActiveFilterChips();
 
   return (
-    <div className="bg-white border-b border-gray-100 shadow-sm mb-6">
-      <div className="p-4">
-        {/* Barre de filtres principale */}
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Filtres par matière */}
-            <div className="flex items-center gap-2">
-              {FILTER_CONFIG.subjects.map((subject) => (
-                <button
-                  key={subject.id}
-                  onClick={() => handleSubjectFilter(subject.id as SubjectFilter)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    filters.subjects.includes(subject.id as SubjectFilter)
-                      ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className="text-xs">{subject.emoji}</span>
-                  {subject.label}
-                  <span className="text-xs opacity-75">
-                    ({filterCounts[subject.id] || 0})
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="w-px h-6 bg-gray-300" />
-
-            {/* Filtres par tendance */}
-            <div className="flex items-center gap-2">
-              {FILTER_CONFIG.trends.map((trend) => (
-                <button
-                  key={trend.id}
-                  onClick={() => handleTrendFilter(trend.id as TrendFilter)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    filters.trends.includes(trend.id as TrendFilter)
-                      ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className="text-xs">{trend.emoji}</span>
-                  {trend.label}
-                  <span className="text-xs opacity-75">
-                    ({filterCounts[trend.id] || 0})
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="w-px h-6 bg-gray-300" />
-
-            {/* Filtres sociaux */}
-            <div className="flex items-center gap-2">
-              {FILTER_CONFIG.social.map((social) => (
-                <button
-                  key={social.id}
-                  onClick={() => handleSocialFilter(social.id as SocialFilter)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    filters.social.includes(social.id as SocialFilter)
-                      ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className="text-xs">{social.emoji}</span>
-                  {social.label}
-                  <span className="text-xs opacity-75">
-                    ({filterCounts[social.id] || 0})
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Menu de tri et réinitialisation */}
-          <div className="flex items-center gap-2">
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+      <div className="px-4 pt-1.5 pb-4">
+        {/* Header avec actions */}
+        <div className="flex items-center justify-end mb-2">
+          <div className="flex items-center gap-3">
             {/* Menu de tri */}
             <div className="relative">
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 border border-gray-200"
               >
-                <Settings size={14} />
+                <Settings size={16} />
                 Trier
-                <ChevronDown size={12} className={`transition-transform ${showSortMenu ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition-transform ${showSortMenu ? 'rotate-180' : ''}`} />
               </button>
 
               <AnimatePresence>
@@ -229,19 +159,19 @@ export function FilterBar({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-48"
+                    className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-20 min-w-48"
                   >
                     {FILTER_CONFIG.sorting.map((option) => (
                       <button
                         key={option.id}
                         onClick={() => handleSort(option.id as SortOption)}
-                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
-                          filters.sortBy === option.id ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl transition-colors ${
+                          filters.sortBy === option.id ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'
                         }`}
                       >
                         {option.label}
                         {filters.sortBy === option.id && (
-                          <span className="text-xs ml-2">
+                          <span className="text-xs ml-2 opacity-75">
                             ({filters.sortOrder === 'desc' ? '↓' : '↑'})
                           </span>
                         )}
@@ -256,12 +186,91 @@ export function FilterBar({
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 border border-red-200"
               >
-                <RotateCcw size={14} />
+                <RotateCcw size={16} />
                 Réinitialiser
               </button>
             )}
+          </div>
+        </div>
+
+        {/* Filtres sur une seule ligne horizontale */}
+        <div className="flex items-start gap-6">
+          
+          {/* Section Matières */}
+          <div className="flex-1">
+            <h4 className="text-xs font-semibold text-gray-700 mb-0.5 uppercase tracking-wide">
+              Matières
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_CONFIG.subjects.map((subject) => (
+                <button
+                  key={subject.id}
+                  onClick={() => handleSubjectFilter(subject.id as SubjectFilter)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    filters.subjects.includes(subject.id as SubjectFilter)
+                      ? 'bg-blue-100 text-blue-800 border border-blue-200 shadow-sm'
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  {subject.label}
+                  <span className="text-[10px] bg-white rounded-full px-1.5 py-0.5 opacity-75 font-semibold">
+                    {filterCounts[subject.id] || 0}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Section Tendances */}
+          <div className="flex-1">
+            <h4 className="text-xs font-semibold text-gray-700 mb-0.5 uppercase tracking-wide">
+              Tendances
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_CONFIG.trends.map((trend) => (
+                <button
+                  key={trend.id}
+                  onClick={() => handleTrendFilter(trend.id as TrendFilter)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    filters.trends.includes(trend.id as TrendFilter)
+                      ? 'bg-orange-100 text-orange-800 border border-orange-200 shadow-sm'
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  {trend.label}
+                  <span className="text-[10px] bg-white rounded-full px-1.5 py-0.5 opacity-75 font-semibold">
+                    {filterCounts[trend.id] || 0}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Section Social */}
+          <div className="flex-1">
+            <h4 className="text-xs font-semibold text-gray-700 mb-0.5 uppercase tracking-wide">
+              Activité sociale
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_CONFIG.social.map((social) => (
+                <button
+                  key={social.id}
+                  onClick={() => handleSocialFilter(social.id as SocialFilter)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    filters.social.includes(social.id as SocialFilter)
+                      ? 'bg-green-100 text-green-800 border border-green-200 shadow-sm'
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  }`}
+                >
+                  {social.label}
+                  <span className="text-[10px] bg-white rounded-full px-1.5 py-0.5 opacity-75 font-semibold">
+                    {filterCounts[social.id] || 0}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -272,22 +281,30 @@ export function FilterBar({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex items-center gap-2 flex-wrap pt-2 border-t border-gray-100"
+              className="mt-4 pt-4 border-t border-gray-200"
             >
-              <span className="text-xs text-gray-500 font-medium">Filtres actifs:</span>
-              {activeChips.map((chip) => (
-                <motion.button
-                  key={`${chip.type}-${chip.id}`}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={() => removeFilter(chip.id, chip.type)}
-                  className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1 hover:bg-blue-200 transition-colors"
-                >
-                  {chip.label}
-                  <X size={12} />
-                </motion.button>
-              ))}
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-sm font-medium text-gray-700">Filtres actifs :</span>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  {activeChips.length} filtre{activeChips.length > 1 ? 's' : ''}
+                </span>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {activeChips.map((chip) => (
+                  <motion.button
+                    key={`${chip.type}-${chip.id}`}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    onClick={() => removeFilter(chip.id, chip.type)}
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm"
+                  >
+                    {chip.label}
+                    <X size={14} />
+                  </motion.button>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

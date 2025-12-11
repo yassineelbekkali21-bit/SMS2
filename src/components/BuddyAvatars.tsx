@@ -28,17 +28,40 @@ export function BuddyAvatars({
   maxAvatars = 3
 }: BuddyAvatarsProps) {
   const [selectedBuddy, setSelectedBuddy] = useState<Buddy | null>(null);
+  const [selectedBuddyIndex, setSelectedBuddyIndex] = useState<number>(0);
   const [isSnapshotOpen, setIsSnapshotOpen] = useState(false);
+  const [clickPosition, setClickPosition] = useState<{ x: number; y: number } | undefined>(undefined);
 
-  const handleBuddyClick = (buddy: Buddy, e: React.MouseEvent) => {
+  const handleBuddyClick = (buddy: Buddy, index: number, e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Capturer la position du clic
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setClickPosition({
+      x: rect.right, // Position à droite de l'avatar
+      y: rect.top    // Aligné en haut avec l'avatar
+    });
+    
     setSelectedBuddy(buddy);
+    setSelectedBuddyIndex(index);
     setIsSnapshotOpen(true);
   };
 
   const handleCloseSnapshot = () => {
     setIsSnapshotOpen(false);
     setSelectedBuddy(null);
+    setClickPosition(undefined);
+  };
+
+  const handleNavigateBuddy = (direction: 'prev' | 'next') => {
+    if (!buddies || buddies.length === 0) return;
+    
+    const newIndex = direction === 'next' 
+      ? (selectedBuddyIndex + 1) % buddies.length
+      : (selectedBuddyIndex - 1 + buddies.length) % buddies.length;
+    
+    setSelectedBuddyIndex(newIndex);
+    setSelectedBuddy(buddies[newIndex]);
   };
   
   if (!buddies || buddies.length === 0) {
@@ -113,27 +136,37 @@ export function BuddyAvatars({
         className={`flex items-center ${avatarSpacing} hover:scale-105 hover:z-10 transition-transform duration-200`}
         title={getTooltipText()}
       >
-        {/* Avatars des buddies */}
-        {visibleBuddies.map((buddy, index) => (
-          <motion.div
-            key={buddy.id}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.4 + index * 0.1, type: "spring" }}
-            className="relative group/avatar"
-            title={`${buddy.name} – ${buddy.courseProgress}% du cours terminé • Clique pour voir le détail`}
-          >
-            <div
-              onClick={(e) => handleBuddyClick(buddy, e)}
-              className={`${avatarSize} rounded-full border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 hover:opacity-100 hover:filter-none cursor-pointer ${getAvatarStyle()} ${
-                buddy.isActive ? 'ring-2 ring-green-400' : ''
-              }`}
-              style={{
-                backgroundImage: `url(${buddy.avatar})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            />
+        {/* Avatars des buddies - Initiales orange */}
+        {visibleBuddies.map((buddy, index) => {
+          // Obtenir les initiales
+          const getInitials = (name: string): string => {
+            const parts = name.split(' ');
+            if (parts.length >= 2) {
+              return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+            }
+            return name.slice(0, 2).toUpperCase();
+          };
+
+          return (
+            <motion.div
+              key={buddy.id}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.4 + index * 0.1, type: "spring" }}
+              className="relative group/avatar"
+              title={`${buddy.name} – ${buddy.courseProgress}% du cours terminé • Clique pour voir le détail`}
+            >
+              <div
+                onClick={(e) => handleBuddyClick(buddy, index, e)}
+                className={`cursor-target ${avatarSize} rounded-full border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 hover:opacity-100 hover:filter-none cursor-pointer bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-bold ${getAvatarStyle()} ${
+                  buddy.isActive ? 'ring-2 ring-green-400' : ''
+                }`}
+                style={{
+                  fontSize: avatarSize === 'w-10 h-10' ? '0.75rem' : '0.65rem'
+                }}
+              >
+                {getInitials(buddy.name)}
+              </div>
             
             {/* Icône activité récente pour les cartes partiellement débloquées */}
             {cardState === 'partiallyUnlocked' && (
@@ -151,7 +184,8 @@ export function BuddyAvatars({
               </div>
             )}
           </motion.div>
-        ))}
+          );
+        })}
 
         {/* Cercle "+X" si plus de buddies */}
         {remainingCount > 0 && (
@@ -159,7 +193,7 @@ export function BuddyAvatars({
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.4 + visibleBuddies.length * 0.1, type: "spring" }}
-            className={`${avatarSize} bg-gray-100 text-xs font-medium text-gray-600 flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 cursor-pointer ${getAvatarStyle()}`}
+            className={`cursor-target ${avatarSize} bg-gray-100 text-xs font-medium text-gray-600 flex items-center justify-center rounded-full border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 cursor-pointer ${getAvatarStyle()}`}
             title={`+${remainingCount} autres buddies`}
           >
             +{remainingCount}
@@ -179,6 +213,10 @@ export function BuddyAvatars({
         buddy={selectedBuddy}
         isOpen={isSnapshotOpen}
         onClose={handleCloseSnapshot}
+        clickPosition={clickPosition}
+        onNavigate={handleNavigateBuddy}
+        currentIndex={selectedBuddyIndex}
+        totalBuddies={buddies.length}
       />
     </div>
   );

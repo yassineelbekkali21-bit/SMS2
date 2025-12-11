@@ -17,6 +17,8 @@ interface PlannerOnboardingModalProps {
   onStartPlanning: () => void;
   onPostpone: () => void; // Nouvelle prop pour "Plus tard"
   courseName?: string;
+  showCelebration?: boolean; // Nouvelle prop pour la célébration
+  packTitle?: string; // Titre du pack pour la célébration
 }
 
 export function PlannerOnboardingModal({ 
@@ -24,7 +26,9 @@ export function PlannerOnboardingModal({
   onClose, 
   onStartPlanning,
   onPostpone,
-  courseName 
+  courseName,
+  showCelebration = false,
+  packTitle
 }: PlannerOnboardingModalProps) {
   console.log('🎯 ONBOARDING MODAL: Rendu avec isOpen:', isOpen, 'courseName:', courseName);
   const [currentStep, setCurrentStep] = useState(0);
@@ -32,11 +36,21 @@ export function PlannerOnboardingModal({
   const steps = [
     {
       icon: <Sparkles className="text-emerald-600" size={40} />,
-      title: "Félicitations !",
-      subtitle: courseName ? `Tu viens de débloquer "${courseName}"` : "Tu as débloqué un cours complet",
-      description: "Et avec ça, tu as maintenant accès à ton planificateur personnel !",
-      color: "bg-gradient-to-br from-emerald-50 to-green-50",
-      iconBg: "bg-emerald-100"
+      title: showCelebration ? "🎉 Félicitations !" : "Félicitations !",
+      subtitle: showCelebration && packTitle 
+        ? `Tu viens de débloquer le pack "${packTitle}"` 
+        : courseName 
+          ? `Tu viens de débloquer "${courseName}"` 
+          : "Tu as débloqué un cours complet",
+      description: showCelebration 
+        ? "🎁 En récompense, tu reçois +100€ sur ta prochaine recharge ! Et maintenant, organise ton apprentissage avec le planificateur intelligent."
+        : "Et avec ça, tu as maintenant accès à ton planificateur personnel !",
+      color: showCelebration 
+        ? "bg-gradient-to-br from-yellow-50 to-orange-50" 
+        : "bg-gradient-to-br from-emerald-50 to-green-50",
+      iconBg: showCelebration 
+        ? "bg-yellow-100" 
+        : "bg-emerald-100"
     },
     {
       icon: <Calendar className="text-blue-600" size={40} />,
@@ -49,12 +63,12 @@ export function PlannerOnboardingModal({
       iconBg: "bg-blue-100"
     },
     {
-      icon: <Target className="text-purple-600" size={40} />,
+      icon: <Target className="text-blue-600" size={40} />,
       title: "Prêt pour le succès ?",
       subtitle: "Planification intelligente activée",
       description: "Deadlines automatiques, adaptation en temps réel, et buddy system pour te motiver !",
-      color: "bg-gradient-to-br from-purple-50 to-pink-50",
-      iconBg: "bg-purple-100"
+      color: "bg-gradient-to-br from-blue-50 to-indigo-50",
+      iconBg: "bg-blue-100"
     }
   ];
 
@@ -169,9 +183,9 @@ export function PlannerOnboardingModal({
                   <TrendingUp className="text-emerald-600 mx-auto mb-2" size={24} />
                   <span className="text-xs text-emerald-700 font-medium">Suivi progrès</span>
                 </div>
-                <div className="text-center p-3 rounded-xl bg-purple-50 border border-purple-100">
-                  <Users className="text-purple-600 mx-auto mb-2" size={24} />
-                  <span className="text-xs text-purple-700 font-medium">Buddy system</span>
+                <div className="text-center p-3 rounded-xl bg-blue-50 border border-blue-100">
+                  <Users className="text-blue-600 mx-auto mb-2" size={24} />
+                  <span className="text-xs text-blue-700 font-medium">Buddy system</span>
                 </div>
               </motion.div>
             )}
@@ -202,7 +216,7 @@ export function PlannerOnboardingModal({
                   onClick={handlePlanNow}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-3"
                 >
                   <Calendar size={18} />
                   Oui, je planifie maintenant

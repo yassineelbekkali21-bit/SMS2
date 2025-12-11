@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { CourseStudyRoom, StudyRoomMessage, AdvancedStudyRoom } from '@/types';
 import { WebRTCStudyRoom } from './WebRTCStudyRoom';
+import { ModernStudyRoom } from './ModernStudyRoom';
 
 interface StudyRoomModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ interface StudyRoomModalProps {
 export function StudyRoomModal({ isOpen, onClose, room, currentUserId }: StudyRoomModalProps) {
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [useWebRTC, setUseWebRTC] = useState(false);
+  const [useModernRoom, setUseModernRoom] = useState(true); // Utiliser ModernStudyRoom par défaut
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [showChat, setShowChat] = useState(true);
@@ -160,7 +162,37 @@ export function StudyRoomModal({ isOpen, onClose, room, currentUserId }: StudyRo
             </div>
 
             {/* Contenu principal */}
-            {useWebRTC ? (
+            {useModernRoom ? (
+              // Vue Modern Study Room (nouvelle)
+              <ModernStudyRoom
+                room={{
+                  id: room.id,
+                  courseId: room.courseName,
+                  courseName: room.courseName,
+                  title: room.name,
+                  type: room.type || 'interactive',
+                  visibility: 'public',
+                  status: 'live',
+                  createdBy: currentUserId,
+                  creatorName: 'Vous',
+                  createdAt: new Date(),
+                  startsAt: new Date(),
+                  currentParticipants: [],
+                  invitedUsers: [],
+                  tags: [],
+                  isRecorded: false,
+                  replayAddedToCourse: false,
+                  abusiveReports: [],
+                  moderationRules: ['Respecter les autres participants', 'Pas de contenu inapproprié'],
+                  xpReward: 25,
+                  buddyCount: 0,
+                  hasActiveBuddies: false
+                } as AdvancedStudyRoom}
+                userId={currentUserId}
+                userName="Yassine"
+                onLeaveRoom={onClose}
+              />
+            ) : useWebRTC ? (
               // Vue WebRTC complète
               <WebRTCStudyRoom
                 room={{
@@ -209,21 +241,25 @@ export function StudyRoomModal({ isOpen, onClose, room, currentUserId }: StudyRo
 
                 {/* Grille des participants */}
                 <div className="absolute bottom-4 left-4 flex gap-2">
-                  {room.currentUsers.slice(0, 4).map((user, index) => (
-                    <div 
-                      key={user.id}
-                      className="w-20 h-16 bg-gray-700 rounded-lg flex items-center justify-center relative"
-                    >
-                      <div className="text-white text-sm font-medium">
-                        {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : user.id.substring(0, 2).toUpperCase()}
-                      </div>
-                      {index === 0 && (
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white">
-                          <Mic size={8} className="text-white ml-0.5 mt-0.5" />
+                  {room.currentUsers.slice(0, 4).map((user, index) => {
+                    if (!user || !user.id) return null;
+                    
+                    return (
+                      <div 
+                        key={user.id}
+                        className="w-20 h-16 bg-gray-700 rounded-lg flex items-center justify-center relative"
+                      >
+                        <div className="text-white text-sm font-medium">
+                          {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : (user.id ? user.id.substring(0, 2).toUpperCase() : '??')}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {index === 0 && (
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white">
+                            <Mic size={8} className="text-white ml-0.5 mt-0.5" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Contrôles vidéo */}

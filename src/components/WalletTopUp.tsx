@@ -1,15 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { CreditCard, Brain, Gift, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { WalletTopUpBonus } from '@/types';
+import { WalletService } from '@/lib/wallet-service';
+import { RechargeBonusService, type RechargeBonusInfo, type RechargeBonusCalculation } from '@/lib/recharge-bonus-service';
+import { ProgressionBonusService, type ProgressionBonusSummary } from '@/lib/progression-bonus-service';
 
 interface WalletTopUpProps {
   currentBalance: number;
   onTopUp: (amount: number, withBonus: number) => void;
   onCancel: () => void;
-  isPackOffer?: boolean; // Nouveau prop pour déterminer si c'est l'offre Pack
+  isPackOffer?: boolean; // Ancien système de bonus (gardé pour compatibilité)
+  userId?: string; // Nouveau : ID utilisateur pour le système de bonus de bienvenue
+  contextualAmount?: number; // Montant suggéré (par exemple lors d'un achat)
+  contextualMessage?: string; // Message contextuel
+  source?: 'header' | 'purchase'; // Source de la recharge
 }
 
 // Configuration des bonus de rechargement (Modèle PlayStation)
@@ -48,30 +55,102 @@ const TOP_UP_BONUSES: WalletTopUpBonus[] = [
 
 const SUGGESTED_AMOUNTS = [100, 250, 500, 1000, 2000];
 
-export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = false }: WalletTopUpProps) {
-  const [amount, setAmount] = useState<number>(250);
+export function WalletTopUp({ 
+  currentBalance, 
+  onTopUp, 
+  onCancel, 
+  isPackOffer = false,
+  userId = 'user-default',
+  contextualAmount,
+  contextualMessage,
+  source = 'header'
+}: WalletTopUpProps) {
+  const [amount, setAmount] = useState<number>(contextualAmount || 250);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [bonusInfo, setBonusInfo] = useState<RechargeBonusInfo | null>(null);
+  const [calculation, setCalculation] = useState<RechargeBonusCalculation | null>(null);
+  const [progressionBonusSummary, setProgressionBonusSummary] = useState<ProgressionBonusSummary | null>(null);
+
+  // Charger les informations de bonus au montage
+  useEffect(() => {
+    if (userId) {
+      const info = RechargeBonusService.getBonusInfo(userId);
+      setBonusInfo(info);
+      console.log('💰 WALLET TOP-UP: Bonus info chargé:', info);
+      
+      // Charger aussi les bonus de progression
+      const progressionSummary = ProgressionBonusService.getProgressionBonusSummary(userId);
+      setProgressionBonusSummary(progressionSummary);
+      console.log('💰 WALLET TOP-UP: Bonus progression chargé:', progressionSummary);
+    }
+  }, [userId]);
+
+  // Calculer le solde total réel (portefeuille + bonus de progression)
+  const totalAvailableBalance = useMemo(() => {
+    const walletBalance = WalletService.getBalance();
+    const progressionBonus = progressionBonusSummary?.totalAvailableAmount || 0;
+    return walletBalance + progressionBonus;
+  }, [currentBalance, progressionBonusSummary]);
+
+  // Recalculer le bonus quand le montant change
+  useEffect(() => {
+    if (bonusInfo && userId) {
+      if (amount > 0) {
+        const calc = RechargeBonusService.calculateBonus(userId, amount);
+        setCalculation(calc);
+      }
+    }
+  }, [amount, bonusInfo, userId]);
 
   const getApplicableBonus = (amount: number): WalletTopUpBonus => {
-    // Si ce n'est pas l'offre Pack, retourner toujours un bonus de 0
-    if (!isPackOffer) {
+    console.log('💰 WALLET TOP-UP: getApplicableBonus appelé avec amount:', amount);
+    console.log('💰 WALLET TOP-UP: calculation:', calculation);
+    console.log('💰 WALLET TOP-UP: progressionBonusSummary:', progressionBonusSummary);
+    
+    // Prioriser le nouveau système de bonus de bienvenue
+    if (calculation && calculation.bonusAmount > 0) {
+      console.log('💰 WALLET TOP-UP: Utilisation bonus de bienvenue:', calculation.bonusAmount);
       return {
         minAmount: 0,
-        bonusAmount: 0,
-        bonusPercentage: 0,
-        description: 'Aucun bonus'
+        bonusAmount: calculation.bonusAmount,
+        bonusPercentage: calculation.bonusInfo.bonusPercentage,
+        description: `Bonus de bienvenue (${calculation.bonusInfo.bonusNumber}/2)`
       };
     }
+
+    // Ajouter les bonus de progression s'il y en a
+    if (progressionBonusSummary && progressionBonusSummary.hasAvailableBonus) {
+      console.log('💰 WALLET TOP-UP: Utilisation bonus de progression:', progressionBonusSummary);
+      return {
+        minAmount: 0,
+        bonusAmount: 100, // Toujours 100€ par bonus, un seul à la fois
+        bonusPercentage: 0, // Pas de pourcentage pour les bonus de progression
+        description: `Bonus de progression`
+      };
+    }
+
+    console.log('💰 WALLET TOP-UP: Aucun bonus applicable');
+    // Fallback vers l'ancien système pour les offres pack
+    if (isPackOffer) {
+      const applicableBonuses = TOP_UP_BONUSES.filter(bonus => amount >= bonus.minAmount);
+      return applicableBonuses[applicableBonuses.length - 1] || TOP_UP_BONUSES[0];
+    }
     
-    // Trouve le bonus le plus élevé applicable pour ce montant
-    const applicableBonuses = TOP_UP_BONUSES.filter(bonus => amount >= bonus.minAmount);
-    return applicableBonuses[applicableBonuses.length - 1] || TOP_UP_BONUSES[0];
+    // Aucun bonus par défaut
+    return {
+      minAmount: 0,
+      bonusAmount: 0,
+      bonusPercentage: 0,
+      description: 'Aucun bonus'
+    };
   };
 
   const currentBonus = getApplicableBonus(amount);
-  const finalAmount = amount + currentBonus.bonusAmount;
+  // Utiliser le calcul correct pour le total crédité
+  const totalCredited = calculation ? calculation.totalCredited : (amount + currentBonus.bonusAmount);
+  const finalAmount = totalCredited - amount; // Le bonus réel
 
   const handleAmountChange = (newAmount: number) => {
     setAmount(newAmount);
@@ -93,7 +172,50 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
     try {
       // Simulation du paiement - ici on intégrerait Stripe
       await new Promise(resolve => setTimeout(resolve, 2000));
-      onTopUp(amount, currentBonus.bonusAmount);
+      
+      let totalBonusAmount = 0;
+      
+      // Utiliser le nouveau service avec bonus de bienvenue si disponible
+      if (bonusInfo && bonusInfo.isEligible && calculation) {
+        // Enregistrer la recharge avec le service de bonus
+        RechargeBonusService.recordSuccessfulRecharge(userId, amount, calculation.bonusAmount);
+        totalBonusAmount = calculation.bonusAmount;
+      } 
+      // Sinon, vérifier s'il y a un bonus de progression disponible
+      else if (progressionBonusSummary && progressionBonusSummary.hasAvailableBonus) {
+        // Consommer le bonus de progression
+        const consumedBonus = ProgressionBonusService.consumeNextProgressionBonus(userId);
+        if (consumedBonus) {
+          totalBonusAmount = consumedBonus.bonusAmount;
+          // Ajouter la transaction de bonus de progression au portefeuille
+          WalletService.addProgressionBonusTransaction(
+            consumedBonus.bonusAmount, 
+            consumedBonus.packId, 
+            consumedBonus.packTitle
+          );
+          console.log(`💎 PROGRESSION BONUS: Bonus de ${consumedBonus.bonusAmount}€ appliqué pour le pack "${consumedBonus.packTitle}"`);
+          
+          // Mettre à jour le progressionBonusSummary après consommation
+          const updatedSummary = ProgressionBonusService.getProgressionBonusSummary(userId);
+          setProgressionBonusSummary(updatedSummary);
+        }
+      } 
+      // Sinon, utiliser l'ancien système ou pas de bonus
+      else {
+        totalBonusAmount = currentBonus.bonusAmount;
+      }
+
+      // 🔑 CRUCIAL: Mettre à jour le portefeuille via WalletService avec le montant total
+      const totalAmount = amount + totalBonusAmount;
+      const walletResult = WalletService.topUpWallet(totalAmount);
+      if (!walletResult.success) {
+        console.error('❌ Erreur lors de la recharge du portefeuille:', walletResult.error);
+        throw new Error(walletResult.error || 'Erreur lors de la recharge');
+      }
+      
+      console.log(`💰 WALLET TOP-UP: +${amount}€ ajoutés au portefeuille. Bonus: +${totalBonusAmount}€ = Total: +${totalAmount}€`);
+
+      onTopUp(amount, totalBonusAmount);
     } catch (error) {
       console.error('Erreur de paiement:', error);
     } finally {
@@ -102,7 +224,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-xl bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-cyan-50/30 flex items-center justify-center z-[10001] p-4">
+    <div className="fixed inset-0 backdrop-blur-xl bg-gray-50/30 flex items-center justify-center z-[10001] p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -116,30 +238,37 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
         {/* Header avec design Web 3.0 */}
         <div className="relative p-8 rounded-t-3xl overflow-hidden">
           {/* Background animé subtil */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-cyan-500/10"></div>
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gray-50"></div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent"></div>
           
           {/* Éléments décoratifs */}
-          <div className="absolute top-4 right-4 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-4 left-4 w-24 h-24 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl"></div>
+          <div className="absolute top-4 right-4 w-32 h-32 bg-gray-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-4 left-4 w-24 h-24 bg-gray-100/30 rounded-full blur-2xl"></div>
           
           <div className="relative flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-lg opacity-20"></div>
-                <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 p-3 rounded-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl blur-lg opacity-20"></div>
+                <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-2xl">
                   <Brain className="w-7 h-7 text-white" />
                 </div>
               </div>
               <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent">
                   Recharger mon portefeuille
                 </h2>
-                <div className="flex items-center space-x-2 mt-1">
+                <div className="flex items-center space-x-3 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <p className="text-gray-600 font-medium">
-                    Solde actuel : <span className="text-gray-900 font-bold">{currentBalance.toFixed(2)}€</span>
-                  </p>
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-1.5 rounded-xl border border-green-200">
+                    <p className="text-green-700 font-semibold text-sm">
+                      Solde actuel : <span className="text-green-800 font-bold text-lg">{totalAvailableBalance.toFixed(2)}€</span>
+                      {progressionBonusSummary && progressionBonusSummary.hasAvailableBonus && (
+                        <span className="text-green-600 text-xs ml-2">
+                          (dont bonus de progression : {progressionBonusSummary.totalAvailableAmount}€)
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -154,17 +283,59 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
         </div>
 
         <div className="p-8">
+          {/* Message contextuel pour les recharges d'achat */}
+          {contextualMessage && source === 'purchase' && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div className="flex items-start gap-3">
+                <AlertCircle size={20} className="text-blue-600 mt-0.5" />
+                <p className="text-sm text-blue-800">
+                  {contextualMessage}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Informations sur les bonus de progression */}
+          {progressionBonusSummary && progressionBonusSummary.hasAvailableBonus && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+                  <Gift size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-blue-900">
+                    💎 Bonus de progression actif
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    100€ ont été ajoutés à ton solde.<br />
+                    Récompense pour avoir complété le pack Électrostatique
+                  </p>
+                </div>
+              </div>
+              {progressionBonusSummary.availableBonuses.length > 1 && (
+                <div className="mt-3 text-xs text-blue-800">
+                  🎁 Tu as encore {progressionBonusSummary.availableBonuses.length - 1} bonus disponibles pour tes prochaines recharges.
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Montants suggérés avec design Web 3.0 */}
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <div className="w-1 h-6 bg-gray-900 rounded-full"></div>
+              <h3 className="text-xl font-bold text-gray-900">
                 Montants suggérés
               </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {SUGGESTED_AMOUNTS.map((suggestedAmount, index) => {
-                const bonus = getApplicableBonus(suggestedAmount);
+                // Calculer le bonus correctement avec le nouveau système
+                const tempCalc = bonusInfo && userId ? 
+                  RechargeBonusService.calculateBonus(userId, suggestedAmount) : 
+                  null;
+                
+                const bonusAmount = tempCalc ? tempCalc.bonusAmount : 0;
                 const isSelected = amount === suggestedAmount && !customAmount;
                 
                 return (
@@ -188,7 +359,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                     `}
                     style={{
                       background: isSelected 
-                        ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%)'
+                        ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(79, 70, 229, 0.08) 100%)'
                         : 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.8) 100%)'
                     }}
                   >
@@ -197,19 +368,19 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                     
                     {/* Icône décorative */}
                     <div className="absolute top-3 right-3 opacity-20">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-400"></div>
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600"></div>
                     </div>
                     
                     <div className="relative">
-                      <div className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">
+                      <div className={`text-2xl font-bold ${isSelected ? 'text-blue-600' : 'bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent'}`}>
                         {suggestedAmount}€
                       </div>
-                      {bonus.bonusAmount > 0 && (
+                      {bonusAmount > 0 && (
                         <div className="flex items-center space-x-2 mt-2">
                           <div className="flex items-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 px-2 py-1 rounded-full">
                             <Gift className="w-3 h-3 text-green-600" />
                             <span className="text-xs text-green-700 font-bold">
-                              +{bonus.bonusAmount}€
+                              +{bonusAmount}€
                             </span>
                           </div>
                         </div>
@@ -221,7 +392,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                           animate={{ scale: 1 }}
                           className="absolute -top-2 -right-2"
                         >
-                          <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full p-1.5 shadow-lg">
+                          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full p-1.5 shadow-lg">
                             <CheckCircle2 className="w-4 h-4" />
                           </div>
                         </motion.div>
@@ -236,13 +407,13 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
           {/* Montant personnalisé avec design moderne */}
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
-              <label className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <div className="w-1 h-6 bg-gray-900 rounded-full"></div>
+              <label className="text-lg font-bold text-gray-900">
                 Ou entrez un montant personnalisé
               </label>
             </div>
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-2xl blur-sm"></div>
               <input
                 type="number"
                 min="10"
@@ -266,12 +437,12 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
             transition={{ duration: 0.3 }}
             className="relative mb-8 overflow-hidden rounded-3xl"
             style={{
-              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(147, 51, 234, 0.05) 100%)'
+              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.06) 0%, rgba(37, 99, 235, 0.06) 50%, rgba(79, 70, 229, 0.06) 100%)'
             }}
           >
             {/* Background décoratif */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 via-blue-400/10 to-purple-400/10"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl"></div>
+            <div className="absolute inset-0 bg-gray-50"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gray-100/30 rounded-full blur-2xl"></div>
             
             <div className="relative border border-white/50 backdrop-blur-sm rounded-3xl p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -281,20 +452,20 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                     <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                     <div className="text-sm font-medium text-gray-600">Montant à payer</div>
                   </div>
-                  <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-bold text-gray-900">
                     {amount.toFixed(2)}€
                   </div>
                 </div>
                 
                 {/* Bonus */}
-                {currentBonus.bonusAmount > 0 && (
+                {(calculation ? calculation.bonusAmount : currentBonus.bonusAmount) > 0 && (
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-2 mb-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                       <div className="text-sm font-medium text-green-600">Bonus offert</div>
                     </div>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                      +{currentBonus.bonusAmount}€
+                    <div className="text-3xl font-bold text-gray-900">
+                      +{(calculation ? calculation.bonusAmount : currentBonus.bonusAmount)}€
                     </div>
                   </div>
                 )}
@@ -302,12 +473,12 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                 {/* Solde final */}
                 <div className="text-center">
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <div className="text-sm font-medium text-blue-600">Votre nouveau solde</div>
                   </div>
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    {(currentBalance + finalAmount).toFixed(2)}€
-                  </div>
+                    <div className="text-3xl font-bold text-blue-600">
+                      {(totalAvailableBalance + totalCredited).toFixed(2)}€
+                    </div>
                 </div>
               </div>
               
@@ -323,7 +494,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                       <Gift className="w-3 h-3 text-white" />
                     </div>
                     <span className="text-sm font-bold text-green-700">
-                      {currentBonus.description} - Bonus de {currentBonus.bonusPercentage}%
+                      {currentBonus.description}
                     </span>
                   </div>
                 </motion.div>
@@ -380,7 +551,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                 <div className={`
                   w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center
                   ${acceptTerms 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 border-blue-500 shadow-lg' 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-600 shadow-lg' 
                     : 'border-gray-300 bg-white group-hover:border-blue-300'
                   }
                 `}>
@@ -429,7 +600,7 @@ export function WalletTopUp({ currentBalance, onTopUp, onCancel, isPackOffer = f
                 }
               `}
               style={acceptTerms && amount >= 10 && !isProcessing ? {
-                background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%)'
+                background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #4F46E5 100%)'
               } : {}}
             >
               {/* Effet de brillance animé */}

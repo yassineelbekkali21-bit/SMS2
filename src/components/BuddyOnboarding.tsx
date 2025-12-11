@@ -30,33 +30,41 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
   const steps = [
     {
       id: 'welcome',
-      title: '👋 Bienvenue dans ton réseau d\'étude !',
+      title: 'Bienvenue dans ton réseau d\'étude',
       description: 'Connecte-toi avec tes amis pour étudier ensemble et progresser plus rapidement.',
-      icon: <Users className="text-blue-600" size={48} />,
+      icon: <Users className="text-white opacity-90" size={32} />,
       content: (
-        <div className="text-center space-y-4">
-          <p className="text-gray-600">
-            Science Made Simple est bien plus qu'une plateforme de cours. 
-            C'est une communauté d'étudiants qui s'entraident !
-          </p>
-          <div className="grid grid-cols-3 gap-4 my-6">
+        <div className="text-center space-y-8">
+          <div className="max-w-md mx-auto">
+            <p className="text-gray-800 text-lg leading-relaxed font-medium">
+              Science Made Simple est bien plus qu'une plateforme de cours.
+            </p>
+            <p className="text-gray-600 mt-3">
+              C'est une communauté d'étudiants qui s'entraident pour réussir ensemble.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <UserPlus className="text-blue-600" size={24} />
+              <div className="w-20 h-20 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="text-gray-700" size={32} />
               </div>
-              <p className="text-sm font-medium">Ajoute tes amis</p>
+              <h4 className="text-base font-semibold text-gray-900 mb-2">Ajoute tes amis</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">Trouve tes camarades d'étude dans ta faculté</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Users className="text-green-600" size={24} />
+              <div className="w-20 h-20 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users className="text-gray-700" size={32} />
               </div>
-              <p className="text-sm font-medium">Étudiez ensemble</p>
+              <h4 className="text-base font-semibold text-gray-900 mb-2">Étudiez ensemble</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">Sessions de groupe plus efficaces</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Target className="text-purple-600" size={24} />
+              <div className="w-20 h-20 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Target className="text-gray-700" size={32} />
               </div>
-              <p className="text-sm font-medium">Progressez plus vite</p>
+              <h4 className="text-base font-semibold text-gray-900 mb-2">Progressez plus vite</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">Entraide et motivation mutuelle</p>
             </div>
           </div>
         </div>
@@ -64,87 +72,123 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
     },
     {
       id: 'target',
-      title: '🎯 Objectif : Ajoute 3 buddies',
+      title: 'Objectif : Ajoute 3 buddies',
       description: 'Pour débloquer ton réseau d\'étude, trouve et ajoute au moins 3 amis qui étudient comme toi.',
-      icon: <Target className="text-green-600" size={48} />,
+      icon: <Target className="text-white opacity-90" size={32} />,
       content: (
-        <div className="space-y-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">Pourquoi 3 buddies ?</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Motivation mutuelle pour rester régulier</li>
-              <li>• Partage de conseils et d'astuces</li>
-              <li>• Sessions d'étude en groupe plus efficaces</li>
-              <li>• Découverte de nouveaux cours recommandés</li>
-            </ul>
-          </div>
-          
-          <div className="flex items-center justify-center">
-            <div className="flex items-center gap-2">
-              {[1, 2, 3].map((num) => (
-                <div key={num} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  addedBuddies.length >= num 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-gray-200 text-gray-500'
-                }`}>
-                  {addedBuddies.length >= num ? <CheckCircle size={16} /> : num}
+        <div className="space-y-8">
+          <div className="bg-white border border-gray-300 p-8 rounded-2xl">
+            <h4 className="font-bold text-gray-900 mb-6 text-lg">Pourquoi 3 buddies ?</h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-semibold text-gray-900 text-sm mb-1">Motivation mutuelle</h5>
+                  <p className="text-sm text-gray-600">Restez réguliers ensemble</p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-semibold text-gray-900 text-sm mb-1">Partage d'astuces</h5>
+                  <p className="text-sm text-gray-600">Conseils et méthodes efficaces</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-semibold text-gray-900 text-sm mb-1">Sessions de groupe</h5>
+                  <p className="text-sm text-gray-600">Étude collaborative optimisée</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-semibold text-gray-900 text-sm mb-1">Recommandations</h5>
+                  <p className="text-sm text-gray-600">Nouveaux cours suggérés</p>
+                </div>
+              </div>
             </div>
           </div>
           
-          <p className="text-center text-sm text-gray-600">
-            {addedBuddies.length}/3 buddies ajoutés
-          </p>
+          <div className="text-center">
+            <div className="inline-flex items-center gap-4 mb-6">
+              {[1, 2, 3].map((num) => (
+                <div key={num} className={`w-12 h-12 rounded-full flex items-center justify-center text-base font-bold border-2 transition-all ${
+                  addedBuddies.length >= num 
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg' 
+                    : 'bg-white text-gray-400 border-gray-300'
+                }`}>
+                  {addedBuddies.length >= num ? <CheckCircle size={20} /> : num}
+                </div>
+              ))}
+            </div>
+            
+            <div className="w-full max-w-sm mx-auto">
+              <div className="flex justify-between text-sm font-medium text-gray-700 mb-3">
+                <span>Progression</span>
+                <span>{addedBuddies.length}/3 buddies ajoutés</span>
+              </div>
+              <div className="h-3 bg-gray-300 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-600 transition-all duration-700 ease-out rounded-full"
+                  style={{ width: `${(addedBuddies.length / 3) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       )
     },
     {
       id: 'suggestions',
-      title: '✨ Découvre tes futurs buddies',
+      title: 'Découvre tes futurs buddies',
       description: 'Voici des étudiants qui partagent tes intérêts et pourraient devenir tes partenaires d\'étude.',
-      icon: <Sparkles className="text-yellow-600" size={48} />,
+      icon: <Sparkles className="text-white opacity-90" size={32} />,
       content: (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Suggestions de buddies mockées */}
           {[
             { id: 'sophie', name: 'Sophie Laurent', faculty: 'Sciences', common: 3, similarity: 92 },
             { id: 'alex', name: 'Alex Moreau', faculty: 'Sciences', common: 2, similarity: 85 },
             { id: 'lea', name: 'Léa Martinez', faculty: 'Sciences', common: 2, similarity: 78 }
           ].map((buddy) => (
-            <div key={buddy.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+            <div key={buddy.id} className="flex items-center justify-between p-6 bg-white border border-gray-200 rounded-2xl hover:border-gray-300 hover:shadow-sm transition-all">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold text-lg">
                   {buddy.name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{buddy.name}</h4>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <span>{buddy.faculty}</span>
-                    <span>•</span>
-                    <span>{buddy.common} cours en commun</span>
-                    <span>•</span>
-                    <span className="text-green-600">{buddy.similarity}% compatible</span>
+                  <h4 className="font-bold text-gray-900 mb-2 text-lg">{buddy.name}</h4>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="font-medium text-gray-700">{buddy.faculty}</span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-600">{buddy.common} cours en commun</span>
+                    <span className="text-gray-400">•</span>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                      <span className="text-blue-600 font-semibold">{buddy.similarity}% compatible</span>
+                    </div>
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => handleAddBuddy(buddy.id, buddy.name)}
                 disabled={addedBuddies.includes(buddy.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all ${
                   addedBuddies.includes(buddy.id)
-                    ? 'bg-green-100 text-green-700 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 border border-blue-600 shadow-sm hover:shadow-md'
                 }`}
               >
                 {addedBuddies.includes(buddy.id) ? (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle size={16} />
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={18} />
                     <span>Ajouté</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <UserPlus size={16} />
+                  <div className="flex items-center gap-2">
+                    <UserPlus size={18} />
                     <span>Ajouter</span>
                   </div>
                 )}
@@ -156,12 +200,14 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-green-50 border border-green-200 rounded-lg p-4 text-center"
+              className="bg-blue-50 border border-blue-200 rounded-2xl p-8 text-center"
             >
-              <CheckCircle className="text-green-600 mx-auto mb-2" size={32} />
-              <h4 className="font-semibold text-green-900 mb-1">Objectif atteint ! 🎉</h4>
-              <p className="text-sm text-green-700">
-                Tu as ajouté 3 buddies. Ton réseau d'étude est maintenant actif !
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="text-white" size={32} />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-3 text-lg">Objectif atteint !</h4>
+              <p className="text-gray-700 leading-relaxed">
+                Tu as ajouté 3 buddies. Ton réseau d'étude est maintenant actif et prêt à être utilisé.
               </p>
             </motion.div>
           )}
@@ -170,44 +216,56 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
     },
     {
       id: 'complete',
-      title: '🎉 Ton réseau est prêt !',
+      title: 'Ton réseau est prêt',
       description: 'Félicitations ! Tu peux maintenant profiter de toutes les fonctionnalités sociales.',
-      icon: <Heart className="text-red-600" size={48} />,
+      icon: <Heart className="text-white opacity-90" size={32} />,
       content: (
-        <div className="text-center space-y-6">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
-            <h4 className="font-bold text-gray-900 mb-4">Ce que tu peux faire maintenant :</h4>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="text-center space-y-8">
+          <div className="bg-white border border-gray-200 p-8 rounded-2xl">
+            <h4 className="font-bold text-gray-900 mb-8 text-xl">Fonctionnalités débloquées</h4>
+            <div className="grid grid-cols-2 gap-8">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Users className="text-blue-600" size={24} />
+                <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Users className="text-gray-900" size={28} />
                 </div>
-                <p className="text-sm font-medium">Study Rooms en groupe</p>
+                <h5 className="text-base font-bold text-gray-900 mb-2">Study Rooms en groupe</h5>
+                <p className="text-sm text-gray-600 leading-relaxed">Sessions collaboratives avec tes buddies</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Heart className="text-green-600" size={24} />
+                <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Heart className="text-gray-900" size={28} />
                 </div>
-                <p className="text-sm font-medium">Notifications d'activité</p>
+                <h5 className="text-base font-bold text-gray-900 mb-2">Notifications d'activité</h5>
+                <p className="text-sm text-gray-600 leading-relaxed">Suivi des progressions en temps réel</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Sparkles className="text-purple-600" size={24} />
+                <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="text-gray-900" size={28} />
                 </div>
-                <p className="text-sm font-medium">Recommandations de cours</p>
+                <h5 className="text-base font-bold text-gray-900 mb-2">Recommandations</h5>
+                <p className="text-sm text-gray-600 leading-relaxed">Cours suggérés par ton réseau</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Target className="text-yellow-600" size={24} />
+                <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Target className="text-gray-900" size={28} />
                 </div>
-                <p className="text-sm font-medium">Objectifs partagés</p>
+                <h5 className="text-base font-bold text-gray-900 mb-2">Objectifs partagés</h5>
+                <p className="text-sm text-gray-600 leading-relaxed">Défis et challenges en équipe</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-blue-600 text-white p-4 rounded-lg">
-            <h4 className="font-semibold mb-1">🏆 Badge débloqué !</h4>
-            <p className="text-sm opacity-90">"Papillon Social" - Pour avoir créé ton réseau d'étude</p>
+          <div className="bg-blue-50 border border-blue-200 p-8 rounded-2xl">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white text-2xl">🏆</span>
+              </div>
+              <div className="text-left">
+                <h4 className="font-bold text-gray-900 text-lg">Badge débloqué</h4>
+                <p className="text-gray-700 font-medium">"Papillon Social"</p>
+                <p className="text-sm text-gray-600">Pour avoir créé ton réseau d'étude</p>
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -277,36 +335,39 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+          className="bg-white rounded-2xl max-w-4xl w-full overflow-hidden"
         >
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 relative">
+          {/* Header premium noir avec texte blanc forcé */}
+          <div className="bg-gray-900 border-b border-gray-800 p-6 relative">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+              className="absolute top-4 right-4 p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              style={{ color: '#E5E7EB' }}
             >
               <X size={20} />
             </button>
             
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-xl">
-                {currentStepData.icon}
+              <div className="p-3 bg-gray-800 border border-gray-700 rounded-xl">
+                <div style={{ color: 'white', opacity: 0.9 }}>
+                  {currentStepData.icon}
+                </div>
               </div>
               <div>
-                <h2 className="text-xl font-bold">{currentStepData.title}</h2>
-                <p className="opacity-90">{currentStepData.description}</p>
+                <h2 className="text-xl font-bold" style={{ color: 'white' }}>{currentStepData.title}</h2>
+                <p style={{ color: '#E5E7EB' }}>{currentStepData.description}</p>
               </div>
             </div>
             
-            {/* Progress bar */}
-            <div className="mt-4">
-              <div className="flex justify-between text-sm opacity-75 mb-2">
+            {/* Barre de progression premium */}
+            <div className="mt-6">
+              <div className="flex justify-between text-sm mb-3" style={{ color: '#E5E7EB' }}>
                 <span>Étape {currentStep + 1} sur {steps.length}</span>
                 <span>{Math.round(((currentStep + 1) / steps.length) * 100)}%</span>
               </div>
-              <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-white"
+                  className="h-full bg-blue-400"
                   initial={{ width: 0 }}
                   animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
                   transition={{ duration: 0.5 }}
@@ -315,8 +376,8 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-6 max-h-96 overflow-y-auto">
+          {/* Content - Plus de limitation de hauteur */}
+          <div className="p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -330,13 +391,13 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
             </AnimatePresence>
           </div>
 
-          {/* Footer */}
-          <div className="border-t border-gray-200 p-6">
+          {/* Footer Premium avec CTA uniformisés */}
+          <div className="border-t border-gray-200 p-8 bg-white">
             <div className="flex items-center justify-between">
               <button
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-3 text-blue-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium bg-transparent border border-transparent hover:bg-blue-50 rounded-lg"
               >
                 Précédent
               </button>
@@ -344,18 +405,18 @@ export function BuddyOnboarding({ userId, userName, isOpen, onClose, onComplete 
               {currentStep === steps.length - 1 ? (
                 <button
                   onClick={handleComplete}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  className="px-10 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-semibold shadow-sm hover:shadow-md text-lg"
                 >
-                  Commencer l'aventure ! 🚀
+                  Commencer l'aventure
                 </button>
               ) : (
                 <button
                   onClick={nextStep}
                   disabled={!canProceed()}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                  className="flex items-center gap-2 px-10 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-sm hover:shadow-md text-lg"
                 >
                   <span>Continuer</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={20} />
                 </button>
               )}
             </div>

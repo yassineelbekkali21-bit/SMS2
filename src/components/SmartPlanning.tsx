@@ -79,7 +79,7 @@ const SortableEvent: React.FC<SortableEventProps> = ({ event, onDelete, onEdit }
       {...attributes}
       {...listeners}
       className={`
-        relative p-5 rounded-2xl cursor-move transition-all duration-300 border-2
+        relative p-5 rounded-2xl cursor-move cursor-target transition-all duration-300 border-2
         hover:shadow-xl hover:scale-[1.02] group
         ${getPriorityBg(event.priority)}
         ${isDragging ? 'z-10 shadow-2xl scale-105 rotate-2' : ''}
@@ -332,7 +332,7 @@ const DraggableCalendarEvent: React.FC<DraggableCalendarEventProps> = ({
         style={style}
         {...attributes}
         {...listeners}
-        className={`text-xs p-1 rounded text-white truncate cursor-move transition-all hover:scale-105 ${
+        className={`text-xs p-1 rounded text-white truncate cursor-move cursor-target transition-all hover:scale-105 ${
           event.type === 'exam' ? 'bg-red-500' :
           event.priority === 'high' ? 'bg-orange-500' :
           event.type === 'study' ? 'bg-blue-500' : 'bg-gray-500'
@@ -351,7 +351,7 @@ const DraggableCalendarEvent: React.FC<DraggableCalendarEventProps> = ({
       style={style}
       {...attributes}
       {...listeners}
-      className={`text-xs p-3 rounded-lg text-white cursor-move transition-all hover:scale-105 ${
+      className={`text-xs p-3 rounded-lg text-white cursor-move cursor-target transition-all hover:scale-105 ${
         event.type === 'exam' ? 'bg-red-500' :
         event.priority === 'high' ? 'bg-orange-500' :
         event.type === 'study' ? 'bg-blue-500' : 'bg-gray-500'

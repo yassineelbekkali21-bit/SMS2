@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Heart, Eye, Brain, Users, BookOpen } from 'lucide-react';
+import { Heart, Eye, Brain, Users, BookOpen, Lock } from 'lucide-react';
 import { getCourseById } from '@/lib/mock-data';
 import { getCourseThumbnail } from '@/lib/course-thumbnails';
 import { Course } from '@/types';
@@ -16,6 +16,7 @@ interface CourseCardPaniniEmptyProps {
   onPreview?: (courseId: string) => void;
   onTest?: (courseId: string) => void;
   onOpenCourse?: (course: Course) => void;
+  onEnroll?: (courseId: string) => void;
 }
 
 export function CourseCardPaniniEmpty({ 
@@ -24,7 +25,8 @@ export function CourseCardPaniniEmpty({
   onToggleFavorite,
   onPreview,
   onTest,
-  onOpenCourse
+  onOpenCourse,
+  onEnroll
 }: CourseCardPaniniEmptyProps) {
   
   const [isHovered, setIsHovered] = useState(false);
@@ -191,16 +193,16 @@ export function CourseCardPaniniEmpty({
           </div>
         </div>
 
-            {/* Boutons - identiques à la carte favori non débloqué mais en grid-cols-2 (pas de "Débloquer") */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Boutons - Aperçu + Se tester + Débloquer */}
+            <div className="grid grid-cols-3 gap-2">
               <motion.button
                 onClick={handlePreviewClick}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-gray-500/20 hover:shadow-md hover:shadow-purple-100"
+                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
               >
-                <Eye size={16} />
-                Aperçu
+                <Eye size={14} />
+                <span className="text-xs">Aperçu</span>
               </motion.button>
 
               <motion.button
@@ -208,10 +210,23 @@ export function CourseCardPaniniEmpty({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 aria-label={`Tester mes connaissances sur le cours ${courseData.title}`}
-                className="py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800 hover:shadow-purple-200"
+                className="py-3 px-3 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
               >
-                <Brain size={16} />
-                Se tester
+                <Brain size={14} />
+                <span className="text-xs">Tester</span>
+              </motion.button>
+
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEnroll?.(courseId);
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-blue-600/20 hover:shadow-xl hover:from-blue-700 hover:to-blue-800"
+              >
+                <Lock size={14} />
+                <span className="text-xs">Débloquer</span>
               </motion.button>
             </div>
       </div>

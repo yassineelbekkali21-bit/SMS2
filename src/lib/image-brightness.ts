@@ -62,3 +62,5 @@ export function getContrastClasses(brightness: number): {
     shadowClass: isDark ? 'drop-shadow-[0_0_4px_rgba(0,0,0,0.6)]' : 'drop-shadow-[0_0_2px_rgba(255,255,255,0.8)]'
   };
 }
+
+

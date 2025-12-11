@@ -21,6 +21,11 @@ const SORTING_CONFIG = {
 
 // Fonction pour générer un nombre d'étudiants pseudo-aléatoire basé sur l'ID du cours
 function generateStudentCount(courseId: string): number {
+  if (!courseId || typeof courseId !== 'string') {
+    console.error('🚨 generateStudentCount: courseId is invalid:', courseId);
+    return 50; // Valeur par défaut
+  }
+  
   const hash = courseId.split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
     return a & a;

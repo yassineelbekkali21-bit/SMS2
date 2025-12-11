@@ -85,71 +85,83 @@ export function CommunityFeed({ activities, className = "" }: CommunityFeedProps
   }));
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 ${className}`}>
-      {/* Header avec filtres */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-              Fil Communautaire
-            </h3>
-            <p className="text-sm text-gray-500">
-              Suivez l'actualité et les réussites de votre communauté
-            </p>
-          </div>
-          
-          {/* Filtres */}
-          <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl">
-            {filters.map(filter => {
-              const Icon = filter.icon;
-              return (
-                <button
-                  key={filter.id}
-                  onClick={() => setActiveFilter(filter.id as FilterType)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                    activeFilter === filter.id
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon size={14} />
-                  {filter.label}
-                </button>
-              );
-            })}
+    <div className={`relative overflow-hidden ${className}`}>
+      {/* Glassmorphism background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-600/5 rounded-3xl" />
+      <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+      
+      {/* Abstract shape */}
+      <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-br from-gray-500/5 to-gray-600/5 rounded-full blur-3xl opacity-40" />
+
+      <div className="relative">
+        {/* Header avec filtres */}
+        <div className="p-6 border-b border-gray-200/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                Fil Communautaire
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                Suivez l'actualité de votre communauté
+              </p>
+            </div>
+            
+            {/* Filtres */}
+            <div className="flex items-center gap-1.5 bg-gray-900/5 p-1 rounded-xl border border-gray-900/10">
+              {filters.map(filter => {
+                const Icon = filter.icon;
+                return (
+                  <button
+                    key={filter.id}
+                    onClick={() => setActiveFilter(filter.id as FilterType)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      activeFilter === filter.id
+                        ? 'bg-gray-900 text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                    }`}
+                  >
+                    <Icon size={12} />
+                    <span className="hidden sm:inline">{filter.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Feed d'activités */}
-      <div className="p-6">
-        {enrichedActivities.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🌟</div>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">
-              Aucune activité pour ce filtre
-            </h4>
-            <p className="text-gray-500">
-              Changez de filtre ou revenez plus tard !
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {enrichedActivities.map((activity, index) => (
-              <motion.div
-                key={activity.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <CommunityFeedCard 
-                  activity={activity}
-                  onReaction={handleReaction}
-                />
-              </motion.div>
-            ))}
-          </div>
-        )}
+        {/* Feed d'activités */}
+        <div className="p-6">
+          {enrichedActivities.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <TrendingUp size={24} className="text-gray-400" />
+              </div>
+              <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                Aucune activité pour ce filtre
+              </h4>
+              <p className="text-xs text-gray-500">
+                Changez de filtre ou revenez plus tard !
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {enrichedActivities.map((activity, index) => (
+                <motion.div
+                  key={activity.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                >
+                  <CommunityFeedCard 
+                    activity={activity}
+                    onReaction={handleReaction}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

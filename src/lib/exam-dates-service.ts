@@ -10,7 +10,7 @@ import {
 } from '@/types';
 
 export class ExamDatesService {
-  private static readonly STORAGE_KEY = 'exam_dates_v1';
+  private static readonly STORAGE_KEY = 'exam_dates_v2_scenarios';
   private static readonly VALIDATION_THRESHOLD = 3; // Nombre de confirmations nécessaires
 
   // ========================================================================
@@ -271,21 +271,48 @@ export class ExamDatesService {
         participatingStudents: 0
       },
       
-      // Cas 1 ter: Date officielle (future) - Intégrales et Applications
+      // Scénario 2: Quelqu'un d'autre a proposé une date - Intégrales et Applications
       {
         courseId: 'integrales',
         courseName: 'Intégrales et Applications',
         faculty: facultyId,
-        status: 'official' as ExamDateStatus,
-        officialDate: new Date('2025-02-12'),
-        officialSource: 'Système d\'Information Étudiant',
+        status: 'proposed' as ExamDateStatus,
+        currentProposal: {
+          id: 'proposal_integrales_1',
+          courseId: 'integrales',
+          facultyId: facultyId,
+          proposedDate: new Date('2025-02-12T10:00:00'),
+          proposedBy: 'student_marie',
+          proposedByName: 'Marie Dubois',
+          proposedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // Il y a 5 jours
+          status: 'pending',
+          confirmations: [
+            {
+              id: 'conf_integrales_1',
+              proposalId: 'proposal_integrales_1',
+              confirmedBy: 'student_lucas',
+              confirmedByName: 'Lucas Martin',
+              confirmedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+              faculty: facultyId
+            },
+            {
+              id: 'conf_integrales_2',
+              proposalId: 'proposal_integrales_1',
+              confirmedBy: 'student_emma',
+              confirmedByName: 'Emma Bernard',
+              confirmedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+              faculty: facultyId
+            }
+          ],
+          corrections: []
+        },
         previousProposals: [],
-        lastUpdated: new Date('2024-12-20'),
+        lastUpdated: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         totalStudentsInCourse: 38,
-        participatingStudents: 0
+        participatingStudents: 3
       },
 
-      // Cas 3: Date proposée par un étudiant (en attente de validation) - Équilibres Chimiques
+      // Scénario 3: J'ai proposé une date (Étudiant SMS) - Équilibres Chimiques
       {
         courseId: 'equilibres',
         courseName: 'Équilibres Chimiques',
@@ -295,54 +322,21 @@ export class ExamDatesService {
           id: 'proposal_equilibres_1',
           courseId: 'equilibres',
           facultyId: facultyId,
-          proposedDate: new Date('2025-01-30'),
-          proposedBy: 'student_sophie',
-          proposedByName: 'Sophie Laurent',
-          proposedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // Il y a 3 jours
+          proposedDate: new Date('2025-01-30T14:00:00'),
+          proposedBy: 'current_user',
+          proposedByName: 'Étudiant SMS',
+          proposedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Il y a 2 jours
           status: 'pending',
-          confirmations: [
-            {
-              id: 'conf_equilibres_1',
-              proposalId: 'proposal_equilibres_1',
-              confirmedBy: 'student_alex',
-              confirmedByName: 'Alex Durand',
-              confirmedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-              faculty: facultyId
-            }
-          ],
+          confirmations: [],
           corrections: []
         },
         previousProposals: [],
         lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         totalStudentsInCourse: 52,
-        participatingStudents: 2
+        participatingStudents: 1
       },
 
-      // Cas 2: Aucune date définie - Analyse Mathématique I
-      {
-        courseId: 'analyse-math',
-        courseName: 'Analyse Mathématique I',
-        faculty: facultyId,
-        status: 'undefined' as ExamDateStatus,
-        previousProposals: [],
-        lastUpdated: new Date(),
-        totalStudentsInCourse: 34,
-        participatingStudents: 0
-      },
-
-      // Cas 2: Aucune date définie - Mécanique Classique
-      {
-        courseId: 'mecanique',
-        courseName: 'Mécanique Classique',
-        faculty: facultyId,
-        status: 'undefined' as ExamDateStatus,
-        previousProposals: [],
-        lastUpdated: new Date(),
-        totalStudentsInCourse: 28,
-        participatingStudents: 0
-      },
-
-      // Cas 2: Aucune date définie - Forces et Mouvement
+      // Scénario 4: Date non définie - Forces et Mouvement
       {
         courseId: 'forces',
         courseName: 'Forces et Mouvement',

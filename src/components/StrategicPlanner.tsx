@@ -16,7 +16,8 @@ import {
   Crown,
   Sparkles,
   ArrowRight,
-  Phone
+  Phone,
+  X
 } from 'lucide-react';
 import { PlannerAccess, StudyPreferences, StudyPlan, BuddySystem, Course } from '@/types/index';
 import { BuddySystemComponent } from './BuddySystem';
@@ -76,6 +77,9 @@ export function StrategicPlanner({
 
   const [generatedPlan, setGeneratedPlan] = useState<StudyPlan | null>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  
+  // États pour les widgets latéraux
+  const [activeWidget, setActiveWidget] = useState<'preferences' | 'buddy' | 'dates' | null>(null);
 
   // Charger automatiquement le planning existant s'il y en a un
   React.useEffect(() => {

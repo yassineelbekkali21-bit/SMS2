@@ -250,10 +250,12 @@ export const useStudyRoomState = (
   notifications: StudyRoomNotification[] = []
 ) => {
   // Calculer l'accès pour chaque cours
-  const userAccess = courses.reduce((acc, course) => {
-    acc[course.id] = StudyRoomService.checkCourseAccess(course, purchasedItems, userId);
-    return acc;
-  }, {} as Record<string, StudyRoomCourseAccess>);
+  const userAccess = courses
+    .filter(course => course && course.id) // Filtrer les cours invalides
+    .reduce((acc, course) => {
+      acc[course.id] = StudyRoomService.checkCourseAccess(course, purchasedItems, userId);
+      return acc;
+    }, {} as Record<string, StudyRoomCourseAccess>);
 
   // Filtrer les Study Rooms accessibles
   const accessibleRooms = StudyRoomService.getAccessibleStudyRooms(

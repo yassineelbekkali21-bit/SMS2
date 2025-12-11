@@ -84,3 +84,5 @@ export function getBuddiesForCourse(courseId: string): Buddy[] {
 export function hasBuddiesForCourse(courseId: string): boolean {
   return getBuddiesForCourse(courseId).length > 0;
 }
+
+

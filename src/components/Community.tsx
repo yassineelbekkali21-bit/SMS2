@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FullBadgesTab from './BadgesTab';
+import CircleDomeGallery from './CircleDomeGallery';
 import { 
   Users, 
   MessageCircle, 
@@ -36,7 +38,10 @@ import {
   Trophy,
   Sparkles,
   ExternalLink,
-  UserPlus
+  UserPlus,
+  Flame,
+  Gift,
+  X
 } from 'lucide-react';
 import { 
   getCurrentUserProfile,
@@ -49,9 +54,10 @@ import {
   getMockAlumniProfiles,
   getMockCourseStudyRooms
 } from '@/lib/mock-data';
-import { BuddiesTab } from './BuddiesTab';
+import ModernBuddiesTab from './ModernBuddiesTab';
 import { AdvancedStudyRoomsTab } from './AdvancedStudyRoomsTab';
 import { StudyRoomModal } from './StudyRoomModal';
+import { CircleDetailView } from './CircleDetailView';
 import { 
   StudentProfile,
   Circle,
@@ -63,20 +69,489 @@ import {
   AlumniProfile
 } from '@/types';
 import { CommunityFeed } from './CommunityFeed';
+import { CompetitionLeaderboard } from './CompetitionLeaderboard';
+import { XPService } from '@/lib/xp-service';
+import { RewardsTeaser } from './RewardsTeaser';
 
-type CommunityTab = 'overview' | 'buddies' | 'circles' | 'study-rooms' | 'qa' | 'badges';
+type CommunityTab = 'overview' | 'buddies' | 'circles' | 'qa' | 'competitions' | 'badges';
 
 // Fonction utilitaire pour filtrer les utilisateurs valides
 const getValidUsers = (users: any[]) => {
   return users ? users.filter(user => user && user.id) : [];
 };
 
-export function Community() {
-  const [activeTab, setActiveTab] = useState<CommunityTab>('overview');
+interface CommunityProps {
+  onOpenMessaging?: (contactId?: string) => void;
+  userId?: string;
+  initialTab?: CommunityTab;
+}
+
+// Composant FullCompetitionsTab - Version enrichie
+function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; onNavigateToBadges?: () => void }) {
+  const [selectedCategory, setSelectedCategory] = useState<'current' | 'upcoming' | 'history' | 'stats'>('current');
+
+  // Mock data pour les compétitions à venir (enrichies)
+  const upcomingCompetitions = [
+    { 
+      id: 1, 
+      title: 'Marathon de la Connaissance', 
+      subtitle: 'Course d\'endurance sur 48h',
+      date: 'Débute dans 2 jours', 
+      startDate: '24 Oct', 
+      endDate: '26 Oct',
+      participants: 1234, 
+      maxParticipants: 2000,
+      reward: 'Badge Diamant + 2000 XP', 
+      bonusReward: '50 € de crédit',
+      status: 'upcoming',
+      difficulty: 'Expert',
+      category: 'Multi-matières'
+    },
+    { 
+      id: 2, 
+      title: 'Duel International', 
+      subtitle: 'Bataille entre pays',
+      date: 'Débute dans 5 jours', 
+      startDate: '27 Oct',
+      endDate: '3 Nov', 
+      participants: 3567, 
+      maxParticipants: 5000,
+      reward: 'Badge Platine + 1500 XP', 
+      bonusReward: 'Accès exclusif nouveau pack',
+      status: 'upcoming',
+      difficulty: 'Avancé',
+      category: 'Pays vs Pays'
+    },
+    { 
+      id: 3, 
+      title: 'Sprint Week-end', 
+      subtitle: 'Challenge rapide et intense',
+      date: 'Débute dans 7 jours', 
+      startDate: '29 Oct',
+      endDate: '30 Oct', 
+      participants: 892, 
+      maxParticipants: 1500,
+      reward: 'Badge Or + 1000 XP', 
+      bonusReward: '30 € de crédit',
+      status: 'upcoming',
+      difficulty: 'Intermédiaire',
+      category: 'Sprint 24h'
+    },
+  ];
+
+  // Mock data pour l'historique
+  const pastCompetitions = [
+    { id: 1, title: 'Sprint du Week-end', date: '12-14 Oct', myRank: 23, participants: 2341, reward: 'Badge Bronze', status: 'completed' },
+    { id: 2, title: 'Clash des Facultés', date: '5-11 Oct', myRank: 8, participants: 8543, reward: 'Badge Argent + 500 XP', status: 'completed' },
+    { id: 3, title: 'Défi des Pays', date: '28 Sept - 4 Oct', myRank: 156, participants: 15234, reward: 'Participation', status: 'completed' },
+  ];
+
+  // Mock data pour les statistiques
+  const myStats = {
+    totalCompetitions: 15,
+    totalWins: 2,
+    totalPodiums: 5,
+    bestRank: 1,
+    totalPoints: 18450,
+    averageRank: 42,
+    winRate: 13,
+  };
+
+  // Mock data pour les récompenses
+  const myRewards = [
+    { id: 1, title: 'Champion du Week-end', emoji: '👑', description: '1ère place Sprint', date: '23 Sept', rarity: 'legendary' as const },
+    { id: 2, title: 'Top 10 Faculté', emoji: '🥇', description: 'Top 10 Clash Facultés', date: '10 Oct', rarity: 'epic' as const },
+    { id: 3, title: 'Participant Actif', emoji: '⭐', description: '10 compétitions participées', date: '15 Oct', rarity: 'rare' as const },
+    { id: 4, title: 'Sprint Master', emoji: '⚡', description: '3 Sprints consécutifs', date: '18 Oct', rarity: 'rare' as const },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="space-y-6"
+    >
+      {/* Header moderne */}
+      <div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Compétitions
+        </h2>
+        <p className="text-gray-600 flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-gray-500" />
+          Défie la communauté et gagne des récompenses
+        </p>
+      </div>
+
+      {/* Navigation - Style horizontal avec icônes (sans container) */}
+      <div className="flex flex-col gap-4">
+        
+        {/* CATÉGORIE */}
+        <div className="flex flex-col gap-3">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Catégorie</span>
+          <div className="flex gap-3 flex-wrap">
+            {[
+              { id: 'current', label: 'En cours', icon: Flame },
+              { id: 'upcoming', label: 'À venir', icon: Sparkles },
+              { id: 'history', label: 'Historique', icon: Clock },
+              { id: 'stats', label: 'Mes stats', icon: TrendingUp },
+            ].map((cat) => (
+              <motion.button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id as any)}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className={`cursor-target relative flex flex-col items-center justify-center gap-2 px-6 py-4 rounded-2xl transition-all min-w-[110px] ${
+                  selectedCategory === cat.id
+                    ? 'bg-gray-900 text-white shadow-xl shadow-gray-900/20'
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                <cat.icon size={24} strokeWidth={2} />
+                <span className="text-xs font-bold whitespace-nowrap tracking-wide">{cat.label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contenu selon la catégorie */}
+      <AnimatePresence mode="wait">
+        {selectedCategory === 'current' && (
+          <motion.div
+            key="current"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            <CompetitionLeaderboard userId={userId} hideHeader={true} />
+          </motion.div>
+        )}
+
+        {selectedCategory === 'upcoming' && (
+          <motion.div
+            key="upcoming"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-4"
+          >
+            {upcomingCompetitions.map((comp, idx) => (
+              <motion.div
+                key={comp.id}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="relative overflow-hidden cursor-pointer group"
+              >
+                {/* Background avec effet subtil */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50/50 to-white rounded-2xl" />
+                <div className="absolute inset-0 rounded-2xl border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow duration-300" />
+                
+                {/* Accent latéral coloré selon difficulté */}
+                <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full ${
+                  comp.difficulty === 'Expert' ? 'bg-gradient-to-b from-gray-900 to-gray-700' :
+                  comp.difficulty === 'Avancé' ? 'bg-gradient-to-b from-gray-700 to-gray-500' :
+                  'bg-gradient-to-b from-blue-600 to-blue-400'
+                }`} />
+                
+                <div className="relative p-6 pl-8">
+                  {/* Header compact et impactant */}
+                  <div className="flex items-start justify-between gap-6 mb-5">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-xl font-semibold text-gray-900" style={{ 
+                          fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+                          letterSpacing: '-0.02em'
+                        }}>
+                          {comp.title}
+                        </h4>
+                        <motion.span 
+                          animate={{ scale: [1, 1.05, 1] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                          className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full"
+                        >
+                          {comp.date}
+                        </motion.span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3" style={{ 
+                        fontFamily: 'Inter, system-ui, sans-serif'
+                      }}>
+                        {comp.subtitle} • {comp.startDate} - {comp.endDate}
+                      </p>
+                      
+                      {/* Tags horizontaux compacts */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-lg">
+                          <Users className="w-3.5 h-3.5 text-gray-600" />
+                          <span className="text-xs text-gray-700 font-medium tabular-nums">
+                            {comp.participants.toLocaleString()}/{comp.maxParticipants.toLocaleString()}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-lg">
+                          <Trophy className="w-3.5 h-3.5 text-gray-600" />
+                          <span className="text-xs text-gray-700 font-medium">{comp.category}</span>
+                        </div>
+                        
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-lg ${
+                          comp.difficulty === 'Expert' ? 'bg-gray-900 text-white' :
+                          comp.difficulty === 'Avancé' ? 'bg-gray-700 text-white' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>
+                          {comp.difficulty}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* CTA principal repositionné */}
+                    <div className="flex flex-col items-end gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+                        style={{ 
+                          fontFamily: 'Inter, system-ui, sans-serif'
+                        }}
+                      >
+                        S'inscrire →
+                      </motion.button>
+                    </div>
+                  </div>
+
+                  {/* Récompenses mise en avant */}
+                  <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-gradient-to-br from-gray-900 to-gray-700 rounded-lg flex items-center justify-center">
+                            <Trophy className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-xs font-semibold text-gray-900 uppercase" style={{ letterSpacing: '0.05em' }}>
+                            Récompenses
+                          </span>
+                        </div>
+                        <div className="space-y-1.5 pl-10">
+                          <p className="text-sm text-gray-900 font-semibold">{comp.reward}</p>
+                          {comp.bonusReward && (
+                            <p className="text-xs text-gray-600">+ {comp.bonusReward}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Barre de remplissage */}
+                      <div className="flex flex-col items-end gap-1 min-w-[120px]">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-xs text-gray-500">Places restantes</span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(comp.participants / comp.maxParticipants) * 100}%` }}
+                            transition={{ duration: 1, ease: "easeOut", delay: idx * 0.1 + 0.3 }}
+                            className="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full"
+                          />
+                        </div>
+                        <span className="text-[10px] text-gray-500 font-medium tabular-nums">
+                          {comp.maxParticipants - comp.participants} places
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {selectedCategory === 'history' && (
+          <motion.div
+            key="history"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-6"
+          >
+            {/* Compétitions à venir */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-gray-900 px-1 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-blue-600" />
+                À venir
+              </h3>
+              {upcomingCompetitions.map((comp, idx) => (
+                <motion.div
+                  key={comp.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-5 border-2 border-blue-200 hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-gray-900">{comp.title}</h4>
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                          Bientôt
+                        </span>
+                      </div>
+                      <p className="text-sm text-blue-700 font-semibold mb-3">{comp.date}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                        <div className="flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5" />
+                          <span>{comp.participants.toLocaleString()} inscrits</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Trophy className="w-3.5 h-3.5 text-yellow-600" />
+                          <span>{comp.reward}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-bold hover:shadow-md transition-all">
+                      S'inscrire
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Compétitions terminées */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-gray-900 px-1 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-gray-600" />
+                Historique
+              </h3>
+              {pastCompetitions.map((comp, idx) => (
+                <motion.div
+                  key={comp.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: (upcomingCompetitions.length + idx) * 0.05 }}
+                  className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-gray-900">{comp.title}</h4>
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                          Terminé
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{comp.date}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                        <div className="flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5" />
+                          <span>{comp.participants.toLocaleString()} participants</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Trophy className="w-3.5 h-3.5 text-yellow-600" />
+                          <span>{comp.reward}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-3xl font-black mb-1 ${
+                        comp.myRank <= 3 ? 'text-yellow-600' : 
+                        comp.myRank <= 10 ? 'text-blue-600' : 
+                        'text-gray-700'
+                      }`}>
+                        #{comp.myRank}
+                      </div>
+                      <p className="text-xs text-gray-500">Ma position</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {selectedCategory === 'stats' && (
+          <motion.div
+            key="stats"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-6"
+          >
+            {/* Teaser Récompenses */}
+            <RewardsTeaser
+              rewards={myRewards}
+              onViewAll={() => {
+                if (onNavigateToBadges) {
+                  onNavigateToBadges();
+                }
+              }}
+            />
+
+            <h3 className="text-lg font-bold text-gray-900 px-1">Mes statistiques</h3>
+            
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
+                <p className="text-xs text-gray-600 mb-1">Victoires</p>
+                <p className="text-3xl font-black text-yellow-700">{myStats.totalWins}</p>
+                <p className="text-xs text-gray-600 mt-1">sur {myStats.totalCompetitions}</p>
+              </div>
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                <p className="text-xs text-gray-600 mb-1">Podiums</p>
+                <p className="text-3xl font-black text-orange-700">{myStats.totalPodiums}</p>
+                <p className="text-xs text-gray-600 mt-1">Top 3</p>
+              </div>
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                <p className="text-xs text-gray-600 mb-1">Meilleur rang</p>
+                <p className="text-3xl font-black text-blue-700">#{myStats.bestRank}</p>
+                <p className="text-xs text-gray-600 mt-1">Record</p>
+              </div>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                <p className="text-xs text-gray-600 mb-1">Points totaux</p>
+                <p className="text-3xl font-black text-purple-700">{(myStats.totalPoints / 1000).toFixed(1)}k</p>
+                <p className="text-xs text-gray-600 mt-1">XP gagnés</p>
+              </div>
+            </div>
+
+            {/* Graphique de performance */}
+            <div className="bg-white rounded-xl p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-4">Performance récente</h4>
+              <div className="flex items-end gap-2 h-40">
+                {[23, 8, 156, 45, 12, 67, 34, 18].map((rank, idx) => {
+                  const height = Math.max(10, 100 - (rank / 200) * 100);
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ height: 0 }}
+                      animate={{ height: `${height}%` }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={`flex-1 rounded-t-lg ${
+                        rank <= 10 ? 'bg-gradient-to-t from-yellow-400 to-yellow-600' :
+                        rank <= 50 ? 'bg-gradient-to-t from-blue-400 to-blue-600' :
+                        'bg-gradient-to-t from-gray-300 to-gray-400'
+                      }`}
+                      title={`Position #${rank}`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="flex justify-between mt-2 text-xs text-gray-500">
+                <span>Il y a 8 compétitions</span>
+                <span>Aujourd'hui</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user-1', initialTab = 'overview' }: CommunityProps = {}) {
+  const [activeTab, setActiveTab] = useState<CommunityTab>(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCircle, setSelectedCircle] = useState<string | null>(null);
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<any>(null);
   const [showStudyRoomModal, setShowStudyRoomModal] = useState(false);
+  const [showCircleDetail, setShowCircleDetail] = useState(false);
 
   const currentUser = getCurrentUserProfile();
   const circles = getMockCircles();
@@ -116,12 +591,46 @@ export function Community() {
     setSelectedStudyRoom(null);
   };
 
+  const handleOpenCircleDetail = (circleId: string | null) => {
+    if (circleId) {
+      // Vérifier si le cercle est déjà rejoint
+      const isJoined = circles.find(c => c.id === circleId)?.isJoined;
+      
+      if (isJoined) {
+        // Si déjà membre → Ouvrir la vue détaillée
+        setSelectedCircle(circleId);
+        setShowCircleDetail(true);
+      } else {
+        // Si pas encore membre → Ouvrir le modal de confirmation uniquement
+        setSelectedCircle(circleId);
+        setShowCircleDetail(false); // Ne pas ouvrir la vue détaillée
+      }
+    }
+  };
+
+  const handleCloseCircleDetail = () => {
+    setShowCircleDetail(false);
+    setSelectedCircle(null);
+  };
+
+  const handleOpenMessaging = (contactId?: string) => {
+    // Fermer la vue détaillée du cercle si elle est ouverte
+    if (showCircleDetail) {
+      setShowCircleDetail(false);
+      setSelectedCircle(null);
+    }
+    // Appeler la callback pour ouvrir la messagerie dans SimpleDashboard
+    if (onOpenMessagingProp) {
+      onOpenMessagingProp(contactId);
+    }
+  };
+
   const tabs = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: TrendingUp },
     { id: 'buddies', label: 'Buddies', icon: UserPlus },
     { id: 'circles', label: 'Cercles', icon: Users },
-    { id: 'study-rooms', label: 'Study Rooms', icon: Video },
     { id: 'qa', label: 'Q&A', icon: MessageCircle },
+    { id: 'competitions', label: 'Compétitions', icon: Trophy },
     { id: 'badges', label: 'Badges', icon: Award }
   ];
 
@@ -141,9 +650,9 @@ export function Community() {
   };
 
   return (
-    <div className="h-[calc(100vh-73px)] bg-gray-50 flex flex-col">
+    <div className="h-full bg-gray-50 flex flex-col">
       {/* Header Communauté - pleine largeur */}
-      <div className="bg-white border-b border-gray-200 px-6 py-6">
+      <div className="bg-white border-b border-gray-200 px-6 py-6 flex-shrink-0">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -153,31 +662,6 @@ export function Community() {
               Tu n'es pas seul. Ensemble, on vise plus haut. 🚀
             </p>
           </div>
-          
-          {/* Profil utilisateur compact */}
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-100"
-          >
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="text-3xl">{currentUser.avatar}</div>
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900">{currentUser.firstName}</h3>
-                <p className="text-sm text-gray-600">{currentUser.faculty}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                    Niveau {currentUser.level}
-                  </span>
-                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                    🔥 {currentUser.studyStreak}j
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
 
         {/* Navigation Tabs */}
@@ -214,43 +698,44 @@ export function Community() {
               activities={activities}
               challenge={challenge}
               studyRooms={studyRooms}
+              userId={userId}
             />
           )}
           {activeTab === 'circles' && (
+            <>
+              {showCircleDetail && selectedCircle ? (
+                <motion.div
+                  key="circle-detail"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="h-full"
+                >
+                  <CircleDetailView
+                    circle={circles.find(c => c.id === selectedCircle)!}
+                    onBack={handleCloseCircleDetail}
+                    onOpenMessaging={handleOpenMessaging}
+                  />
+                </motion.div>
+              ) : (
             <CirclesTab 
               joinedCircles={joinedCircles}
               availableCircles={availableCircles}
               selectedCircle={selectedCircle}
-              onSelectCircle={setSelectedCircle}
+                  onSelectCircle={handleOpenCircleDetail}
+                  onCloseModal={() => {
+                    setSelectedCircle(null);
+                    setShowCircleDetail(false);
+                  }}
               alumniProfiles={alumniProfiles}
             />
           )}
-          {activeTab === 'study-rooms' && (
-            <AdvancedStudyRoomsTab 
-              userId={currentUser.id}
-              userName={currentUser.firstName || currentUser.name || 'Étudiant'}
-              purchasedItems={new Set(['course-loi-gauss', 'course-integrales'])}
-              onNavigateToUpgrade={(courseId) => {
-                console.log('Navigation vers upgrade pour:', courseId);
-              }}
-              userCourses={[
-                { id: 'loi-gauss', title: 'Loi de Gauss', description: 'Électrostatique et champs', difficulty: 'intermediate', lessons: [], instructor: 'Dr. Physics', duration: 120, price: 700 },
-                { id: 'integrales', title: 'Intégrales et Applications', description: 'Calcul intégral avancé', difficulty: 'advanced', lessons: [], instructor: 'Dr. Math', duration: 150, price: 700 },
-                { id: 'suites-limites', title: 'Suites et Limites', description: 'Analyse mathématique', difficulty: 'intermediate', lessons: [], instructor: 'Dr. Math', duration: 100, price: 700 }
-              ]}
-              isAdmin={currentUser.id === 'admin_zak'} // Simuler un utilisateur admin
-            />
+            </>
           )}
           {activeTab === 'buddies' && (
-            <BuddiesTab 
+            <ModernBuddiesTab 
               userId={currentUser.id}
-              userName={currentUser.firstName || currentUser.name || 'Étudiant'}
-              userCourses={[
-                { id: 'loi-gauss', title: 'Loi de Gauss', description: 'Électrostatique et champs', difficulty: 'intermediate', lessons: [], instructor: 'Dr. Physics', duration: 120, price: 700 },
-                { id: 'integrales', title: 'Intégrales et Applications', description: 'Calcul intégral avancé', difficulty: 'advanced', lessons: [], instructor: 'Dr. Math', duration: 150, price: 700 },
-                { id: 'suites-limites', title: 'Suites et Limites', description: 'Analyse mathématique', difficulty: 'intermediate', lessons: [], instructor: 'Dr. Math', duration: 100, price: 700 },
-                { id: 'thermodynamique', title: 'Thermodynamique', description: 'Physique statistique', difficulty: 'advanced', lessons: [], instructor: 'Dr. Physics', duration: 180, price: 700 }
-              ]}
+              userName={currentUser.firstName || 'Étudiant'}
             />
           )}
           {activeTab === 'qa' && (
@@ -259,8 +744,14 @@ export function Community() {
               currentUser={currentUser}
             />
           )}
+          {activeTab === 'competitions' && (
+            <FullCompetitionsTab 
+              userId={userId} 
+              onNavigateToBadges={() => setActiveTab('badges')}
+            />
+          )}
           {activeTab === 'badges' && (
-            <BadgesTab 
+            <FullBadgesTab 
               badges={badges}
               currentUser={currentUser}
             />
@@ -288,181 +779,353 @@ function OverviewTab({
   circles, 
   activities, 
   challenge, 
-  studyRooms 
+  studyRooms,
+  userId 
 }: { 
   currentUser: StudentProfile;
   circles: Circle[];
   activities: CommunityActivity[];
   challenge: CommunityChallenge;
   studyRooms: StudyRoom[];
+  userId: string;
 }) {
   const activeRooms = studyRooms.filter(room => room.currentUsers.length > 0);
+  const xpService = XPService.getInstance();
+  const profile = xpService.getUserXPProfile();
+
+  // Mock recent badges (top 3)
+  const recentBadges = profile.badges.slice(0, 3);
+
+  // Mock buddies data (top 3 most active)
+  const topBuddies = [
+    { id: 'user-sophie', name: 'Sophie Martin', level: 12, xp: 2450, activity: 'Complété Thermodynamique', timeAgo: '5 min' },
+    { id: 'user-thomas', name: 'Thomas Bernard', level: 18, xp: 4200, activity: 'Study Room active', timeAgo: 'Maintenant' },
+    { id: 'user-emma', name: 'Emma Laurent', level: 10, xp: 1980, activity: 'A débloqué un badge', timeAgo: '30 min' },
+  ];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      className="space-y-6"
     >
-      {/* Colonne principale */}
-      <div className="lg:col-span-2 space-y-6">
-        {/* Défi collectif */}
+      {/* Bento Grid - Premium Layout Optimisé */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        {/* Compétition en cours - Large 2x2 */}
         <motion.div 
-          whileHover={{ scale: 1.01 }}
-          className="bg-gray-50 rounded-2xl p-6 border border-gray-200"
+          whileHover={{ y: -2 }}
+          className="md:col-span-2 lg:col-span-2 md:row-span-2 relative overflow-hidden group cursor-pointer"
+          style={{ minHeight: '400px' }}
         >
-          <div className="flex items-center justify-between mb-4">
+          {/* Glassmorphism background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-red-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+          
+          {/* Abstract shapes */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-full blur-3xl opacity-40" />
+          
+          <div className="relative p-7 h-full flex flex-col">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="text-2xl">{challenge.icon}</div>
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-md">
+                  <Trophy className="w-7 h-7 text-white" />
+                </div>
               <div>
-                <h3 className="font-bold text-gray-900">{challenge.title}</h3>
-                <p className="text-sm text-gray-600">{challenge.description}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 tracking-tight" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                    Clash des Facultés
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                    Se termine dans 2j 14h
+                  </p>
               </div>
             </div>
+              
             <div className="text-right">
-              <div className="text-2xl font-bold text-gray-900">{challenge.current}h</div>
-              <div className="text-sm text-gray-600">/ {challenge.target}h</div>
+                <div className="text-xs text-gray-500 mb-1">Ton rang</div>
+                <div className="text-3xl font-bold text-gray-900 tabular-nums">#23</div>
             </div>
           </div>
           
-          <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Progression collective</span>
-              <span>{Math.round((challenge.current / challenge.target) * 100)}%</span>
+            {/* Mini Leaderboard */}
+            <div className="flex-1 space-y-2 mb-6">
+              {[
+                { rank: 1, name: 'Polytechnique', xp: 45200, color: 'from-yellow-400 to-yellow-600' },
+                { rank: 2, name: 'ENS', xp: 42100, color: 'from-gray-300 to-gray-500' },
+                { rank: 3, name: 'HEC', xp: 39800, color: 'from-amber-600 to-amber-800' },
+              ].map((faculty) => (
+                <div key={faculty.rank} className="flex items-center gap-3 p-2.5 bg-white/50 rounded-xl border border-gray-200/50">
+                  <div className={`w-7 h-7 bg-gradient-to-br ${faculty.color} rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                    {faculty.rank}
             </div>
-            <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${(challenge.current / challenge.target) * 100}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gray-900 rounded-full"
-              />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-semibold text-gray-900 truncate">{faculty.name}</h4>
+                    <p className="text-[10px] text-gray-500">{faculty.xp.toLocaleString()} XP</p>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex -space-x-2">
-              {challenge.participants.slice(0, 3).map((participantId, index) => (
-                <div key={participantId} className="w-8 h-8 bg-gray-700 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">
-                  {index + 1}
+                  <Trophy size={14} className={`${faculty.rank === 1 ? 'text-yellow-500' : 'text-gray-400'}`} />
                 </div>
               ))}
-              {challenge.participants.length > 3 && (
-                <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-white text-xs">
-                  +{challenge.participants.length - 3}
-                </div>
-              )}
+          </div>
+
+            {/* CTA - Bottom Right */}
+            <div className="flex justify-end">
+              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+                Voir plus
+                <ChevronRight size={14} />
+              </button>
             </div>
-            <span className="text-sm text-gray-600 font-medium">{challenge.reward}</span>
           </div>
         </motion.div>
 
-        {/* Fil Communautaire */}
-        <CommunityFeed activities={activities} />
-
-        {/* Study Rooms actives */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Study Rooms actives</h3>
-            <span className="text-sm text-gray-600">{activeRooms.length} rooms ouvertes</span>
+        {/* Mes Buddies Actifs - Vertical 1x2 */}
+        <motion.div 
+          whileHover={{ y: -2 }}
+          className="lg:col-span-1 lg:row-span-2 relative overflow-hidden cursor-pointer"
+          style={{ minHeight: '400px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+          
+          <div className="relative p-6 h-full flex flex-col">
+            <div className="mb-5">
+              <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                Buddies actifs
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                Activité récente
+              </p>
           </div>
 
-          <div className="space-y-4">
-            {activeRooms.map((room) => (
+            <div className="flex-1 space-y-3">
+              {topBuddies.map((buddy) => (
+                <div key={buddy.id} className="p-3 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                      {buddy.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="text-xs font-semibold text-gray-900 truncate">{buddy.name}</h4>
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-100 rounded text-[10px] font-semibold text-gray-700">
+                          Niv. {buddy.level}
+                        </span>
+                    </div>
+                      <p className="text-[10px] text-gray-600 mb-1">{buddy.activity}</p>
+                      <p className="text-[10px] text-gray-400">{buddy.timeAgo}</p>
+                  </div>
+                      </div>
+                </div>
+              ))}
+                </div>
+
+            {/* CTA - Bottom Right */}
+            <div className="flex justify-end mt-4">
+              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+                Voir plus
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Badges Récents - 1x1 */}
+        <motion.div 
+          whileHover={{ y: -2 }}
+          className="lg:col-span-1 relative overflow-hidden cursor-pointer"
+          style={{ minHeight: '200px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+          
+          <div className="relative p-6 h-full flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                Badges récents
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                Derniers débloqués
+              </p>
+          </div>
+
+            <div className="flex-1 flex items-center justify-center gap-3">
+              {recentBadges.map((badge, idx) => (
               <motion.div
-                key={room.id}
-                whileHover={{ scale: 1.01 }}
-                className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 hover:border-gray-300 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <Video className="text-gray-600" size={20} />
-                      {room.pomodoroTimer.isActive && (
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-gray-800 rounded-full animate-pulse"></div>
-                      )}
+                  key={badge.id}
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: idx * 0.1, type: 'spring' }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center text-3xl shadow-md mb-2">
+                    {badge.emoji || '🏆'}
                     </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900">{room.name}</h4>
-                      <p className="text-sm text-gray-600">{room.subject}</p>
-                    </div>
+                  <p className="text-[9px] text-gray-600 text-center font-medium line-clamp-2">{badge.name}</p>
+              </motion.div>
+            ))}
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    {room.pomodoroTimer.isActive && (
-                      <div className="flex items-center gap-2 text-red-600">
-                        <Timer size={16} />
-                        <span className="text-sm font-mono">{formatTimer(room.pomodoroTimer.timeRemaining)}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Users size={16} className="text-gray-400" />
-                      <span className="text-sm text-gray-600">{room.currentUsers.length}/{room.maxUsers}</span>
-                    </div>
-                    <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
-                      Rejoindre
+            {/* CTA - Bottom Right */}
+            <div className="flex justify-end mt-4">
+              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+                Voir plus
+                <ChevronRight size={14} />
                     </button>
                   </div>
                 </div>
               </motion.div>
-            ))}
+
+        {/* Ma Streak & Stats - 1x1 */}
+        <motion.div 
+          whileHover={{ y: -2 }}
+          className="lg:col-span-1 relative overflow-hidden"
+          style={{ minHeight: '200px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+          
+          <div className="relative p-6 h-full flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                Ma progression
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                Stats personnelles
+              </p>
           </div>
+
+            <div className="flex-1 flex flex-col justify-center space-y-4">
+              {/* Streak */}
+              <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-200">
+                <div className="text-3xl mb-1">🔥</div>
+                <div className="text-2xl font-bold text-gray-900 tabular-nums">{currentUser.studyStreak}</div>
+                <p className="text-[10px] text-gray-600 font-medium">jours de série</p>
         </div>
 
+              {/* XP & Level */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 bg-white/50 rounded-lg border border-gray-200/50">
+                  <div className="text-lg font-bold text-gray-900 tabular-nums">{Math.floor(currentUser.totalXP / 1000)}</div>
+                  <p className="text-[9px] text-gray-500">Niveau</p>
       </div>
-
-      {/* Sidebar */}
-      <div className="space-y-6">
-        {/* Mes cercles */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Mes cercles</h3>
-          
-          <div className="space-y-3">
-            {circles.map((circle) => (
-              <div key={circle.id} className="flex items-center gap-3">
-                <div className="text-lg">{circle.icon}</div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 text-sm">{circle.name}</h4>
-                  <p className="text-xs text-gray-500">{circle.memberCount} membres</p>
+                <div className="text-center p-2 bg-white/50 rounded-lg border border-gray-200/50">
+                  <div className="text-lg font-bold text-gray-900 tabular-nums">{currentUser.totalXP}</div>
+                  <p className="text-[9px] text-gray-500">XP Total</p>
                 </div>
-                <ChevronRight size={16} className="text-gray-400" />
+          </div>
+        </div>
+      </div>
+        </motion.div>
+
+        {/* Mes Cercles - 1x1 */}
+        <motion.div 
+          whileHover={{ y: -2 }}
+          className="lg:col-span-1 relative overflow-hidden cursor-pointer"
+          style={{ minHeight: '200px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
+          
+          <div className="relative p-6 h-full flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                Mes cercles
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                {circles.length} communautés
+              </p>
+                </div>
+            
+            <div className="flex-1 space-y-2">
+              {circles.slice(0, 3).map((circle) => (
+                <div key={circle.id} className="flex items-center gap-2.5 p-2 rounded-xl bg-white/50 border border-gray-200/50 hover:shadow-md transition-all group">
+                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                    {circle.icon}
+              </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-medium text-gray-900 truncate">{circle.name}</h4>
+                    <p className="text-[10px] text-gray-500">{circle.memberCount} membres</p>
+          </div>
+                  <ChevronRight size={14} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
               </div>
             ))}
-          </div>
         </div>
 
-        {/* Motto personnalisé */}
-        {currentUser.motto && (
-          <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-            <div className="text-center">
-              <Star className="text-gray-600 mx-auto mb-2" size={24} />
-              <p className="text-gray-700 italic">"{currentUser.motto}"</p>
-              <p className="text-xs text-gray-500 mt-2">Ton motto</p>
+            {/* CTA - Bottom Right */}
+            <div className="flex justify-end mt-4">
+              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+                Voir plus
+                <ChevronRight size={14} />
+              </button>
             </div>
           </div>
-        )}
+        </motion.div>
 
-        {/* Quick stats */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Tes stats</h3>
+        {/* Study Rooms Live - 1x1 */}
+        <motion.div 
+          whileHover={{ y: -2 }}
+          className="lg:col-span-1 relative overflow-hidden cursor-pointer"
+          style={{ minHeight: '200px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-3xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 shadow-2xl shadow-black/5" />
           
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Cours terminés</span>
-              <span className="font-bold text-green-600">{currentUser.coursesCompleted}</span>
+          <div className="relative p-6 h-full flex flex-col">
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-semibold text-gray-900 tracking-tight" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                  Study Rooms
+                </h3>
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">XP total</span>
-              <span className="font-bold text-purple-600">{currentUser.totalXP}</span>
+              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+                {activeRooms.length} actives maintenant
+              </p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Streak actuelle</span>
-              <span className="font-bold text-orange-600">🔥 {currentUser.studyStreak}</span>
+            
+            <div className="flex-1 space-y-2">
+              {activeRooms.slice(0, 2).map((room) => (
+                <div key={room.id} className="p-2.5 rounded-xl bg-white/50 border border-gray-200/50 hover:shadow-md transition-all">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="relative flex-shrink-0">
+                      <Video className="text-gray-600" size={14} />
+                      {room.pomodoroTimer.isActive && (
+                        <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                      )}
+            </div>
+                    <h4 className="text-xs font-medium text-gray-900 truncate flex-1">{room.name}</h4>
+          </div>
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-gray-600">{room.subject}</span>
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <Users size={10} />
+                      <span className="tabular-nums">{room.currentUsers.length}</span>
             </div>
           </div>
+        </div>
+              ))}
+            </div>
+
+            {/* CTA - Bottom Right */}
+            <div className="flex justify-end mt-4">
+              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+                Voir plus
+                <ChevronRight size={14} />
+              </button>
         </div>
       </div>
+        </motion.div>
+      </div>
+
+      {/* Fil Communautaire - Full Width */}
+      <CommunityFeed activities={activities} />
     </motion.div>
   );
 }
@@ -489,12 +1152,14 @@ function CirclesTab({
   availableCircles, 
   selectedCircle, 
   onSelectCircle,
+  onCloseModal,
   alumniProfiles 
 }: {
   joinedCircles: Circle[];
   availableCircles: Circle[];
   selectedCircle: string | null;
   onSelectCircle: (circleId: string | null) => void;
+  onCloseModal: () => void;
   alumniProfiles: AlumniProfile[];
 }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -509,7 +1174,9 @@ function CirclesTab({
 
   const handleJoinCircle = (circleId: string) => {
     console.log('Rejoindre le cercle:', circleId);
-    // TODO: Implémenter la logique de rejoindre un cercle
+    // TODO: Implémenter la logique de rejoindre un cercle (API call)
+    // Pour l'instant, on simule juste un succès
+    alert(`✅ Vous avez rejoint le cercle avec succès !`);
   };
 
   const handleLeaveCircle = (circleId: string) => {
@@ -524,82 +1191,240 @@ function CirclesTab({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-8"
     >
-      {/* Header avec recherche et filtres */}
+      {/* Header moderne avec recherche et filtres */}
+      <div className="relative">
+        {/* Gradient background subtil */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50 rounded-3xl -z-10" />
+        
+        <div className="p-8 space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Cercles de la communauté</h2>
-          <p className="text-gray-600">Rejoins des cercles pour échanger avec d'autres étudiants</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Cercles de la communauté
+              </h2>
+              <p className="text-gray-600 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-gray-500" />
+                Rejoins des cercles pour échanger avec d'autres étudiants
+              </p>
         </div>
 
-        <div className="flex gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <div className="flex gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:flex-none sm:w-64">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
               placeholder="Rechercher un cercle..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:shadow-md transition-all placeholder-gray-400 !cursor-text"
             />
           </div>
           
+              <div className="relative">
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as 'all' | 'faculty' | 'course')}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">Tous</option>
-            <option value="faculty">Facultés</option>
-            <option value="course">Cours</option>
+                  className="pl-5 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:shadow-md font-medium text-gray-700 transition-all cursor-pointer appearance-none"
+                >
+                  <option value="all">Tous les cercles</option>
+                  <option value="faculty">Par faculté</option>
+                  <option value="course">Par cours</option>
           </select>
+                <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" size={18} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Mes cercles */}
+      {/* Mes cercles - Section premium */}
       {joinedCircles.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <CheckCircle className="text-green-600" size={24} />
-            Mes cercles ({joinedCircles.length})
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2.5 bg-green-100 rounded-xl">
+              <CheckCircle className="text-green-700" size={20} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Mes cercles
           </h3>
+              <p className="text-sm text-gray-600">
+                {joinedCircles.length} cercle{joinedCircles.length > 1 ? 's' : ''} actif{joinedCircles.length > 1 ? 's' : ''}
+                <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Actif</span>
+              </p>
+            </div>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {joinedCircles.map((circle) => (
               <CircleCard
                 key={circle.id}
                 circle={circle}
                 isJoined={true}
                 onAction={() => handleLeaveCircle(circle.id)}
-                onSelect={() => onSelectCircle(circle.id)}
+                onSelect={() => onSelectCircle(circle.id)} // Ouvre la vue détaillée (car déjà membre)
               />
             ))}
           </div>
         </div>
       )}
 
-      {/* Cercles disponibles */}
+      {/* Cercles disponibles - Section moderne avec DomeGallery */}
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Globe className="text-blue-600" size={24} />
-          Cercles disponibles ({filteredAvailable.length})
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <Globe className="text-white" size={20} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">
+              Découvrir les cercles
         </h3>
+            <p className="text-sm text-gray-600">
+              {filteredAvailable.length} cercle{filteredAvailable.length > 1 ? 's' : ''} en exploration 3D
+            </p>
+          </div>
+        </div>
+        
+        {/* Barre de recherche pour le dôme */}
+        <div className="mb-6">
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+            <input
+              type="text"
+              placeholder="Rechercher une faculté, un pays, un cours..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-2xl text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all !cursor-text"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors !cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+        </div>
         
         {filteredAvailable.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAvailable.map((circle) => (
-              <CircleCard
-                key={circle.id}
-                circle={circle}
-                isJoined={false}
-                onAction={() => handleJoinCircle(circle.id)}
-                onSelect={() => onSelectCircle(circle.id)}
-              />
-            ))}
+          <div className="my-8" style={{ height: '650px', width: '100%' }}>
+            <CircleDomeGallery
+              circles={filteredAvailable.map((circle) => ({
+                id: circle.id,
+                name: circle.name,
+                description: circle.description,
+                icon: circle.icon,
+                memberCount: circle.memberCount,
+                type: circle.type,
+                color: circle.color
+              }))}
+              onCircleClick={(circle) => {
+                onSelectCircle(circle.id);
+                // Le modal s'ouvrira via selectedCircle
+              }}
+              fit={0.7}
+              segments={20}
+              overlayBlurColor="#f9fafb"
+              dragSensitivity={18}
+              maxVerticalRotationDeg={8}
+              minRadius={750}
+            />
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
-            <Users className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-gray-600">Aucun cercle trouvé pour votre recherche</p>
+          <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl border border-gray-200">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", bounce: 0.5 }}
+            >
+              <Users className="mx-auto text-gray-300 mb-4" size={56} />
+            </motion.div>
+            <p className="text-gray-600 font-medium">Aucun cercle trouvé</p>
+            <p className="text-sm text-gray-500 mt-1">Essayez d'ajuster vos filtres</p>
+          </div>
+        )}
+
+        {/* Modal de confirmation pour rejoindre un cercle */}
+        {selectedCircle && availableCircles.find(c => c.id === selectedCircle) && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseModal();
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {(() => {
+                const circle = availableCircles.find(c => c.id === selectedCircle)!;
+                return (
+                  <>
+                    <div className="text-center mb-6">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mx-auto mb-4">
+                        <span className="text-5xl">
+                          {circle.type === 'faculty' ? '🎓' : circle.type === 'course' ? '📚' : '🎯'}
+                        </span>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{circle.name}</h2>
+                      <p className="text-gray-600 text-sm">{circle.description}</p>
+                    </div>
+
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">Membres</span>
+                        <span className="font-semibold text-gray-900 flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          {circle.memberCount}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">Type</span>
+                        <span className="font-semibold text-gray-900">
+                          {circle.type === 'faculty' ? 'Faculté' : 
+                           circle.type === 'course' ? 'Cours' : 'Alumni'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 relative z-10">
+                      <button
+                        onClick={(e) => {
+                          console.log('🔴 Annuler clicked');
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onCloseModal();
+                        }}
+                        type="button"
+                        style={{ pointerEvents: 'auto' }}
+                        className="cursor-pointer flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          console.log('🟢 Rejoindre clicked');
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleJoinCircle(circle.id);
+                          onCloseModal();
+                        }}
+                        type="button"
+                        style={{ pointerEvents: 'auto' }}
+                        className="cursor-pointer flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30"
+                      >
+                        Rejoindre
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+            </motion.div>
           </div>
         )}
       </div>
@@ -626,7 +1451,7 @@ function CirclesTab({
   );
 }
 
-// Composant pour une carte de cercle
+// Composant pour une carte de cercle - Version Apple Vision / Science Made Simple
 function CircleCard({
   circle,
   isJoined,
@@ -638,53 +1463,114 @@ function CircleCard({
   onAction: () => void;
   onSelect: () => void;
 }) {
+  // Déterminer le type de logo à afficher
+  const renderLogo = () => {
+    // Si c'est un pays → Drapeau
+    if (circle.name.includes('France') || circle.name.includes('Français') || circle.icon === '🇫🇷') {
+      return <span className="text-5xl">🇫🇷</span>;
+    }
+    if (circle.name.includes('Maroc') || circle.name.includes('Marocain') || circle.icon === '🇲🇦') {
+      return <span className="text-5xl">🇲🇦</span>;
+    }
+    if (circle.name.includes('Belgique') || circle.name.includes('Belge') || circle.icon === '🇧🇪') {
+      return <span className="text-5xl">🇧🇪</span>;
+    }
+    if (circle.icon === '🎓') {
+      return <span className="text-5xl">🎓</span>;
+    }
+    
+    // Si c'est une université → Initiales dans cercle
+    if (circle.type === 'faculty' && !circle.icon.match(/[\u{1F1E0}-\u{1F1FF}]/u)) {
+      const initials = circle.name.split(' ').map(w => w[0]).join('').slice(0, 3);
+      return (
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
+          <span className="text-white font-black text-xl">{initials}</span>
+        </div>
+      );
+    }
+    
+    // Si c'est un cours → Badge avec emoji
+    return (
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg">
+        <span className="text-3xl">{circle.icon}</span>
+      </div>
+    );
+  };
+  
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="cursor-target group relative bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 hover:border-gray-300/80 hover:shadow-2xl hover:shadow-black/5 transition-all duration-300 overflow-hidden cursor-pointer"
       onClick={onSelect}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`text-2xl p-3 rounded-xl bg-${circle.color}-100`}>
-            {circle.icon}
+      {/* Glassmorphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-gray-100/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Status badge - Actif */}
+      {isJoined && (
+        <div className="absolute top-4 right-4 z-10">
+          <div className="px-2.5 py-1 bg-green-500 rounded-full flex items-center gap-1.5 shadow-lg shadow-green-500/20">
+            <CheckCircle className="text-white" size={12} />
+            <span className="text-[10px] font-bold text-white uppercase tracking-wide">Actif</span>
           </div>
-          <div>
-            <h4 className="font-bold text-gray-900">{circle.name}</h4>
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              circle.type === 'faculty' 
-                ? 'bg-blue-100 text-blue-700' 
-                : 'bg-purple-100 text-purple-700'
-            }`}>
-              {circle.type === 'faculty' ? 'Faculté' : 'Cours'}
-            </span>
           </div>
+      )}
+
+      <div className="relative p-5">
+        {/* Logo/Icon centré */}
+        <div className="flex justify-center mb-3">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 500 }}
+          >
+            {renderLogo()}
+          </motion.div>
         </div>
         
-        {isJoined && <CheckCircle className="text-green-600" size={20} />}
+        {/* Titre et badge */}
+        <div className="text-center mb-2">
+          <h4 className="font-bold text-base text-gray-900 mb-1.5 line-clamp-1 group-hover:text-black transition-colors">
+            {circle.name}
+          </h4>
+          <span className="inline-block px-2.5 py-0.5 bg-gray-900 text-white text-[9px] font-bold uppercase tracking-wider rounded-full">
+            {circle.type === 'faculty' ? 'Faculté' : circle.type === 'course' ? 'Cours' : 'Alumni'}
+          </span>
       </div>
 
-      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{circle.description}</p>
+        {/* Description */}
+        <p className="text-gray-600 text-xs text-center mb-3 line-clamp-2 leading-relaxed">
+          {circle.description}
+        </p>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 text-gray-500">
-          <Users size={16} />
-          <span className="text-sm">{circle.memberCount} membres</span>
+        {/* Séparateur */}
+        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-3" />
+
+        {/* Membres */}
+        <div className="flex items-center justify-center gap-1.5 mb-3">
+          <div className="p-1 bg-gray-100 rounded-lg">
+            <Users size={12} className="text-gray-700" />
+          </div>
+          <span className="text-xs font-bold text-gray-900">{circle.memberCount.toLocaleString()}</span>
+          <span className="text-[10px] text-gray-500 font-medium">membres</span>
         </div>
 
-        <button
+        {/* Bouton action - Uniquement "Rejoindre" pour les cercles non rejoints */}
+        {!isJoined && (
+          <motion.button
           onClick={(e) => {
             e.stopPropagation();
             onAction();
           }}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            isJoined
-              ? 'bg-red-50 text-red-600 hover:bg-red-100'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          {isJoined ? 'Quitter' : 'Rejoindre'}
-        </button>
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="cursor-target w-full py-2.5 rounded-2xl text-sm font-bold bg-gray-900 text-white hover:bg-black shadow-lg shadow-black/10 transition-all duration-200"
+          >
+            Rejoindre
+          </motion.button>
+        )}
       </div>
     </motion.div>
   );
@@ -1402,243 +2288,5 @@ function QuestionCard({
   );
 }
 
-function BadgesTab({ 
-  badges, 
-  currentUser 
-}: {
-  badges: SocialBadge[];
-  currentUser: StudentProfile;
-}) {
-  const [filterRarity, setFilterRarity] = useState<'all' | 'common' | 'rare' | 'epic' | 'legendary'>('all');
 
-  const unlockedBadges = badges.filter(badge => badge.unlockedAt);
-  const lockedBadges = badges.filter(badge => !badge.unlockedAt);
 
-  const filteredUnlocked = unlockedBadges.filter(badge => 
-    filterRarity === 'all' || badge.rarity === filterRarity
-  );
-
-  const filteredLocked = lockedBadges.filter(badge => 
-    filterRarity === 'all' || badge.rarity === filterRarity
-  );
-
-  const getRarityColor = (rarity: string) => {
-    switch(rarity) {
-      case 'common': return 'text-gray-600 bg-gray-100';
-      case 'rare': return 'text-gray-700 bg-gray-200';
-      case 'epic': return 'text-gray-800 bg-gray-300';
-      case 'legendary': return 'text-gray-900 bg-gray-400';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const getRarityBorder = (rarity: string) => {
-    switch(rarity) {
-      case 'common': return 'border-gray-300';
-      case 'rare': return 'border-gray-400';
-      case 'epic': return 'border-gray-500';
-      case 'legendary': return 'border-gray-600 shadow-gray-200';
-      default: return 'border-gray-300';
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      {/* Header avec filtre */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Badges Sociaux</h2>
-          <p className="text-gray-600">Débloquez des badges en participant à la communauté</p>
-        </div>
-
-        <select
-          value={filterRarity}
-          onChange={(e) => setFilterRarity(e.target.value as typeof filterRarity)}
-          className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="all">Toutes les raretés</option>
-          <option value="common">Commun</option>
-          <option value="rare">Rare</option>
-          <option value="epic">Épique</option>
-          <option value="legendary">Légendaire</option>
-        </select>
-      </div>
-
-      {/* Statistiques */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Award className="text-green-600" size={16} />
-            <span className="text-sm text-gray-600">Badges obtenus</span>
-          </div>
-          <div className="text-xl font-bold text-gray-900">{unlockedBadges.length}</div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Clock className="text-orange-600" size={16} />
-            <span className="text-sm text-gray-600">En progression</span>
-          </div>
-          <div className="text-xl font-bold text-gray-900">{lockedBadges.length}</div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Crown className="text-yellow-600" size={16} />
-            <span className="text-sm text-gray-600">Badges rares+</span>
-          </div>
-          <div className="text-xl font-bold text-gray-900">
-            {unlockedBadges.filter(b => ['rare', 'epic', 'legendary'].includes(b.rarity)).length}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Star className="text-purple-600" size={16} />
-            <span className="text-sm text-gray-600">Progression</span>
-          </div>
-          <div className="text-xl font-bold text-gray-900">
-            {Math.round((unlockedBadges.length / badges.length) * 100)}%
-          </div>
-        </div>
-      </div>
-
-      {/* Badges obtenus */}
-      {filteredUnlocked.length > 0 && (
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Award className="text-green-600" size={24} />
-            Badges obtenus ({filteredUnlocked.length})
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredUnlocked.map((badge) => (
-              <BadgeCard
-                key={badge.id}
-                badge={badge}
-                isUnlocked={true}
-                getRarityColor={getRarityColor}
-                getRarityBorder={getRarityBorder}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Badges à débloquer */}
-      {filteredLocked.length > 0 && (
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Clock className="text-orange-600" size={24} />
-            À débloquer ({filteredLocked.length})
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredLocked.map((badge) => (
-              <BadgeCard
-                key={badge.id}
-                badge={badge}
-                isUnlocked={false}
-                getRarityColor={getRarityColor}
-                getRarityBorder={getRarityBorder}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* État vide */}
-      {filteredUnlocked.length === 0 && filteredLocked.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
-          <Award className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun badge trouvé</h3>
-          <p className="text-gray-600">Changez le filtre de rareté pour voir plus de badges</p>
-        </div>
-      )}
-    </motion.div>
-  );
-}
-
-// Composant pour une carte de badge
-function BadgeCard({
-  badge,
-  isUnlocked,
-  getRarityColor,
-  getRarityBorder
-}: {
-  badge: SocialBadge;
-  isUnlocked: boolean;
-  getRarityColor: (rarity: string) => string;
-  getRarityBorder: (rarity: string) => string;
-}) {
-  const progressPercent = badge.criteria.current && badge.criteria.target 
-    ? (badge.criteria.current / badge.criteria.target) * 100
-    : 0;
-
-  return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      className={`bg-white rounded-2xl p-6 border-2 transition-all ${
-        isUnlocked 
-          ? `${getRarityBorder(badge.rarity)} shadow-lg` 
-          : 'border-gray-200 opacity-60'
-      }`}
-    >
-      <div className="text-center">
-        <div className={`text-4xl mb-3 ${isUnlocked ? '' : 'grayscale'}`}>
-          {badge.icon}
-        </div>
-        
-        <h4 className="font-bold text-gray-900 mb-1">{badge.name}</h4>
-        
-        <span className={`text-xs px-2 py-1 rounded-full ${getRarityColor(badge.rarity)}`}>
-          {badge.rarity.charAt(0).toUpperCase() + badge.rarity.slice(1)}
-        </span>
-        
-        <p className="text-gray-600 text-sm mt-3 mb-4">{badge.description}</p>
-
-        {!isUnlocked && badge.criteria.current !== undefined && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Progression</span>
-              <span className="font-medium">
-                {badge.criteria.current}/{badge.criteria.target}
-              </span>
-            </div>
-            
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(progressPercent, 100)}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className={`h-2 rounded-full bg-gradient-to-r ${
-                  badge.rarity === 'legendary' ? 'from-yellow-400 to-yellow-600' :
-                  badge.rarity === 'epic' ? 'from-purple-400 to-purple-600' :
-                  badge.rarity === 'rare' ? 'from-blue-400 to-blue-600' :
-                  'from-gray-400 to-gray-600'
-                }`}
-              />
-            </div>
-            
-            <p className="text-xs text-gray-500">
-              {Math.round(progressPercent)}% complété
-            </p>
-          </div>
-        )}
-
-        {isUnlocked && badge.unlockedAt && (
-          <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-green-700 text-sm font-medium">
-              ✓ Obtenu le {badge.unlockedAt.toLocaleDateString('fr-FR')}
-            </p>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-}

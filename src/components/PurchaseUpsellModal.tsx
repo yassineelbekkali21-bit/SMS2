@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, BookOpen, GraduationCap, Award, CheckCircle, CreditCard, Wallet } from 'lucide-react';
+import { X, BookOpen, GraduationCap, Award, CheckCircle, CreditCard, Wallet, XCircle } from 'lucide-react';
 import { PurchaseOption } from '@/types';
 import { WalletService } from '@/lib/wallet-service';
 import { WalletTopUp } from './WalletTopUp';
+import { RechargeBonusService } from '@/lib/recharge-bonus-service';
 
 
 interface PurchaseUpsellModalProps {
@@ -38,15 +39,17 @@ export function PurchaseUpsellModal({
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [userBalance, setUserBalance] = useState<number>(0);
   const [showTopUpModal, setShowTopUpModal] = useState<boolean>(false);
+  const [contextualRechargeAmount, setContextualRechargeAmount] = useState<number>(0);
+  const [contextualRechargeMessage, setContextualRechargeMessage] = useState<string>('');
   const [topUpSource, setTopUpSource] = useState<'lesson' | 'course' | 'pack' | 'general'>('general');
   const [pendingPurchaseOption, setPendingPurchaseOption] = useState<PurchaseOption | null>(null);
 
   // Charger le solde au montage et quand la modale s'ouvre
   useEffect(() => {
     if (isOpen) {
-      const balance = WalletService.getBalance();
-      setUserBalance(balance);
-      console.log(`💰 UPSELL MODAL: Solde chargé - ${balance.toFixed(2)}€`);
+      const totalBalance = WalletService.getTotalBalance('user-default');
+      setUserBalance(totalBalance.total);
+      console.log(`💰 UPSELL MODAL: Solde total chargé - ${totalBalance.total.toFixed(2)}€ (Portefeuille: ${totalBalance.walletBalance}€ + Bonus: ${totalBalance.progressionBonus}€)`);
     }
   }, [isOpen]);
 
@@ -54,14 +57,42 @@ export function PurchaseUpsellModal({
     return null;
   }
 
+  // Collecter toutes les features uniques de toutes les options
+  const getAllUniqueFeatures = (): string[] => {
+    const allFeatures = new Set<string>();
+    purchaseOptions.forEach(option => {
+      (option.features || []).forEach(feature => {
+        // Normaliser les features pour la comparaison (enlever les bullet points)
+        const normalized = feature.startsWith('•') || feature.startsWith('–') 
+          ? feature.substring(2).trim() 
+          : feature.trim();
+        allFeatures.add(normalized);
+      });
+    });
+    return Array.from(allFeatures);
+  };
+
+  // Vérifier si une option a une feature spécifique
+  const hasFeature = (option: PurchaseOption, featureToCheck: string): boolean => {
+    return (option.features || []).some(feature => {
+      const normalized = feature.startsWith('•') || feature.startsWith('–') 
+        ? feature.substring(2).trim() 
+        : feature.trim();
+      return normalized === featureToCheck;
+    });
+  };
+
   const handlePurchase = (option: PurchaseOption) => {
     console.log('🛒 UPSELL MODAL: handlePurchase called with option:', option);
     console.log('💰 UPSELL MODAL: userBalance:', userBalance, 'price:', option.price);
     
-    const result = WalletService.makePurchase(option);
+    const result = WalletService.makePurchase(option, 'user-default');
     
     if (result.success) {
       console.log('✅ Achat réussi via WalletService');
+      if (result.usedProgressionBonus && result.usedProgressionBonus > 0) {
+        console.log(`💎 UPSELL MODAL: Bonus de progression utilisé - ${result.usedProgressionBonus}€`);
+      }
       setUserBalance(result.newBalance);
       
       // Appeler le callback parent si fourni
@@ -92,12 +123,21 @@ export function PurchaseUpsellModal({
     if (option) {
       setPendingPurchaseOption(option);
       console.log(`💳 UPSELL MODAL: Option mémorisée pour achat automatique:`, option.title);
+      
+      // Calculer le montant manquant et préparer le message contextuel
+      const missingAmount = Math.ceil(option.price - userBalance);
+      setContextualRechargeAmount(missingAmount);
+      
+      // Obtenir les informations de bonus pour le message contextuel
+      const bonusInfo = RechargeBonusService.getBonusInfo('user-default'); // TODO: utiliser le vrai userId
+      const contextualMessage = RechargeBonusService.getContextualRechargeMessage(bonusInfo, missingAmount);
+      setContextualRechargeMessage(contextualMessage);
     }
     
     if (onAddFunds) {
       onAddFunds();
     } else {
-      // Utiliser notre propre modal de recharge
+      // Utiliser l'ancienne modal de recharge adaptée avec bonus
       setShowTopUpModal(true);
     }
   };
@@ -105,27 +145,40 @@ export function PurchaseUpsellModal({
   const handleTopUpComplete = (amount: number, bonus: number) => {
     console.log(`💰 UPSELL MODAL: Recharge terminée - +${amount}€${bonus ? ` + bonus ${bonus}€` : ''}`);
     
-    // Mettre à jour le solde via WalletService
-    const result = WalletService.topUpWallet(amount, topUpSource);
-    if (result.success) {
-      setUserBalance(result.newBalance);
+    // ⚠️ NE PAS recharger ici - c'est déjà fait dans WalletTopUp
+    // const result = WalletService.topUpWallet(amount); // SUPPRIMÉ - Double recharge !
+    
+    // Récupérer le nouveau solde total (portefeuille + bonus)
+    const totalBalance = WalletService.getTotalBalance('user-default');
+    setUserBalance(totalBalance.total);
+    console.log(`💰 UPSELL MODAL: Nouveau solde total après recharge: ${totalBalance.total}€`);
+    
+    // Si on a une option en attente et que le solde est suffisant, acheter automatiquement
+    if (pendingPurchaseOption && totalBalance.total >= pendingPurchaseOption.price && onPurchase) {
+      console.log('💳 UPSELL MODAL: Achat automatique après recharge:', pendingPurchaseOption.title);
+      console.log(`💳 UPSELL MODAL: Solde total: ${totalBalance.total}€, Prix: ${pendingPurchaseOption.price}€`);
       
-      // Si on a une option en attente et que le solde est suffisant, acheter automatiquement
-      if (pendingPurchaseOption && result.newBalance >= pendingPurchaseOption.price && onPurchase) {
-        console.log('💳 UPSELL MODAL: Achat automatique après recharge:', pendingPurchaseOption.title);
+      // ⚠️ CRUCIAL: Passer par WalletService.makePurchase pour déduire le montant
+      const purchaseResult = WalletService.makePurchase(pendingPurchaseOption, 'user-default');
+      
+      if (purchaseResult.success) {
+        console.log('✅ UPSELL MODAL: Achat automatique réussi via WalletService');
+        setUserBalance(purchaseResult.newBalance);
         onPurchase(pendingPurchaseOption);
         setPendingPurchaseOption(null);
         onClose();
         return;
+      } else {
+        console.log('❌ UPSELL MODAL: Achat automatique échoué:', purchaseResult.error);
       }
-      
-      // Afficher un message de succès
-      const message = bonus > 0
-        ? `🎉 Recharge réussie !\n\n+${amount}€ + bonus ${bonus}€\nNouveau solde: ${result.newBalance.toFixed(2)}€`
-        : `💰 Recharge réussie !\n\n+${amount}€\nNouveau solde: ${result.newBalance.toFixed(2)}€`;
-      
-      alert(message);
     }
+    
+    // Afficher un message de succès
+    const message = bonus > 0
+      ? `🎉 Recharge réussie !\n\n+${amount}€ + bonus ${bonus}€\nNouveau solde: ${totalBalance.total.toFixed(2)}€`
+      : `💰 Recharge réussie !\n\n+${amount}€\nNouveau solde: ${totalBalance.total.toFixed(2)}€`;
+    
+    alert(message);
     setShowTopUpModal(false);
     setPendingPurchaseOption(null);
   };
@@ -151,22 +204,6 @@ export function PurchaseUpsellModal({
             </div>
           </div>
 
-          {/* Conseil pédagogique */}
-          <div className="p-3 bg-blue-50 border-l-4 border-blue-400">
-            <div className="flex items-center space-x-2">
-              <div className="bg-blue-100 p-1.5 rounded-full">
-                <GraduationCap className="w-4 h-4 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="text-base font-semibold text-blue-900">Conseil pédagogique</h3>
-                <p className="text-blue-800 text-sm leading-tight">
-                  Une approche progressive et complète est la clé de la réussite ! Nos experts recommandent de maîtriser l'ensemble du sujet. 
-                  <span className="font-medium">Tu peux toujours commencer petit et évoluer !</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Options d'achat */}
           <div className="p-4">
             <div className={`grid grid-cols-1 ${
@@ -179,7 +216,7 @@ export function PurchaseUpsellModal({
               {(purchaseOptions || [])
                 .map((option, index) => {
                   const IconComponent = OPTION_ICONS[option.type];
-                  const canAfford = userBalance >= option.price;
+                  const canAfford = WalletService.canAfford(option.price, 'user-default');
                   const isRecommended = option.badge === 'Recommandé';
                   const isValueAdded = option.badge === 'Valeur ajoutée';
                   
@@ -231,15 +268,21 @@ export function PurchaseUpsellModal({
                       {/* Features */}
                       <div className="px-4 pb-3">
                         <ul className="space-y-1.5 mb-4">
-                          {(option.features || []).map((feature, idx) => {
-                            const isSubItem = feature.startsWith('•') || feature.startsWith('–');
-                            const displayText = isSubItem ? feature.substring(2) : feature;
+                          {getAllUniqueFeatures().map((feature, idx) => {
+                            const included = hasFeature(option, feature);
                             
                             return (
-                              <li key={idx} className={`flex items-start space-x-2 ${isSubItem ? 'ml-5' : ''}`}>
-                                {!isSubItem && <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />}
-                                {isSubItem && <div className="w-1 h-1 bg-gray-400 rounded-full flex-shrink-0 mt-1.5"></div>}
-                                <span className="text-gray-700 text-xs leading-snug">{displayText}</span>
+                              <li key={idx} className="flex items-start space-x-2">
+                                {included ? (
+                                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                                ) : (
+                                  <XCircle className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5" />
+                                )}
+                                <span className={`text-xs leading-snug ${
+                                  included ? 'text-gray-700 font-medium' : 'text-gray-400 line-through'
+                                }`}>
+                                  {feature}
+                                </span>
                               </li>
                             );
                           })}
@@ -265,28 +308,6 @@ export function PurchaseUpsellModal({
                             </div>
                             <div className="text-orange-600 text-xs text-center">
                               Il vous manque {(option.price - userBalance).toFixed(2)}€
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Message de recommandation */}
-                        {isRecommended && (
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3">
-                            <div className="text-blue-800 text-xs text-center font-medium">
-                              Avantage pédagogique
-                            </div>
-                          </div>
-                        )}
-
-
-                        {/* Hint Wallet - uniquement pour le pack */}
-                        {option.type === 'pack' && !canAfford && (
-                          <div className="mb-3 p-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <span className="text-blue-600 text-sm">💡</span>
-                              <div className="text-xs text-blue-800 leading-tight">
-                                {WalletService.getPackBonusHint() || option.walletHint}
-                              </div>
                             </div>
                           </div>
                         )}
@@ -345,7 +366,7 @@ export function PurchaseUpsellModal({
                     onClick={() => handleTopUpRequest('general')}
                     className="text-blue-600 hover:text-blue-700 font-medium text-xs hover:underline"
                   >
-                    Recharger mon portefeuille pour plus d'options
+                    Recharger mon portefeuille
                   </button>
                 </div>
               )}
@@ -360,6 +381,10 @@ export function PurchaseUpsellModal({
           onCancel={() => setShowTopUpModal(false)}
           onTopUp={handleTopUpComplete}
           isPackOffer={topUpSource === 'pack'}
+          userId="user-default" // TODO: utiliser le vrai userId
+          contextualAmount={contextualRechargeAmount > 0 ? contextualRechargeAmount : undefined}
+          contextualMessage={contextualRechargeMessage || undefined}
+          source="purchase"
         />
       )}
     </div>

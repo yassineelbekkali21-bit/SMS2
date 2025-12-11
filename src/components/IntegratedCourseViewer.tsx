@@ -29,6 +29,7 @@ import {
   BarChart3,
   Globe,
   ChevronDown,
+  ChevronRight,
   Gift,
   Crown,
   CheckCircle,
@@ -41,13 +42,27 @@ import {
   Gem,
   Download,
   Library,
-  Heart
+  Heart,
+  MessageSquare,
+  Info,
+  Check,
+  ThumbsUp,
+  Lightbulb
 } from 'lucide-react';
 import { Course, Lesson, User, PurchaseOption } from '@/types';
 import { IdentityVerificationModal } from './IdentityVerificationModal';
 import { IdentityVerificationTrigger } from './IdentityVerificationTrigger';
 import { IdentityVerificationService } from '@/lib/identity-verification-service';
 import { useFavorites } from '@/hooks/useFavorites';
+import { WalletService } from '@/lib/wallet-service';
+import { WalletBalance } from './WalletBalance';
+import { XPService, UserXPProfile } from '@/lib/xp-service';
+import XPWidget from './XPWidget';
+import SocialFeedIcon from './SocialFeedIcon';
+import SocialFeedPanel from './SocialFeedPanel';
+import { StudyRoomHeaderWidget } from './StudyRoomHeaderWidget';
+import { UnifiedSocialWidget } from './UnifiedSocialWidget';
+import { NotificationWidget } from './NotificationWidget';
 import { VideoWithQuiz } from './VideoWithQuiz';
 // import { VideoQuizPlayer } from './VideoQuizPlayer'; // Temporairement désactivé
 import { WhatsAppIntegration } from './WhatsAppIntegration';
@@ -60,7 +75,9 @@ import { MiniQuiz } from './MiniQuiz';
 import { getQuizByLessonId, generateUpsellOptions, mockUser } from '@/lib/mock-data';
 import { PurchaseUpsellModal } from './PurchaseUpsellModal';
 import { WalletTopUp } from './WalletTopUp';
-import { NotificationWidget } from './NotificationWidget';
+import { AdvancedStudyRoomService } from '@/lib/advanced-studyroom-service';
+import { AdvancedStudyRoom } from '@/types';
+import { WebRTCStudyRoom } from './WebRTCStudyRoom';
 
 interface IntegratedCourseViewerProps {
   course: Course | null;
@@ -74,6 +91,7 @@ interface IntegratedCourseViewerProps {
   user?: any;
   lessons?: Lesson[];
   onLessonsUpdate?: (lessons: Lesson[]) => void;
+  userXPProfile?: UserXPProfile | null;
 }
 
 // Fonds d'écran prédéfinis
@@ -274,13 +292,11 @@ const CourseNode: React.FC<{
       {/* Node principal */}
       <motion.button
         onClick={onClick}
-        disabled={state === 'locked'}
         className={`
           relative w-16 h-16 rounded-2xl flex items-center justify-center group
           transition-all duration-300 cursor-pointer
           ${getNodeStyle()}
           ${isSelected ? 'ring-4 ring-blue-200' : ''}
-          ${state === 'locked' ? 'cursor-not-allowed' : ''}
         `}
         animate={isSelected ? { scale: 1.1 } : { scale: 1 }}
       >
@@ -297,7 +313,7 @@ const CourseNode: React.FC<{
               case 'available': 
                 return 'Leçon débloquée 🔓 - Cliquez pour commencer';
               case 'locked': 
-                return 'Leçon verrouillée 🔒 - Débloquez le cours pour accéder';
+                return 'Leçon verrouillée 🔒 - Cliquez pour débloquer';
             }
           })()}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
@@ -315,7 +331,7 @@ const CourseNode: React.FC<{
         
         {/* Badge XP */}
         {state !== 'locked' && (
-          <div className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+          <div className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
             +{lesson.xpReward}
           </div>
         )}
@@ -492,7 +508,7 @@ const LessonDetailBlock: React.FC<{
     };
     if (lesson.quizCompleted) return {
       text: `Quiz fait (${lesson.quizScore}%)`,
-      color: 'bg-purple-50 text-purple-700 border-purple-200',
+      color: 'bg-gray-50 text-purple-700 border-gray-200',
       icon: Brain,
       description: 'Quiz terminé - débloquez la leçon pour continuer'
     };
@@ -669,7 +685,7 @@ const LessonDetailBlock: React.FC<{
 
                 {/* Ligne secondaire - Upsell Pack Électrostatique */}
                 <div className="flex items-start gap-3">
-                  <Library size={18} className="text-purple-600 flex-shrink-0 mt-0.5" />
+                  <Library size={18} className="text-gray-900 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 leading-relaxed">
                     Pour accéder à l'intégralité des slides de toutes vos leçons et cours, débloquez le{' '}
                     <button
@@ -732,7 +748,7 @@ const LessonDetailBlock: React.FC<{
                   <div className="text-xs text-gray-500">{difficulty?.estimatedTime}</div>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
+                  <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
                     <Zap size={14} />
                     <span className="text-xs font-medium">Récompense</span>
                   </div>
@@ -778,7 +794,7 @@ const LessonDetailBlock: React.FC<{
               {/* Bouton Je me teste - Mobile */}
               <button
                 onClick={onShowQuiz}
-                className="flex-1 bg-purple-50 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-3 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-gray-50 border-2 border-gray-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-3 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
                 title={lesson.isOwned ? "Test complet accessible" : "Test gratuit disponible"}
               >
                 <HelpCircle size={16} />
@@ -821,7 +837,7 @@ const LessonDetailBlock: React.FC<{
               {/* Bouton Je me teste - Desktop */}
               <button
                 onClick={onShowQuiz}
-                className="w-full bg-purple-50 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                className="w-full bg-gray-50 border-2 border-gray-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
                 title={lesson.isOwned ? "Test complet accessible" : "Test gratuit disponible"}
               >
                 <HelpCircle size={16} />
@@ -856,7 +872,8 @@ export function IntegratedCourseViewer({
   onPurchase,
   user: propUser,
   lessons: propLessons,
-  onLessonsUpdate
+  onLessonsUpdate,
+  userXPProfile: propUserXPProfile
 }: IntegratedCourseViewerProps) {
   const [currentView, setCurrentView] = useState<'map' | 'lesson'>('map');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
@@ -878,6 +895,30 @@ export function IntegratedCourseViewer({
   const [upsellOptions, setUpsellOptions] = useState<PurchaseOption[]>([]);
   const [showWalletTopUp, setShowWalletTopUp] = useState(false);
   const [user, setUser] = useState<User>(propUser || mockUser);
+  const [selectedStudyRoom, setSelectedStudyRoom] = useState<AdvancedStudyRoom | null>(null);
+  
+  // États pour le header (répliqués du SimpleDashboard)
+  const [showSocialFeed, setShowSocialFeed] = useState(false);
+  const [userXPProfile, setUserXPProfile] = useState<UserXPProfile | null>(null);
+  const [walletUpdateTrigger, setWalletUpdateTrigger] = useState(0);
+
+  // Calculer les infos de Study Room pour le cours actuel
+  const courseStudyRoomInfo = React.useMemo(() => {
+    if (!course?.id) return null;
+    
+    const allRooms = AdvancedStudyRoomService.getActiveStudyRooms();
+    const room = allRooms.find(r => 
+      r.courseId === course.id && (r.status === 'live' || r.status === 'scheduled')
+    );
+    
+    if (!room) return null;
+    
+    return {
+      room,
+      isActive: room.status === 'live',
+      participantCount: room.currentParticipants.filter(p => !p.leftAt).length
+    };
+  }, [course?.id]);
   
   // Mettre à jour le user local quand propUser change
   useEffect(() => {
@@ -885,16 +926,30 @@ export function IntegratedCourseViewer({
       setUser(propUser);
     }
   }, [propUser]);
+  
+  // Initialiser le profil XP depuis les props ou le service
+  useEffect(() => {
+    if (propUserXPProfile) {
+      setUserXPProfile(propUserXPProfile);
+    } else {
+    const profile = XPService.getInstance().getUserXPProfile();
+    setUserXPProfile(profile);
+    }
+  }, [propUserXPProfile, user?.id]);
   const [showCommunity, setShowCommunity] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [expandedBentoCard, setExpandedBentoCard] = useState<string | null>(null);
 
   // Navigation items - identiques au dashboard principal
   const navigationItems = [
     { id: 'courses', label: 'Mes cours', icon: BookOpen },
     { id: 'unlock', label: 'Débloquer', icon: Brain },
     { id: 'planning', label: 'Planification', icon: Calendar },
+    { id: 'study-rooms', label: 'Study Rooms', icon: Globe },
     { id: 'community', label: 'Communauté', icon: Users },
+    { id: 'messaging', label: 'Messages', icon: MessageCircle, hasNotification: true },
+    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, isExternal: true },
   ];
 
   // Effet pour gérer les mises à jour différées vers le parent
@@ -1269,70 +1324,56 @@ export function IntegratedCourseViewer({
               {/* Header identique à la landing */}
               <header className="bg-white border-b border-gray-200 flex-shrink-0 z-40">
                 <div className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center">
+                    {/* Menu burger mobile uniquement */}
                       <button 
                         onClick={() => setSidebarOpen(true)}
-                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+                      className="absolute left-6 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
                       >
                         <Menu size={20} />
                       </button>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                          <Brain className="text-white" size={16} />
-                        </div>
-                        <div>
-                          <h1 className="text-lg font-bold text-gray-900">Science Made Simple</h1>
-                          <p className="text-xs text-gray-500">{course.title}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
+
+                    {/* Widgets centrés */}
                     <div className="flex items-center gap-4">
-                      <div className="hidden md:flex items-center gap-4">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                          <input
-                            type="text"
-                            placeholder="Rechercher..."
-                            className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent w-64"
+                      {/* Portefeuille */}
+                      {user?.wallet && (
+                        <div data-tour="wallet">
+                          <WalletBalance 
+                            balance={WalletService.getTotalBalance(user?.id || 'user-default').walletBalance}
+                            onAddFunds={() => setShowWalletTopUp(true)}
+                            userId={user?.id || 'user-default'}
+                            key={walletUpdateTrigger} // Force re-render after purchase
                           />
                         </div>
-                        
-                        <BackgroundSelector
-                          selectedBackground={selectedBackground}
-                          onSelect={setSelectedBackground}
-                          isOpen={showBackgroundSelector}
-                          onToggle={() => setShowBackgroundSelector(!showBackgroundSelector)}
-                        />
-                        
-                        <button
-                          onClick={onClose}
-                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                          <ArrowLeft size={20} className="text-gray-600" />
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium">
-                          +{totalXP} XP
+                      )}
+
+                      {/* Widget XP avec compteur */}
+                      {userXPProfile && (
+                        <div data-tour="xp-widget">
+                          <button 
+                            onClick={() => setShowSocialFeed(true)}
+                            className="text-blue-600 font-bold text-sm hover:text-blue-700 transition-colors"
+                          >
+                            Niveau {userXPProfile.currentLevel.level} • {userXPProfile.totalXP} XP{userXPProfile.dailyStreak > 0 ? ` • 🔥 ${userXPProfile.dailyStreak}j` : ''}
+                          </button>
                         </div>
-                        {/* Widget Notifications */}
-                        <NotificationWidget />
-                        
-                        {/* Widget Paramètres */}
-                        <button
-                          onClick={onToggleSettings}
-                          className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="Paramètres"
-                        >
-                          <Settings size={20} />
-                        </button>
-                        
-                        <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                      )}
+
+                      {/* Fil Social */}
+                      <div data-tour="social-feed">
+                        <SocialFeedIcon 
+                          onClick={() => setShowSocialFeed(true)}
+                          className="text-gray-600 hover:text-gray-900"
+                        />
                       </div>
+
+                      {/* Bouton retour */}
+                      <button
+                        onClick={onClose}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        <ArrowLeft size={20} className="text-gray-600" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1350,13 +1391,24 @@ export function IntegratedCourseViewer({
                         <button
                           key={item.id}
                           onClick={() => {
+                            if (item.isExternal && item.id === 'whatsapp') {
+                              window.open('https://wa.me/33123456789', '_blank');
+                            } else {
                             onClose(); // Fermer le viewer
                             onNavigateToSection?.(item.id); // Naviguer vers la section
+                            }
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
+                            item.id === 'whatsapp'
+                              ? 'bg-green-500 text-white hover:bg-green-600'
+                              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                          }`}
                         >
                           <item.icon size={20} />
                           <span className="font-medium">{item.label}</span>
+                          {item.hasNotification && (
+                            <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -1399,6 +1451,75 @@ export function IntegratedCourseViewer({
                             }`}
                           />
                         </motion.button>
+
+                        {/* Study Room Button - always visible */}
+                        <motion.button
+                          key="study-room-btn-map"
+                          onClick={() => {
+                            console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
+                            
+                            if (courseStudyRoomInfo) {
+                              // Si la room est scheduled, la démarrer
+                              let roomToJoin = courseStudyRoomInfo.room;
+                              if (courseStudyRoomInfo.room.status === 'scheduled') {
+                                roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
+                              }
+                              
+                              // Rejoindre directement la Study Room
+                              const success = AdvancedStudyRoomService.joinStudyRoom(
+                                roomToJoin.id, 
+                                user?.id || 'user-default', 
+                                user?.name || 'Étudiant'
+                              );
+                              
+                              if (success) {
+                                setSelectedStudyRoom(roomToJoin);
+                              } else {
+                                alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
+                              }
+                            } else {
+                              // Si pas de room, aller au module Study Rooms
+                              onClose();
+                              if (onNavigateToSection) {
+                                onNavigateToSection('study-rooms');
+                              }
+                            }
+                          }}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all group relative ${
+                            courseStudyRoomInfo?.isActive 
+                              ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
+                              : 'bg-gray-900 hover:bg-gray-800'
+                          } text-white`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Ouvrir Study Room'}
+                        >
+                          <Users size={18} className="text-white" strokeWidth={2.5} />
+                          <span className="text-sm font-medium">
+                            {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
+                          </span>
+                          
+                          {courseStudyRoomInfo?.isActive && courseStudyRoomInfo.participantCount > 0 && (
+                            <motion.span 
+                              key="participant-badge-map"
+                              className="absolute -top-1 -right-1 bg-white text-green-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                            >
+                              {courseStudyRoomInfo.participantCount}
+                            </motion.span>
+                          )}
+                          
+                          {courseStudyRoomInfo?.isActive && (
+                            <motion.div 
+                              key="pulse-dot-map"
+                              className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full"
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ repeat: Infinity, duration: 2 }}
+                            />
+                          )}
+                        </motion.button>
                       </div>
                       
                       <div className="flex items-center gap-8">
@@ -1411,7 +1532,7 @@ export function IntegratedCourseViewer({
                           <div className="text-sm text-gray-600">Étapes</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-purple-600">{Math.round(progressPercentage)}%</div>
+                          <div className="text-2xl font-bold text-gray-900">{Math.round(progressPercentage)}%</div>
                           <div className="text-sm text-gray-600">Progression</div>
                         </div>
                       </div>
@@ -1544,22 +1665,37 @@ export function IntegratedCourseViewer({
                       </div>
                       
                       <div className="flex items-center gap-3">
-                        <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-lg font-medium text-sm">
-                          +{selectedLesson.xpReward} XP
+                        {/* Portefeuille */}
+                        {user?.wallet && (
+                          <div data-tour="wallet">
+                            <WalletBalance 
+                              balance={WalletService.getTotalBalance(user?.id || 'user-default').walletBalance}
+                              onAddFunds={() => setShowWalletTopUp(true)}
+                              userId={user?.id || 'user-default'}
+                              key={walletUpdateTrigger}
+                            />
                         </div>
-                        {/* Widget Notifications */}
-                        <NotificationWidget />
+                        )}
                         
-                        {/* Widget Paramètres */}
+                        {/* Widget XP avec compteur */}
+                        {userXPProfile && (
+                          <div data-tour="xp-widget">
                         <button
-                          onClick={onToggleSettings}
-                          className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="Paramètres"
+                              onClick={() => setShowSocialFeed(true)}
+                              className="text-blue-600 font-bold text-sm hover:text-blue-700 transition-colors"
                         >
-                          <Settings size={20} />
+                              Niveau {userXPProfile.currentLevel.level} • {userXPProfile.totalXP} XP{userXPProfile.dailyStreak > 0 ? ` • 🔥 ${userXPProfile.dailyStreak}j` : ''}
                         </button>
-                        
-                        <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                          </div>
+                        )}
+
+                        {/* Fil Social */}
+                        <div data-tour="social-feed">
+                          <SocialFeedIcon 
+                            onClick={() => setShowSocialFeed(true)}
+                            className="text-gray-600 hover:text-gray-900"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1578,13 +1714,24 @@ export function IntegratedCourseViewer({
                         <button
                           key={item.id}
                           onClick={() => {
+                            if (item.isExternal && item.id === 'whatsapp') {
+                              window.open('https://wa.me/33123456789', '_blank');
+                            } else {
                             onClose(); // Fermer le viewer
                             onNavigateToSection?.(item.id); // Naviguer vers la section
+                            }
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
+                            item.id === 'whatsapp'
+                              ? 'bg-green-500 text-white hover:bg-green-600'
+                              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                          }`}
                         >
                           <item.icon size={20} />
                           <span className="font-medium">{item.label}</span>
+                          {item.hasNotification && (
+                            <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -1638,10 +1785,74 @@ export function IntegratedCourseViewer({
                           />
                         </motion.button>
                         
-                        <div className="hidden md:flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                          <span>En cours</span>
-                        </div>
+                        {/* Study Room Button */}
+                        <motion.button
+                          key="study-room-btn-lesson"
+                          onClick={() => {
+                            console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
+                            
+                            if (courseStudyRoomInfo) {
+                              // Si la room est scheduled, la démarrer
+                              let roomToJoin = courseStudyRoomInfo.room;
+                              if (courseStudyRoomInfo.room.status === 'scheduled') {
+                                roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
+                              }
+                              
+                              // Rejoindre directement la Study Room
+                              const success = AdvancedStudyRoomService.joinStudyRoom(
+                                roomToJoin.id, 
+                                user?.id || 'user-default', 
+                                user?.name || 'Étudiant'
+                              );
+                              
+                              if (success) {
+                                setSelectedStudyRoom(roomToJoin);
+                              } else {
+                                alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
+                              }
+                            } else {
+                              // Si pas de room, aller au module Study Rooms
+                              onClose();
+                              if (onNavigateToSection) {
+                                onNavigateToSection('study-rooms');
+                              }
+                            }
+                          }}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all group relative ${
+                            courseStudyRoomInfo?.isActive 
+                              ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
+                              : 'bg-gray-900 hover:bg-gray-800'
+                          } text-white`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Ouvrir Study Room'}
+                        >
+                          <Users size={16} className="text-white" strokeWidth={2.5} />
+                          <span className="text-xs font-medium hidden sm:inline">
+                            {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
+                          </span>
+                          
+                          {courseStudyRoomInfo?.isActive && courseStudyRoomInfo.participantCount > 0 && (
+                            <motion.span 
+                              key="participant-badge-lesson"
+                              className="absolute -top-1 -right-1 bg-white text-green-600 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center sm:w-5 sm:h-5 sm:text-xs"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                            >
+                              {courseStudyRoomInfo.participantCount}
+                            </motion.span>
+                          )}
+                          
+                          {courseStudyRoomInfo?.isActive && (
+                            <motion.div 
+                              key="pulse-dot-lesson"
+                              className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full"
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ repeat: Infinity, duration: 2 }}
+                            />
+                          )}
+                        </motion.button>
                       </div>
                     </div>
                   </div>
@@ -1669,241 +1880,909 @@ export function IntegratedCourseViewer({
 
                         {/* Détails de la leçon sous la vidéo */}
                         <div className="space-y-8 pb-16">
-                          {/* Description et Objectifs - même largeur que la vidéo */}
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Description */}
+                          {/* Bento Grid - Ressources de la leçon */}
+                          <div className="space-y-4">
+                            {/* Bento Grid Layout avec ordre dynamique */}
+                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-[200px]">
+                              
+                              {/* Card 1: Description - Medium (spans 3 columns, 1 row) */}
                             <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.1 }}
-                              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'description' ? null : 'description')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'description' 
+                                    ? 'lg:col-span-6 lg:row-span-2' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'description' ? -1 : 0,
+                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                                }}
+                              >
+                                <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-16 -mb-16" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'description' && (
+                                  <div className="relative h-full flex flex-col">
+                                    <div className="flex items-center gap-3 mb-3">
+                                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <BookOpen size={18} className="text-white" />
+                                      </div>
+                                      <div>
+                                        <h3 className="font-bold text-gray-900">Description</h3>
+                                        <p className="text-[10px] text-gray-600">Vue d'ensemble</p>
+                                      </div>
+                                    </div>
+                                    <p className="text-xs text-gray-600 opacity-60 line-clamp-3">
+                                      {selectedLesson?.description || "Découvrez les concepts clés et l'approche pédagogique de cette leçon..."}
+                                    </p>
+                                    <div className="absolute bottom-2 right-2 text-xs text-blue-600 font-semibold flex items-center gap-1">
+                                      Lire plus
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
+                                      </motion.div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'description' && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full overflow-y-auto"
                             >
                               <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                                  <BookOpen size={16} className="text-blue-600" />
+                                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-sky-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                                        <BookOpen size={20} className="text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Description</h3>
+                                      <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 bg-clip-text text-transparent">Description de la leçon</h3>
                               </div>
-                              <p className="text-gray-700 leading-relaxed text-sm">{selectedLesson.description}</p>
+                                    <p className="text-gray-700 leading-relaxed border-l-4 border-blue-500 pl-4">
+                                      {selectedLesson?.description || "Cette leçon couvre les fondamentaux essentiels du sujet. Vous apprendrez à maîtriser les concepts de base et à les appliquer dans des situations pratiques."}
+                                    </p>
+                                  </motion.div>
+                                )}
                             </motion.div>
 
-                            {/* Objectifs d'apprentissage */}
-                            {selectedLesson.objectives && selectedLesson.objectives.length > 0 && (
+                              {/* Card 2: Objectifs d'apprentissage - Medium (spans 3 columns, 1 row) */}
                               <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'objectives' ? null : 'objectives')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'objectives' 
+                                    ? 'lg:col-span-6 lg:row-span-2' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'objectives' ? -1 : 1,
+                                  background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.05) 0%, rgba(100, 116, 139, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(71, 85, 105, 0.15)'
+                                }}
+                              >
+                                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-16 -mt-16" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'objectives' && (
+                                  <div className="relative h-full flex flex-col">
+                                    <div className="flex items-center gap-3 mb-3">
+                                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <Target size={18} className="text-white" />
+                              </div>
+                                      <div>
+                                        <h3 className="font-bold text-gray-900">Objectifs</h3>
+                                        <p className="text-[10px] text-gray-600">{selectedLesson?.objectives?.length || 0} points clés</p>
+                                      </div>
+                                    </div>
+                                    <div className="flex-1 flex items-center opacity-60">
+                                      <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2">
+                                          <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-800">1</div>
+                                          <span className="text-xs text-gray-600">Maîtriser les concepts...</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-800">2</div>
+                                          <span className="text-xs text-gray-600">Appliquer dans la pratique...</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="absolute bottom-2 right-2 text-xs text-green-600 font-semibold flex items-center gap-1">
+                                      Voir tous
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
+                            </motion.div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'objectives' && (
+                            <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full overflow-y-auto"
                               >
                                 <div className="flex items-center gap-3 mb-4">
-                                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                                    <Target size={16} className="text-green-600" />
+                                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
+                                        <Target size={20} className="text-white" />
                                   </div>
-                                  <h3 className="text-lg font-semibold text-gray-900">Objectifs d'apprentissage</h3>
+                                      <h3 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Objectifs d'apprentissage</h3>
                                 </div>
-                                <div className="space-y-3">
-                                  {selectedLesson.objectives.map((objective, index) => (
-                                    <div key={`objective-${index}`} className="flex items-start gap-3">
-                                      <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                                    <div className="space-y-4">
+                                      {(selectedLesson?.objectives || [
+                                        "Comprendre les concepts fondamentaux",
+                                        "Savoir appliquer les méthodes dans des cas pratiques",
+                                        "Résoudre des exercices de complexité croissante"
+                                      ]).map((objective, index) => (
+                                        <div key={index} className="flex items-start gap-3 border-l-4 border-green-500 pl-3">
+                                          <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 shadow-md">
                                         {index + 1}
                                       </div>
-                                      <span className="text-gray-700 text-sm leading-relaxed">{objective}</span>
+                                          <span className="text-base text-gray-700 leading-relaxed">{objective}</span>
                                     </div>
                                   ))}
                                 </div>
                               </motion.div>
                             )}
-                          </div>
+                              </motion.div>
 
-                          {/* Prérequis - en dessous, centré */}
-                          {selectedLesson.prerequisites && selectedLesson.prerequisites.length > 0 && (
+                              {/* Card 3: Essentiels à retenir - Large (spans 4 columns, 2 rows) */}
                             <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.3 }}
-                              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-2xl mx-auto"
-                            >
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'essentials' ? null : 'essentials')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-4 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'essentials' 
+                                    ? 'lg:col-span-6 lg:row-span-3' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'essentials' ? -1 : 2,
+                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                                }}
+                              >
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-20 -mt-20" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'essentials' && (
+                                  <div className="relative h-full flex flex-col">
                               <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                                  <Award size={16} className="text-orange-600" />
+                                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <BookOpen size={20} className="text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Prérequis</h3>
+                                      <div>
+                                        <h3 className="text-lg font-bold text-gray-900">Essentiels à retenir</h3>
+                                        <p className="text-xs text-gray-600">Mindmap des concepts clés</p>
                               </div>
-                              <div className="space-y-2">
-                                {selectedLesson.prerequisites.map((prerequisite, index) => (
-                                  <div key={`prerequisite-${index}`} className="flex items-start gap-3">
-                                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
-                                    <span className="text-gray-700 text-sm">{prerequisite}</span>
                                   </div>
-                                ))}
+                                    
+                                    {/* Mini preview */}
+                                    <div className="flex-1 flex items-center justify-center opacity-60">
+                                      <div className="text-center">
+                                        <div className="flex items-center gap-2 mb-2 justify-center">
+                                          <div className="w-8 h-8 bg-gray-300 rounded-full" />
+                                          <span className="text-xs font-medium text-gray-700">Concept principal</span>
                               </div>
-                            </motion.div>
-                          )}
-
-                          {/* Section Notes et Ressources */}
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Notes de cours */}
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.4 }}
-                              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
-                            >
-                              <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                                  <FileText size={16} className="text-purple-600" />
-                                </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Notes de cours</h3>
-                              </div>
-                              <div className="space-y-3">
-                                <p className="text-gray-700 text-sm leading-relaxed">
-                                  • Concepts clés à retenir pour cette leçon
-                                </p>
-                                <p className="text-gray-700 text-sm leading-relaxed">
-                                  • Formules importantes et leur application
-                                </p>
-                                <p className="text-gray-700 text-sm leading-relaxed">
-                                  • Exercices pratiques recommandés
-                                </p>
-                                <p className="text-gray-700 text-sm leading-relaxed">
-                                  • Points d'attention pour l'examen
-                                </p>
-                              </div>
-                            </motion.div>
-
-                            {/* Ressources complémentaires */}
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.5 }}
-                              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
-                            >
-                              <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                  <ExternalLink size={16} className="text-indigo-600" />
-                                </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Ressources</h3>
-                              </div>
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                                  <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                                    <FileText size={14} className="text-red-600" />
-                                  </div>
-                                  <span className="text-sm font-medium text-gray-900">PDF - Résumé de cours</span>
-                                </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <Calculator size={14} className="text-blue-600" />
-                                  </div>
-                                  <span className="text-sm font-medium text-gray-900">Exercices pratiques</span>
-                                </div>
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <Play size={14} className="text-green-600" />
-                                  </div>
-                                  <span className="text-sm font-medium text-gray-900">Vidéos complémentaires</span>
-                                </div>
-                              </div>
+                                        <div className="grid grid-cols-2 gap-2 mt-3">
+                                          <div className="text-xs text-gray-600 bg-white/60 rounded-lg p-2">Formules</div>
+                                          <div className="text-xs text-gray-600 bg-white/60 rounded-lg p-2">Applications</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="absolute bottom-4 right-4 text-xs text-purple-600 font-semibold flex items-center gap-1">
+                                      Voir plus
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
                             </motion.div>
                           </div>
+                                  </div>
+                                )}
 
-                          {/* Section Progression et Évaluation */}
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'essentials' && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full flex flex-col"
+                                  >
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.2 }}
+                              className="h-full flex flex-col"
+                            >
+                              {/* Header */}
+                              <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <BookOpen size={18} className="text-white" />
+                                </div>
+                                  <div>
+                                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Essentiels à retenir</h3>
+                                    <p className="text-sm text-gray-500">Concepts clés de cette leçon</p>
+                              </div>
+                                </div>
+                                <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+                                  <span className="text-sm font-medium text-gray-700">5 points clés</span>
+                                </div>
+                              </div>
+                            
+                              {/* Mindmap visuelle - Web 3.0 Apple Vision Style */}
+                              <div className="flex-1 flex flex-col gap-2.5 overflow-hidden">
+                                {/* Concept central - Glassmorphic Hero */}
+                                <motion.div
+                                  initial={{ scale: 0.98, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                                  className="relative bg-gradient-to-br from-gray-900/95 via-gray-900/90 to-gray-800/95 backdrop-blur-2xl rounded-3xl p-5 overflow-hidden group border border-white/10"
+                                  style={{
+                                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)'
+                                  }}
+                                >
+                                  {/* Ambient glow */}
+                                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                  
+                                  <div className="relative flex items-start gap-4">
+                                    <motion.div 
+                                      whileHover={{ scale: 1.05, rotate: 5 }}
+                                      className="w-12 h-12 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl flex items-center justify-center shrink-0 border border-white/10"
+                                    >
+                                      <Zap size={24} className="text-white" strokeWidth={2} />
+                                    </motion.div>
+                                    <div className="flex-1 space-y-1.5">
+                                      <h4 className="text-[17px] font-semibold tracking-tight !text-white" style={{ letterSpacing: '-0.02em' }}>
+                                        Loi de Gauss - Concept fondamental
+                                      </h4>
+                                      <p className="text-[14px] leading-snug font-light !text-white/85">
+                                        Le flux électrique à travers une surface fermée est proportionnel à la charge totale contenue à l'intérieur. Cette loi est fondamentale pour résoudre les problèmes de symétrie en électrostatique.
+                                      </p>
+                                    </div>
+                              </div>
+                            </motion.div>
+
+                                {/* Grid 2x2 - Glassmorphic cards */}
+                                <div className="grid grid-cols-2 gap-2.5 flex-1 min-h-0">
+                                  {/* Formules */}
+                            <motion.div
+                                    initial={{ y: 10, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.1, duration: 0.4 }}
+                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
+                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
+                                  >
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                        <Calculator size={16} className="text-white" strokeWidth={2.5} />
+                                </div>
+                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Formules</span>
+                              </div>
+                                    <div className="space-y-1.5 flex-1">
+                                      <p className="text-[13px] font-mono text-gray-900 bg-gray-900/5 px-2.5 py-1.5 rounded-lg">Φ = Q/ε₀</p>
+                                      <p className="text-[13px] font-mono text-gray-900 bg-gray-900/5 px-2.5 py-1.5 rounded-lg">∮ E⃗·dA⃗ = Q/ε₀</p>
+                                  </div>
+                                  </motion.div>
+
+                                  {/* Applications */}
+                                  <motion.div
+                                    initial={{ y: 10, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.15, duration: 0.4 }}
+                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
+                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
+                                  >
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                        <Lightbulb size={16} className="text-white" strokeWidth={2.5} />
+                                </div>
+                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Applications</span>
+                                  </div>
+                                    <ul className="space-y-2 flex-1">
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Sphère chargée
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Cylindre infini
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Plan infini chargé
+                                      </li>
+                                    </ul>
+                                  </motion.div>
+
+                                  {/* Points clés */}
+                                  <motion.div
+                                    initial={{ y: 10, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2, duration: 0.4 }}
+                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
+                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
+                                  >
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                        <Target size={16} className="text-white" strokeWidth={2.5} />
+                                </div>
+                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Points clés</span>
+                                  </div>
+                                    <ul className="space-y-2 flex-1">
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Symétrie essentielle
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Surface de Gauss
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Orientation du champ
+                                      </li>
+                                    </ul>
+                                  </motion.div>
+
+                                  {/* Examen */}
+                                  <motion.div
+                                    initial={{ y: 10, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.25, duration: 0.4 }}
+                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
+                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
+                                  >
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                        <CheckCircle size={16} className="text-white" strokeWidth={2.5} />
+                                </div>
+                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">À l'examen</span>
+                              </div>
+                                    <ul className="space-y-2 flex-1">
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Choix de la surface
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Calcul du flux
+                                      </li>
+                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
+                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
+                                        Vérification symétrie
+                                      </li>
+                                    </ul>
+                            </motion.div>
+                          </div>
+                              </div>
+                          </motion.div>
+                                  </motion.div>
+                                )}
+                            </motion.div>
+
+                              {/* Card 2: Exercices Collaboratifs - Medium (spans 2 columns, 2 rows) */}
+                            <motion.div
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'exercises' ? null : 'exercises')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-2 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'exercises' 
+                                    ? 'lg:col-span-6 lg:row-span-3' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'exercises' ? -1 : 3,
+                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                                }}
+                              >
+                                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-16 -mt-16" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'exercises' && (
+                                  <div className="relative h-full flex flex-col">
+                                    <div className="flex items-center gap-2 mb-3">
+                                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                        <Users size={18} className="text-white" />
+                                </div>
+                                      <div>
+                                        <h3 className="font-bold text-gray-900">Exercices pratiques</h3>
+                                        <p className="text-[10px] text-gray-600">Collaboration +10XP</p>
+                              </div>
+                                  </div>
+                                    
+                                    <div className="flex-1 flex flex-col justify-center space-y-2 opacity-60">
+                                      <div className="flex items-center gap-2 bg-white/60 rounded-lg p-2">
+                                        <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center flex-shrink-0">
+                                          <CheckCircle size={12} className="text-gray-700" />
+                                </div>
+                                        <span className="text-[10px] font-medium text-gray-700">16 résolus</span>
+                                  </div>
+                                      <div className="flex items-center gap-2 bg-white/60 rounded-lg p-2">
+                                        <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center flex-shrink-0">
+                                          <HelpCircle size={12} className="text-gray-700" />
+                                </div>
+                                        <span className="text-[10px] font-medium text-gray-700">8 en attente 🔥</span>
+                                  </div>
+                                </div>
+                                    
+                                    <div className="absolute bottom-4 right-4 text-xs text-blue-600 font-semibold flex items-center gap-1">
+                                      Contribuer
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
+                            </motion.div>
+                          </div>
+                                  </div>
+                                )}
+
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'exercises' && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full flex flex-col"
+                                  >
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 }}
-                            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6"
+                              transition={{ delay: 0.2 }}
+                              className="h-full flex flex-col"
                           >
-                            <div className="flex items-center gap-3 mb-6">
-                              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <TrendingUp size={16} className="text-blue-600" />
+                              {/* Header */}
+                              <div className="flex items-center justify-between mb-8">
+                              <div className="flex items-center gap-4">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <Users size={18} className="text-white" />
                               </div>
-                              <h3 className="text-lg font-semibold text-gray-900">Progression & Évaluation</h3>
+                                  <div>
+                                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Exercices pratiques</h3>
+                                    <p className="text-sm text-gray-500">Collaboration étudiante récompensée</p>
+                              </div>
+                                  </div>
+                                <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+                                  <Sparkles size={14} className="text-gray-700" />
+                                  <span className="text-sm font-medium text-gray-700">+10 XP/solution</span>
+                                </div>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                              {/* Temps passé */}
-                              <div className="text-center">
-                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                                  <Clock size={20} className="text-blue-600" />
+                              {/* Statistiques de contribution */}
+                              <div className="grid grid-cols-3 gap-3 mb-6">
+                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                  <p className="text-2xl font-semibold text-gray-900 mb-1">24</p>
+                                  <p className="text-xs text-gray-600 font-medium">Exercices totaux</p>
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900">15 min</p>
-                                <p className="text-sm text-gray-600">Temps passé</p>
+                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                  <p className="text-2xl font-semibold text-gray-900 mb-1">8</p>
+                                  <p className="text-xs text-gray-600 font-medium">À résoudre</p>
+                                  </div>
+                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                  <p className="text-2xl font-semibold text-gray-900 mb-1">47</p>
+                                  <p className="text-xs text-gray-600 font-medium">Contributions</p>
+                                </div>
                               </div>
 
-                              {/* Score quiz */}
-                              <div className="text-center">
-                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                                  <Award size={20} className="text-green-600" />
+                              {/* Exercices disponibles - Grid 2 colonnes */}
+                              <div className="flex-1 grid grid-cols-2 gap-3">
+                                {/* Exercice résolu */}
+                                <div className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                                      <CheckCircle size={16} className="text-gray-700" />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900">85%</p>
-                                <p className="text-sm text-gray-600">Score quiz</p>
+                                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">Résolu</span>
+                                  </div>
+                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Forces et accélération</h4>
+                                  <p className="text-xs text-gray-600 mb-3">Résolu par <span className="font-medium text-gray-900">Sophie M.</span></p>
+                                  <div className="flex items-center justify-between text-xs text-gray-500">
+                                    <span>12 contributions</span>
+                                    <button className="text-gray-900 hover:text-gray-700 font-medium">Voir →</button>
+                                  </div>
                               </div>
 
-                              {/* Progression cours */}
-                              <div className="text-center">
-                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                                  <CheckCircle size={20} className="text-purple-600" />
+                                {/* Exercice non-résolu (CTA) */}
+                          <motion.div
+                                  whileHover={{ scale: 1.01 }}
+                                  className="bg-white rounded-lg p-4 border-2 border-gray-900 hover:shadow-sm transition-all cursor-pointer"
+                                >
+                                  <div className="relative">
+                                    <div className="flex items-center gap-2 mb-3">
+                                      <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                                        <HelpCircle size={16} className="text-white" />
                                 </div>
-                                <p className="text-2xl font-bold text-gray-900">2/5</p>
-                                <p className="text-sm text-gray-600">Leçons terminées</p>
+                                      <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded font-medium">
+                                        Nouveau
+                                      </span>
                               </div>
+                                    <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Applications du théorème</h4>
+                                    <p className="text-xs text-gray-600 mb-3">
+                                      Sois le premier à contribuer
+                                  </p>
+                                    <button className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-2 px-3 font-medium text-xs transition-all flex items-center justify-center gap-2">
+                                      <Zap size={14} />
+                                      Proposer (+10 XP)
+                                    </button>
                             </div>
                           </motion.div>
 
-                          {/* Section Commentaires et Discussion */}
+                                {/* Exercice en cours de validation */}
+                                <div className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                                      <Clock size={16} className="text-gray-700" />
+                                </div>
+                                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">En validation</span>
+                                  </div>
+                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Cinématique avancée</h4>
+                                  <p className="text-xs text-gray-600 mb-3">Proposé par <span className="font-medium text-gray-900">Zak L.</span></p>
+                                  <div className="flex items-center justify-between text-xs text-gray-500">
+                                    <span>5 upvotes</span>
+                                    <button className="text-gray-900 hover:text-gray-700 font-medium">Voter →</button>
+                                  </div>
+                                </div>
+
+                                {/* Call to action - 4ème carte */}
+                              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-all">
+                                <div className="relative">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                                      <Trophy size={16} className="text-gray-700" />
+                                </div>
+                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium">Helper</span>
+                                  </div>
+                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Deviens contributeur</h4>
+                                  <p className="text-xs text-gray-600 mb-3">
+                                    Gagne des XP et des badges
+                                  </p>
+                                  <button className="w-full bg-white hover:bg-gray-50 text-gray-900 rounded-lg py-2 px-3 font-medium text-xs transition-all flex items-center justify-center gap-2 border border-gray-200">
+                                    Voir tous
+                                    <ChevronRight size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                              </div>
+                            </motion.div>
+                                  </motion.div>
+                                )}
+                          </motion.div>
+
+                              {/* Card 5: Q&A Intégré - Medium (spans 3 columns, 2 rows) */}
+                              <motion.div
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'qa' ? null : 'qa')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-3 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'qa' 
+                                    ? 'lg:col-span-6 lg:row-span-3' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'qa' ? -1 : 4,
+                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                                }}
+                              >
+                                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-20 -mb-20" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'qa' && (
+                                  <div className="relative h-full flex flex-col">
+                                    <div className="flex items-center gap-3 mb-3">
+                                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <MessageSquare size={18} className="text-white" />
+                                      </div>
+                                      <div>
+                                        <h3 className="font-bold text-gray-900">Q&A Intégré</h3>
+                                        <p className="text-[10px] text-gray-600">Par slide vidéo</p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 space-y-2 opacity-60">
+                                      <div className="bg-white/60 rounded-lg p-2">
+                                  <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-xs font-bold text-gray-900">03:24</span>
+                                          <span className="text-xs text-gray-700 font-medium">Quelle est la formule?</span>
+                                  </div>
+                                        <p className="text-[10px] text-gray-600 pl-2">→ Sophie a répondu</p>
+                                      </div>
+                                      <div className="bg-white/60 rounded-lg p-2">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-xs font-bold text-gray-900">07:15</span>
+                                          <span className="text-xs text-gray-700 font-medium">Comment calculer?</span>
+                                        </div>
+                                        <p className="text-[10px] text-gray-600 pl-2">→ 3 réponses</p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="absolute bottom-2 right-2 text-xs text-orange-600 font-semibold flex items-center gap-1">
+                                      Voir tout
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
+                                      </motion.div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'qa' && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full flex flex-col"
+                                  >
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.7 }}
-                            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                                      transition={{ delay: 0.2 }}
+                                      className="h-full flex flex-col"
                           >
-                            <div className="flex items-center justify-between mb-6">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                                  <MessageCircle size={16} className="text-yellow-600" />
+                                      {/* Header */}
+                                      <div className="flex items-center justify-between mb-8">
+                              <div className="flex items-center gap-4">
+                                          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                                            <MessageSquare size={18} className="text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Discussion de la leçon</h3>
+                                          <div>
+                                            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Q&A Intégré</h3>
+                                            <p className="text-sm text-gray-500">Questions contextuelles par slide vidéo</p>
                               </div>
-                              <button className="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition-colors text-sm font-medium">
-                                Ajouter un commentaire
-                              </button>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+                                          <span className="text-sm font-medium text-gray-700">8 questions</span>
+                                        </div>
                             </div>
                             
-                            <div className="space-y-4">
-                              {/* Commentaire exemple 1 */}
-                              <div className="flex gap-3 p-4 bg-gray-50 rounded-xl">
-                                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                  JD
+                                      {/* Liste des questions - Ultra-minimaliste */}
+                                      <div className="flex-1 space-y-2">
+                                        {/* Question 1 - Résolue */}
+                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
+                                          <div className="flex items-start gap-3">
+                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
+                                              03:24
+                                            </button>
+                                            <div className="flex-1 min-w-0">
+                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Comment appliquer cette formule dans un cas pratique ?</h4>
+                                              <p className="text-xs text-gray-500 mb-2">Zak L.</p>
+                                              <div className="bg-gray-50/80 rounded p-2 mb-2">
+                                                <div className="flex items-center gap-1.5 mb-1">
+                                                  <Check size={10} className="text-gray-600" />
+                                                  <span className="text-xs text-gray-600">Sophie M.</span>
                                 </div>
-                                <div className="flex-1">
+                                                <p className="text-xs text-gray-600 leading-relaxed">
+                                                  Il faut identifier les variables connues, puis appliquer la formule...
+                                                </p>
+                                              </div>
+                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+                                                Voir plus →
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* Question 2 - Sans réponse */}
+                                        <motion.div
+                                          whileHover={{ scale: 1.002 }}
+                                          className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg cursor-pointer"
+                                        >
+                                          <div className="flex items-start gap-3">
+                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
+                                              07:15
+                                            </button>
+                                            <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900">Jean Dupont</span>
-                                    <span className="text-xs text-gray-500">il y a 2 heures</span>
+                                                <h4 className="font-medium text-gray-900 text-sm tracking-tight">Quelle est la différence entre ces deux approches ?</h4>
+                                                <span className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0"></span>
                                   </div>
-                                  <p className="text-sm text-gray-700">
-                                    Excellente explication des concepts fondamentaux ! J'ai enfin compris la différence entre...
-                                  </p>
+                                              <p className="text-xs text-gray-500 mb-2">Alex R.</p>
+                                              <button className="text-xs text-gray-900 hover:text-gray-700 font-medium transition-colors">
+                                                Répondre →
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </motion.div>
+
+                                        {/* Question 3 - Plusieurs réponses */}
+                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
+                                          <div className="flex items-start gap-3">
+                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
+                                              12:40
+                                            </button>
+                                            <div className="flex-1 min-w-0">
+                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Pourquoi utiliser cette méthode plutôt qu'une autre ?</h4>
+                                              <p className="text-xs text-gray-500 mb-2">Emma T. • 3 réponses</p>
+                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+                                                Voir les réponses →
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* Question 4 */}
+                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
+                                          <div className="flex items-start gap-3">
+                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
+                                              15:32
+                                            </button>
+                                            <div className="flex-1 min-w-0">
+                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Comment calculer le flux dans ce cas ?</h4>
+                                              <p className="text-xs text-gray-500 mb-2">Marie D.</p>
+                                              <div className="bg-gray-50/80 rounded p-2 mb-2">
+                                                <div className="flex items-center gap-1.5 mb-1">
+                                                  <Check size={10} className="text-gray-600" />
+                                                  <span className="text-xs text-gray-600">Zak L.</span>
+                                                </div>
+                                                <p className="text-xs text-gray-600 leading-relaxed">
+                                                  Tu dois utiliser la symétrie cylindrique et intégrer sur la surface...
+                                                </p>
+                                              </div>
+                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+                                                Voir plus →
+                                              </button>
+                                            </div>
                                 </div>
                               </div>
 
-                              {/* Commentaire exemple 2 */}
-                              <div className="flex gap-3 p-4 bg-gray-50 rounded-xl">
-                                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                  SM
+                                        {/* CTA pour poser une question */}
+                                        <div className="pt-2 -mx-2 px-2">
+                                          <button className="w-full text-left py-3 px-3 rounded-lg border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50/50 transition-all group">
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-xs text-gray-500 group-hover:text-gray-900 font-medium transition-colors">Poser une question</span>
+                                              <ChevronRight size={12} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                                 </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900">Sophie Martin</span>
-                                    <span className="text-xs text-gray-500">il y a 5 heures</span>
+                                          </button>
                                   </div>
-                                  <p className="text-sm text-gray-700">
-                                    Quelqu'un pourrait-il m'expliquer la partie sur les applications pratiques ? 🤔
-                                  </p>
+                                      </div>
+                          </motion.div>
+                                  </motion.div>
+                                )}
+                              </motion.div>
+
+                              {/* Card 6: Quiz de la leçon - Small (spans 3 columns, 1 row) */}
+                              <motion.div
+                                layout
+                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'quiz' ? null : 'quiz')}
+                                whileHover={{ scale: 1.02 }}
+                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
+                                  expandedBentoCard === 'quiz' 
+                                    ? 'lg:col-span-6 lg:row-span-2' 
+                                    : ''
+                                }`}
+                                style={{
+                                  order: expandedBentoCard === 'quiz' ? -1 : 5,
+                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
+                                  backdropFilter: 'blur(10px)',
+                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                                }}
+                              >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-16 -mt-16" />
+                                
+                                {/* Preview Mode */}
+                                {expandedBentoCard !== 'quiz' && (
+                                  <div className="relative h-full flex flex-col">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
+                                          <Award size={18} className="text-white" />
                                 </div>
+                                        <div>
+                                          <h3 className="font-bold text-gray-900">Quiz</h3>
+                                          <p className="text-[10px] text-gray-600">12 questions</p>
+                                  </div>
+                                </div>
+                                      <motion.div
+                                        animate={{ rotate: [0, 10, -10, 0] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="text-2xl"
+                                      >
+                                        🎯
+                                      </motion.div>
+                              </div>
+
+                                    <div className="flex-1 flex items-center justify-center opacity-60">
+                              <div className="text-center">
+                                        <p className="text-sm font-bold text-gray-700 mb-1">85%</p>
+                                        <p className="text-xs text-gray-600">Ton score</p>
+                                </div>
+                                  </div>
+                                    
+                                    <div className="absolute bottom-2 right-2 text-xs text-purple-600 font-semibold flex items-center gap-1">
+                                      Commencer
+                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                        →
+                                      </motion.div>
+                            </div>
+                                  </div>
+                                )}
+
+                                {/* Expanded Mode */}
+                                {expandedBentoCard === 'quiz' && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="relative h-full flex flex-col"
+                                  >
+                                    <motion.div
+                                      initial={{ opacity: 0, y: 20 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ delay: 0.2 }}
+                                      className="h-full flex flex-col"
+                                    >
+                                      {/* Header */}
+                                      <div className="flex items-center justify-between mb-8">
+                                        <div className="flex items-center gap-4">
+                                          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
+                                            <Award size={18} className="text-white" />
+                                          </div>
+                                          <div>
+                                            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Quiz de la leçon</h3>
+                                            <p className="text-sm text-gray-500">Valide tes connaissances</p>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Stats du quiz */}
+                                      <div className="grid grid-cols-3 gap-3 mb-6">
+                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                          <p className="text-2xl font-semibold text-gray-900 mb-1">12</p>
+                                          <p className="text-xs text-gray-600 font-medium">Questions</p>
+                                        </div>
+                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                          <p className="text-2xl font-semibold text-gray-900 mb-1">85%</p>
+                                          <p className="text-xs text-gray-600 font-medium">Ton score</p>
+                                        </div>
+                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
+                                          <p className="text-2xl font-semibold text-gray-900 mb-1">78%</p>
+                                          <p className="text-xs text-gray-600 font-medium">Moyenne</p>
+                                        </div>
+                                      </div>
+
+                                      {/* Description */}
+                                      <div className="flex-1 bg-gray-50 rounded-xl p-5 border border-gray-200 mb-6">
+                                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-base tracking-tight">
+                                          <Info size={16} className="text-gray-700" />
+                                          Détails du quiz
+                                        </h4>
+                                        <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                                          Évalue ta compréhension des concepts clés de la leçon. Réponds à toutes les questions pour débloquer des points XP et valider ta progression.
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-3">
+                                          <div className="flex items-center gap-2 text-xs text-gray-600">
+                                            <Clock size={14} className="text-gray-700" />
+                                            <span>≈ 15 minutes</span>
+                                </div>
+                                          <div className="flex items-center gap-2 text-xs text-gray-600">
+                                            <Sparkles size={14} className="text-gray-700" />
+                                            <span>+50 XP</span>
                               </div>
                             </div>
+                                      </div>
+
+                                      {/* CTA */}
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowQuiz(true);
+                                          setExpandedBentoCard(null);
+                                        }}
+                                        className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl py-3 px-6 font-semibold text-base transition-all flex items-center justify-center gap-3"
+                                      >
+                                        <Play size={18} />
+                                        Commencer le quiz
+                                      </button>
                           </motion.div>
+                                  </motion.div>
+                                )}
+                              </motion.div>
+
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2364,6 +3243,30 @@ export function IntegratedCourseViewer({
             isOpen={showIdentityVerification}
             onClose={() => setShowIdentityVerification(false)}
             onUploadComplete={handleIdentityUpload}
+          />
+        )}
+        
+        {/* Panneau Social Feed */}
+        <SocialFeedPanel
+          isOpen={showSocialFeed}
+          onClose={() => setShowSocialFeed(false)}
+        />
+
+        {/* Modal Study Room WebRTC */}
+        {selectedStudyRoom && (
+          <WebRTCStudyRoom
+            room={selectedStudyRoom}
+            userId={user?.id || 'user-default'}
+            userName={user?.name || 'Étudiant'}
+            userAvatar={user?.avatar || '/avatars/default.jpg'}
+            isModerator={false}
+            onLeaveRoom={() => {
+              AdvancedStudyRoomService.leaveStudyRoom(selectedStudyRoom.id, user?.id || 'user-default');
+              setSelectedStudyRoom(null);
+            }}
+            onKickParticipant={(participantId) => {
+              console.log('Kick participant:', participantId);
+            }}
           />
         )}
       </AnimatePresence>

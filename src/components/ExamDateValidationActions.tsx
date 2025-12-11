@@ -178,14 +178,29 @@ export function ExamDateValidationActions({
         </motion.div>
       )}
 
-      {/* Limitation des actions */}
-      {!canConfirm && !canCorrect && proposal.status === 'pending' && (
-        <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
-          <AlertTriangle size={16} />
+      {/* Message pour le proposant */}
+      {proposal.proposedBy === userId && proposal.status === 'pending' && (
+        <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <Clock size={18} className="text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-blue-900 mb-1">
+              Votre proposition a été soumise
+            </p>
+            <p className="text-xs text-blue-700">
+              En attente de validation par {3 - proposal.confirmations.length} autre(s) étudiant(s) de votre faculté
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Message pour les autres qui ont déjà interagi */}
+      {proposal.proposedBy !== userId && !canConfirm && !canCorrect && proposal.status === 'pending' && (
+        <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
+          <CheckCircle size={16} />
           <span className="text-sm">
-            {proposal.proposedBy === userId 
-              ? "Vous ne pouvez pas valider votre propre proposition"
-              : "Vous avez déjà interagi avec cette proposition"}
+            Vous avez déjà interagi avec cette proposition
           </span>
         </div>
       )}

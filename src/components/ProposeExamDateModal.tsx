@@ -85,18 +85,24 @@ export function ProposeExamDateModal({
 
   return (
     <AnimatePresence>
+      {/* Overlay transparent pour fermer au clic extérieur */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        className="fixed inset-0 z-50"
         onClick={handleClose}
       >
+        {/* Popover positionné */}
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-2xl max-w-md w-full shadow-2xl"
+          initial={{ scale: 0.9, opacity: 0, y: -10 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: -10 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl max-w-md w-[95vw] md:w-full shadow-2xl border border-gray-200"
+          style={{
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

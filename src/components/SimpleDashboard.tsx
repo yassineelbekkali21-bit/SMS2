@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TargetCursor from './TargetCursor';
+import BlurText from './BlurText';
 import { 
   BookOpen, 
   TrendingUp, 
@@ -13,7 +15,6 @@ import {
   Menu, 
   X,
   Search,
-  Bell,
   Settings,
   User,
   Star,
@@ -31,7 +32,12 @@ import {
   HelpCircle,
   MoreHorizontal,
   FileText,
-  Shield
+  Shield,
+  Flame,
+  UserCheck,
+  Zap,
+  Video,
+  Calculator
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -57,6 +63,7 @@ import { ClientOnly } from './ClientOnly';
 import { WalletTopUp } from './WalletTopUp';
 import { PurchaseUpsellModal } from './PurchaseUpsellModal';
 import { WalletBalance } from './WalletBalance';
+import { WalletService } from '@/lib/wallet-service';
 import { IdentityStatusBadge } from './IdentityStatusBadge';
 import { IdentityVerificationModal } from './IdentityVerificationModal';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -73,6 +80,8 @@ import { PurchaseSystem } from './PurchaseSystem';
 import { SmartPackOffer } from './SmartPackOffer';
 import { SmartCourseComparison } from './SmartCourseComparison';
 import { Community } from './Community';
+import { DirectMessaging } from './DirectMessaging';
+import { AdvancedStudyRoomsTab } from './AdvancedStudyRoomsTab';
 import { getCourseRecommendations } from '@/lib/smart-recommendations';
 import { PremiumCheckout } from './PremiumCheckout';
 import { CourseStaircaseView } from './CourseStaircaseView';
@@ -80,6 +89,7 @@ import { IntegratedCourseViewer } from './IntegratedCourseViewer';
 import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, PurchaseOption, CourseStudyRoom, BuddySystem } from '@/types';
 import { PersonalProfileSection } from './PersonalProfileSection';
 import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons } from '@/lib/mock-data';
+import { ProgressionBonusService } from '@/lib/progression-bonus-service';
 import { StudyRoomButton } from './StudyRoomButton';
 import { TrendBadgeComponent } from './TrendBadge';
 import { smartSortFacultyCourses, CourseWithTrend } from '@/lib/faculty-sorting';
@@ -90,13 +100,22 @@ import {
   getFilterCounts 
 } from '@/lib/course-filtering';
 import { StudyRoomModal } from './StudyRoomModal';
-import { StrategicPlanner } from './StrategicPlanner';
+import { StrategicPlannerCompact } from './StrategicPlannerCompact';
 import { PlannerOnboardingModal } from './PlannerOnboardingModal';
 import { useStudyRoomState } from '@/lib/studyroom-service';
 import { usePlannerState } from '@/lib/planner-service';
-import { NotificationWidget } from './NotificationWidget';
-import { StudyRoomHeaderWidget } from './StudyRoomHeaderWidget';
 import { UnifiedSocialWidget } from './UnifiedSocialWidget';
+import SocialFeedIcon from './SocialFeedIcon';
+import SocialFeedPanel from './SocialFeedPanel';
+import { XPHeaderWidget } from './XPHeaderWidget';
+import { XPService, UserXPProfile, XPAction, Badge, XPLevel } from '@/lib/xp-service';
+import XPWidget from './XPWidget';
+import XPFeedback from './XPFeedback';
+import { AdvancedStudyRoomService } from '@/lib/advanced-studyroom-service';
+import XPTestPanel from './XPTestPanel';
+import { GamifiedProfile } from './GamifiedProfile';
+import { XPBoostEvent } from './XPBoostEvent';
+import { SocialFeedService } from '@/lib/social-feed-service';
 import { OnboardingSpotlight } from './OnboardingSpotlight';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { BuddyOnboarding } from './BuddyOnboarding';
@@ -116,25 +135,90 @@ interface SimpleDashboardProps {
   onLogout?: () => void;
 }
 
-// Composant de métrique simple
+// Composant de métrique simple avec animations
 const SimpleMetric = ({ 
   icon: Icon, 
   value, 
   label, 
-  accent = false 
+  accent = false,
+  animated = false,
+  animationType = 'none',
+  subtitle
 }: { 
   icon: any;
   value: string | number;
   label: string;
   accent?: boolean;
+  animated?: boolean;
+  animationType?: 'glow' | 'flame' | 'pulse' | 'none';
+  subtitle?: string;
 }) => (
-  <div className={`p-6 ${accent ? 'bg-black text-white' : 'bg-white border border-gray-200'} rounded-lg`}>
-    <div className="flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+  <motion.div 
+    className={`p-6 ${accent ? 'bg-black text-white' : 'bg-white border border-gray-200'} rounded-lg relative overflow-hidden`}
+    whileHover={{ scale: 1.02 }}
+    transition={{ duration: 0.2 }}
+  >
+    {/* Animation de fond pour streak et amis */}
+    {animated && animationType === 'flame' && (
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-transparent"
+        animate={{
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    )}
+    {animated && animationType === 'glow' && (
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent"
+        animate={{
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    )}
+    {animated && animationType === 'pulse' && (
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent"
+        animate={{
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    )}
+
+    <div className="flex items-center gap-4 relative z-10">
+      <motion.div 
+        className={`w-12 h-12 rounded-lg flex items-center justify-center ${
         accent ? 'bg-white/20' : 'bg-gray-100'
-      }`}>
+        }`}
+        animate={animated ? {
+          boxShadow: animationType === 'flame' 
+            ? ['0 0 10px rgba(251, 146, 60, 0.3)', '0 0 20px rgba(239, 68, 68, 0.5)', '0 0 10px rgba(251, 146, 60, 0.3)']
+            : animationType === 'glow'
+            ? ['0 0 10px rgba(34, 197, 94, 0.3)', '0 0 20px rgba(16, 185, 129, 0.5)', '0 0 10px rgba(34, 197, 94, 0.3)']
+            : undefined
+        } : {}}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
         <Icon size={20} className={accent ? 'text-white' : 'text-gray-600'} />
-      </div>
+      </motion.div>
       <div>
         <div className={`text-2xl font-bold ${accent ? 'text-white' : 'text-gray-900'}`}>
           {value}
@@ -142,9 +226,14 @@ const SimpleMetric = ({
         <div className={`text-sm ${accent ? 'text-gray-300' : 'text-gray-500'}`}>
           {label}
         </div>
+        {subtitle && (
+          <div className={`text-xs mt-1 ${accent ? 'text-gray-400' : 'text-gray-400'}`}>
+            {subtitle}
       </div>
+        )}
     </div>
   </div>
+  </motion.div>
 );
 
 // Footer moderne et simple
@@ -186,7 +275,7 @@ const ModernFooter = () => (
             <li><a href="/contact" className="text-gray-600 hover:text-gray-900">Nous contacter</a></li>
             <li>
               <a 
-                href="https://wa.me/33123456789" 
+                href="https://wa.me/32477025622" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-green-600 hover:text-green-700 font-medium"
@@ -301,6 +390,34 @@ function createMockCourseFromId(courseId: string): Course | null {
       progress: 0,
       isOwned: false,
       isPrimary: false
+    },
+    'course-math-analyse-1': {
+      id: 'course-math-analyse-1',
+      title: 'Analyse Mathématique I',
+      description: 'Bases de l\'analyse : dérivées, limites et continuité',
+      faculty: 'Solvay Brussels School',
+      year: '2024-2025',
+      difficulty: 'intermediate',
+      duration: '180 min',
+      totalLessons: 6,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: false,
+      isPrimary: false
+    },
+    'course-chimie-generale': {
+      id: 'course-chimie-generale',
+      title: 'Chimie Générale',
+      description: 'Concepts fondamentaux de la chimie moderne et applications',
+      faculty: 'Solvay Brussels School',
+      year: '2024-2025',
+      difficulty: 'intermediate',
+      duration: '140 min',
+      totalLessons: 5,
+      completedLessons: 0,
+      progress: 0,
+      isOwned: false,
+      isPrimary: false
     }
   };
   
@@ -332,8 +449,10 @@ function createMockCourseFromId(courseId: string): Course | null {
             courseId === 'course-gauss' ? 'pack-electromagnetisme' :
             courseId === 'course-forces' ? 'pack-electromagnetisme' :
             courseId === 'course-integrales' ? 'pack-mathematiques' :
-            courseId === 'course-franklin-dna' ? 'pack-biologie' :
-            courseId === 'course-physique-mecanique' ? 'pack-physique' : undefined
+            courseId === 'course-math-analyse-1' ? 'pack-mathematiques' :
+            courseId === 'course-physique-mecanique' ? 'pack-sciences' :
+            courseId === 'course-chimie-generale' ? 'pack-sciences' :
+            courseId === 'course-franklin-dna' ? 'pack-biologie' : undefined
   };
   
   console.log('✅ createMockCourseFromId: Cours mock créé:', mockCourse.title);
@@ -355,8 +474,40 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     onPurchase,
     onLogout
   } = props;
-  const [primaryCourses, setPrimaryCourses] = useState(data.primaryCourses);
+  
+  // Vérification et valeurs par défaut pour data
+  const safeData = data || {
+    primaryCourses: [],
+    suggestedCourses: [],
+    user: user || {
+      id: 'guest',
+      name: 'Étudiant',
+      year: 'Invité',
+      faculty: 'Non défini',
+      wallet: { balance: 0 }
+    },
+    facultyStats: {
+      totalStudents: 0
+    },
+    progress: []
+  };
+  
+  const [primaryCourses, setPrimaryCourses] = useState(safeData.primaryCourses || []);
   const [suggestedExpanded, setSuggestedExpanded] = useState(true);
+
+  // 🎨 État pour la densité adaptative (Option 1 + 4)
+  const [isScrolledCompact, setIsScrolledCompact] = useState(false);
+
+  // 🔽 Détection du scroll pour mode compact
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolledCompact(scrollY > 300); // Compacter après 300px de scroll
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // État des filtres pour la section faculté
   const [facultyFilters, setFacultyFilters] = useState<FilterState>({
@@ -367,40 +518,106 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     sortOrder: 'desc'
   });
 
-  // Tri intelligent des cours de la faculté
-  const smartSortedCourses = useMemo(() => {
-    const coursesToSort = data.suggestedCourses
-      .filter(suggestion => !favorites.includes(suggestion.course.id)) // Filtrer les cours déjà favoris
-      .map(suggestion => suggestion.course);
-    
-    return smartSortFacultyCourses(coursesToSort);
-  }, [data.suggestedCourses, favorites]);
-
-  // Filtrage et tri final des cours de la faculté
-  const filteredFacultyCourses = useMemo(() => {
-    return filterAndSortCourses(smartSortedCourses, facultyFilters);
-  }, [smartSortedCourses, facultyFilters]);
-
-  // Comptes pour les filtres
-  const filterCounts = useMemo(() => {
-    return getFilterCounts(smartSortedCourses);
-  }, [smartSortedCourses]);
-
   // États du composant
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courseViewerOpen, setCourseViewerOpen] = useState(false);
   const [useGamifiedViewer, setUseGamifiedViewer] = useState(true); // Nouveau viewer par défaut
   const [showStaircaseView, setShowStaircaseView] = useState(false);
   const [showIntegratedViewer, setShowIntegratedViewer] = useState(false);
+  
+  // État du fil social
+  const [showSocialFeed, setShowSocialFeed] = useState(false);
+  const [socialFeedInitialTab, setSocialFeedInitialTab] = useState<'now' | 'buddies' | 'for-you' | 'competitions' | 'progression'>('now');
+  const [communityInitialTab, setCommunityInitialTab] = useState<'overview' | 'buddies' | 'circles' | 'qa' | 'competitions' | 'badges'>('overview');
+
+  // État pour la messagerie
+  const [messagingContactId, setMessagingContactId] = useState<string | undefined>(undefined);
+
+  // 🎯 États pour le système XP et gamification
+  const [userXPProfile, setUserXPProfile] = useState<UserXPProfile | null>(null);
+  const [showGamifiedProfile, setShowGamifiedProfile] = useState(false);
+  const [showCompetitions, setShowCompetitions] = useState(false);
+  const [showXPBoost, setShowXPBoost] = useState(true);
+  const [xpFeedback, setXpFeedback] = useState<{
+    show: boolean;
+    xpGained: number;
+    action: XPAction;
+    newLevel?: XPLevel;
+    newBadges?: Badge[];
+  } | null>(null);
+  const xpService = XPService.getInstance();
+  
+  // Démarrer la simulation des activités sociales (démo uniquement)
+  useEffect(() => {
+    const socialFeedService = SocialFeedService.getInstance();
+    socialFeedService.startBuddySimulation();
+    socialFeedService.startFounderSessionSimulation(); // Nouvelle simulation
+  }, []); // Une seule fois au montage
+
+  // 🎯 Initialiser le profil XP
+  useEffect(() => {
+    const profile = xpService.getUserXPProfile();
+    setUserXPProfile(profile);
+    
+    // Mettre à jour la série quotidienne
+    const { streakUpdated, xpGained } = xpService.updateDailyStreak();
+    if (streakUpdated && xpGained > 0) {
+      setUserXPProfile(xpService.getUserXPProfile());
+    }
+  }, []);
+
+  // 🏢 Régénérer les Study Rooms pour tous les packs (une seule fois)
+  useEffect(() => {
+    const STUDYROOMS_VERSION = 'v5_no_duplicates'; // Changer cette version pour forcer une régénération
+    const lastVersion = localStorage.getItem('studyrooms_version');
+    
+    if (lastVersion !== STUDYROOMS_VERSION) {
+      console.log('🔄 Régénération des Study Rooms avec sessions Compléments de Zak...');
+      const rooms = AdvancedStudyRoomService.refreshStudyRooms();
+      localStorage.setItem('studyrooms_version', STUDYROOMS_VERSION);
+      console.log(`✅ ${rooms.length} Study Rooms créées automatiquement (dont ${rooms.filter(r => r.isComplement).length} sessions Compléments)`);
+      
+      // Debug: afficher les détails
+      AdvancedStudyRoomService.debugLog();
+    }
+  }, []);
+
+  // 🎯 Fonction pour ajouter de l'XP avec feedback visuel
+  const handleXPGain = (actionType: string, multiplier: number = 1, context?: string) => {
+    const result = xpService.addXP(actionType, multiplier, context);
+    
+    if (result.xpGained > 0) {
+      setUserXPProfile(result.profile);
+      
+      // Afficher le feedback XP
+      setXpFeedback({
+        show: true,
+        xpGained: result.xpGained,
+        action: {
+          id: `${actionType}-${Date.now()}`,
+          type: actionType as any,
+          points: result.xpGained,
+          title: result.profile.recentActions[0]?.title || 'Action complétée',
+          description: result.profile.recentActions[0]?.description || '',
+          emoji: result.profile.recentActions[0]?.emoji || '🎯'
+        },
+        newLevel: result.newLevel,
+        newBadges: result.newBadges
+      });
+    }
+    
+    return result;
+  };
+  
   // État des leçons synchronisé avec les achats
   const [courseLessons, setCourseLessons] = useState<{[courseId: string]: Lesson[]}>({});
 
   // Initialiser primaryCourses seulement au premier rendu
   useEffect(() => {
     if (primaryCourses.length === 0) {
-      setPrimaryCourses(data.primaryCourses);
+      setPrimaryCourses(safeData.primaryCourses || []);
     }
-  }, [data.primaryCourses]);
+  }, [safeData.primaryCourses]);
 
   // Synchroniser les favoris avec primaryCourses
   useEffect(() => {
@@ -411,7 +628,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     
     // Nettoyer les favoris incohérents (cours qui ne devraient pas être favoris par défaut)
     const invalidFavorites = favorites.filter(favoriteId => {
-      const course = data.primaryCourses.find(c => c.id === favoriteId);
+      const course = safeData.primaryCourses.find(c => c.id === favoriteId);
       
       // Supprimer seulement si : cours trouvé mais pas primaire ET cours était marqué comme favori par défaut
       // (Ne pas supprimer les favoris ajoutés manuellement par l'utilisateur)
@@ -421,7 +638,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     if (invalidFavorites.length > 0) {
       console.log('🧹 SYNC: Nettoyage favoris incohérents:', invalidFavorites);
       invalidFavorites.forEach(courseId => {
-        const course = data.primaryCourses.find(c => c.id === courseId);
+        const course = safeData.primaryCourses.find(c => c.id === courseId);
         const isPurchased = purchasedItems.has(courseId);
         console.log(`🧹 CLEANUP: Suppression ${courseId} - isPrimary: ${course?.isPrimary}, isOwned: ${course?.isOwned}`);
         removeFavorite(courseId, course?.title);
@@ -438,8 +655,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     
     // Créer un pool de tous les cours disponibles
     const allAvailableCourses = [
-      ...data.primaryCourses,
-      ...data.suggestedCourses.map(s => s.course)
+      ...safeData.primaryCourses,
+      ...safeData.suggestedCourses.map(s => s.course)
     ];
     
     // Créer des cours mock pour les favoris qui ne sont pas dans les données principales
@@ -495,6 +712,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [showBackgroundOptions, setShowBackgroundOptions] = useState(false);
   const [showWalletTopUp, setShowWalletTopUp] = useState(false);
+  const [showPackCompletionModal, setShowPackCompletionModal] = useState(false);
+  const [completedPackInfo, setCompletedPackInfo] = useState<{packId: string, packTitle: string} | null>(null);
+  const [pendingPackCelebration, setPendingPackCelebration] = useState<{packId: string, packTitle: string} | null>(null);
   const [showPurchaseUpsell, setShowPurchaseUpsell] = useState(false);
   const [showIdentityVerification, setShowIdentityVerification] = useState(false);
   
@@ -504,12 +724,69 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [showStudyRoomModal, setShowStudyRoomModal] = useState(false);
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<CourseStudyRoom | null>(null);
   const [selectedLessonForPurchase, setSelectedLessonForPurchase] = useState<any>(null);
-  // Utiliser les purchasedItems des props ou un Set par défaut
-  const purchasedItems = propsPurchasedItems || new Set(['course-suites']);
+  // Utiliser les purchasedItems du localStorage ou un Set vide par défaut
+  const [purchasedItems, setPurchasedItems] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('purchasedItems');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    }
+    return new Set();
+  });
   
   // 🔍 DEBUG: Vérifier purchasedItems après achat
   console.log('🔍 PURCHASED ITEMS:', Array.from(purchasedItems));
   console.log('🔍 PURCHASED ITEMS DETAILS:', purchasedItems);
+
+  // Écouter les changements du localStorage pour purchasedItems
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const stored = localStorage.getItem('purchasedItems');
+      if (stored) {
+        const parsedItems = JSON.parse(stored) as string[];
+        const newPurchasedItems = new Set(parsedItems);
+        setPurchasedItems(newPurchasedItems);
+        console.log('🔄 PURCHASED ITEMS: Mise à jour depuis localStorage:', Array.from(newPurchasedItems));
+      }
+    };
+
+    // Écouter les événements de storage
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Écouter les événements personnalisés pour les changements locaux
+    window.addEventListener('purchasedItemsChanged', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('purchasedItemsChanged', handleStorageChange);
+    };
+  }, []);
+
+  // Synchroniser unlockedCourses avec purchasedItems
+  useEffect(() => {
+    const unlocked: string[] = [];
+    
+    Array.from(purchasedItems).forEach(item => {
+      if (typeof item === 'string') {
+        // Pack acheté : débloquer tous les cours du pack
+        if (item.startsWith('pack-')) {
+          const pack = getCoursePacks().find(p => p.id === item);
+          if (pack) {
+            unlocked.push(...pack.courses);
+          }
+        }
+        // Cours acheté directement
+        else if (item.startsWith('course-')) {
+          unlocked.push(item);
+        }
+      }
+    });
+    
+    // Supprimer les doublons
+    const uniqueUnlocked = [...new Set(unlocked)];
+    console.log('🔓 UNLOCKED COURSES: Synchronisation avec purchasedItems:', uniqueUnlocked);
+    setUnlockedCourses(uniqueUnlocked);
+  }, [purchasedItems]);
+
   const settingsRef = useRef<HTMLDivElement>(null);
 
   // Options de fond d'écran
@@ -565,7 +842,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // Utiliser le hook Study Room
   const studyRoomState = useStudyRoomState(
-    [...primaryCourses, ...data.suggestedCourses.map(s => s.course)],
+    [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)],
     Array.from(purchasedItems),
     user?.id || '1',
     activeStudyRooms,
@@ -578,7 +855,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   
   // Utiliser le hook Planificateur
   const plannerState = usePlannerState(
-    [...primaryCourses, ...data.suggestedCourses.map(s => s.course)],
+    [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)],
     Array.from(purchasedItems),
     user?.id || '1',
     plannerConfigured,
@@ -587,6 +864,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // État du Buddy System
   const [buddy, setBuddy] = useState<BuddySystem | null>(null);
+  
+  // État pour forcer la mise à jour du header après un achat
+  const [walletUpdateTrigger, setWalletUpdateTrigger] = useState(0);
   
   // État de l'onboarding du planificateur
   const [showPlannerOnboarding, setShowPlannerOnboarding] = useState(false);
@@ -597,10 +877,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   // Fonction pour déclencher l'onboarding du planificateur (OBLIGATOIRE à chaque déblocage)
   const triggerPlannerOnboarding = (courseName: string, courseId?: string) => {
     console.log('🎯 ONBOARDING: Déclenchement planification pour', courseName);
+    console.log('🎯 ONBOARDING: pendingPackCelebration:', pendingPackCelebration);
     
     // Trouver le cours concerné pour la planification cumulative
     if (courseId) {
-      const course = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+      const course = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
         .find(c => c.id === courseId);
       if (course) {
         setFocusedCourseForPlanning(course);
@@ -608,14 +889,35 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       }
     }
     
-    // ⚠️ TOUJOURS déclencher l'onboarding lors d'un déblocage de cours complet
-    // C'est une étape systématique et incontournable du déblocage
-    setTimeout(() => {
-      console.log('🎯 ONBOARDING: Exécution du déclenchement OBLIGATOIRE pour', courseName);
-      setOnboardingCourseName(courseName);
-      setShowPlannerOnboarding(true);
-      console.log('🎯 ONBOARDING: États mis à jour - courseName:', courseName, 'show:', true);
-    }, 300);
+    // Vérifier s'il y a une célébration de pack en attente
+    if (pendingPackCelebration) {
+      console.log('🎉 PACK COMPLETION: Célébration en attente détectée, déclenchement avant planification');
+      console.log('🎉 PACK COMPLETION: Célébration pour:', pendingPackCelebration.packTitle, 'ID:', pendingPackCelebration.packId);
+      console.log('🎉 PACK COMPLETION: courseName actuel:', courseName);
+      // Déclencher d'abord la célébration
+      setCompletedPackInfo(pendingPackCelebration);
+      setShowPackCompletionModal(true);
+      console.log('🎉 PACK COMPLETION: Modal de célébration ouverte, showPackCompletionModal:', true);
+      // Nettoyer la célébration en attente
+      setPendingPackCelebration(null);
+      
+      // Programmer la planification pour après la célébration
+      setTimeout(() => {
+        console.log('🎯 ONBOARDING: Exécution du déclenchement OBLIGATOIRE pour', courseName, '(après célébration)');
+        setOnboardingCourseName(courseName);
+        setShowPlannerOnboarding(true);
+        console.log('🎯 ONBOARDING: États mis à jour - courseName:', courseName, 'show:', true);
+      }, 1000); // Délai plus long pour laisser le temps à l'utilisateur de voir la célébration
+    } else {
+      // ⚠️ TOUJOURS déclencher l'onboarding lors d'un déblocage de cours complet
+      // C'est une étape systématique et incontournable du déblocage
+      setTimeout(() => {
+        console.log('🎯 ONBOARDING: Exécution du déclenchement OBLIGATOIRE pour', courseName);
+        setOnboardingCourseName(courseName);
+        setShowPlannerOnboarding(true);
+        console.log('🎯 ONBOARDING: États mis à jour - courseName:', courseName, 'show:', true);
+      }, 300);
+    }
   };
 
   // Handler pour démarrer la planification depuis l'onboarding
@@ -625,7 +927,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     console.log('🎯 ONBOARDING: onboardingCourseName:', onboardingCourseName);
     
     // Trouver le cours concerné pour pré-remplir ses informations
-    const targetCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+    const targetCourse = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
       .find(course => course.title === onboardingCourseName);
     
     if (targetCourse) {
@@ -716,7 +1018,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const euroWallet = useEuroWallet(150); // 150€ de solde initial selon les spécifications
 
   // Hook du tour guidé
-  const onboardingTour = useOnboardingTour(user?.id || data.user?.id);
+  const onboardingTour = useOnboardingTour(user?.id || safeData.user?.id);
   
   // État pour le BuddyOnboarding
   const [showBuddyOnboarding, setShowBuddyOnboarding] = useState(false);
@@ -726,7 +1028,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   
   // Vérifier si l'utilisateur a terminé le buddy onboarding
   useEffect(() => {
-    const userId = user?.id || data.user?.id;
+    const userId = user?.id || safeData.user?.id;
     if (userId && onboardingTour.hasCompletedTour) {
       const hasBuddyOnboarding = localStorage.getItem(`buddy_onboarding_completed_${userId}`) === 'true';
       
@@ -739,20 +1041,43 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         return () => clearTimeout(timer);
       }
     }
-  }, [onboardingTour.hasCompletedTour, user?.id, data.user?.id, showBuddyOnboarding]);
+  }, [onboardingTour.hasCompletedTour, user?.id, safeData.user?.id, showBuddyOnboarding]);
+
+  // Tri intelligent des cours de la faculté (après déclaration de unlockedCourses)
+  const smartSortedCourses = useMemo(() => {
+    const coursesToSort = safeData.suggestedCourses
+      .filter(suggestion => suggestion && suggestion.course && suggestion.course.id) // Filtrer les cours invalides
+      .filter(suggestion => !favorites.includes(suggestion.course.id)) // Filtrer les cours déjà favoris
+      .filter(suggestion => !unlockedCourses.includes(suggestion.course.id)) // Filtrer les cours déjà débloqués
+      .map(suggestion => suggestion.course); // Extraire les cours des suggestions
+    
+    console.log('🎯 SMART SORT: coursesToSort:', coursesToSort.map(c => ({ id: c.id, title: c.title })));
+    
+    return smartSortFacultyCourses(coursesToSort);
+  }, [safeData.suggestedCourses, favorites, unlockedCourses]);
+
+  // Filtrage et tri final des cours de la faculté
+  const filteredFacultyCourses = useMemo(() => {
+    return filterAndSortCourses(smartSortedCourses, facultyFilters);
+  }, [smartSortedCourses, facultyFilters]);
+
+  // Comptes pour les filtres
+  const filterCounts = useMemo(() => {
+    return getFilterCounts(smartSortedCourses);
+  }, [smartSortedCourses]);
 
 
   // Handlers pour le portefeuille
   const handleWalletTopUp = (amount: number, bonus: number) => {
     const totalAdded = amount + bonus;
     
-    const currentWallet = user?.wallet || data.user?.wallet;
+    const currentWallet = user?.wallet || safeData.user?.wallet;
     if (currentWallet && props.onUpdateUser) {
       const oldBalance = currentWallet.balance;
       const newBalance = oldBalance + totalAdded;
       
       const updatedUser = {
-        ...(user || data.user),
+        ...(user || safeData.user),
         wallet: {
           ...currentWallet,
           balance: newBalance,
@@ -810,17 +1135,150 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     setShowIdentityVerification(false);
   };
 
+  const checkPackCompletion = (option: PurchaseOption) => {
+    console.log('🎯 PACK COMPLETION: Vérification de la complétion après achat', option.type, option.itemId);
+    
+    try {
+      const packs = getCoursePacks();
+      
+      // Corriger la logique de création de l'ID d'achat
+      let purchaseKey: string;
+      if (option.type === 'lesson') {
+        purchaseKey = option.itemId.startsWith('lesson-') ? option.itemId : `lesson-${option.itemId}`;
+      } else {
+        // Pour les packs et cours, utiliser directement l'itemId s'il contient déjà le préfixe
+        purchaseKey = option.itemId.startsWith(option.type) ? option.itemId : `${option.type}-${option.itemId}`;
+      }
+      
+      const updatedPurchasedItems = new Set([...Array.from(purchasedItems), purchaseKey]);
+      console.log('🔍 PACK COMPLETION: purchaseKey créé:', purchaseKey);
+      console.log('🔍 PACK COMPLETION: updatedPurchasedItems:', Array.from(updatedPurchasedItems));
+      
+      // Vérifier si c'est un achat de pack complet
+      if (option.type === 'pack') {
+        // Ne vérifier que le pack qui vient d'être acheté
+        const purchasedPack = packs.find(pack => pack.id === option.itemId);
+        
+        if (purchasedPack) {
+          console.log(`🎯 PACK COMPLETION: Vérification du pack acheté ${purchasedPack.id} (${purchasedPack.title})`);
+          
+          // Créer les cours avec leurs leçons pour ce pack
+          const packCourses = purchasedPack.courses.map(courseId => {
+            const courseData = createMockCourseFromId(courseId);
+            return {
+              ...courseData,
+              lessons: generateMockLessons(courseId, courseData?.title || '')
+            };
+          });
+          
+          // Vérifier si le pack est maintenant complété
+          const isCompleted = ProgressionBonusService.isPackCompleted(packCourses, updatedPurchasedItems, purchasedPack.id);
+          
+          if (isCompleted) {
+            console.log(`🎉 PACK COMPLETION: Pack ${purchasedPack.id} complété !`);
+            
+            // Vérifier si un bonus n'a pas déjà été donné pour ce pack
+            const bonusHistory = ProgressionBonusService.getUserProgressionBonusHistory(safeData.user?.id || 'user-default');
+            const existingBonus = bonusHistory.bonuses.find(bonus => bonus.packId === purchasedPack.id);
+            
+            if (!existingBonus) {
+              console.log(`🎁 PACK COMPLETION: Nouveau bonus de progression pour ${purchasedPack.title}`);
+              
+              // Créer le bonus de progression
+              ProgressionBonusService.createProgressionBonus(
+                safeData.user?.id || 'user-default',
+                purchasedPack.id,
+                purchasedPack.title,
+                100 // 100€ de bonus
+              );
+              
+              console.log(`💎 PACK COMPLETION: Bonus de progression de 100€ créé pour "${purchasedPack.title}" (sera utilisé lors de la prochaine recharge)`);
+              
+              // Programmer la célébration pour juste avant la planification - SEULEMENT pour le pack acheté
+              setPendingPackCelebration({
+                packId: purchasedPack.id,
+                packTitle: purchasedPack.title
+              });
+              console.log(`🎉 PACK COMPLETION: Célébration programmée pour ${purchasedPack.title}`);
+            } else {
+              console.log(`🎁 PACK COMPLETION: Bonus déjà existant pour ${purchasedPack.title}`);
+            }
+          } else {
+            console.log(`⏳ PACK COMPLETION: Pack ${purchasedPack.id} pas encore complété`);
+          }
+        }
+      } else {
+        // Pour les achats de cours/leçons individuels, vérifier tous les packs
+        packs.forEach(pack => {
+          console.log(`🎯 PACK COMPLETION: Vérification du pack ${pack.id} (${pack.title})`);
+          
+          // Créer les cours avec leurs leçons pour ce pack
+          const packCourses = pack.courses.map(courseId => {
+            const courseData = createMockCourseFromId(courseId);
+            return {
+              ...courseData,
+              lessons: generateMockLessons(courseId, courseData?.title || '')
+            };
+          });
+          
+          // Vérifier si le pack est maintenant complété
+          const isCompleted = ProgressionBonusService.isPackCompleted(packCourses, updatedPurchasedItems, pack.id);
+          
+          if (isCompleted) {
+            console.log(`🎉 PACK COMPLETION: Pack ${pack.id} complété !`);
+            
+            // Vérifier si un bonus n'a pas déjà été donné pour ce pack
+            const bonusHistory = ProgressionBonusService.getUserProgressionBonusHistory(safeData.user?.id || 'user-default');
+            const existingBonus = bonusHistory.bonuses.find(bonus => bonus.packId === pack.id);
+            
+            if (!existingBonus) {
+              console.log(`🎁 PACK COMPLETION: Nouveau bonus de progression pour ${pack.title}`);
+              // Programmer la célébration pour juste avant la planification
+              setPendingPackCelebration({
+                packId: pack.id,
+                packTitle: pack.title
+              });
+              console.log(`🎉 PACK COMPLETION: Célébration programmée pour ${pack.title}`);
+            } else {
+              console.log(`🎁 PACK COMPLETION: Bonus déjà existant pour ${pack.title}`);
+            }
+          } else {
+            console.log(`⏳ PACK COMPLETION: Pack ${pack.id} pas encore complété`);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('❌ PACK COMPLETION: Erreur lors de la vérification:', error);
+    }
+  };
+
   const handleLessonPurchase = (option: PurchaseOption) => {
     console.log('🛒 ACHAT: Post-processing après achat', option.type, option.itemId);
     
     // Note: L'achat a déjà été traité par WalletService dans PurchaseUpsellModal
     // Cette fonction se contente de mettre à jour l'état local et déclencher la planification
     
+    // 🎯 XP selon le type d'achat
+    if (option.type === 'lesson') {
+      handleXPGain('lesson_unlock', 1, option.itemId);
+    } else if (option.type === 'course') {
+      handleXPGain('course_complete', 1, option.itemId);
+    } else if (option.type === 'pack') {
+      handleXPGain('pack_complete', 1, option.itemId);
+    }
+    
     // 🔑 CRUCIAL: Informer le parent pour mettre à jour purchasedItems
     if (onPurchase) {
       onPurchase(option.type, option.itemId, option.price);
       console.log('🔑 PURCHASE: Informé le parent de l\'achat:', option.type, option.itemId);
     }
+
+    // 💰 CRUCIAL: Forcer la mise à jour du header après l'achat
+    setWalletUpdateTrigger(prev => prev + 1);
+    console.log('💰 WALLET: Header forcé à se mettre à jour après achat');
+
+    // Vérifier la complétion de pack AVANT de déclencher la planification
+    checkPackCompletion(option);
 
     // Ajouter notifications de paiement et déblocage
     import('@/lib/notification-service').then(({ NotificationService }) => {
@@ -837,6 +1295,16 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         }
       }
     });
+
+    // 🪩 Ajouter une activité sociale personnelle
+    const socialFeedService = SocialFeedService.getInstance();
+    if (option.type === 'lesson' && selectedCourse) {
+      socialFeedService.addPersonalAchievement(`as débloqué une nouvelle leçon en ${selectedCourse.title}`);
+    } else if (option.type === 'course' && selectedCourse) {
+      socialFeedService.addPersonalAchievement(`as complété le cours ${selectedCourse.title} !`);
+    } else if (option.type === 'pack') {
+      socialFeedService.addPersonalAchievement(`as complété un pack complet !`);
+    }
 
     // 🔑 MISE À JOUR CENTRALISÉE DES LEÇONS (POINT CRITIQUE)
     
@@ -959,6 +1427,15 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           isOwned: false // Pas encore le cours complet
         };
         setPrimaryCourses(prev => [courseToAdd, ...prev]);
+        
+        // 🔑 IMPORTANT: Sauvegarder aussi dans localStorage pour la cohérence
+        const existingFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        if (!existingFavorites.includes(selectedCourse.id)) {
+          const updatedFavorites = [...existingFavorites, selectedCourse.id];
+          localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+          console.log('💾 SYNC: Cours ajouté dans localStorage.favorites:', selectedCourse.id);
+        }
+        
         console.log('✅ SYNC: Cours parent ajouté aux favoris:', selectedCourse.title);
       }
       
@@ -967,7 +1444,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       console.log('🔄 SYNC: Achat d\'un cours complet, mise à jour favoris');
       
       // Toujours chercher le cours par option.itemId pour éviter les confusions
-      const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+      const purchasedCourse = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
         .find(course => course.id === option.itemId);
       
       if (purchasedCourse) {
@@ -1014,13 +1491,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       
       // Récupérer les informations du pack acheté
       const packs = getCoursePacks();
-      const purchasedPack = packs.find((p: any) => p.id === option.itemId || p.id === 'pack-electromagnetisme');
+      const purchasedPack = packs.find((p: any) => p.id === option.itemId);
       
       if (purchasedPack && purchasedPack.courses) {
         console.log('🔄 SYNC: Pack trouvé:', purchasedPack.title, 'avec cours:', purchasedPack.courses);
         
         // Récupérer tous les cours du pack depuis les données
-        const allCourses = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)];
+        const allCourses = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)];
         const packCourses = purchasedPack.courses
           .map((courseId: string) => allCourses.find(c => c.id === courseId))
           .filter(Boolean)
@@ -1095,7 +1572,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       
       // 🔄 SYNC: Mettre à jour selectedCourse pour correspondre au cours acheté
       if (option.type === 'course') {
-        const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+        const purchasedCourse = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
           .find(course => course.id === option.itemId);
         if (purchasedCourse && purchasedCourse.id !== selectedCourse?.id) {
           console.log('🔄 SYNC: Redirection vers le cours acheté:', purchasedCourse.title, '(était:', selectedCourse?.title, ')');
@@ -1109,7 +1586,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       if (option.type === 'pack') {
         // Pour un pack, utiliser le nom du pack et proposer tous les cours
         const packs = getCoursePacks();
-        const purchasedPack = packs.find((p: any) => p.id === option.itemId || p.id === 'pack-electromagnetisme');
+        const purchasedPack = packs.find((p: any) => p.id === option.itemId);
         
         if (purchasedPack) {
           courseName = purchasedPack.title;
@@ -1119,7 +1596,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         }
       } else {
         // Pour un cours individuel - toujours chercher par option.itemId pour éviter les confusions
-        const purchasedCourse = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+        const purchasedCourse = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
           .find(course => course.id === option.itemId);
         
         if (purchasedCourse) {
@@ -1136,7 +1613,10 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       }
       
       console.log('🎯 ONBOARDING: DÉCLENCHEMENT FINAL pour:', courseName, 'ID:', planningItemId);
-      triggerPlannerOnboarding(courseName, planningItemId);
+      // Ajouter un délai pour laisser le temps à la célébration d'être programmée
+      setTimeout(() => {
+        triggerPlannerOnboarding(courseName, planningItemId);
+      }, 200);
     } else {
       console.log('🎯 ONBOARDING: Pas un achat de cours complet, pas d\'onboarding');
     }
@@ -1186,6 +1666,73 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const handleOpenCourse = (course: Course) => {
     setSelectedCourse(course);
     setShowIntegratedViewer(true); // Utiliser le nouveau viewer par défaut
+  };
+
+  // Fonction pour ouvrir la messagerie depuis Community
+  const handleOpenMessagingFromCommunity = (contactId?: string) => {
+    setMessagingContactId(contactId);
+    setActiveSection('messaging');
+  };
+
+  // 🎯 Handler universel pour les redirections depuis le Social Feed Hub
+  const handleSocialFeedNavigation = (linkType: string, linkId?: string) => {
+    console.log(`🎯 Navigation Social Feed: ${linkType} → ${linkId || 'no-id'}`);
+    
+    // Fermer le Social Feed Panel
+    setShowSocialFeed(false);
+    
+    switch (linkType) {
+      case 'course':
+        // Rediriger vers le cours
+        const course = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)].find(c => c.id === linkId);
+        if (course) {
+          handleOpenIntegratedViewer(course);
+        }
+        break;
+        
+      case 'competition':
+        // Ouvrir le module Communauté sur l'onglet Compétitions
+        setCommunityInitialTab('competitions');
+        setActiveSection('community');
+        break;
+        
+      case 'circle':
+        // Ouvrir le module Communauté sur l'onglet Cercles
+        setCommunityInitialTab('circles');
+        setActiveSection('community');
+        break;
+        
+      case 'message':
+        // Ouvrir la messagerie avec le contact pré-sélectionné
+        setActiveSection('messaging');
+        setMessagingContactId(linkId || '');
+        break;
+        
+      case 'xp-event':
+        // Afficher l'événement XP Boost
+        setShowXPBoost(true);
+        break;
+        
+      case 'study-room':
+        // Ouvrir le module Study Rooms
+        setActiveSection('study-rooms');
+        break;
+        
+      case 'buddy':
+        // Ouvrir le module Communauté sur l'onglet Buddies
+        setCommunityInitialTab('buddies');
+        setActiveSection('community');
+        break;
+        
+      case 'community':
+        // Ouvrir le module Communauté sur l'onglet Badges
+        setCommunityInitialTab('badges');
+        setActiveSection('community');
+        break;
+        
+      default:
+        console.warn(`Type de lien non géré: ${linkType}`);
+    }
   };
 
   // Fonction pour naviguer vers le Course Viewer depuis le planificateur
@@ -1240,23 +1787,19 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         description: 'Formation complète en électrostatique',
         price: 1200,
         features: [
-          'Accès à l\'ensemble des cours d\'électrostatique :',
-          '– Loi de Gauss',
-          '– Intégrales et Applications', 
-          '– Forces et Mouvement',
-          '– Suites et Limites',
-          '– Champs Électriques, Potentiels et Énergie',
           'Vidéos FullHD',
           'Quiz d\'auto-évaluation',
-          'Slides PDF disponibles pour tous les cours du pack',
-          'Accès aux Study Rooms premium',
-          'Accès à tous les groupes WhatsApp',
-          'Garantie de réussite globale',
+          'Toutes les leçons du cours',
+          'Accès aux Study Rooms',
+          'Garantie de réussite',
           'Support prioritaire',
-          'Planificateur inclus'
+          'Accès au groupe WhatsApp du cours',
+          'Accès à la communauté',
+          'Planificateur inclus',
+          'Tous les cours d\'électrostatique',
+          'Slides PDF disponibles pour tous les cours du pack'
         ],
-        badge: 'Pack Premium',
-        walletHint: 'Astuce : Recharge ton portefeuille et profite d\'un bonus offert (quantité limitée).'
+        badge: 'Pack Premium'
       }];
     }
 
@@ -1268,19 +1811,19 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       description: pack.description,
       price: 1200, // Prix fixe pour tous les packs
       features: [
-        `Accès à l'ensemble des cours de ${pack.title.toLowerCase()} :`,
-        ...pack.courses.map((courseId: string) => `– ${getCourseNameFromId(courseId)}`),
         'Vidéos FullHD',
         'Quiz d\'auto-évaluation',
-        'Slides PDF disponibles pour tous les cours du pack',
-        'Accès aux Study Rooms premium',
-        'Accès à tous les groupes WhatsApp',
-        'Garantie de réussite globale',
+        'Toutes les leçons du cours',
+        'Accès aux Study Rooms',
+        'Garantie de réussite',
         'Support prioritaire',
-        'Planificateur inclus'
+        'Accès au groupe WhatsApp du cours',
+        'Accès à la communauté',
+        'Planificateur inclus',
+        `Tous les cours de ${pack.title.toLowerCase()}`,
+        'Slides PDF disponibles pour tous les cours du pack'
       ],
-      badge: 'Pack Premium',
-      walletHint: 'Astuce : Recharge ton portefeuille et profite d\'un bonus offert (quantité limitée).'
+      badge: 'Pack Premium'
     }];
   };
 
@@ -1496,7 +2039,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   };
 
   const handlePreviewCourse = (courseId: string) => {
-    const course = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)]
+    const course = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]
       .find(c => c.id === courseId);
     if (course) {
       setPreviewCourse(course);
@@ -1514,7 +2057,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // Fonction pour débloquer un cours avec des crédits (interceptée pour déclencher la comparaison)
   const handleUnlockCourse = (courseId: string) => {
-    const course = data.suggestedCourses.find(s => s.course.id === courseId)?.course;
+    const course = safeData.suggestedCourses.find(s => s.course.id === courseId)?.course;
     if (!course) return;
 
     // Au lieu de débloquer directement, on déclenche la comparaison intelligente
@@ -1524,7 +2067,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // Fonction pour débloquer directement un cours (utilisée après confirmation)
   const handleDirectCourseUnlock = (courseId: string) => {
-    const course = data.suggestedCourses.find(s => s.course.id === courseId)?.course;
+    const course = safeData.suggestedCourses.find(s => s.course.id === courseId)?.course;
     if (!course) return;
 
     const creditCost = course.creditCost || 1;
@@ -1738,7 +2281,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const handleUnlockPack = (packId: string, courseIds: string[]) => {
     // Récupérer les cours du pack
     const packCourses = courseIds.map(courseId => 
-      data.suggestedCourses.find(s => s.course.id === courseId)?.course
+      safeData.suggestedCourses.find(s => s.course.id === courseId)?.course
     ).filter(Boolean) as Course[];
 
     if (packCourses.length === 0) return;
@@ -1790,12 +2333,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   };
 
   // Calculs de statistiques
-  const totalHours = data.progress.reduce((acc, p) => acc + p.timeSpent, 0) / 60;
+  const totalHours = safeData.progress.reduce((acc, p) => acc + p.timeSpent, 0) / 60;
   const averageProgress = primaryCourses.length > 0 
     ? Math.round(primaryCourses.reduce((acc, course) => acc + course.progress, 0) / primaryCourses.length)
     : 0;
-  const bestRanking = data.progress.length > 0 
-    ? Math.min(...data.progress.map(p => p.facultyRanking))
+  const bestRanking = safeData.progress.length > 0 
+    ? Math.min(...safeData.progress.map(p => p.facultyRanking))
     : null;
 
   // Navigation items simplifiés avec persistance
@@ -1830,11 +2373,21 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       isPremium: true,
       hasNotification: plannerState.plannerAccess.hasAccess && !plannerConfigured
     },
+    { id: 'study-rooms', label: 'Study Rooms', icon: Video, hasAccess: true },
     { id: 'community', label: 'Communauté', icon: Users, hasAccess: true },
+    { id: 'messaging', label: 'Messages', icon: MessageCircle, hasAccess: true, hasNotification: true },
+    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, hasAccess: true, isExternal: true },
   ];
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .overflow-x-auto::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
       {/* Vue escalier - Remplace complètement l'interface */}
       {selectedCourse && showStaircaseView ? (
         <CourseStaircaseView
@@ -1855,7 +2408,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           onToggleSettings={() => setShowSettings(!showSettings)}
           purchasedItems={purchasedItems}
           onPurchase={handleLessonPurchase}
-          user={user || data.user}
+          user={user || safeData.user}
           lessons={courseLessons[selectedCourse.id]}
           onLessonsUpdate={(updatedLessons) => {
             setCourseLessons(prev => ({
@@ -1863,9 +2416,27 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               [selectedCourse.id]: updatedLessons
             }));
           }}
+          userXPProfile={userXPProfile}
         />
       ) : (
-        <div className="min-h-screen pt-[73px] relative overflow-hidden">
+        <div 
+          id="dashboard-container"
+          className="min-h-screen pt-[73px] relative overflow-hidden"
+        >
+          {/* Curseur animé personnalisé pour le dashboard */}
+          <TargetCursor 
+            spinDuration={2}
+            hideDefaultCursor={true}
+          />
+          
+          {/* Style pour cacher le curseur uniquement dans le dashboard */}
+          <style dangerouslySetInnerHTML={{ __html: `
+            #dashboard-container,
+            #dashboard-container * {
+              cursor: none !important;
+            }
+          `}} />
+          
           {/* Arrière-plan dynamique */}
           {selectedBackground !== 'default' ? (
             <div 
@@ -1886,8 +2457,14 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           )}
           
           
-          {/* Contenu principal */}
-          <div className="relative z-10">
+          {/* Contenu principal adaptatif */}
+          <div 
+            className={`relative z-10 transition-all duration-300 ease-in-out ${
+              showSocialFeed 
+                ? 'mr-[480px] md:mr-[480px] lg:mr-[450px] xl:mr-[520px] 2xl:mr-[580px]' // Décalage adaptatif selon la largeur du panneau
+                : 'mr-0'
+            }`}
+          >
         {/* Header épuré bord à bord - pleine largeur */}
       <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
         <div className="px-6 py-4">
@@ -1895,15 +2472,15 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setSidebarOpen(true)}
-                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+                className="cursor-target w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
               >
                 <Menu size={20} />
               </button>
 
               
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                  <Brain className="text-white" size={16} />
+                <div className="w-8 h-8 flex items-center justify-center">
+                  {/* Espace réservé pour le logo */}
                 </div>
                 <div>
                   <h1 className="text-lg font-bold text-gray-900">Science Made Simple</h1>
@@ -1914,91 +2491,57 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             {/* Crédits et notifications */}
             <div className="hidden md:flex items-center gap-4">
               {/* Portefeuille */}
-              {(user?.wallet || data.user?.wallet) && (
+              {(user?.wallet || safeData.user?.wallet) && (
                 <div data-tour="wallet">
                   <WalletBalance 
-                    balance={(user?.wallet || data.user?.wallet)?.balance || 0}
+                    balance={WalletService.getTotalBalance(safeData.user?.id || 'user-default').walletBalance}
                     onAddFunds={() => setShowWalletTopUp(true)}
+                    userId={safeData.user?.id || 'user-default'}
+                    key={walletUpdateTrigger} // Force re-render after purchase
                   />
                 </div>
               )}
+              
+                  {/* Widget XP */}
+                  {userXPProfile && (
+                <XPHeaderWidget
+                        profile={userXPProfile}
+                  onClick={() => {
+                    setSocialFeedInitialTab('progression');
+                    setShowSocialFeed(true);
+                  }}
+                />
+                  )}
 
-              
-              
-              {/* Bouton WhatsApp - VERT */}
-              <a
-                data-tour="whatsapp"
-                href="https://wa.me/33123456789"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors group"
-                title="Contactez-nous sur WhatsApp"
-              >
-                <MessageSquare size={18} className="text-white" />
-                <span className="text-white text-sm font-medium">Discute avec nous</span>
-              </a>
-              
-              
-              
+                  {/* Fil Social */}
+                  <div data-tour="social-feed">
+                    <SocialFeedIcon 
+                      onClick={() => {
+                        setSocialFeedInitialTab('now');
+                        setShowSocialFeed(true);
+                      }}
+                      className="text-gray-600 hover:text-gray-900"
+                    />
+                  </div>
 
               {/* Widget Social Unifié */}
               <UnifiedSocialWidget
                 userId={user?.id || 'current_user'}
                 onNavigateToCommunity={() => setActiveSection('community')}
                 onNavigateToSection={setActiveSection}
-              />
-
-              {/* Widget Study Rooms */}
-              <div data-tour="study-rooms">
-                <StudyRoomHeaderWidget
-                  userId={user?.id || 'current_user'}
-                  userName={user?.name || 'Étudiant SMS'}
-                  purchasedItems={purchasedItems}
-                  onNavigateToStudyRooms={() => setActiveSection('community')}
-                  onNavigateToUpgrade={(courseId) => {
-                    setActiveSection('unlock');
-                    console.log('Navigation vers upgrade pour:', courseId);
-                  }}
-                />
-              </div>
-
-              {/* Widget Notifications */}
-               <NotificationWidget
-                 onNotificationClick={(notification) => {
-                   // Gérer la navigation selon le type de notification
-                   if (notification.actionData?.action === 'configure' && notification.category === 'planning') {
-                     setActiveSection('planning');
-                   } else if (notification.category === 'courses' && notification.actionData?.courseId) {
-                     // Ouvrir le course viewer
-                     console.log('Navigate to course:', notification.actionData.courseId);
-                   } else if (notification.category === 'community') {
-                     setActiveSection('community');
-                   }
-                 }}
                />
 
               {/* Widget des paramètres */}
             </div>
 
             <div className="flex items-center gap-4">
-              {/* WhatsApp mobile */}
-              <a
-                href="https://wa.me/33123456789"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors"
-                title="Contactez-nous sur WhatsApp"
-              >
-                <MessageSquare size={18} className="text-white" />
-              </a>
-
               {/* Profil utilisateur avec paramètres */}
               <div className="relative" ref={settingsRef}>
                 <button 
                   onClick={() => setShowSettings(!showSettings)}
                   className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold hover:bg-gray-800 transition-colors"
                 >
-                  {data.user.name.charAt(0)}
+                  {safeData.user.name.charAt(0)}
                 </button>
 
                 {/* Dropdown profil + paramètres */}
@@ -2015,11 +2558,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold">
-                            {data.user.name.charAt(0)}
+                            {safeData.user.name.charAt(0)}
                           </div>
                           <div>
-                            <h3 className="text-sm font-semibold text-gray-900">{data.user.name}</h3>
-                            <p className="text-xs text-gray-500">{data.user.year}</p>
+                            <h3 className="text-sm font-semibold text-gray-900">{safeData.user.name}</h3>
+                            <p className="text-xs text-gray-500">{safeData.user.year}</p>
                           </div>
                         </div>
                         <button 
@@ -2280,15 +2823,19 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     key={item.id}
                     data-tour={item.id}
                     onClick={() => {
-                      if (item.hasAccess) {
+                      if (item.id === 'whatsapp') {
+                        window.open('https://wa.me/33123456789', '_blank');
+                      } else if (item.hasAccess) {
                         setActiveSection(item.id);
                       } else if (item.isPremium) {
                         // Afficher le message d'accès premium
                         alert(plannerState.plannerAccess.accessMessage);
                       }
                     }}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all relative group ${
-                      isActive
+                    className={`cursor-target w-full flex items-center gap-3 p-3 rounded-lg transition-all relative group ${
+                      item.id === 'whatsapp'
+                        ? 'bg-green-500 text-white hover:bg-green-600'
+                        : isActive
                         ? 'bg-black text-white' 
                         : isDisabled
                         ? 'text-gray-400 cursor-not-allowed'
@@ -2343,7 +2890,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         {/* Contenu principal bord à bord avec marge pour sidebar fixe */}
         <main className="flex-1 md:ml-64 pt-0 pb-16 md:pb-0">
           {(activeSection === 'planning' || forceShowPlanner) ? (
-            <StrategicPlanner
+            <StrategicPlannerCompact
               plannerAccess={plannerState.plannerAccess}
               onGeneratePlan={handleGeneratePlan}
               onWhatsAppContact={handlePlannerWhatsApp}
@@ -2363,20 +2910,54 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               focusedCourse={focusedCourseForPlanning}
               onNavigateToCourse={handleNavigateToCourse}
             />
+          ) : activeSection === 'study-rooms' ? (
+            <div className="h-[calc(100vh-85px)] overflow-y-auto">
+              <AdvancedStudyRoomsTab 
+                userId={user?.id || safeData.user?.id || 'user-1'}
+                userName={user?.name || safeData.user?.name || 'Étudiant'}
+                purchasedItems={purchasedItems}
+                onNavigateToUpgrade={(courseId) => {
+                  console.log('Navigation vers upgrade pour:', courseId);
+                  setActiveSection('unlock');
+                }}
+                onNavigateToCourseReplay={(courseId, replayId) => {
+                  console.log('📺 Navigation vers le replay:', replayId, 'du cours:', courseId);
+                  // Trouver le cours
+                  const course = primaryCourses.find(c => c.id === courseId);
+                  if (course) {
+                    setSelectedCourse(course);
+                    setActiveSection('courses');
+                    // TODO: Mettre un état pour afficher directement le replay dans IntegratedCourseViewer
+                  }
+                }}
+                userCourses={primaryCourses}
+                isAdmin={false}
+              />
+            </div>
           ) : activeSection === 'community' ? (
-            <Community />
+            <div className="h-[calc(100vh-85px)] overflow-hidden">
+              <Community 
+                onOpenMessaging={handleOpenMessagingFromCommunity} 
+                userId={user?.id || safeData.user?.id || 'user-1'} 
+                initialTab={communityInitialTab}
+              />
+            </div>
+          ) : activeSection === 'messaging' ? (
+            <div className="h-[calc(100vh-85px)]">
+              <DirectMessaging defaultContactId={messagingContactId} />
+            </div>
           ) : activeSection === 'unlock' ? (
             <div className="p-8">
               <PurchaseSystem
                 data={data}
-                userBalance={(user?.wallet || data.user?.wallet)?.balance || 150}
+                userBalance={(user?.wallet || safeData.user?.wallet)?.balance || 150}
                 onBalanceChange={(newBalance) => {
                   // Mettre à jour le solde du portefeuille
                   if (props.onUpdateUser) {
-                    const currentWallet = user?.wallet || data.user?.wallet;
+                    const currentWallet = user?.wallet || safeData.user?.wallet;
                     if (currentWallet) {
                       const updatedUser = {
-                        ...data.user,
+                        ...safeData.user,
                         wallet: {
                           ...currentWallet,
                           balance: newBalance,
@@ -2405,44 +2986,56 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             <div className="p-8">
               {/* Message d'accueil motivant */}
               <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Salut {data.user.name.split(' ')[0]} ! {
+                <BlurText
+                  text={`Salut ${safeData.user.name.split(' ')[0]} ! ${
                     averageProgress >= 75 ? '🌟 Tu es sur une lancée incroyable !' : 
                     averageProgress >= 50 ? '🔥 Ta détermination paye vraiment !' : 
                     averageProgress > 0 ? '💪 Chaque effort compte, tu progresses !' : 
                     '🚀 Prêt à conquérir de nouveaux savoirs ?'
-                  }
-                </h2>
-                <p className="text-gray-600">
-                  {averageProgress >= 75 ? 'Tu es en train de devenir un expert ! Continue sur cette voie exceptionnelle.' : 
-                   averageProgress >= 50 ? 'Tes efforts se transforment en compétences solides. Tu peux être fier de toi !' : 
-                   averageProgress > 0 ? 'Chaque session d\'étude te rapproche de tes objectifs. Garde cette motivation !' : 
-                   'L\'aventure commence maintenant. Chaque grand parcours débute par un premier pas !'}
-                </p>
+                  }`}
+                  delay={50}
+                  animateBy="words"
+                  direction="top"
+                  as="h2"
+                  className="text-2xl font-bold text-gray-900 mb-2"
+                />
               </div>
 
-            {/* Métriques simplifiées */}
+            {/* Métriques simplifiées - Mix Motivation + Social */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
+              {/* 1. Cours actifs / totaux */}
               <SimpleMetric
                 icon={BookOpen}
-                value={primaryCourses.length}
+                value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
                 label="Cours actifs"
                 accent={true}
               />
+              
+              {/* 2. Day Streak avec animation flamme */}
               <SimpleMetric
-                icon={TrendingUp}
-                value={bestRanking ? `#${bestRanking}` : 'N/A'}
-                label="Classement"
+                icon={Flame}
+                value={`${7} jours`}
+                label="Day Streak"
+                animated={true}
+                animationType="flame"
               />
+              
+              {/* 3. Buddies connectés avec animation glow */}
               <SimpleMetric
-                icon={Clock}
-                value={`${Math.round(totalHours)}h`}
-                label="Temps d'étude"
+                icon={UserCheck}
+                value={`${3}/${8}`}
+                label="Buddies connectés"
+                animated={true}
+                animationType="glow"
               />
+              
+              {/* 4. Objectif du jour avec animation pulse */}
               <SimpleMetric
-                icon={Target}
-                value={`${averageProgress}%`}
-                label="Progression"
+                icon={Zap}
+                value="200 XP"
+                label="Objectif du jour"
+                animated={true}
+                animationType="pulse"
               />
             </div>
 
@@ -2452,7 +3045,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 <PersonalProfileSection 
                   personalProfile={personalProfile}
                   onCourseClick={(courseId) => {
-                    const course = [...primaryCourses, ...data.suggestedCourses.map(s => s.course)].find(c => c.id === courseId);
+                    const course = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)].find(c => c.id === courseId);
                     if (course) {
                       handleOpenIntegratedViewer(course);
                     }
@@ -2470,7 +3063,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 onEnroll={handleUnlockCourse}
                 onOpenCourse={handleOpenCourse}
                 onOpenStaircaseView={handleOpenStaircaseView}
-                progressData={data.progress}
+                progressData={safeData.progress}
                 getStudyRoomProps={getStudyRoomProps}
                 onCompletePack={handleCompletePack}
                 purchasedItems={purchasedItems}
@@ -2479,7 +3072,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
             {/* Section Cours Suggérés */}
             <section>
-              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+              <div className="mb-6">
                 <div 
                   className="flex items-center justify-between cursor-pointer"
                   onClick={() => setSuggestedExpanded(!suggestedExpanded)}
@@ -2489,11 +3082,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       <Users size={20} className="text-gray-600" />
                     </div>
                     <div data-tour="faculty-courses">
-                      <h2 className="text-lg font-bold text-gray-900">
+                      <h2 className="text-xl font-bold text-gray-900">
                         Les étudiants de votre faculté suivent également les cours suivants
                       </h2>
                       <p className="text-gray-500 text-sm">
-                        Basé sur {data.facultyStats.totalStudents} étudiants de {data.user.faculty}
+                        Basé sur {safeData.facultyStats.totalStudents} étudiants de {safeData.user.faculty}
                       </p>
                     </div>
                   </div>
@@ -2514,16 +3107,237 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {/* Barre de filtres */}
-                    <FilterBar
-                      filters={facultyFilters}
-                      onFiltersChange={setFacultyFilters}
-                      filterCounts={filterCounts}
-                    />
+                    {/* Filtres horizontaux avec icônes - Une ligne */}
+                    <div className="mb-6 pb-4 border-b border-gray-200">
+                      {/* Structure avec labels alignés et filtres en dessous */}
+                      <div className="flex items-start gap-8 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {/* Groupe MATIÈRES */}
+                        <div className="flex flex-col gap-3">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Matières</span>
+                          <div className="flex gap-2">
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.subjects.includes('all');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  subjects: isActive ? [] : ['all'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.subjects.includes('all') 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Home size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Tout</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.subjects.includes('physics');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  subjects: isActive ? [] : ['physics'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.subjects.includes('physics') 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Zap size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Physique</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.subjects.includes('chemistry');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  subjects: isActive ? [] : ['chemistry'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.subjects.includes('chemistry') 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <FileText size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Chimie</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.subjects.includes('mathematics');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  subjects: isActive ? [] : ['mathematics'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.subjects.includes('mathematics') 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Calculator size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Maths</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.subjects.includes('biology');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  subjects: isActive ? [] : ['biology'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.subjects.includes('biology') 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Brain size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Biologie</span>
+                            </motion.button>
+                          </div>
+                        </div>
+                        
+                        
+                        {/* Groupe TENDANCES */}
+                        <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Tendances</span>
+                          <div className="flex gap-2">
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.trends.includes('popular');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  trends: isActive ? [] : ['popular'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.trends.includes('popular') 
+                                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Flame size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Populaires</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.trends.includes('new');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  trends: isActive ? [] : ['new'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.trends.includes('new') 
+                                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Sparkles size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Nouveaux</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.trends.includes('recommended');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  trends: isActive ? [] : ['recommended'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.trends.includes('recommended') 
+                                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <Target size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Recommandés</span>
+                            </motion.button>
+                          </div>
+                        </div>
+                        
+                        
+                        {/* Groupe ACTIVITÉ SOCIALE */}
+                        <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Activité sociale</span>
+                          <div className="flex gap-2">
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.social.includes('buddies');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  social: isActive ? [] : ['buddies'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.social.includes('buddies') 
+                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <UserCheck size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Mes buddies</span>
+                            </motion.button>
+                            
+                            <motion.button 
+                              onClick={() => {
+                                const isActive = facultyFilters.social.includes('most-followed');
+                                setFacultyFilters({ 
+                                  ...facultyFilters, 
+                                  social: isActive ? [] : ['most-followed'] 
+                                });
+                              }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
+                                facultyFilters.social.includes('most-followed') 
+                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              <TrendingUp size={20} />
+                              <span className="text-xs font-semibold whitespace-nowrap">Plus suivis</span>
+                            </motion.button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Grille des cours filtrés */}
                     {filteredFacultyCourses.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 pt-6">
+                      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-12 pt-6 transition-all duration-300 ${
+                        isScrolledCompact ? 'gap-6' : 'gap-8'
+                      }`}>
                         <AnimatePresence mode="popLayout">
                           {filteredFacultyCourses.map((course: CourseWithTrend, index: number) => (
                             <motion.div
@@ -2548,7 +3362,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               <SuggestedCourseCard
                                 course={course}
                                 enrolledStudents={course.studentCount || 0}
-                                reason={`${course.studentCount || 0} étudiants de ${data.user.faculty}`}
+                                reason={`${course.studentCount || 0} étudiants de ${safeData.user.faculty}`}
                                 onUnlock={handleDirectCourseUnlock}
                                 onPreview={handlePreviewCourse}
                                 onToggleFavorite={handleToggleFavorite}
@@ -2560,6 +3374,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                 }}
                                 canAfford={true}
                                 isUnlocked={unlockedCourses.includes(course.id)}
+                                isCompactMode={isScrolledCompact}
                               />
                             </motion.div>
                           ))}
@@ -2689,7 +3504,10 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       <button
                         key={item.id}
                         onClick={() => {
-                          if (item.hasAccess) {
+                          if (item.id === 'whatsapp') {
+                            window.open('https://wa.me/33123456789', '_blank');
+                            setSidebarOpen(false);
+                          } else if (item.hasAccess) {
                             setActiveSection(item.id);
                             setSidebarOpen(false); // Fermer la sidebar mobile
                           } else if (item.isPremium) {
@@ -2697,7 +3515,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                           }
                         }}
                         className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all relative ${
-                          isActive
+                          item.id === 'whatsapp'
+                            ? 'bg-green-500 text-white hover:bg-green-600'
+                            : isActive
                             ? 'bg-black text-white' 
                             : isDisabled
                             ? 'text-gray-400 cursor-not-allowed opacity-60'
@@ -2756,7 +3576,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         }}
         onShowUpsell={(courseId) => {
           handleClosePreviewModal();
-          const course = data.suggestedCourses.find(c => c.course.id === courseId)?.course;
+          const course = safeData.suggestedCourses.find(c => c.course.id === courseId)?.course;
           if (course) {
             setSelectedLessonForPurchase({ id: courseId, title: course.title });
             setShowPurchaseUpsell(true);
@@ -2764,7 +3584,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         }}
         onNavigateToCourse={(courseId) => {
           handleClosePreviewModal();
-          const course = data.suggestedCourses.find(c => c.course.id === courseId)?.course;
+          const course = safeData.suggestedCourses.find(c => c.course.id === courseId)?.course;
           if (course) {
             setSelectedCourse(course);
             setShowIntegratedViewer(true);
@@ -2898,11 +3718,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       )}
 
       {/* Modales du portefeuille */}
-      {showWalletTopUp && (user?.wallet || data.user?.wallet) && (
+      {showWalletTopUp && (user?.wallet || safeData.user?.wallet) && (
         <WalletTopUp
-          currentBalance={(user?.wallet || data.user?.wallet)?.balance || 0}
+          currentBalance={WalletService.getTotalBalance(safeData.user?.id || 'user-default').total}
           onTopUp={handleWalletTopUp}
           onCancel={() => setShowWalletTopUp(false)}
+          userId={safeData.user?.id || 'user-default'}
+          source="header"
         />
       )}
 
@@ -2914,6 +3736,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           onUploadComplete={handleIdentityUpload}
         />
       )}
+
 
       {showPurchaseUpsell && selectedLessonForPurchase && (
         <PurchaseUpsellModal
@@ -2943,6 +3766,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         onStartPlanning={handleStartPlannerFromOnboarding}
         onPostpone={handlePostponePlanner}
         courseName={onboardingCourseName}
+        showCelebration={!!pendingPackCelebration}
+        packTitle={pendingPackCelebration?.packTitle}
       />
 
 
@@ -2951,13 +3776,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         isActive={onboardingTour.isTourActive}
         onComplete={onboardingTour.completeTour}
         onSkip={onboardingTour.skipTour}
-        userName={user?.name || data.user?.name}
+        userName={user?.name || safeData.user?.name}
       />
 
       {/* Onboarding Buddy System */}
       <BuddyOnboarding
-        userId={user?.id || data.user?.id || 'current-user'}
-        userName={user?.name || data.user?.name || 'Étudiant'}
+        userId={user?.id || safeData.user?.id || 'current-user'}
+        userName={user?.name || safeData.user?.name || 'Étudiant'}
         isOpen={showBuddyOnboarding}
         onClose={() => setShowBuddyOnboarding(false)}
         onComplete={() => {
@@ -2968,8 +3793,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
       {/* Configuration Rapports Parents */}
       <ParentReportsSettings
-        userId={user?.id || data.user?.id || 'current-user'}
-        userName={user?.name || data.user?.name || 'Étudiant'}
+        userId={user?.id || safeData.user?.id || 'current-user'}
+        userName={user?.name || safeData.user?.name || 'Étudiant'}
         isOpen={showParentReportsSettings}
         onClose={() => setShowParentReportsSettings(false)}
       />
@@ -2987,14 +3812,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 key={item.id}
                 data-tour={`mobile-${item.id}`}
                 onClick={() => {
-                  if (item.hasAccess) {
+                  if (item.id === 'whatsapp') {
+                    window.open('https://wa.me/33123456789', '_blank');
+                  } else if (item.hasAccess) {
                     setActiveSection(item.id);
                   } else if (item.isPremium) {
                     alert(plannerState.plannerAccess.accessMessage);
                   }
                 }}
                 className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all relative min-w-0 flex-1 ${
-                  isActive
+                  item.id === 'whatsapp'
+                    ? 'bg-green-500 text-white'
+                    : isActive
                     ? 'text-blue-600' 
                     : isDisabled
                     ? 'text-gray-400'
@@ -3036,6 +3865,54 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           </button>
         </div>
       </nav>
+
+      {/* Panneau latéral du fil social */}
+      <SocialFeedPanel 
+        isOpen={showSocialFeed}
+        onClose={() => setShowSocialFeed(false)}
+        onNavigate={handleSocialFeedNavigation}
+        initialTab={socialFeedInitialTab}
+      />
+
+      {/* 🎯 Feedback XP */}
+      {xpFeedback?.show && (
+        <XPFeedback
+          xpGained={xpFeedback.xpGained}
+          action={xpFeedback.action}
+          newLevel={xpFeedback.newLevel}
+          newBadges={xpFeedback.newBadges}
+          onComplete={() => setXpFeedback(null)}
+        />
+      )}
+
+      {/* 🧪 Panel de test XP (développement uniquement) */}
+      {process.env.NODE_ENV === 'development' && (
+        <XPTestPanel />
+      )}
+
+      {/* 🎮 Profil Gamifié */}
+      <AnimatePresence>
+        {showGamifiedProfile && userXPProfile && (
+          <GamifiedProfile
+            profile={userXPProfile}
+            userName={user?.name || safeData.user?.name || 'Étudiant'}
+            onClose={() => setShowGamifiedProfile(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* 🏆 Événements XP Boost (affiché dans la section courses) */}
+      {activeSection === 'courses' && showXPBoost && (
+        <div className="fixed bottom-24 right-6 z-40 max-w-md">
+          <XPBoostEvent
+            events={[]} // Les événements sont définis dans le composant par défaut
+            onDismiss={(eventId) => {
+              console.log('Événement fermé:', eventId);
+              setShowXPBoost(false);
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }

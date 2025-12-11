@@ -184,3 +184,5 @@ export function getFilterCounts(courses: CourseWithTrend[]): Record<string, numb
   
   return counts;
 }
+
+

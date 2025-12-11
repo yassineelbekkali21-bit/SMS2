@@ -339,7 +339,11 @@ export function AdvancedPlanDisplay({
   const renderWeekView = () => {
     const weekDays = [];
     const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+    
+    // Calculer le début de semaine (lundi)
+    const dayOfWeek = startOfWeek.getDay();
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Si dimanche (0), reculer de 6 jours, sinon reculer de (jour - 1)
+    startOfWeek.setDate(currentDate.getDate() - daysToSubtract);
     
     for (let i = 0; i < 7; i++) {
       const day = new Date(startOfWeek);
@@ -350,82 +354,45 @@ export function AdvancedPlanDisplay({
       weekDays.push(
         <div 
           key={dayKey} 
-          className={`bg-white rounded-xl border border-gray-100 overflow-hidden ${DragDropService.getDropZoneClasses(dragOverDate === dayKey, true)}`}
+          className={`bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border-2 border-slate-200/60 min-h-[320px] p-4 shadow-lg hover:shadow-xl transition-all backdrop-blur-sm ${DragDropService.getDropZoneClasses(dragOverDate === dayKey, true)}`}
           onDragOver={(e) => handleDragOver(e, day)}
           onDrop={(e) => handleDrop(e, day)}
         >
-          <div className="bg-gray-50 px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100">
-            <div className="text-center">
-              <div className="text-sm lg:text-base font-semibold text-gray-900 mb-1">
-                {new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(day)}
-              </div>
-              <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900">
-                {day.getDate()}
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-3 lg:p-4 space-y-2 lg:space-y-3 min-h-[220px] lg:min-h-[280px] xl:min-h-[320px]">
+          <div className="space-y-2">
             {daySessions.map((session) => {
               const status = getSessionStatus(session);
-              const statusColors = SessionDisplayService.getStatusColors(status);
-              const compactName = SessionDisplayService.getCompactCourseName(session);
               const timeRange = SessionDisplayService.formatTimeRange(session.startTime, session.endTime);
-              const progressInfo = SessionDisplayService.getProgressIndicator(session);
-              const shouldShowProgress = SessionDisplayService.shouldShowProgress(session);
-              const cardHeight = SessionDisplayService.getCardHeight(session);
+              
+              // Couleurs selon le statut - Version Premium
+              let bgColor = 'bg-gradient-to-br from-blue-50 to-indigo-100';
+              let borderColor = 'border-blue-300';
+              let textColor = 'text-blue-900';
+              
+              if (status === 'completed') {
+                bgColor = 'bg-gradient-to-br from-emerald-50 to-green-100';
+                borderColor = 'border-emerald-300';
+                textColor = 'text-emerald-900';
+              } else if (status === 'missed') {
+                bgColor = 'bg-gradient-to-br from-red-50 to-rose-100';
+                borderColor = 'border-red-300';
+                textColor = 'text-red-900';
+              }
               
               return (
                 <motion.div
                   key={session.id}
-                  whileHover={{ scale: 1.01 }}
+                  whileHover={{ scale: 1.05, y: -3 }}
                   draggable={DragDropService.canBeDragged(session)}
                   onDragStart={(e) => handleDragStart(session, e as any)}
                   onDragEnd={handleDragEnd}
-                  className={`min-h-[100px] lg:min-h-[120px] xl:min-h-[140px] ${statusColors.bg} ${statusColors.border} border rounded-lg lg:rounded-xl transition-all relative overflow-hidden shadow-sm hover:shadow-md ${DragDropService.getDragClasses(session, isDragging)}`}
+                  className={`${bgColor} ${borderColor} ${textColor} border-l-4 rounded-xl p-4 cursor-pointer cursor-target transition-all hover:shadow-lg backdrop-blur-sm ${DragDropService.getDragClasses(session, isDragging)}`}
                   onClick={() => openSessionDetails(session)}
                 >
-                  {/* Indicateur de statut (barre latérale) */}
-                  <div className={`absolute left-0 top-0 bottom-0 w-1.5 lg:w-2 ${statusColors.progressBar}`}></div>
-                  
-                  <div className="p-3 lg:p-4 xl:p-5 pl-4 lg:pl-5 xl:pl-6">
-                    {/* Header: Nom du cours + icône de statut */}
-                    <div className="flex items-start justify-between mb-2 lg:mb-3">
-                      <h4 className={`text-sm lg:text-base xl:text-lg font-semibold ${statusColors.text} leading-tight flex-1 pr-2`}>
-                        {session.lessonName || session.courseName}
-                      </h4>
-                      {SessionDisplayService.getStatusIcon(status) && (
-                        <span className={`text-sm lg:text-base ${statusColors.text} font-bold flex-shrink-0`}>
-                          {SessionDisplayService.getStatusIcon(status)}
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Heure - Plus visible */}
-                    <div className={`text-xs lg:text-sm ${statusColors.text} opacity-80 mb-3 lg:mb-4 font-medium`}>
-                      {timeRange}
-                    </div>
-                    
-                    {/* Barre de progression améliorée */}
-                    {shouldShowProgress && (
-                      <div className="space-y-1.5 lg:space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className={`flex-1 h-1.5 lg:h-2 ${statusColors.progressBg} rounded-full overflow-hidden mr-2`}>
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${progressInfo.percentage}%` }}
-                              transition={{ duration: 0.4 }}
-                              className={`h-full ${statusColors.progressBar} rounded-full`}
-                            />
-                          </div>
-                          {progressInfo.label && (
-                            <span className={`text-xs lg:text-sm ${statusColors.text} opacity-75 font-medium flex-shrink-0`}>
-                              {progressInfo.label}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                  <div className="font-semibold text-sm mb-1 leading-tight">
+                    {session.lessonName || session.courseName}
+                  </div>
+                  <div className="text-xs opacity-80">
+                    {timeRange}
                   </div>
                 </motion.div>
               );
@@ -437,7 +404,28 @@ export function AdvancedPlanDisplay({
     
     return (
       <div className="w-full">
-        <div className="grid grid-cols-7 gap-3 lg:gap-4 xl:gap-6 2xl:gap-8">
+        {/* Header avec les jours de la semaine */}
+        <div className="grid grid-cols-7 gap-2 lg:gap-4 mb-4">
+          {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map((dayName, index) => {
+            const dayDate = new Date(startOfWeek);
+            dayDate.setDate(startOfWeek.getDate() + index);
+            const isToday = dayDate.toDateString() === new Date().toDateString();
+            
+            return (
+              <div key={dayName} className="text-center">
+                <div className={`text-sm font-medium mb-2 ${isToday ? 'text-blue-600' : 'text-gray-600'}`}>
+                  {dayName}
+                </div>
+                <div className={`text-2xl font-bold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                  {dayDate.getDate()}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {/* Grille des sessions */}
+        <div className="grid grid-cols-7 gap-2 lg:gap-4 auto-rows-fr">
           {weekDays}
         </div>
       </div>
@@ -449,9 +437,9 @@ export function AdvancedPlanDisplay({
     const daySessions = sessionsByDay[dayKey] || [];
     
     return (
-      <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-        <div className="bg-gray-50 px-6 lg:px-8 py-4 lg:py-6 border-b border-gray-100">
-          <h3 className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 text-center">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 overflow-hidden shadow-xl shadow-slate-900/10">
+        <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-indigo-50 px-6 py-5 border-b border-slate-200/60">
+          <h3 className="text-xl font-bold text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">
             {formatDate(currentDate)}
           </h3>
         </div>
@@ -475,31 +463,34 @@ export function AdvancedPlanDisplay({
                 return (
                   <motion.div
                     key={session.id}
-                    whileHover={{ scale: 1.005 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
                     draggable={DragDropService.canBeDragged(session)}
                     onDragStart={(e) => handleDragStart(session, e as any)}
                     onDragEnd={handleDragEnd}
-                    className={`${statusColors.bg} ${statusColors.border} border rounded-xl lg:rounded-2xl transition-all relative overflow-hidden min-h-[140px] lg:min-h-[160px] xl:min-h-[180px] shadow-sm hover:shadow-md ${DragDropService.getDragClasses(session, isDragging)}`}
+                    className={`${statusColors.bg} ${statusColors.border} border-2 rounded-2xl transition-all relative overflow-hidden min-h-[140px] shadow-lg hover:shadow-xl cursor-pointer cursor-target backdrop-blur-sm ${DragDropService.getDragClasses(session, isDragging)}`}
                     onClick={() => openSessionDetails(session)}
                   >
-                    {/* Indicateur de statut (barre latérale) */}
-                    <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${statusColors.progressBar}`}></div>
+                    {/* Indicateur de statut moderne (barre latérale) */}
+                    <div className={`absolute left-0 top-0 bottom-0 w-2 ${statusColors.progressBar} shadow-lg`}></div>
                     
-                    <div className="p-5 lg:p-6 xl:p-7 pl-7 lg:pl-8 xl:pl-9">
+                    {/* Gradient overlay pour plus de profondeur */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+                    
+                    <div className="p-4 pl-6">
                       {/* Header: Nom du cours + statut + heure */}
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3 flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2 flex-1">
                           {SessionDisplayService.getStatusIcon(status) && (
-                            <span className={`text-lg ${statusColors.text} font-bold`}>
+                            <span className={`text-base ${statusColors.text} font-bold`}>
                               {SessionDisplayService.getStatusIcon(status)}
                             </span>
                           )}
-                          <h4 className={`text-lg lg:text-xl xl:text-2xl font-semibold ${statusColors.text} leading-tight`}>
+                          <h4 className={`text-base font-semibold ${statusColors.text} leading-tight`}>
                             {session.lessonName || session.courseName}
                           </h4>
                         </div>
                         
-                        <div className={`text-base lg:text-lg font-medium ${statusColors.text} opacity-75`}>
+                        <div className={`text-sm font-medium ${statusColors.text} opacity-75`}>
                           {timeRange}
                         </div>
                       </div>
@@ -648,7 +639,7 @@ export function AdvancedPlanDisplay({
                   <motion.div
                     key={session.id}
                     whileHover={{ scale: 1.02 }}
-                    className={`${statusColors.bg} ${statusColors.border} border rounded-md p-2 cursor-pointer transition-all relative overflow-hidden`}
+                    className={`${statusColors.bg} ${statusColors.border} border rounded-md p-2 cursor-pointer cursor-target transition-all relative overflow-hidden`}
                     onClick={(e) => {
                       e.stopPropagation();
                       openSessionDetails(session);
@@ -691,7 +682,7 @@ export function AdvancedPlanDisplay({
               
               {/* Indicateur "+x" si plus de 2 sessions */}
               {daySessions.length > 2 && (
-                <div className="text-xs text-gray-500 text-center py-1 bg-gray-100 rounded border border-dashed border-gray-300 cursor-pointer hover:bg-gray-200 transition-colors"
+                <div className="text-xs text-gray-500 text-center py-1 bg-gray-100 rounded border border-dashed border-gray-300 cursor-pointer cursor-target hover:bg-gray-200 transition-colors"
                      onClick={(e) => {
                        e.stopPropagation();
                        handleDayClick(new Date(currentDay), daySessions);
@@ -714,11 +705,11 @@ export function AdvancedPlanDisplay({
     }
     
     return (
-      <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         {/* Header du mois */}
-        <div className="bg-gray-50 px-6 lg:px-8 py-4 lg:py-6 border-b border-gray-100">
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900">
               {new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentDate)}
             </h3>
             
@@ -726,13 +717,13 @@ export function AdvancedPlanDisplay({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewSettings(prev => ({ ...prev, currentView: 'week' }))}
-                className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100 transition-colors"
+                className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
               >
                 Vue semaine
               </button>
               <button
                 onClick={() => setViewSettings(prev => ({ ...prev, currentView: 'day' }))}
-                className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100 transition-colors"
+                className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
               >
                 Vue jour
               </button>
@@ -785,19 +776,10 @@ export function AdvancedPlanDisplay({
   };
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-100 p-8 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-3xl font-semibold text-gray-900 mb-2">
-              Planning généré
-            </h2>
-            <p className="text-gray-600">
-              {plan.sessions.length} sessions • {plan.totalEstimatedHours}h au total
-            </p>
-          </div>
-          
+    <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Header Premium */}
+      <div className="bg-white/95 backdrop-blur-sm border-b border-slate-200/60 p-6 shadow-lg shadow-slate-900/5">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <PlannerViewToggle
               currentView={viewSettings.currentView}
@@ -806,70 +788,66 @@ export function AdvancedPlanDisplay({
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation moderne */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+          <div className="flex items-center gap-4">
+            <button
               onClick={() => navigateDate('prev')}
-              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors"
+              className="group w-10 h-10 bg-gradient-to-r from-slate-100 to-slate-200 hover:from-blue-100 hover:to-indigo-100 border border-slate-200 hover:border-blue-300 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </motion.button>
+              <ChevronLeft className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+            </button>
             
-            <h3 className="text-xl font-semibold text-gray-900 min-w-[200px] text-center">
-              {AdvancedPlannerService.formatViewTitle(viewSettings.currentView, currentDate)}
-            </h3>
+            <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-xl px-6 py-3 min-w-[240px]">
+              <h3 className="text-lg font-bold text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">
+                {AdvancedPlannerService.formatViewTitle(viewSettings.currentView, currentDate)}
+              </h3>
+            </div>
             
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
               onClick={() => navigateDate('next')}
-              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors"
+              className="group w-10 h-10 bg-gradient-to-r from-slate-100 to-slate-200 hover:from-blue-100 hover:to-indigo-100 border border-slate-200 hover:border-blue-300 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md"
             >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </motion.button>
+              <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+            </button>
+            
+            <p className="text-sm text-slate-600 font-medium ml-3">
+              {plan.sessions.length} sessions • {plan.totalEstimatedHours}h au total
+            </p>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
+          {/* Actions Premium */}
+          <div className="flex items-center gap-3 flex-wrap">
             {/* Bouton Accéder au cours - Affiché seulement si un cours focalisé existe */}
             {focusedCourse && onNavigateToCourse && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => onNavigateToCourse(focusedCourse.id)}
-                className="bg-green-50 border-2 border-green-200 text-green-700 rounded-xl px-3 py-2 lg:px-4 font-semibold hover:bg-green-100 hover:border-green-300 transition-all flex items-center gap-2 text-sm lg:text-base"
+                className="group bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 border border-emerald-400 text-white rounded-xl px-4 py-2.5 text-sm font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-2"
                 title={`Retourner au cours "${focusedCourse.title}"`}
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                 <span className="hidden sm:inline">Revenir au cours</span>
                 <span className="sm:hidden">Cours</span>
-              </motion.button>
+              </button>
             )}
             
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               onClick={onEditPlan}
-              className="bg-white border-2 border-gray-200 text-gray-700 rounded-xl px-3 py-2 lg:px-4 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2 text-sm lg:text-base"
+              className="group bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 border border-slate-300 text-slate-700 hover:text-slate-800 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2"
             >
-              <Edit3 className="w-4 h-4" />
+              <Edit3 className="w-4 h-4 group-hover:rotate-12 transition-transform" />
               <span className="hidden sm:inline">Modifier</span>
               <span className="sm:hidden">Éditer</span>
-            </motion.button>
+            </button>
             
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               onClick={onRegeneratePlan}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl px-3 py-2 lg:px-4 font-semibold shadow-lg shadow-indigo-500/25 hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center gap-2 text-sm lg:text-base"
+              className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center gap-2"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
               <span className="hidden sm:inline">Régénérer</span>
               <span className="sm:hidden">Refaire</span>
-            </motion.button>
+            </button>
           </div>
         </div>
       </div>
@@ -913,59 +891,12 @@ export function AdvancedPlanDisplay({
           )}
 
           {/* Main Content */}
-          <div className="grid grid-cols-1 2xl:grid-cols-6 gap-8">
+          <div className="grid grid-cols-1 gap-8">
             {/* Planning View - Utilise toute la largeur disponible */}
-            <div className="2xl:col-span-5">
+            <div className="w-full">
               {viewSettings.currentView === 'day' && renderDayView()}
               {viewSettings.currentView === 'week' && renderWeekView()}
               {viewSettings.currentView === 'month' && renderMonthView()}
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Badges */}
-              <PlannerBadges badges={badges} />
-              
-              {/* Progress Stats */}
-              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Statistiques</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Progression</span>
-                      <span className="font-semibold text-gray-900">{plan.progressPercentage || 0}%</span>
-                    </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${plan.progressPercentage || 0}%` }}
-                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-emerald-600">
-                        {plan.sessions.filter(s => getSessionStatus(s) === 'completed').length}
-                      </div>
-                      <div className="text-xs text-gray-600">Complétées</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-red-600">
-                        {plan.sessions.filter(s => getSessionStatus(s) === 'missed').length}
-                      </div>
-                      <div className="text-xs text-gray-600">Manquées</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

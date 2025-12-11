@@ -35,3 +35,5 @@ export function TrendBadgeComponent({ badge, animationDelay = 0 }: TrendBadgeCom
     </motion.div>
   );
 }
+
+

@@ -1,0 +1,2588 @@
+
+> science-made-simple-next@0.1.0 dev
+> next dev -p 3001
+
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.31:3001
+
+ ✓ Starting...
+ ✓ Ready in 1411ms
+ ○ Compiling / ...
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ HEAD / 500 in 8659ms
+ GET / 500 in 16ms
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/BuddiesTab.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/src/components/BuddiesTab.tsx[0m:779:1]
+ [2m776[0m |         }}
+ [2m777[0m |       />
+ [2m778[0m |     </div>
+ [2m779[0m |   );
+     : [35;1m  ^[0m
+ [2m780[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/BuddiesTab.tsx
+./src/components/Community.tsx
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ✓ Compiled /_error in 1255ms (2334 modules)
+ ✓ Compiled in 182ms (1111 modules)
+ ✓ Compiled in 166ms (1111 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ HEAD / 200 in 451ms
+ ✓ Compiled in 191ms (1111 modules)
+ ✓ Compiled in 512ms (2236 modules)
+ ✓ Compiled in 266ms (1106 modules)
+ ✓ Compiled in 186ms (1106 modules)
+ ✓ Compiled in 159ms (1106 modules)
+ ✓ Compiled in 242ms (1106 modules)
+ ✓ Compiled in 243ms (1106 modules)
+ ✓ Compiled in 237ms (1106 modules)
+ ✓ Compiled in 147ms (1106 modules)
+ ✓ Compiled in 233ms (1106 modules)
+ ✓ Compiled in 265ms (1106 modules)
+ ✓ Compiled in 223ms (1106 modules)
+ ✓ Compiled in 222ms (1106 modules)
+ ✓ Compiled in 281ms (1106 modules)
+ ✓ Compiled in 287ms (1106 modules)
+ ✓ Compiled in 215ms (1106 modules)
+ ✓ Compiled in 164ms (1106 modules)
+ ✓ Compiled in 246ms (1106 modules)
+ ✓ Compiled in 191ms (1106 modules)
+ ✓ Compiled in 267ms (1106 modules)
+ ✓ Compiled in 225ms (1106 modules)
+ ✓ Compiled in 188ms (1106 modules)
+ ✓ Compiled in 174ms (1106 modules)
+ ✓ Compiled in 169ms (1106 modules)
+ ✓ Compiled in 139ms (1106 modules)
+ ✓ Compiled in 224ms (1106 modules)
+ ✓ Compiled in 168ms (1106 modules)
+ ✓ Compiled in 407ms (1106 modules)
+ ✓ Compiled in 180ms (1106 modules)
+ ✓ Compiled in 188ms (1106 modules)
+ ✓ Compiled in 173ms (1106 modules)
+ ✓ Compiled in 158ms (1106 modules)
+ ✓ Compiled in 134ms (1106 modules)
+ ✓ Compiled in 217ms (1106 modules)
+ ✓ Compiled in 221ms (1106 modules)
+ ✓ Compiled in 177ms (1106 modules)
+ ✓ Compiled in 150ms (1106 modules)
+ ✓ Compiled in 206ms (1106 modules)
+ ✓ Compiled in 266ms (1106 modules)
+ ✓ Compiled in 194ms (1106 modules)
+ ✓ Compiled in 159ms (1106 modules)
+ ✓ Compiled in 166ms (1106 modules)
+ ✓ Compiled in 165ms (1106 modules)
+ ✓ Compiled in 230ms (1106 modules)
+ ✓ Compiled in 151ms (1106 modules)
+ ✓ Compiled in 195ms (1106 modules)
+ ✓ Compiled in 172ms (1106 modules)
+ ✓ Compiled in 319ms (1106 modules)
+ ✓ Compiled in 152ms (1106 modules)
+ ✓ Compiled in 150ms (1106 modules)
+ ✓ Compiled in 126ms (1106 modules)
+ ✓ Compiled in 282ms (1106 modules)
+ ✓ Compiled in 154ms (1106 modules)
+ ✓ Compiled in 267ms (1106 modules)
+ ✓ Compiled in 154ms (1106 modules)
+ ✓ Compiled in 125ms (1106 modules)
+ ✓ Compiled in 295ms (1106 modules)
+ ✓ Compiled in 132ms (1106 modules)
+ ✓ Compiled in 201ms (1106 modules)
+ ✓ Compiled in 135ms (1106 modules)
+ ✓ Compiled in 186ms (1106 modules)
+ ✓ Compiled in 160ms (1106 modules)
+ ✓ Compiled in 273ms (1106 modules)
+ ✓ Compiled in 146ms (1106 modules)
+ ✓ Compiled in 133ms (1106 modules)
+ ✓ Compiled in 232ms (1106 modules)
+ ✓ Compiled in 156ms (1106 modules)
+ ✓ Compiled in 147ms (1106 modules)
+ ✓ Compiled in 139ms (1106 modules)
+ ✓ Compiled in 206ms (1106 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 470ms
+ ✓ Compiled in 250ms (1106 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 224ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 214ms (1106 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 204ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 252ms (1106 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 228ms (1106 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 280ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 189ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 160ms (1106 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 241ms (1106 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 229ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 157ms (1106 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 240ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 228ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 259ms (1106 modules)
+ GET / 200 in 60ms
+ ✓ Compiled in 240ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 200ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 152ms (1106 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 152ms (1106 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 170ms (1106 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 240ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 268ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 351ms (1106 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 216ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 227ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 237ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 215ms (1106 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 258ms (1106 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 217ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 286ms (1106 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 234ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 209ms (1106 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 274ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 229ms (1106 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 271ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 154ms (1106 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 301ms (1106 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 239ms (1106 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 203ms (1106 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 152ms (1106 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 150ms (1106 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 152ms (1106 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 282ms (1106 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 250ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 217ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 233ms (1106 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 155ms (1106 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 211ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 198ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 237ms (1106 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 210ms (1106 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 244ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 259ms (1106 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 219ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 261ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 244ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 223ms (1106 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 250ms (1106 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 256ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 255ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 213ms (1106 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 198ms (1106 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 216ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 237ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 313ms (1106 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 251ms (1106 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 64ms
+ ✓ Compiled in 245ms (1106 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 34ms
+ ✓ Compiled in 300ms (1106 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 248ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 249ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 299ms (1106 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 250ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 1161ms (2236 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 258ms
+ ✓ Compiled in 604ms (2236 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 140ms
+ ✓ Compiled in 335ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 402ms (1106 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 258ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 183ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 224ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 352ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 224ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 249ms (1106 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 308ms (1106 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 217ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 217ms (1106 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 221ms (1106 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 255ms (1106 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 282ms (1106 modules)
+ GET / 200 in 126ms
+ ✓ Compiled in 200ms (1106 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 212ms (1106 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 287ms (1106 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 2s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 536ms
+ ✓ Compiled in 180ms (1091 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 231ms (1091 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 322ms (1091 modules)
+ GET / 200 in 63ms
+ ✓ Compiled in 217ms (1091 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 337ms (1091 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 195ms (1091 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 245ms (1091 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 193ms (1091 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 214ms (1091 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 168ms (1091 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 562ms (1091 modules)
+ GET / 200 in 26ms
+ ○ Compiling /profil ...
+ ✓ Compiled /profil in 1290ms (2215 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /profil/ 200 in 1678ms
+ GET / 200 in 300ms
+ ✓ Compiled in 618ms (1100 modules)
+ HEAD / 200 in 90ms
+ ✓ Compiled in 258ms (1100 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 300ms (1100 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 330ms (1100 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 1471ms (2235 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 158ms
+ ✓ Compiled in 298ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 259ms (1103 modules)
+ GET / 200 in 16ms
+ GET / 200 in 221ms
+ ✓ Compiled in 211ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 217ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 202ms (1103 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 247ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 182ms (1103 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 269ms (1103 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 458ms (1103 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 34ms
+ ✓ Compiled in 314ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 261ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 320ms (1103 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 260ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 302ms (1103 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 270ms (1103 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 287ms (1103 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 265ms (1103 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 718ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 198ms
+ ✓ Compiled in 427ms (1103 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 249ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 291ms (1103 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 253ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 305ms (1103 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 284ms (1103 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 281ms (1103 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 277ms (1103 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 227ms (1103 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 313ms (1103 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 1757ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 285ms
+ ✓ Compiled in 400ms (1103 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 314ms (1103 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 255ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 273ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 326ms (1103 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 247ms (1103 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 1914ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 133ms
+ ✓ Compiled in 510ms (1103 modules)
+ GET / 200 in 38ms
+ HEAD / 200 in 325ms
+ ✓ Compiled in 457ms (1103 modules)
+ GET / 200 in 43ms
+ ✓ Compiled in 322ms (1103 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 270ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 312ms (1103 modules)
+ GET / 200 in 59ms
+ ✓ Compiled in 298ms (1103 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 317ms (1103 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 294ms (1103 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 293ms (1103 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 256ms (1103 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 238ms (1103 modules)
+ GET / 200 in 26ms
+ HEAD / 200 in 37ms
+ ✓ Compiled in 184ms (1103 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 253ms (1103 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 238ms (1103 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 3s (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 145ms
+ ✓ Compiled in 344ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 765ms (1103 modules)
+ GET / 200 in 68ms
+ ✓ Compiled in 317ms (1103 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 232ms (1103 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 251ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 236ms (1103 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 162ms (1103 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 220ms (1103 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 238ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 259ms (1103 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 227ms (1103 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 268ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 235ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 187ms (1103 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 249ms (1103 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 152ms (1103 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 212ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 208ms (1103 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 397ms (1103 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 224ms (1103 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 220ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 146ms (1103 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 493ms (1103 modules)
+ GET / 200 in 49ms
+ ✓ Compiled in 303ms (1103 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 260ms (1103 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 240ms (1103 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 259ms (1103 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 257ms (1103 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 263ms (1103 modules)
+ GET / 200 in 59ms
+ ✓ Compiled in 1800ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 154ms
+ ✓ Compiled in 265ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 188ms (1103 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 451ms (1103 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 205ms (1103 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 338ms (1103 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 239ms (1103 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 199ms (1103 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 300ms (1103 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 261ms (1103 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 832ms (1103 modules)
+ GET / 200 in 96ms
+ ✓ Compiled in 179ms (1103 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 211ms (1103 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 320ms (1103 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 982ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 120ms
+ ✓ Compiled in 310ms (1103 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 332ms (1103 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 762ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 144ms
+ ✓ Compiled in 279ms (1103 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 822ms (2222 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 121ms
+ ✓ Compiled in 213ms (1103 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 1043ms (2222 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 179ms (1103 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 570ms
+ ✓ Compiled in 348ms (1103 modules)
+ GET / 200 in 57ms
+ ✓ Compiled in 193ms (1103 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 287ms (1103 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 288ms (1103 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 299ms (1103 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 52ms
+ ✓ Compiled in 1302ms (2219 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 138ms
+ ✓ Compiled in 604ms (1102 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 417ms (1102 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 1139ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 205ms
+ ✓ Compiled in 485ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 545ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 112ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 21ms
+ HEAD / 200 in 269ms
+ ✓ Compiled in 222ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 584ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 324ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 2.6s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 78ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 244ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 182ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 211ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 256ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 219ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 281ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 302ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 296ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 276ms (1105 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 325ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 295ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 2.1s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 162ms
+ ✓ Compiled in 626ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 61ms
+ ✓ Compiled in 275ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 256ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 275ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 1444ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 292ms
+ ✓ Compiled in 623ms (1105 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 282ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 308ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 248ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 159ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 392ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 1176ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 229ms
+ ✓ Compiled in 331ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 319ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 292ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 262ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 251ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 444ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 118ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 324ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 27ms
+ HEAD / 200 in 301ms
+ ✓ Compiled in 481ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 254ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 249ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 237ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 1451ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 412ms
+ ✓ Compiled in 331ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 260ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 174ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 174ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 190ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 189ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 224ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 157ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 227ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 306ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 513ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 309ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 298ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 261ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 256ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 250ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 238ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 662ms (1105 modules)
+ GET / 200 in 68ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 243ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 240ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 251ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 282ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 295ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 271ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 359ms (1105 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 1699ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 151ms
+ ✓ Compiled in 299ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 298ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 168ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 235ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 650ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 192ms
+ ✓ Compiled in 226ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 298ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 754ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 213ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 164ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 188ms (1105 modules)
+ GET / 200 in 14ms
+ HEAD / 200 in 329ms
+ ✓ Compiled in 201ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 282ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 306ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 1080ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 552ms
+ ✓ Compiled in 839ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 422ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 296ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 607ms (1105 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 262ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 776ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 302ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 487ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 129ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 737ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 125ms
+ ✓ Compiled in 463ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 475ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 104ms
+ ✓ Compiled in 326ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 334ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 575ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 116ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 1062ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 105ms
+ ✓ Compiled in 174ms (1105 modules)
+ ✓ Compiled in 257ms (1105 modules)
+ ✓ Compiled in 253ms (1105 modules)
+ ✓ Compiled in 156ms (1105 modules)
+ HEAD / 200 in 376ms
+ ✓ Compiled in 470ms (1105 modules)
+ ✓ Compiled in 471ms (1105 modules)
+ ✓ Compiled in 281ms (1105 modules)
+ ✓ Compiled in 406ms (1105 modules)
+ ✓ Compiled in 336ms (1105 modules)
+ ✓ Compiled in 516ms (2226 modules)
+ ✓ Compiled in 208ms (1105 modules)
+ ✓ Compiled in 346ms (1105 modules)
+ ✓ Compiled in 291ms (1105 modules)
+ ✓ Compiled in 486ms (2226 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 361ms
+ ✓ Compiled in 491ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 30ms
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 500 in 628ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1958ms (2319 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 1685ms
+ ✓ Compiled in 447ms (1106 modules)
+ GET / 200 in 383ms
+ ✓ Compiled in 348ms (1106 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 1198ms (1106 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 12.6s (2319 modules)
+ ✓ Compiled in 943ms (1106 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 326ms
+ GET / 200 in 21ms
+ ✓ Compiled in 10.4s (2319 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 197ms
+ ✓ Compiled in 303ms (1106 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 209ms (1106 modules)
+ GET / 200 in 16ms
+ HEAD / 200 in 288ms
+ ✓ Compiled in 316ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 353ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 363ms (1105 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 326ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 463ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 4.6s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 352ms
+ ✓ Compiled in 1303ms (1105 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 903ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 246ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 209ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 254ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 271ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 258ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 171ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 330ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 244ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 185ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 188ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 235ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 188ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 282ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 337ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 2.9s (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 361ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 404ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 319ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 2.4s (2226 modules)
+ ✓ Compiled in 206ms (1105 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 441ms
+ GET / 200 in 19ms
+ ✓ Compiled in 348ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 338ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 271ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 867ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 116ms
+ ✓ Compiled in 819ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 356ms (1105 modules)
+ GET / 200 in 427ms
+ ✓ Compiled in 441ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 311ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 754ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 147ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 384ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 309ms (1105 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 140ms (1105 modules)
+ GET / 200 in 15ms
+ HEAD / 200 in 283ms
+ ✓ Compiled in 246ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 329ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 244ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 1476ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 246ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 296ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 625ms (1105 modules)
+ GET / 200 in 61ms
+ ✓ Compiled in 437ms (1105 modules)
+ GET / 200 in 77ms
+ ✓ Compiled in 421ms (1105 modules)
+ GET / 200 in 68ms
+ ✓ Compiled in 239ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 239ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 249ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 310ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 188ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 199ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 220ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 278ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 880ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 374ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 310ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 517ms (1105 modules)
+ GET / 200 in 719ms
+ ✓ Compiled in 857ms (1105 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 430ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 1287ms (1105 modules)
+ GET / 200 in 125ms
+ ✓ Compiled in 659ms (1105 modules)
+ GET / 200 in 108ms
+ ✓ Compiled in 1709ms (1105 modules)
+ GET / 200 in 219ms
+ ✓ Compiled in 5.3s (1105 modules)
+ GET / 200 in 134ms
+ ✓ Compiled in 5.9s (1105 modules)
+ ✓ Compiled in 923ms (1105 modules)
+ GET / 200 in 169ms
+ GET / 200 in 90ms
+ ✓ Compiled in 645ms (1105 modules)
+ GET / 200 in 58ms
+ ✓ Compiled in 355ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 2.3s (1105 modules)
+ GET / 200 in 456ms
+ ✓ Compiled in 7.7s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 1203ms
+ ✓ Compiled in 749ms (1105 modules)
+ GET / 200 in 58ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 468ms (1105 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 246ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 373ms (1105 modules)
+ GET / 200 in 40ms
+ HEAD / 200 in 313ms
+ ✓ Compiled in 253ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 271ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 287ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 253ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 3s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 149ms
+ ✓ Compiled in 319ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 212ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 155ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 209ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 241ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 264ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 513ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 246ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 568ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 264ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 285ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 242ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 225ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 243ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 249ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 343ms (1105 modules)
+ GET / 200 in 386ms
+ ✓ Compiled in 302ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 299ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 276ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 228ms (1105 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 163ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 385ms (1105 modules)
+ GET / 200 in 445ms
+ ✓ Compiled in 368ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 691ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 246ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 259ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 1183ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 150ms
+ ✓ Compiled in 327ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 409ms (1105 modules)
+ GET / 200 in 65ms
+ ✓ Compiled in 303ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 261ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 16ms
+ HEAD / 200 in 293ms
+ ✓ Compiled in 237ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 260ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 212ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 251ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 281ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 220ms (1105 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 330ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 311ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 251ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 299ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 258ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 804ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 325ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 253ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 288ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 295ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 256ms (1105 modules)
+ ✓ Compiled in 278ms (1105 modules)
+ GET / 200 in 48ms
+ ✓ Compiled in 240ms (1105 modules)
+ GET / 200 in 14ms
+ GET / 200 in 13ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 59ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 548ms (1105 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 225ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 130ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 170ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 177ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 190ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 720ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 338ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 290ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 2.1s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 110ms
+ ✓ Compiled in 226ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 313ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 169ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 192ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 204ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 162ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 217ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 169ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 292ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 288ms (1105 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 316ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 314ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 237ms (1105 modules)
+ ✓ Compiled in 145ms (1105 modules)
+ ✓ Compiled in 244ms (1105 modules)
+ ✓ Compiled in 154ms (1105 modules)
+ ✓ Compiled in 248ms (1105 modules)
+ ✓ Compiled in 149ms (1105 modules)
+ GET / 200 in 85ms
+ GET / 200 in 43ms
+ GET / 200 in 21ms
+ GET / 200 in 316ms
+ GET / 200 in 41ms
+ GET / 200 in 17ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 836ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 226ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 239ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 251ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 139ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 192ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 287ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 254ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 282ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 245ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 258ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 248ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 432ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 231ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 271ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 258ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 326ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 165ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 162ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 226ms (1105 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 212ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 728ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 305ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 301ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 244ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 632ms (1105 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 197ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 237ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 214ms (1105 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 278ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 293ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 163ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 254ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 144ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 1046ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 394ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 407ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 390ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 305ms (1105 modules)
+ GET / 200 in 54ms
+ ✓ Compiled in 302ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 281ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 285ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 349ms (1105 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 292ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 313ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 290ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 286ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 281ms (1105 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 300ms (1105 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 286ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 262ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 261ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 453ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 361ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 316ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 247ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 781ms (1105 modules)
+ GET / 200 in 78ms
+ ✓ Compiled in 307ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 305ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 264ms (1105 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 224ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 253ms (1105 modules)
+ ✓ Compiled in 154ms (1105 modules)
+ GET / 200 in 20ms
+ GET / 200 in 11ms
+ ✓ Compiled in 318ms (1105 modules)
+ GET / 200 in 205ms
+ ✓ Compiled in 307ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 1294ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 228ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 631ms (1105 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 255ms (1105 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 293ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 176ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 272ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 241ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 702ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 6.3s (1105 modules)
+ GET / 200 in 234ms
+ ✓ Compiled in 308ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 419ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 381ms (1105 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 303ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 324ms (1105 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 11.4s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 196ms
+ ✓ Compiled in 315ms (1105 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 1680ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 105ms
+ ✓ Compiled in 348ms (1105 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 6s (2226 modules)
+ ✓ Compiled in 1889ms (1105 modules)
+ ✓ Compiled in 484ms (1105 modules)
+ ✓ Compiled in 3.5s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 2683ms
+ ✓ Compiled in 41s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 420ms
+ GET / 200 in 16ms
+ ✓ Compiled in 396ms (1105 modules)
+ GET / 200 in 50ms
+ GET / 200 in 26ms
+ GET / 200 in 20ms
+ ✓ Compiled in 388ms (1105 modules)
+ GET / 200 in 68ms
+ ✓ Compiled in 4.5s (1105 modules)
+ GET / 200 in 52ms
+ ✓ Compiled in 435ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 418ms (1105 modules)
+ GET / 200 in 55ms
+ ✓ Compiled in 591ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 467ms (1105 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 315ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 2.8s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 369ms
+ ✓ Compiled in 617ms (1105 modules)
+ GET / 200 in 82ms
+ ✓ Compiled in 1568ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 200ms
+ ✓ Compiled in 311ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 1424ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 162ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 261ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 2.3s (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 379ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 875ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 255ms
+ ✓ Compiled in 308ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 2.6s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 153ms
+ ✓ Compiled in 414ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 1376ms (2226 modules)
+ ✓ Compiled in 205ms (1105 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 108ms
+ GET / 200 in 19ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 389ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 278ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 269ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 264ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 290ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 270ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 312ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 310ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 316ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 337ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 346ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 276ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 322ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 326ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 286ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 6.6s (2226 modules)
+ ✓ Compiled in 1080ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 1147ms
+ GET / 200 in 12ms
+ ✓ Compiled in 338ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 4.3s (2226 modules)
+ ✓ Compiled in 2.1s (1105 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 1383ms
+ GET / 200 in 33ms
+ ✓ Compiled in 482ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 2.6s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 126ms
+ ✓ Compiled in 404ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 343ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 299ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 2.7s (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 244ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 307ms (1105 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 2.5s (1105 modules)
+ GET / 200 in 92ms
+ ✓ Compiled in 717ms (1105 modules)
+ GET / 200 in 53ms
+ ✓ Compiled in 1188ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 259ms
+ ✓ Compiled in 340ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 311ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 6.9s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 303ms
+ ✓ Compiled in 383ms (1105 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 334ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 307ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 2s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 285ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 684ms
+ ✓ Compiled in 428ms (1105 modules)
+ ✓ Compiled in 2.2s (2226 modules)
+ ✓ Compiled in 690ms (1105 modules)
+ ✓ Compiled in 361ms (1105 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 208ms
+ ✓ Compiled in 715ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 616ms
+ ✓ Compiled in 797ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 291ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 323ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 281ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 274ms (1105 modules)
+ GET / 200 in 25ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 278ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 287ms (1105 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 494ms (1105 modules)
+ GET / 200 in 529ms
+ ✓ Compiled in 304ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 1946ms (1105 modules)
+ GET / 200 in 620ms
+ ✓ Compiled in 416ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 258ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 264ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 273ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 206ms (1105 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 305ms (1105 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 313ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 261ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 403ms (1105 modules)
+ GET / 200 in 312ms
+ ✓ Compiled in 344ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 324ms (1105 modules)
+ GET / 200 in 21ms
+ ✓ Compiled in 292ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 295ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 169ms (1105 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 200ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 230ms (1105 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 299ms (1105 modules)
+ GET / 200 in 333ms
+ ✓ Compiled in 280ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 301ms (1105 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 291ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 317ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 287ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 262ms (1105 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 260ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 298ms (1105 modules)
+ GET / 200 in 19ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 263ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 290ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 276ms (1105 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 266ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 268ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 435ms (1105 modules)
+ GET / 200 in 345ms
+ ✓ Compiled in 378ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 335ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 303ms (1105 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 293ms (1105 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 296ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 277ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 330ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 324ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 322ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 289ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 265ms (1105 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 279ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 330ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 297ms (1105 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 301ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 267ms (1105 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 300ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 257ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 311ms (1105 modules)
+ GET / 200 in 27ms
+ ✓ Compiled in 306ms (1105 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 283ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 276ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 339ms (1105 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 377ms (1105 modules)
+ GET / 200 in 309ms
+ ✓ Compiled in 376ms (1105 modules)
+ GET / 200 in 34ms
+ ✓ Compiled in 661ms (1105 modules)
+ ✓ Compiled in 325ms (1105 modules)
+ ✓ Compiled in 334ms (1105 modules)
+ ✓ Compiled in 345ms (1105 modules)
+ ✓ Compiled in 304ms (1105 modules)
+ ✓ Compiled in 309ms (1105 modules)
+ ✓ Compiled in 308ms (1105 modules)
+ ✓ Compiled in 244ms (1105 modules)
+ ✓ Compiled in 266ms (1105 modules)
+ ✓ Compiled in 284ms (1105 modules)
+ ✓ Compiled in 265ms (1105 modules)
+ ✓ Compiled in 242ms (1105 modules)
+ ✓ Compiled in 305ms (1105 modules)
+ ✓ Compiled in 342ms (1105 modules)
+ ✓ Compiled in 300ms (1105 modules)
+ ✓ Compiled in 283ms (1105 modules)
+ ✓ Compiled in 265ms (1105 modules)
+ ✓ Compiled in 351ms (1105 modules)
+ ✓ Compiled in 292ms (1105 modules)
+ ✓ Compiled in 318ms (1105 modules)
+ ✓ Compiled in 244ms (1105 modules)
+ ✓ Compiled in 250ms (1105 modules)
+ ✓ Compiled in 246ms (1105 modules)
+ ✓ Compiled in 288ms (1105 modules)
+ ✓ Compiled in 292ms (1105 modules)
+ ✓ Compiled in 277ms (1105 modules)
+ ✓ Compiled in 273ms (1105 modules)
+ ✓ Compiled in 300ms (1105 modules)
+ ✓ Compiled in 198ms (1105 modules)
+ ✓ Compiled in 255ms (1105 modules)
+ ✓ Compiled in 295ms (1105 modules)
+ ✓ Compiled in 245ms (1105 modules)
+ ✓ Compiled in 1020ms (1105 modules)
+ ✓ Compiled in 364ms (1105 modules)
+ ✓ Compiled in 286ms (1105 modules)
+ ✓ Compiled in 286ms (1105 modules)
+ ✓ Compiled in 291ms (1105 modules)
+ ✓ Compiled in 242ms (1105 modules)
+ ✓ Compiled in 164ms (1105 modules)
+ ✓ Compiled in 235ms (1105 modules)
+ ✓ Compiled in 171ms (1105 modules)
+ ✓ Compiled in 308ms (1105 modules)
+ ✓ Compiled in 273ms (1105 modules)
+ ✓ Compiled in 251ms (1105 modules)
+ ✓ Compiled in 243ms (1105 modules)
+ ✓ Compiled in 282ms (1105 modules)
+ ✓ Compiled in 233ms (1105 modules)
+ ✓ Compiled in 270ms (1105 modules)
+ ✓ Compiled in 245ms (1105 modules)
+ ✓ Compiled in 228ms (1105 modules)
+ ✓ Compiled in 166ms (1105 modules)
+ ✓ Compiled in 208ms (1105 modules)
+ ✓ Compiled in 259ms (1105 modules)
+ ✓ Compiled in 213ms (1105 modules)
+ ✓ Compiled in 248ms (1105 modules)
+ ✓ Compiled in 269ms (1105 modules)
+ ✓ Compiled in 262ms (1105 modules)
+ ✓ Compiled in 339ms (1105 modules)
+ ✓ Compiled in 293ms (1105 modules)
+ ✓ Compiled in 2.1s (1105 modules)
+ ✓ Compiled in 414ms (1105 modules)
+ ✓ Compiled in 345ms (1105 modules)
+ ✓ Compiled in 285ms (1105 modules)
+ ✓ Compiled in 323ms (1105 modules)
+ ✓ Compiled in 294ms (1105 modules)
+ ✓ Compiled in 311ms (1105 modules)
+ ✓ Compiled in 304ms (1105 modules)
+ ✓ Compiled in 247ms (1105 modules)
+ ✓ Compiled in 289ms (1105 modules)
+ ✓ Compiled in 321ms (1105 modules)
+ ✓ Compiled in 292ms (1105 modules)
+ ✓ Compiled in 282ms (1105 modules)
+ ✓ Compiled in 249ms (1105 modules)
+ ✓ Compiled in 213ms (1105 modules)
+ ✓ Compiled in 343ms (1105 modules)
+ ✓ Compiled in 322ms (1105 modules)
+ ✓ Compiled in 294ms (1105 modules)
+ ✓ Compiled in 280ms (1105 modules)
+ ✓ Compiled in 285ms (1105 modules)
+ ✓ Compiled in 269ms (1105 modules)
+ ✓ Compiled in 296ms (1105 modules)
+ ✓ Compiled in 470ms (1105 modules)
+ ✓ Compiled in 257ms (1105 modules)
+ ✓ Compiled in 194ms (1105 modules)
+ ✓ Compiled in 237ms (1105 modules)
+ ✓ Compiled in 214ms (1105 modules)
+ GET / 200 in 78ms
+ GET / 200 in 20ms
+ GET / 200 in 14ms
+ GET / 200 in 12ms
+ GET / 200 in 19ms
+ GET / 200 in 11ms
+ ✓ Compiled in 248ms (1105 modules)
+ ✓ Compiled in 271ms (1105 modules)
+ ✓ Compiled in 235ms (1105 modules)
+ ✓ Compiled in 255ms (1105 modules)
+ ✓ Compiled in 260ms (1105 modules)
+ ✓ Compiled in 283ms (1105 modules)
+ ✓ Compiled in 270ms (1105 modules)
+ ✓ Compiled in 208ms (1105 modules)
+ ✓ Compiled in 255ms (1105 modules)
+ ✓ Compiled in 139ms (1105 modules)
+ ✓ Compiled in 284ms (1105 modules)
+ GET / 200 in 45ms
+ GET / 200 in 24ms
+ GET / 200 in 13ms
+ GET / 200 in 30ms
+ GET / 200 in 17ms
+ GET / 200 in 18ms
+ GET / 200 in 15ms
+ GET / 200 in 18ms
+ GET / 200 in 15ms
+ GET / 200 in 31ms
+ GET / 200 in 27ms
+ GET / 200 in 20ms
+ GET / 200 in 24ms
+ GET / 200 in 17ms
+ GET / 200 in 17ms
+ GET / 200 in 151ms
+ GET / 200 in 20ms
+ GET / 200 in 15ms
+ GET / 200 in 16ms
+ GET / 200 in 14ms
+ GET / 200 in 19ms
+ GET / 200 in 21ms
+ GET / 200 in 17ms
+ GET / 200 in 17ms
+ GET / 200 in 18ms
+ GET / 200 in 24ms
+ GET / 200 in 21ms
+ GET / 200 in 20ms
+ GET / 200 in 13ms
+ GET / 200 in 13ms
+ GET / 200 in 16ms
+ GET / 200 in 13ms
+ GET / 200 in 14ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 14ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 19ms
+ GET / 200 in 14ms
+ GET / 200 in 11ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 12ms
+ GET / 200 in 11ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 12ms
+ GET / 200 in 14ms
+ GET / 200 in 12ms
+ GET / 200 in 12ms
+ GET / 200 in 11ms
+ GET / 200 in 11ms
+ GET / 200 in 13ms
+ GET / 200 in 15ms
+ GET / 200 in 18ms
+ GET / 200 in 14ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 15ms
+ GET / 200 in 96ms
+ GET / 200 in 12ms
+ GET / 200 in 13ms
+ GET / 200 in 15ms
+ GET / 200 in 11ms
+ GET / 200 in 13ms
+ GET / 200 in 20ms
+ GET / 200 in 14ms
+ GET / 200 in 18ms
+ GET / 200 in 13ms
+ GET / 200 in 13ms
+ GET / 200 in 12ms
+ GET / 200 in 14ms
+ GET / 200 in 11ms
+ GET / 200 in 10ms
+ GET / 200 in 358ms
+ GET / 200 in 436ms
+ GET / 200 in 356ms
+ GET / 200 in 98ms
+ GET / 200 in 132ms
+ GET / 200 in 63ms
+ GET / 200 in 50ms
+ GET / 200 in 98ms
+ GET / 200 in 44ms
+ GET / 200 in 17ms
+ GET / 200 in 15ms
+ GET / 200 in 16ms
+ GET / 200 in 13ms
+ GET / 200 in 15ms
+ GET / 200 in 13ms
+ GET / 200 in 13ms
+ ✓ Compiled in 303ms (1105 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 555ms
+ ✓ Compiled in 315ms (1105 modules)
+ GET / 200 in 33ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 34ms
+ ✓ Compiled in 312ms (1105 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 360ms (1105 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 84ms
+ ✓ Compiled in 452ms (1105 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 375ms (1105 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 323ms (1105 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 303ms (1105 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 294ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 2.6s (2224 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 244ms
+ ✓ Compiled in 409ms (1104 modules)
+ GET / 200 in 35ms
+ ✓ Compiled in 533ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 225ms
+ ✓ Compiled in 309ms (1105 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 602ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 208ms
+ ✓ Compiled in 43s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 589ms
+ ✓ Compiled in 5s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 287ms
+ ✓ Compiled in 1526ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 86ms
+ ✓ Compiled in 1264ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 464ms
+ ✓ Compiled in 696ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 163ms
+ ✓ Compiled in 333ms (1105 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 14.8s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 603ms
+ ✓ Compiled in 847ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 1251ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 199ms
+ GET / 200 in 462ms
+ ✓ Compiled in 22.6s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 299ms
+ ✓ Compiled in 5.9s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 190ms
+ ✓ Compiled in 3.2s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 154ms
+ ✓ Compiled in 853ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 154ms
+ ✓ Compiled in 298ms (1095 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 694ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 812ms
+ ✓ Compiled in 514ms (1095 modules)
+ GET / 200 in 53ms
+ ✓ Compiled in 4.3s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 247ms
+ ✓ Compiled in 2.7s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 104ms
+ ✓ Compiled in 215ms (1095 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 940ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 250ms
+ ✓ Compiled in 1617ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 612ms
+ ✓ Compiled in 288ms (1095 modules)
+ GET / 200 in 17ms
+ ✓ Compiled in 959ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 123ms
+ ✓ Compiled in 1537ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 134ms
+ ✓ Compiled in 2.9s (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 120ms
+ ✓ Compiled in 299ms (1095 modules)
+ GET / 200 in 14ms
+ GET / 200 in 443ms
+ ✓ Compiled in 1197ms (2206 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 4488ms
+ GET / 200 in 917ms
+ ✓ Compiled in 12.1s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 2054ms
+ ✓ Compiled in 1243ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 205ms
+ ✓ Compiled in 1116ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 148ms
+ ✓ Compiled in 2.7s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 129ms
+ ✓ Compiled in 1857ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 222ms
+ ✓ Compiled in 450ms (1105 modules)
+ GET / 200 in 24ms
+ ✓ Compiled in 3.4s (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 149ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 265ms
+ ✓ Compiled in 1469ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 1432ms
+ ✓ Compiled in 1804ms (1105 modules)
+ GET / 200 in 23ms
+ ✓ Compiled in 1048ms (2226 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 133ms
+ ⚠ Server is approaching the used memory threshold, restarting...
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.129.32:3001
+
+ ✓ Starting...
+ ✓ Ready in 5s
+ ○ Compiling / ...
+ ⨯ ./src/components/FavoritesPackCollection.tsx:17:1
+Module not found: Can't resolve './CourseCard'
+  15 | } from 'lucide-react';
+  16 | import { Course } from '@/types';
+> 17 | import { CourseCard } from './CourseCard';
+     | ^
+  18 | import { SuggestedCourseCard } from './SuggestedCourseCard';
+  19 | import { CourseCardPaniniEmpty } from './CourseCardPaniniEmpty';
+  20 | import { getCoursePacks, getCourseById } from '@/lib/mock-data';
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/FavoritesPackCollection.tsx:17:1
+Module not found: Can't resolve './CourseCard'
+  15 | } from 'lucide-react';
+  16 | import { Course } from '@/types';
+> 17 | import { CourseCard } from './CourseCard';
+     | ^
+  18 | import { SuggestedCourseCard } from './SuggestedCourseCard';
+  19 | import { CourseCardPaniniEmpty } from './CourseCardPaniniEmpty';
+  20 | import { getCoursePacks, getCourseById } from '@/lib/mock-data';
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ ⨯ ./src/components/FavoritesPackCollection.tsx:17:1
+Module not found: Can't resolve './CourseCard'
+  15 | } from 'lucide-react';
+  16 | import { Course } from '@/types';
+> 17 | import { CourseCard } from './CourseCard';
+     | ^
+  18 | import { SuggestedCourseCard } from './SuggestedCourseCard';
+  19 | import { CourseCardPaniniEmpty } from './CourseCardPaniniEmpty';
+  20 | import { getCoursePacks, getCourseById } from '@/lib/mock-data';
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/components/SimpleDashboard.tsx
+./src/app/page.tsx
+ GET / 500 in 4519ms
+ ✓ Compiled /_error in 1433ms (2316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 602ms
+ ✓ Compiled in 825ms (2311 modules)
+ ✓ Compiled in 214ms (1098 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 284ms
+ GET / 200 in 13ms
+ ✓ Compiled in 672ms (2311 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 435ms
+ ✓ Compiled in 240ms (1098 modules)
+ GET / 200 in 14ms
+ ✓ Compiled in 807ms (2311 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 69ms
+ ✓ Compiled in 1764ms (2309 modules)
+ ✓ Compiled in 906ms (2309 modules)
+ ✓ Compiled in 141ms (1097 modules)
+ ✓ Compiled in 576ms (2309 modules)
+ ✓ Compiled in 511ms (2309 modules)
+ ✓ Compiled in 144ms (1097 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 235ms
+ GET / 200 in 66ms
+ ✓ Compiled in 958ms (2309 modules)
+ ✓ Compiled in 1283ms (2309 modules)
+ ✓ Compiled in 630ms (2309 modules)
+ ✓ Compiled in 246ms (1097 modules)
+ ✓ Compiled in 608ms (2309 modules)
+ ✓ Compiled in 501ms (2309 modules)
+ ✓ Compiled in 645ms (2309 modules)
+ ✓ Compiled in 127ms (1097 modules)
+ ✓ Compiled in 298ms (2309 modules)
+ ✓ Compiled in 442ms (2309 modules)
+ ✓ Compiled in 196ms (1097 modules)
+ ✓ Compiled in 412ms (2309 modules)
+ ✓ Compiled in 290ms (1097 modules)
+ ✓ Compiled in 312ms (2309 modules)
+ ✓ Compiled in 249ms (1097 modules)
+ ✓ Compiled in 505ms (2309 modules)
+ ✓ Compiled in 145ms (1097 modules)
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js'
+    at <unknown> (.next/server/app/page.js:1611:47)
+    at Object.<anonymous> (.next/server/app/page.js:1614:3) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js',
+  page: '/'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/webpack-runtime.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/app/page.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/require.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/load-components.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/utils.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/options.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/index.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-server.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/pages/_document.js:1:321)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:366) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+Error: ENOENT: no such file or directory, open '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js'
+    at <unknown> (.next/server/app/page.js:1611:47)
+    at Object.<anonymous> (.next/server/app/page.js:1614:3) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js',
+  page: '/'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/webpack-runtime.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/app/page.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/require.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/load-components.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/utils.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/options.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/index.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-server.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/pages/_document.js:1:321)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:366) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ GET / 500 in 419ms
+ GET / 500 in 41ms
+ ✓ Compiled in 522ms (2309 modules)
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js'
+    at <unknown> (.next/server/app/page.js:1611:47)
+    at Object.<anonymous> (.next/server/app/page.js:1614:3) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js',
+  page: '/'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/webpack-runtime.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/app/page.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/require.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/load-components.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/utils.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/options.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/index.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-server.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/pages/_document.js:1:321)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:366) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+Error: ENOENT: no such file or directory, open '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js'
+    at <unknown> (.next/server/app/page.js:1611:47)
+    at Object.<anonymous> (.next/server/app/page.js:1614:3) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/vendor-chunks/lucide-react.js',
+  page: '/'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/webpack-runtime.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/.next/server/app/page.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/require.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/load-components.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/utils.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/options.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/swc/index.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/router-server.js
+- /Users/elbekkaliyass/Desktop/testWindsurf/dashYassine/science-made-simple-next/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/pages/_document.js:1:321)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:366) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ ⨯ [TypeError: Cannot read properties of undefined (reading '/_app')]
+[TypeError: Cannot read properties of undefined (reading '/_app')]
+ GET / 500 in 142ms
+ GET / 500 in 18ms
+[?25h

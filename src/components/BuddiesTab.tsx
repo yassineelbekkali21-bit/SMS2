@@ -32,6 +32,8 @@ import { ModernBuddyInviteModal } from './ModernBuddyInviteModal';
 import { AdvancedStudyRoomService } from '@/lib/advanced-studyroom-service';
 import { GamificationService } from '@/lib/gamification-service';
 import { EnhancedNotificationsService } from '@/lib/enhanced-notifications-service';
+import { EnhancedBuddySearch } from './EnhancedBuddySearch';
+import { BuddyProgressDashboard } from './BuddyProgressDashboard';
 
 interface BuddiesTabProps {
   userId: string;
@@ -48,6 +50,7 @@ export function BuddiesTab({ userId, userName, userCourses = [] }: BuddiesTabPro
   const [showModernInviteModal, setShowModernInviteModal] = useState(false);
   const [inviteType, setInviteType] = useState<'search' | 'phone'>('search');
   const [isLoading, setIsLoading] = useState(true);
+  const [activeView, setActiveView] = useState<'dashboard' | 'search' | 'legacy'>('dashboard');
   const [crossSellingOpportunities, setCrossSellingOpportunities] = useState<Array<{
     buddyId: string;
     buddyName: string;
@@ -243,10 +246,158 @@ export function BuddiesTab({ userId, userName, userCourses = [] }: BuddiesTabPro
     );
   }
 
+  // Handlers pour les nouveaux composants
+  const handleSendInvite = (targetUserId: string) => {
+    console.log('Envoi invitation à:', targetUserId);
+    // Utiliser la logique existante
+    handleSendBuddyRequest(targetUserId);
+  };
+
+  const handleMessageBuddy = (buddyId: string) => {
+    console.log('Ouvrir conversation avec:', buddyId);
+    // TODO: Ouvrir le module de messagerie avec ce buddy
+  };
+
+  const handleJoinStudyRoom = (roomId: string) => {
+    console.log('Rejoindre Study Room:', roomId);
+    // TODO: Rediriger vers la Study Room
+  };
+
+  // Handlers supplémentaires  
+  function handleJoinBuddyStudyRoom(roomId: string, buddyName: string) {
+    console.log(`Rejoindre la Study Room de ${buddyName}: ${roomId}`);
+    // Ici on redirigerait vers la Study Room
+    
+    // Award XP pour rejoindre via buddy
+    GamificationService.awardXP(
+      userId,
+      'study-room-join',
+      roomId,
+      `Rejoint ${buddyName} dans une Study Room`
+    );
+
+    // Notification pour cross-selling si applicable
+    const opportunity = crossSellingOpportunities.find(op => op.buddyId === 'buddy_' + buddyName.toLowerCase());
+    if (opportunity) {
+      setTimeout(() => {
+        EnhancedNotificationsService.addNotificationWithGrouping(
+          EnhancedNotificationsService.createCrossSellingNotification(
+            userId,
+            opportunity.buddyId,
+            opportunity.buddyName,
+            opportunity.courseId,
+            opportunity.courseName,
+            opportunity.priceEuros
+          )
+        );
+      }, 30000); // Après 30 secondes dans la room
+    }
+  }
+
+  function handleCrossSellingClick(courseId: string, buddyName: string) {
+    console.log(`Cross-selling: cours ${courseId} recommandé par ${buddyName}`);
+    
+    // Créer notification de cross-selling
+    EnhancedNotificationsService.addNotificationWithGrouping(
+      EnhancedNotificationsService.createCrossSellingNotification(
+        userId,
+        'buddy_' + buddyName.toLowerCase(),
+        buddyName,
+        courseId,
+        getCourseNameById(courseId),
+        700
+      )
+    );
+
+    // Ici on ouvrirait la modal d'achat du cours
+    alert(`${buddyName} suit "${getCourseNameById(courseId)}". Voulez-vous le débloquer pour 700€ ?`);
+  }
+
   return (
     <div className="p-6 space-y-8">
-      {/* Header avec actions */}
-      <div className="flex items-center justify-between">
+      {/* Header avec actions et sélection de vue */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Mes Buddies</h2>
+          <p className="text-gray-600">Étudie avec tes amis et suivez vos progressions mutuelles</p>
+        </div>
+        
+        {/* Sélecteur de vue */}
+        <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => setActiveView('dashboard')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              activeView === 'dashboard'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => setActiveView('search')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              activeView === 'search'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Rechercher
+          </button>
+          <button
+            onClick={() => setActiveView('legacy')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              activeView === 'legacy'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Liste complète
+          </button>
+        </div>
+      </div>
+
+      {/* Contenu selon la vue active */}
+      <AnimatePresence mode="wait">
+        {activeView === 'dashboard' && (
+          <motion.div
+            key="dashboard"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <BuddyProgressDashboard
+              buddies={[]} // Utilise les données mock par défaut
+              notifications={[]} // Utilise les données mock par défaut
+              onMessage={handleMessageBuddy}
+              onJoinStudyRoom={handleJoinStudyRoom}
+            />
+          </motion.div>
+        )}
+
+        {activeView === 'search' && (
+          <motion.div
+            key="search"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <EnhancedBuddySearch
+              onInvite={handleSendInvite}
+              onExternalInvite={() => console.log('Invitation externe')}
+            />
+          </motion.div>
+        )}
+
+        {activeView === 'legacy' && (
+          <motion.div
+            key="legacy"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            {/* Ancienne interface - on garde le code existant ci-dessous */}
+            <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Mes Buddies</h2>
           <p className="text-gray-600 mt-1">Travaillez ensemble, progressez plus vite</p>
@@ -624,59 +775,9 @@ export function BuddiesTab({ userId, userName, userCourses = [] }: BuddiesTabPro
           setShowModernInviteModal(false);
         }}
       />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-
-  // ========================================================================
-  // NOUVELLES FONCTIONS DE GESTION
-  // ========================================================================
-
-  function handleJoinBuddyStudyRoom(roomId: string, buddyName: string) {
-    console.log(`Rejoindre la Study Room de ${buddyName}: ${roomId}`);
-    // Ici on redirigerait vers la Study Room
-    
-    // Award XP pour rejoindre via buddy
-    GamificationService.awardXP(
-      userId,
-      'study-room-join',
-      roomId,
-      `Rejoint ${buddyName} dans une Study Room`
-    );
-
-    // Notification pour cross-selling si applicable
-    const opportunity = crossSellingOpportunities.find(op => op.buddyId === 'buddy_' + buddyName.toLowerCase());
-    if (opportunity) {
-      setTimeout(() => {
-        EnhancedNotificationsService.addNotificationWithGrouping(
-          EnhancedNotificationsService.createCrossSellingNotification(
-            userId,
-            opportunity.buddyId,
-            opportunity.buddyName,
-            opportunity.courseId,
-            opportunity.courseName,
-            opportunity.priceEuros
-          )
-        );
-      }, 30000); // Après 30 secondes dans la room
-    }
-  }
-
-  function handleCrossSellingClick(courseId: string, buddyName: string) {
-    console.log(`Cross-selling: cours ${courseId} recommandé par ${buddyName}`);
-    
-    // Créer notification de cross-selling
-    EnhancedNotificationsService.addNotificationWithGrouping(
-      EnhancedNotificationsService.createCrossSellingNotification(
-        userId,
-        'buddy_' + buddyName.toLowerCase(),
-        buddyName,
-        courseId,
-        getCourseNameById(courseId),
-        700
-      )
-    );
-
-    // Ici on ouvrirait la modal d'achat du cours
-    alert(`${buddyName} suit "${getCourseNameById(courseId)}". Voulez-vous le débloquer pour 700€ ?`);
-  }
 }
