@@ -345,23 +345,55 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               />
             </div>
 
-            {/* Categories List */}
+            {/* Categories List OR Search Results */}
             <div className="space-y-0 divide-y divide-gray-800 pb-20">
-              {data.map((program) => {
-                return (
-                  <button
-                    key={program.id}
-                    onClick={() => {
-                      setSelectedProgramId(program.id);
-                      setView('topics');
-                    }}
-                    className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
-                  >
-                    <span className="text-xl font-bold text-white pl-2 text-left">{program.label}</span>
-                    <ChevronRight size={24} className="text-gray-500 group-hover:text-white transition-colors" />
-                  </button>
-                );
-              })}
+              {searchTerm ? (
+                // Search Results: Flattened List of Topics
+                data.length > 0 ? (
+                  data.flatMap(program => 
+                    program.topics.map(topic => ({ ...topic, programLabel: program.label, programId: program.id }))
+                  ).map((item) => (
+                    <button
+                      key={`${item.programId}-${item.id}`}
+                      onClick={() => {
+                        setSelectedProgramId(item.programId);
+                        setSelectedTopicId(item.id);
+                        setView('lesson');
+                      }}
+                      className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
+                    >
+                      <div className="text-left">
+                        <span className="block text-xl font-bold text-white pl-2">{item.label}</span>
+                        <span className="block text-sm text-gray-500 pl-2 mt-1">{item.programLabel}</span>
+                      </div>
+                      <ChevronRight size={24} className="text-gray-500 group-hover:text-white transition-colors" />
+                    </button>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-gray-400 py-10">
+                    <p className="text-lg font-medium">
+                      {language === 'fr' ? 'Aucun résultat trouvé' : 'No results found'}
+                    </p>
+                  </div>
+                )
+              ) : (
+                // Default View: List of Programs
+                data.map((program) => {
+                  return (
+                    <button
+                      key={program.id}
+                      onClick={() => {
+                        setSelectedProgramId(program.id);
+                        setView('topics');
+                      }}
+                      className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
+                    >
+                      <span className="text-xl font-bold text-white pl-2 text-left">{program.label}</span>
+                      <ChevronRight size={24} className="text-gray-500 group-hover:text-white transition-colors" />
+                    </button>
+                  );
+                })
+              )}
             </div>
           </motion.div>
         )}
