@@ -54,13 +54,13 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
       {/* Navigation */}
       <nav className={`sticky z-[100] transition-all duration-300 ${
         isExploreOpen 
-          ? 'top-0 px-0 md:top-4 md:px-6' 
+          ? 'top-0 left-0 right-0 md:top-4 md:px-6' 
           : 'top-2 px-3 md:top-4 md:px-6'
       }`}>
-        <div className={`max-w-[1600px] mx-auto transition-all duration-300 shadow-2xl ${
+        <div className={`transition-all duration-300 shadow-2xl ${
           isExploreOpen 
-            ? 'bg-black rounded-none md:rounded-3xl' 
-            : 'bg-black rounded-2xl md:rounded-3xl'
+            ? 'bg-black w-full md:max-w-[1600px] md:mx-auto md:rounded-3xl' 
+            : 'bg-black rounded-2xl md:rounded-3xl max-w-[1600px] mx-auto'
         }`}>
           <div className="px-3 md:px-6 py-2 md:py-1">
             <div className="flex items-center justify-between">
