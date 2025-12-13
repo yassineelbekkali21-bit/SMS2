@@ -213,7 +213,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="fixed inset-0 z-40 bg-black pt-28 px-6 overflow-y-auto"
+      className="fixed inset-0 z-[90] bg-black pt-32 px-6 overflow-y-auto"
     >
       <AnimatePresence mode="wait">
         {/* Level 1: Categories (Programs) */}
@@ -269,11 +269,11 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
               <button 
                 onClick={() => setView('categories')}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
+                className="w-8 h-8 flex items-center justify-center text-white hover:text-gray-300"
               >
                 <ArrowLeft size={24} />
               </button>
-              <h3 className="text-lg font-bold text-white truncate">{selectedProgram.label}</h3>
+              <h3 className="text-xl font-bold text-white truncate">{selectedProgram.label}</h3>
             </div>
 
             {/* Topics List */}
@@ -321,12 +321,15 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
              <button 
                onClick={() => setView('topics')}
-               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white flex-shrink-0"
+               className="w-8 h-8 flex items-center justify-center text-white hover:text-gray-300 flex-shrink-0"
              >
                <ArrowLeft size={24} />
              </button>
              <div className="flex flex-col overflow-hidden">
-                <span className="text-xs text-gray-400 uppercase tracking-wider truncate font-bold">{selectedProgram.label}</span>
+                <div className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider truncate font-bold mb-0.5">
+                  <span>{selectedProgram.label}</span>
+                  <ChevronRight size={10} />
+                </div>
                 <h3 className="text-lg font-bold text-white truncate">{selectedTopic.label}</h3>
              </div>
            </div>
