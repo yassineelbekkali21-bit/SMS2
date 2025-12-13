@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Play, MessageCircle, Globe, CheckCircle } from 'lucide-react';
+import { Menu, X, Play, MessageCircle, Globe, CheckCircle, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { VideoModal } from '@/components/VideoModal';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ExploreMenu } from '../ExploreMenu';
+import { ExploreMenu, MobileExploreOverlay } from '../ExploreMenu';
 
 interface HeroSectionProps {
   onEnterApp?: () => void;
@@ -18,6 +18,7 @@ const WHATSAPP_NUMBER = '32477025622';
 
 export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: HeroSectionProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
 
   const WHATSAPP_DEFAULT_MESSAGE = language === 'fr' 
@@ -133,12 +134,13 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
 
               {/* Menu mobile */}
               <div className="md:hidden flex items-center gap-3">
-                {/* Explore Button Mobile - Opens Menu */}
+                {/* Explore Button Mobile - Opens Overlay */}
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white font-semibold transition-colors"
+                  onClick={() => setIsExploreOpen(true)}
+                  className="flex items-center gap-1 text-gray-300 hover:text-white font-semibold transition-colors mr-auto"
                 >
                   <span className="text-sm uppercase tracking-wide">{language === 'fr' ? 'Explorer' : 'Explore'}</span>
+                  <ChevronDown size={14} className="mt-0.5" />
                 </button>
 
                 {/* CTA Button Mobile - Icon Only */}
@@ -159,15 +161,13 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
               </div>
             </div>
 
+            {/* Mobile Explore Overlay */}
+            <MobileExploreOverlay isOpen={isExploreOpen} onClose={() => setIsExploreOpen(false)} />
+
             {/* Menu mobile dropdown */}
             {isMenuOpen && (
               <div className="md:hidden border-t border-gray-800 mt-4 pt-4 pb-4">
                 <div className="space-y-4">
-                  {/* Explore Menu Mobile */}
-                  <div className="border-b border-gray-800 pb-4">
-                    <ExploreMenu isMobile={true} onClose={() => setIsMenuOpen(false)} />
-                  </div>
-                  
                   <button 
                     onClick={() => {
                       scrollToSection('how-it-works');

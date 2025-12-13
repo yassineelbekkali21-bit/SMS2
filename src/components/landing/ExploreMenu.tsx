@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Play, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
 
@@ -182,6 +182,141 @@ const exploreData = {
     }
   ]
 };
+
+// New Component: Mobile Overlay Navigation (MasterClass Style)
+export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const { language } = useLanguage();
+  const [view, setView] = useState<'categories' | 'program'>('categories');
+  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
+
+  // Fallback to FR if EN data is incomplete in this mock
+  const data = exploreData[language] || exploreData['fr'];
+  const selectedProgram = data.find(p => p.id === selectedProgramId);
+
+  // Reset view when closing
+  React.useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        setView('categories');
+        setSelectedProgramId(null);
+      }, 300);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="fixed inset-0 z-40 bg-black pt-24 px-6 overflow-y-auto"
+    >
+      <AnimatePresence mode="wait">
+        {view === 'categories' ? (
+          <motion.div
+            key="categories"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+              <input 
+                type="text" 
+                placeholder={language === 'fr' ? "Rechercher..." : "Search..."}
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-gray-700 transition-colors"
+              />
+            </div>
+
+            {/* Categories List */}
+            <div className="space-y-2">
+              {data.map((program) => {
+                const Icon = program.icon;
+                return (
+                  <button
+                    key={program.id}
+                    onClick={() => {
+                      setSelectedProgramId(program.id);
+                      setView('program');
+                    }}
+                    className="w-full flex items-center justify-between py-4 border-b border-gray-800 active:bg-gray-900/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
+                        <Icon size={24} />
+                      </div>
+                      <span className="text-xl font-bold text-white">{program.label}</span>
+                    </div>
+                    <ChevronRight size={24} className="text-gray-600 group-hover:text-white transition-colors" />
+                  </button>
+                );
+              })}
+            </div>
+
+            <button 
+              onClick={onClose}
+              className="w-full py-4 text-gray-500 font-medium mt-8"
+            >
+              {language === 'fr' ? 'Fermer' : 'Close'}
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="program"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="space-y-8"
+          >
+            {/* Back Header */}
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setView('categories')}
+                className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <h3 className="text-2xl font-bold text-white">{selectedProgram?.label}</h3>
+            </div>
+
+            {/* Topics List */}
+            <div className="space-y-4">
+              {selectedProgram?.topics.map((topic) => (
+                <div key={topic.id} className="bg-gray-900 rounded-2xl p-5 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <h4 className="text-lg font-bold text-white">{topic.label}</h4>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-gray-400 text-sm">
+                    <Play size={14} className="text-blue-500" />
+                    <span>{topic.lesson.title}</span>
+                  </div>
+
+                  <Link 
+                    href={topic.lesson.video}
+                    className="block w-full text-center py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-bold transition-colors mt-2"
+                  >
+                    {language === 'fr' ? 'Voir la leçon' : 'Watch Lesson'}
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <Link 
+              href={`/program/${selectedProgram?.id}`}
+              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg"
+            >
+               {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
 export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean; onClose?: () => void }) {
   const { language } = useLanguage();
