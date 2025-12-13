@@ -273,7 +273,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               >
                 <ArrowLeft size={24} />
               </button>
-              <h3 className="text-xl font-bold text-white truncate">{selectedProgram.label}</h3>
+              <h3 className="text-xl font-bold truncate" style={{ color: '#FFFFFF' }}>{selectedProgram.label}</h3>
             </div>
 
             {/* Topics List */}
@@ -326,11 +326,11 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                <ArrowLeft size={24} />
              </button>
              <div className="flex flex-col overflow-hidden">
-                <div className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider truncate font-bold mb-0.5">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wider truncate font-bold mb-0.5" style={{ color: '#9CA3AF' }}>
                   <span>{selectedProgram.label}</span>
                   <ChevronRight size={10} />
                 </div>
-                <h3 className="text-lg font-bold text-white truncate">{selectedTopic.label}</h3>
+                <h3 className="text-lg font-bold truncate" style={{ color: '#FFFFFF' }}>{selectedTopic.label}</h3>
              </div>
            </div>
 
@@ -339,20 +339,20 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
              {/* Lesson Card */}
              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-6">
                
-               {/* Lesson Title (White) */}
-               <div className="flex items-start gap-4">
-                 <div className="mt-1 min-w-[24px] w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                   <Play size={20} fill="currentColor" />
-                 </div>
-                 <div>
-                   <span className="text-white font-bold text-xl leading-tight block mb-2">
-                     {selectedTopic.lesson.title}
-                   </span>
-                   <p className="text-gray-300 text-base leading-relaxed">
-                     {selectedTopic.lesson.desc}
-                   </p>
-                 </div>
-               </div>
+                   {/* Lesson Title (White) */}
+                   <div className="flex items-start gap-4">
+                     <div className="mt-1 min-w-[24px] w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                       <Play size={20} fill="currentColor" />
+                     </div>
+                     <div>
+                       <span className="font-bold text-xl leading-tight block mb-2" style={{ color: '#FFFFFF' }}>
+                         {selectedTopic.lesson.title}
+                       </span>
+                       <p className="text-base leading-relaxed" style={{ color: '#D1D5DB' }}>
+                         {selectedTopic.lesson.desc}
+                       </p>
+                     </div>
+                   </div>
 
                {/* Actions Buttons */}
                <div className="grid grid-cols-1 gap-3 pt-2">
