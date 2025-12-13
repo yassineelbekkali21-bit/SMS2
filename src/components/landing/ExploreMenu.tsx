@@ -213,7 +213,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="fixed top-[72px] left-0 right-0 bottom-0 z-[90] bg-black px-6 py-6 overflow-y-auto"
+      className="fixed top-[68px] left-0 right-0 bottom-0 z-[90] bg-black px-6 py-6 overflow-y-auto"
     >
       <AnimatePresence mode="wait">
         {/* Level 1: Categories (Programs) */}
