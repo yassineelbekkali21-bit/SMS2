@@ -52,7 +52,11 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
   return (
     <>
       {/* Navigation */}
-      <nav className="sticky top-2 md:top-4 z-[100] px-3 md:px-6">
+      <nav className={`sticky z-[100] transition-all duration-300 ${
+        isExploreOpen 
+          ? 'top-0 px-0 md:top-4 md:px-6' 
+          : 'top-2 px-3 md:top-4 md:px-6'
+      }`}>
         <div className={`max-w-[1600px] mx-auto transition-all duration-300 shadow-2xl ${
           isExploreOpen 
             ? 'bg-black rounded-none md:rounded-3xl' 
