@@ -676,16 +676,8 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                 </div>
 
                 {/* Column 3: Featured Lesson (Preview/Quiz) */}
-                <div className="col-span-5 bg-white p-8 flex flex-col justify-center relative overflow-hidden">
-                  {/* Background Decoration */}
-                  <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
-                    {(() => {
-                      const Icon = currentProgram.icon;
-                      return <Icon size={200} />;
-                    })()}
-                  </div>
-
-                  <div className="relative z-10 flex flex-col justify-center h-full overflow-y-auto max-h-[450px] pr-2">
+                <div className="col-span-5 bg-white p-8 flex flex-col relative overflow-hidden">
+                  <div className="relative z-10 flex flex-col h-full overflow-y-auto max-h-[450px] pr-2">
                     <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider mb-6 w-fit sticky top-0">
                       {language === 'fr' ? 'Notions Clés' : 'Key Concepts'}
                     </span>
