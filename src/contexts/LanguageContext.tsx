@@ -50,6 +50,7 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.bio2': 'Tu rejoins des étudiants qui se posent les mêmes questions que toi, qui traversent les mêmes blocages, et qui progressent, étape par étape.',
     'mentor.bio3': 'Pas de pression inutile. Pas de jargon. Pas besoin d\'être "bon" pour commencer. Juste une méthode claire, un cadre rassurant, et une progression qui a du sens.',
     'mentor.bio4': 'Oui, il faudra travailler. Mais tu n\'avanceras jamais seul.',
+    'mentor.bio5': 'Les autres ont déjà commencé. Pourquoi pas toi ?',
     
     // Target Section (Who is SMS for?)
     'target.title': 'Pour qui est Science Made Simple ?',
@@ -287,6 +288,7 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.bio2': 'You\'re joining students who ask the same questions as you, who face the same obstacles, and who progress, step by step.',
     'mentor.bio3': 'No unnecessary pressure. No jargon. No need to be "good" to start. Just a clear method, a reassuring framework, and progress that makes sense.',
     'mentor.bio4': 'Yes, you\'ll have to work. But you\'ll never move forward alone.',
+    'mentor.bio5': 'Others have already started. Why not you?',
 
     // Target Section (Who is SMS for?)
     'target.title': 'Who is Science Made Simple for?',
