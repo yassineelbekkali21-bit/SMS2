@@ -6,6 +6,7 @@ import { Menu, X, Play, MessageCircle, Globe, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import { VideoModal } from '@/components/VideoModal';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExploreMenu } from '../ExploreMenu';
 
 interface HeroSectionProps {
   onEnterApp?: () => void;
@@ -69,6 +70,11 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   />
                 </div>
               </button>
+
+              {/* Explore Menu - Centered between Logo and Tabs */}
+              <div className="hidden md:block">
+                <ExploreMenu />
+              </div>
               
               {/* Menu desktop - Centré */}
               <div className="hidden md:flex items-center gap-16">
@@ -79,16 +85,22 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   {t('nav.method')}
                 </button>
                 <button
+                  onClick={() => scrollToSection('testimonials')}
+                  className="text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
+                >
+                  {t('nav.results')}
+                </button>
+                <button
                   onClick={() => scrollToSection('offre')}
                   className="text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
                 >
                   {t('nav.offer')}
                 </button>
                 <button
-                  onClick={() => scrollToSection('testimonials')}
+                  onClick={() => scrollToSection('whatsapp-contact')}
                   className="text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
                 >
-                  {t('nav.results')}
+                  {t('nav.contact')}
                 </button>
                 <button
                   onClick={() => scrollToSection('faq')}
@@ -161,6 +173,15 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   </button>
                   <button 
                     onClick={() => {
+                      scrollToSection('testimonials');
+                      setIsMenuOpen(false);
+                    }}
+                    className="block w-full text-left text-gray-300 hover:text-white py-2"
+                  >
+                    {t('nav.results')}
+                  </button>
+                  <button 
+                    onClick={() => {
                       scrollToSection('offre');
                       setIsMenuOpen(false);
                     }}
@@ -170,12 +191,12 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   </button>
                   <button 
                     onClick={() => {
-                      scrollToSection('testimonials');
+                      scrollToSection('whatsapp-contact');
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left text-gray-300 hover:text-white py-2"
                   >
-                    {t('nav.results')}
+                    {t('nav.contact')}
                   </button>
                   <button 
                     onClick={() => {
@@ -220,8 +241,7 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 className="text-6xl font-black text-gray-900 mb-6 md:mb-8 leading-[1.05] tracking-tight"
                 style={{ fontSize: 'clamp(2.3rem, 8vw, 4.5rem)' }}
               >
-                {t('hero.title.line1')}<br />
-                {t('hero.title.line2.start')}<span className="text-blue-600">{t('hero.title.line2.highlight')}</span>
+                {t('hero.title.line1')} <span className="text-blue-600">{t('hero.title.line2.highlight')}</span>
               </h1>
 
               {/* Liste à puces visuelle */}
@@ -319,27 +339,6 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 </div>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pitch Section */}
-      <section className="bg-black py-16 md:py-20 px-6">
-        <div className="max-w-6xl mx-auto space-y-8 text-left">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <p key={i} className="text-2xl md:text-4xl leading-relaxed font-normal" style={{ color: '#FFFFFF' }}>
-              {t(`pitch.${i}`)}
-            </p>
-          ))}
-
-          <div className="pt-8">
-            <button
-              onClick={handleWhatsAppClick}
-              className="px-8 py-4 bg-white text-black rounded-xl font-semibold text-xl hover:bg-gray-100 transition-all shadow-lg"
-            >
-              <MessageCircle size={20} className="inline mr-2" />
-              {t('pitch.cta')}
-            </button>
           </div>
         </div>
       </section>

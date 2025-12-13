@@ -202,7 +202,3 @@ export function TestimonialsSectionMultilang() {
     </section>
   );
 }
-
-
-
-

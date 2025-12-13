@@ -15,46 +15,104 @@ const translations: Record<Language, Record<string, string>> = {
   fr: {
     // Navigation
     'nav.method': 'Méthode',
-    'nav.offer': 'Offre',
     'nav.results': 'Résultats',
+    'nav.offer': 'Offre',
+    'nav.contact': 'Contact',
     'nav.faq': 'FAQ',
     'nav.start': 'Commencer gratuitement',
 
     // Hero Section
-    'hero.title.line1': "Toutes les sciences que vous désirez apprendre.",
-    'hero.title.line2.start': 'Une plateforme. ',
-    'hero.title.line2.highlight': 'Une solution.',
+    'hero.title.line1': "De la confusion à ",
+    'hero.title.line2.start': '',
+    'hero.title.line2.highlight': 'la maîtrise.',
     'hero.bullet1.bold': 'Diagnostic',
     'hero.bullet1.text': 'qui t\'oriente',
     'hero.bullet2.bold': 'Parcours d\'apprentissage',
     'hero.bullet2.text': 'structuré par niveaux',
-    'hero.bullet3.bold': 'Méthode éprouvée,',
-    'hero.bullet3.text': 'zéro prérequis',
+    'hero.bullet3.bold': 'Méthode',
+    'hero.bullet3.text': 'éprouvée, sans prérequis',
     'hero.bullet4.bold': 'Communauté qui t\'élève',
     'hero.bullet4.text': '& mentor accessible',
     'hero.subtitle.line1': '',
     'hero.subtitle.line2': 'Tu vas comprendre, progresser, kiffer les sciences et viser plus haut',
     'hero.subtitle.line2.highlight': 'que tu ne l\'imaginais.',
-    'hero.cta': 'Rejoins le mouvement',
-    'hero.microcopy': 'Accès à vie • Mises à jour gratuites • Leçons offertes',
+    'hero.cta': 'Commencer gratuitement',
+    'hero.microcopy': 'Diagnostic gratuit. Leçons offertes. Sans engagement.',
     'hero.social_proof': 'étudiants ont déjà décollé avec nous',
     'hero.see_how': 'Voir comment ça marche en 2 minutes',
 
     // Pitch Section
-    'pitch.1': 'Tout le monde peut réussir. Je te le garantis. Quelles que soient tes ambitions, quelles que soient tes difficultés, on y arrivera ensemble.',
-    'pitch.2': 'Si tu es motivé, je vais te faire bosser dur. Mais tu verras vite qu\'on peut dépasser ce que tu croyais possible.',
-    'pitch.3': 'On t\'expliquera les maths, la physique, la chimie et l\'économie comme personne ne te les a jamais expliquées. Pas de jargon. Pas de flou. Pas d\'ennui. Juste une méthode claire, directe, et des résultats concrets.',
-    'pitch.4': 'Nos étudiants ne se contentent pas de réussir : ils visent les meilleures écoles. Et ils y arrivent.',
-    'pitch.5': 'Notre mission est simple : dévoiler ton véritable potentiel. Te faire comprendre. Te faire progresser. Et peut-être même... te faire aimer ces matières.',
-    'pitch.6': 'Alors oui, tu vas bosser. Oui, ce sera exigeant. Mais tu ne seras jamais seul. Et tu ne reconnaîtras plus ton niveau d\'ici quelques semaines.',
-    'pitch.7': 'Tout commence par un simple message WhatsApp.',
-    'pitch.8': 'Les autres ont déjà commencé. Pourquoi pas toi ?',
-    'pitch.cta': 'Commencer gratuitement',
+    'mentor.role': 'Founder of Science Made Simple',
+    'mentor.label': 'Rencontre ton mentor',
+    'mentor.title': 'De l\'échec à l\'excellence.',
+    'mentor.quote': 'L\'excellence n\'est pas réservée aux génies. C\'est une méthode, et je vais te la donner.',
+    'mentor.bio1': 'Tout le monde peut réussir. Je te le garantis. Quelles que soient tes ambitions, quelles que soient tes difficultés, on y arrivera ensemble. Si tu es motivé, je vais te faire bosser dur, mais tu verras vite qu\'on peut dépasser ce que tu croyais possible.',
+    'mentor.bio2': 'On t\'expliquera les maths, la physique, la chimie et l\'économie comme personne ne te les a jamais expliquées. Pas de jargon. Pas de flou. Pas d\'ennui. Juste une méthode claire, directe, et des résultats concrets.',
+    'mentor.bio3': 'Nos étudiants ne se contentent pas de réussir : ils visent les meilleures écoles. Et ils y arrivent. Alors oui, ce sera exigeant. Mais tu ne seras jamais seul.',
+    
+    // Target Section (Who is SMS for?)
+    'target.title': 'Pour qui est Science Made Simple ?',
+    'target.card1.title': 'Étudiants en difficulté',
+    'target.card1.desc': 'Tu as pris du retard, les bases te manquent et l\'examen approche. Tu as besoin d\'une méthode claire pour valider coûte que coûte.',
+    'target.card2.title': 'Étudiants ambitieux',
+    'target.card2.desc': 'Tu as déjà de bonnes notes, mais tu vises le 18/20, la mention ou l\'entrée dans une filière sélective. Tu veux aller plus loin que le cours.',
+    'target.card3.title': 'Curieux & Passionnés',
+    'target.card3.desc': 'Vous n\'avez pas d\'examen, juste l\'envie de comprendre le monde. Vous voulez de la rigueur scientifique, pas de la vulgarisation simpliste.',
+    'target.cta': 'Rejoins le mouvement',
+
+    // Curriculum Section (Augment Style)
+    'curriculum.title': 'Un programme qui évolue',
+    'curriculum.title.highlight': 'avec toi.',
+    'curriculum.stats.classes': 'Chapitres',
+    'curriculum.stats.students': 'Étudiants',
+    'curriculum.stats.resources': 'Fiches PDF',
+    
+    'curriculum.physics.title': 'Physics Mastery',
+    'curriculum.physics.desc': 'Dominez la matière, l\'énergie et les forces. Un cours structuré pour transformer l\'abstrait en concret.',
+    'curriculum.physics.outcomes.1': 'Mécanique & Dynamique',
+    'curriculum.physics.outcomes.2': 'Électricité & Magnétisme',
+    'curriculum.physics.outcomes.3': 'Ondes & Optique',
+    'curriculum.physics.outcomes.4': 'Thermodynamique',
+
+    'curriculum.math.title': 'Mathematics Mastery',
+    'curriculum.math.desc': 'Le langage universel des sciences. Ne subissez plus les calculs, apprenez à les lire et à les utiliser.',
+    'curriculum.math.outcomes.1': 'Analyse (Fonctions, Intégrales)',
+    'curriculum.math.outcomes.2': 'Algèbre Linéaire',
+    'curriculum.math.outcomes.3': 'Géométrie & Trigonométrie',
+    'curriculum.math.outcomes.4': 'Logique & Raisonnement',
+
+    'curriculum.chem.title': 'Chemistry Mastery',
+    'curriculum.chem.desc': 'Comprenez ce qui compose le monde. Des atomes aux réactions complexes, tout devient limpide.',
+    'curriculum.chem.outcomes.1': 'Chimie Générale & Atomistique',
+    'curriculum.chem.outcomes.2': 'Chimie Organique',
+    'curriculum.chem.outcomes.3': 'Cinétique & Équilibres',
+    'curriculum.chem.outcomes.4': 'Acides-Bases & Solutions',
+
+    'curriculum.stats.title': 'Statistics Mastery',
+    'curriculum.stats.desc': 'Faites parler les données. Indispensable pour l\'économie, la psychologie et les sciences sociales.',
+    'curriculum.stats.outcomes.1': 'Statistiques Descriptives',
+    'curriculum.stats.outcomes.2': 'Probabilités & Combinatoire',
+    'curriculum.stats.outcomes.3': 'Variables Aléatoires',
+    'curriculum.stats.outcomes.4': 'Tests d\'Hypothèses',
+
+    'curriculum.eco.title': 'Economics Mastery',
+    'curriculum.eco.desc': 'Décryptez les mécanismes du marché. Microéconomie et Macroéconomie expliquées simplement.',
+    'curriculum.eco.outcomes.1': 'Offre, Demande & Marchés',
+    'curriculum.eco.outcomes.2': 'Comportement du Consommateur',
+    'curriculum.eco.outcomes.3': 'Production & Coûts',
+    'curriculum.eco.outcomes.4': 'Politiques Économiques',
+
+    'curriculum.accounting.title': 'Accounting Mastery',
+    'curriculum.accounting.desc': 'Maîtrisez le langage des affaires. Du bilan au compte de résultat, comprenez la logique financière.',
+    'curriculum.accounting.outcomes.1': 'Comptabilité Générale',
+    'curriculum.accounting.outcomes.2': 'Analyse Financière',
+    'curriculum.accounting.outcomes.3': 'Comptabilité de Gestion',
+    'curriculum.accounting.outcomes.4': 'Fiscalité & Normes',
 
     // How it works
-    'how.title': 'Comment on t\'aide à passer de la',
-    'how.title.highlight': 'confusion à la maîtrise',
-    'how.subtitle': 'On t\'accompagne avec exigence et bienveillance.',
+    'how.title': 'On t\'accompagne avec',
+    'how.title.highlight': 'exigence et bienveillance.',
+    'how.subtitle': '',
     'how.step1.title': 'On commence par toi',
     'how.step1.desc': 'On identifie tes difficultés, ton niveau et ce que tu veux vraiment maîtriser.\nPas de jugement, pas de prérequis — [[juste un diagnostic clair pour comprendre d\'où tu pars.]]',
     'how.step2.title': 'On t\'oriente dans ton programme Mastery',
@@ -64,9 +122,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Parler de ma situation sur WhatsApp',
 
     // Why us
-    'why.title': 'Pourquoi on t\'offre pas juste des cours.',
-    'why.title.line2': 'Mais on t\'offre une',
-    'why.title.highlight': 'transformation',
+    'why.title': 'Pourquoi on ne t’offre pas juste des cours,',
+    'why.title.line2': '',
+    'why.title.highlight': 'mais une transformation',
     'why.reason1.title': 'Parce qu\'on commence par toi, pas par un catalogue',
     'why.reason1.desc': 'Diagnostic humain. On t\'écoute, on te comprend, on t\'oriente. Une progression logique, construite, qui t\'amène vers la maîtrise.',
     'why.reason2.title': 'Parce qu\'on redonne enfin du plaisir à comprendre les sciences',
@@ -102,7 +160,7 @@ const translations: Record<Language, Record<string, string>> = {
     'offer.subtitle': '',
     'offer.mastery.title': 'Un objectif : la maîtrise totale.',
     'offer.mastery.block1.title': 'Mastery Programs',
-    'offer.mastery.block1.intro': 'Accès à vie à l\'intégralité des matières débloquées.\nUn environnement pensé pour comprendre, progresser et performer depuis ton niveau actuel jusqu\'à une véritable maîtrise scientifique :',
+    'offer.mastery.block1.intro': 'Accès à vie à l\'intégralité des matières débloquées.',
     'offer.mastery.block2.title': 'Mastery Levels',
     'offer.mastery.block2.intro': '3 niveaux pour s\'adapter à la difficulté réelle de chaque matière :',
     'offer.mastery.cta': 'Commencer gratuitement',
@@ -121,9 +179,16 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Testimonials
     'testimonials.title': 'Ils ont transformé leurs résultats grâce à Science Made Simple.',
-    'testimonials.title.highlight': 'Demain, c\'est peut-être toi.',
+    'testimonials.title.highlight': 'Demain, ce sera peut-être toi.',
     'testimonials.cta': 'Commencer gratuitement',
     'testimonials.video.title': 'SMS vous remercie pour votre confiance',
+
+    // Start Journey Section
+    'start.title': 'Commence ton aventure aujourd\'hui.',
+    'start.subtitle': 'Rejoins +2400 étudiants qui ont transformé leurs résultats.',
+    'start.guarantee': 'Diagnostic gratuit • Sans engagement • Satisfait ou remboursé',
+    'start.cta_primary': 'Commencer gratuitement',
+    'start.cta_secondary': 'Explorer le programme',
 
     // WhatsApp Contact
     'contact.title': 'C\'est ici que ça commence,',
@@ -186,15 +251,16 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navigation
     'nav.method': 'Method',
-    'nav.offer': 'Offer',
     'nav.results': 'Results',
+    'nav.offer': 'Offer',
+    'nav.contact': 'Contact',
     'nav.faq': 'FAQ',
     'nav.start': 'Start for free',
 
     // Hero Section
-    'hero.title.line1': "Whatever science you have to learn.",
-    'hero.title.line2.start': 'One platform. ',
-    'hero.title.line2.highlight': 'One solution.',
+    'hero.title.line1': "From confusion to ",
+    'hero.title.line2.start': '',
+    'hero.title.line2.highlight': 'mastery.',
     'hero.bullet1.bold': 'Diagnosis',
     'hero.bullet1.text': 'that guides you',
     'hero.bullet2.bold': 'Learning path',
@@ -212,20 +278,77 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.see_how': 'See how it works in 2 minutes',
 
     // Pitch Section
-    'pitch.1': 'Everyone can succeed. I guarantee it. Whatever your ambitions, whatever your difficulties, we will get there together.',
-    'pitch.2': 'If you are motivated, I will make you work hard. But you will quickly see that we can exceed what you thought possible.',
-    'pitch.3': 'We will explain math, physics, chemistry and economics like no one has ever explained them to you. No jargon. No blur. No boredom. Just a clear, direct method, and concrete results.',
-    'pitch.4': 'Our students don\'t just pass: they aim for the best schools. And they make it.',
-    'pitch.5': 'Our mission is simple: reveal your true potential. Make you understand. Make you progress. And maybe even... make you love these subjects.',
-    'pitch.6': 'So yes, you will work. Yes, it will be demanding. But you will never be alone. And you won\'t recognize your level in a few weeks.',
-    'pitch.7': 'It all starts with a simple WhatsApp message.',
-    'pitch.8': 'Others have already started. Why not you?',
-    'pitch.cta': 'Start for free',
+    'mentor.role': 'Founder of Science Made Simple',
+    'mentor.label': 'Meet your mentor',
+    'mentor.title': 'From failure to excellence.',
+    'mentor.quote': 'Excellence is not reserved for geniuses. It is a method, and I will give it to you.',
+    'mentor.bio1': 'Everyone can succeed. I guarantee it. Whatever your ambitions, whatever your difficulties, we will get there together. If you are motivated, I will make you work hard, but we will exceed what you thought possible.',
+    'mentor.bio2': 'We will explain math, physics, chemistry and economics like no one has ever explained them to you. No jargon. No blur. No boredom. Just a clear, direct method, and concrete results.',
+    'mentor.bio3': 'Our students don\'t just pass: they aim for the best schools. And they make it. So yes, it will be demanding. But you will never be alone.',
+
+    // Target Section (Who is SMS for?)
+    'target.title': 'Who is Science Made Simple for?',
+    'target.card1.title': 'Students struggling',
+    'target.card1.desc': 'You have fallen behind, basics are missing and the exam is approaching. You need a clear method to pass at all costs.',
+    'target.card2.title': 'Ambitious students',
+    'target.card2.desc': 'You already have good grades, but you aim for 18/20, honors or entry into a selective program. You want to go further than the course.',
+    'target.card3.title': 'Lifelong Learners',
+    'target.card3.desc': 'You have no exams, just a desire to understand the world. You want scientific rigor, not oversimplified popularization.',
+    'target.cta': 'Join the movement',
+
+    // Curriculum Section (Augment Style)
+    'curriculum.title': 'A curriculum that evolves',
+    'curriculum.title.highlight': 'with you.',
+    'curriculum.stats.classes': 'Chapters',
+    'curriculum.stats.students': 'Students',
+    'curriculum.stats.resources': 'PDF Sheets',
+    
+    'curriculum.physics.title': 'Physics Mastery',
+    'curriculum.physics.desc': 'Master matter, energy, and forces. A structured course to turn the abstract into concrete.',
+    'curriculum.physics.outcomes.1': 'Mechanics & Dynamics',
+    'curriculum.physics.outcomes.2': 'Electricity & Magnetism',
+    'curriculum.physics.outcomes.3': 'Waves & Optics',
+    'curriculum.physics.outcomes.4': 'Thermodynamics',
+
+    'curriculum.math.title': 'Mathematics Mastery',
+    'curriculum.math.desc': 'The universal language of science. Don\'t suffer through calculations, learn to read and use them.',
+    'curriculum.math.outcomes.1': 'Analysis (Functions, Integrals)',
+    'curriculum.math.outcomes.2': 'Linear Algebra',
+    'curriculum.math.outcomes.3': 'Geometry & Trigonometry',
+    'curriculum.math.outcomes.4': 'Logic & Reasoning',
+
+    'curriculum.chem.title': 'Chemistry Mastery',
+    'curriculum.chem.desc': 'Understand what the world is made of. From atoms to complex reactions, everything becomes clear.',
+    'curriculum.chem.outcomes.1': 'General Chemistry & Atomistics',
+    'curriculum.chem.outcomes.2': 'Organic Chemistry',
+    'curriculum.chem.outcomes.3': 'Kinetics & Equilibrium',
+    'curriculum.chem.outcomes.4': 'Acids-Bases & Solutions',
+
+    'curriculum.stats.title': 'Statistics Mastery',
+    'curriculum.stats.desc': 'Make data speak. Essential for economics, psychology, and social sciences.',
+    'curriculum.stats.outcomes.1': 'Descriptive Statistics',
+    'curriculum.stats.outcomes.2': 'Probabilities & Combinatorics',
+    'curriculum.stats.outcomes.3': 'Random Variables',
+    'curriculum.stats.outcomes.4': 'Hypothesis Testing',
+
+    'curriculum.eco.title': 'Economics Mastery',
+    'curriculum.eco.desc': 'Decipher market mechanisms. Microeconomics and Macroeconomics explained simply.',
+    'curriculum.eco.outcomes.1': 'Supply, Demand & Markets',
+    'curriculum.eco.outcomes.2': 'Consumer Behavior',
+    'curriculum.eco.outcomes.3': 'Production & Costs',
+    'curriculum.eco.outcomes.4': 'Economic Policies',
+
+    'curriculum.accounting.title': 'Accounting Mastery',
+    'curriculum.accounting.desc': 'Master the language of business. From balance sheets to income statements, understand financial logic.',
+    'curriculum.accounting.outcomes.1': 'General Accounting',
+    'curriculum.accounting.outcomes.2': 'Financial Analysis',
+    'curriculum.accounting.outcomes.3': 'Management Accounting',
+    'curriculum.accounting.outcomes.4': 'Taxation & Standards',
 
     // How it works
-    'how.title': 'How we help you go from',
-    'how.title.highlight': 'confusion to mastery',
-    'how.subtitle': 'We support you with rigor and kindness.',
+    'how.title': 'We support you with',
+    'how.title.highlight': 'rigor and kindness.',
+    'how.subtitle': '',
     'how.step1.title': 'We start with you',
     'how.step1.desc': 'We identify your difficulties, your level and what you really want to master.\nNo judgment, no prerequisites — [[just a clear diagnosis to understand where you\'re starting from.]]',
     'how.step2.title': 'We guide you through your Mastery program',
@@ -235,9 +358,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Discuss my situation on WhatsApp',
 
     // Why us
-    'why.title': 'Why we don\'t just offer you courses.',
-    'why.title.line2': 'But we offer you a',
-    'why.title.highlight': 'transformation',
+    'why.title': 'Why we don\'t just offer you courses,',
+    'why.title.line2': '',
+    'why.title.highlight': 'but a transformation',
     'why.reason1.title': 'Because we start with you, not a catalog',
     'why.reason1.desc': 'Human diagnosis. We listen to you, we understand you, we guide you. A logical, structured progression that leads you to mastery.',
     'why.reason2.title': 'Because we finally bring back the joy of understanding science',
@@ -273,7 +396,7 @@ const translations: Record<Language, Record<string, string>> = {
     'offer.subtitle': '',
     'offer.mastery.title': 'One goal: total mastery.',
     'offer.mastery.block1.title': 'Mastery Programs',
-    'offer.mastery.block1.intro': 'Lifetime access to all unlocked subjects.\nAn environment designed to understand, progress and perform from your current level to true scientific mastery:',
+    'offer.mastery.block1.intro': 'Lifetime access to all unlocked subjects.',
     'offer.mastery.block2.title': 'Mastery Levels',
     'offer.mastery.block2.intro': '3 levels to adapt to the real difficulty of each subject:',
     'offer.mastery.cta': 'Start for free',
@@ -295,6 +418,13 @@ const translations: Record<Language, Record<string, string>> = {
     'testimonials.title.highlight': 'Tomorrow, it could be you.',
     'testimonials.cta': 'Start for free',
     'testimonials.video.title': 'SMS thanks you for your trust',
+
+    // Start Journey Section
+    'start.title': 'Start your journey today.',
+    'start.subtitle': 'Join +2400 students who transformed their results.',
+    'start.guarantee': 'Free diagnosis • No commitment • Money-back guarantee',
+    'start.cta_primary': 'Start for free',
+    'start.cta_secondary': 'Explore curriculum',
 
     // WhatsApp Contact
     'contact.title': 'This is where it starts,',
@@ -362,7 +492,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>('fr');
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    const translation = translations[language][key];
+    return translation !== undefined ? translation : key;
   };
 
   return (

@@ -41,16 +41,6 @@ export function HowItWorksSectionMultilang() {
             <br className="hidden md:block" />
             <span className="text-blue-600 block md:inline mt-2 md:mt-0">{t('how.title.highlight')}</span>
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-base text-gray-600 max-w-3xl mx-auto"
-            style={{ fontSize: 'clamp(1.125rem, 2.2vw, 1.625rem)' }}
-          >
-            {t('how.subtitle')}
-          </motion.p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">

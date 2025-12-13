@@ -11,6 +11,10 @@ import { TestimonialsSectionMultilang } from './sections/TestimonialsSectionMult
 import { WhatsAppContactFormMultilang } from './sections/WhatsAppContactFormMultilang';
 import { FAQSectionMultilang } from './sections/FAQSectionMultilang';
 import { FooterMultilang } from './sections/FooterMultilang';
+import { MentorSectionMultilang } from './sections/MentorSectionMultilang';
+import { TargetSectionMultilang } from './sections/TargetSectionMultilang';
+import { CurriculumSectionMultilang } from './sections/CurriculumSectionMultilang';
+import { StartJourneySectionMultilang } from './sections/StartJourneySectionMultilang';
 
 interface NewMarketingLandingMultilangProps {
   onEnterApp?: () => void;
@@ -26,10 +30,13 @@ function LandingContent({ onEnterApp }: NewMarketingLandingMultilangProps) {
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
       />
+      <MentorSectionMultilang />
+      {/* <TargetSectionMultilang /> */}
       <HowItWorksSectionMultilang />
       <WhyUsSectionMultilang />
       <TestimonialsSectionMultilang />
-      <ContentCarouselMultilang />
+      <StartJourneySectionMultilang />
+      <CurriculumSectionMultilang />
       <OfferModelSectionMultilang />
       <WhatsAppContactFormMultilang />
       <FAQSectionMultilang />
@@ -45,7 +52,3 @@ export function NewMarketingLandingMultilang({ onEnterApp }: NewMarketingLanding
     </LanguageProvider>
   );
 }
-
-
-
-

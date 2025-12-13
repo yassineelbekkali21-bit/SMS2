@@ -5,10 +5,17 @@ import { motion } from 'framer-motion';
 import { GraduationCap, Target, ArrowRight, Sparkles, Gift, Eye, CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface Badge {
+  text: string;
+  icon?: React.ElementType;
+  color?: 'blue' | 'green' | 'purple' | 'gray';
+}
+
 interface OfferBlock {
   title: string;
+  titleBadge?: Badge;
   intro?: string;
-  bullets: string[];
+  bullets: (string | { text: string; badge?: Badge })[];
   footer?: string;
   isAddons?: boolean;
 }
@@ -22,10 +29,9 @@ interface OfferCardProps {
   ctaAction: () => void;
   delay?: number;
   highlight?: boolean;
-  badges?: Array<{ text: string; icon: React.ElementType }>;
 }
 
-function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, delay = 0, highlight = false, badges = [] }: OfferCardProps) {
+function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, delay = 0, highlight = false }: OfferCardProps) {
   const { language } = useLanguage();
   
   return (
@@ -62,27 +68,6 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
             <Icon size={20} />
           </div>
         </div>
-        
-        {/* Badges / Bandeaux */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {badges.map((badge, index) => {
-            const BadgeIcon = badge.icon;
-            return (
-              <React.Fragment key={index}>
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold uppercase tracking-wider ${
-                  highlight 
-                    ? 'bg-white/10 text-white border border-white/20' 
-                    : 'bg-gray-900 text-white border border-gray-900'
-                }`}>
-                  <BadgeIcon size={16} />
-                  {badge.text}
-                </div>
-                {/* Force line break after 2nd badge if there are 3 badges */}
-                {index === 1 && badges.length === 3 && <div className="basis-full h-0" />}
-              </React.Fragment>
-            );
-          })}
-        </div>
       </div>
 
       {/* Body */}
@@ -93,12 +78,12 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
           {language === 'fr' ? "CE QUI EST INCLUS" : "WHAT'S INCLUDED"}
         </p>
 
-        <div className="space-y-4 flex-1">
+        <div className="space-y-5 flex-1">
           {blocks.map((block, index) => (
             <div key={index} className="relative">
               {/* Connector Line for multiple blocks */}
               {index < blocks.length - 1 && (
-                <div className={`absolute left-3 top-7 bottom-[-20px] w-0.5 ${
+                <div className={`absolute left-3 top-7 bottom-[-24px] w-0.5 ${
                   highlight ? 'bg-gray-800' : 'bg-gray-100'
                 }`} />
               )}
@@ -111,36 +96,64 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
                 </div>
                 
                 <div className="flex-1">
-                  <h4 
-                    className={`font-bold text-lg mb-1 ${
-                      highlight ? '!text-white' : 'text-gray-900'
-                    }`}
-                    style={{ fontSize: 'clamp(1.125rem, 3vw, 1.625rem)' }}
-                  >
-                    {block.title}
-                  </h4>
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h4 
+                      className={`font-bold text-lg ${
+                        highlight ? '!text-white' : 'text-gray-900'
+                      }`}
+                      style={{ fontSize: 'clamp(1.125rem, 3vw, 1.625rem)' }}
+                    >
+                      {block.title}
+                    </h4>
+                    {/* Title Badge */}
+                    {block.titleBadge && (
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-sm font-bold uppercase tracking-wide ${
+                        highlight 
+                          ? 'bg-blue-600 bg-opacity-20 text-white border border-blue-600 border-opacity-30' 
+                          : 'bg-blue-50 text-blue-700 border border-blue-100'
+                      }`}>
+                        {block.titleBadge.icon && <block.titleBadge.icon size={14} />}
+                        {block.titleBadge.text}
+                      </span>
+                    )}
+                  </div>
                   
                   {block.intro && (
-                    <p className={`text-sm md:text-xl mb-1.5 ${
+                    <p className={`text-sm md:text-xl mb-2 ${
                       highlight ? '!text-white' : 'text-gray-600'
                     }`}>
                       {block.intro}
                     </p>
                   )}
                   
-                  <ul className="space-y-1">
+                  <ul className="space-y-2">
                     {block.bullets.map((bullet, bulletIndex) => {
-                      // Determine if the bullet is part of "Mastery Boosters"
                       const isBooster = block.isAddons;
+                      const text = typeof bullet === 'string' ? bullet : bullet.text;
+                      const badge = typeof bullet === 'string' ? undefined : bullet.badge;
                       
                       return (
-                        <li key={bulletIndex} className={`text-sm md:text-xl flex items-start ${
+                        <li key={bulletIndex} className={`text-sm md:text-xl flex flex-wrap items-center gap-2 ${
                           highlight ? '!text-white' : 'text-gray-600'
                         } ${isBooster ? 'font-bold' : ''}`}>
-                          <span className={`mr-2 mt-0.5 ${
-                            highlight ? 'text-gray-400' : 'text-gray-400'
-                          }`}>•</span>
-                          {bullet}
+                          <div className="flex items-start">
+                            <span className={`mr-2 mt-0.5 ${
+                              highlight ? 'text-gray-400' : 'text-gray-400'
+                            }`}>•</span>
+                            <span>{text}</span>
+                          </div>
+                          
+                          {/* Bullet Badge */}
+                          {badge && (
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs md:text-sm font-bold uppercase tracking-wide ${
+                              highlight 
+                                ? 'bg-blue-600 bg-opacity-20 text-white border border-blue-600 border-opacity-30' 
+                                : 'bg-blue-50 text-blue-700 border border-blue-100'
+                            }`}>
+                              {badge.icon && <badge.icon size={14} />}
+                              {badge.text}
+                            </span>
+                          )}
                         </li>
                       );
                     })}
@@ -161,7 +174,7 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
 
         <button
           onClick={ctaAction}
-          className={`w-full mt-5 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg md:text-2xl ${
+          className={`w-full mt-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg md:text-2xl ${
             highlight 
               ? 'bg-blue-600 text-white hover:bg-blue-700' 
               : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -178,9 +191,12 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
 export function OfferModelSectionMultilang() {
   const { language, t } = useLanguage();
 
-  // ... (keeping the same data definitions)
   const addonsBlock: OfferBlock = {
     title: 'Mastery Boosters',
+    titleBadge: {
+      text: language === 'fr' ? '4 semaines offertes' : '4 weeks free',
+      icon: Sparkles
+    },
     intro: language === 'fr' 
       ? 'Modules pour accélérer ta progression :'
       : 'Modules to accelerate your progress:',
@@ -209,10 +225,26 @@ export function OfferModelSectionMultilang() {
   const masteryProgramsBlocks: OfferBlock[] = [
     {
       title: t('offer.mastery.block1.title'),
+      titleBadge: {
+        text: language === 'fr' ? 'Previews disponibles' : 'Previews available',
+        icon: Eye
+      },
       intro: t('offer.mastery.block1.intro'),
       bullets: language === 'fr' 
-        ? ["Slides manuscrits & Q&A", "Exercices + corrections détaillées", "Accès à la communauté & aux cercles", "Support WhatsApp"]
-        : ["Handwritten slides & Q&A", "Exercises + detailed corrections", "Community & study circles access", "WhatsApp Support"]
+        ? [
+            { text: "Diagnostic d'orientation", badge: { text: "Offert", icon: Gift } },
+            "Slides manuscrits & Q&A", 
+            "Exercices + corrections détaillées", 
+            "Accès à la communauté & aux cercles", 
+            "Support WhatsApp"
+          ]
+        : [
+            { text: "Orientation Diagnosis", badge: { text: "Free", icon: Gift } },
+            "Handwritten slides & Q&A", 
+            "Exercises + detailed corrections", 
+            "Community & study circles access", 
+            "WhatsApp Support"
+          ]
     },
     {
       title: t('offer.mastery.block2.title'),
@@ -230,6 +262,10 @@ export function OfferModelSectionMultilang() {
   const examPrepBlocks: OfferBlock[] = [
     {
       title: t('offer.exam.block1.title'),
+      titleBadge: {
+        text: language === 'fr' ? 'Previews disponibles' : 'Previews available',
+        icon: Eye
+      },
       intro: t('offer.exam.block1.intro'),
       bullets: language === 'fr'
         ? ["Slides manuscrits", "Exercices corrigés & entraînement progressif", "Accès communauté & Q&A", "Support WhatsApp"]
@@ -263,11 +299,6 @@ export function OfferModelSectionMultilang() {
             ctaText={t('offer.mastery.cta')}
             ctaAction={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
             delay={0}
-            badges={[
-              { text: language === 'fr' ? 'Diagnostic offert' : 'Free diagnosis', icon: Gift },
-              { text: language === 'fr' ? 'Boosters offerts 4 semaines' : '4 weeks free boosters', icon: Sparkles },
-              { text: language === 'fr' ? 'Previews disponibles' : 'Previews available', icon: Eye }
-            ]}
           />
 
           <OfferCard
@@ -279,13 +310,9 @@ export function OfferModelSectionMultilang() {
             ctaAction={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
             delay={0.15}
             highlight={true}
-            badges={[
-              { text: language === 'fr' ? 'Previews disponibles' : 'Previews available', icon: Eye }
-            ]}
           />
         </div>
       </div>
     </section>
   );
 }
-

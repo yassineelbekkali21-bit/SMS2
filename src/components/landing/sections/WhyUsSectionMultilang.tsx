@@ -59,14 +59,14 @@ export function WhyUsSectionMultilang() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <h2 
             className="text-4xl font-bold text-gray-900 mb-6 leading-tight"
             style={{ fontSize: 'clamp(1.2rem, 6vw, 3rem)' }}
           >
             {t('why.title')}<br />
-            {t('why.title.line2')} <span className="text-blue-600">{t('why.title.highlight')}</span>.
+            <span className="text-blue-600">{t('why.title.highlight')}</span>.
           </h2>
         </motion.div>
 
@@ -118,7 +118,3 @@ export function WhyUsSectionMultilang() {
     </section>
   );
 }
-
-
-
-
