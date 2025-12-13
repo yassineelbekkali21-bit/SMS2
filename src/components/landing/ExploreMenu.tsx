@@ -354,21 +354,34 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                      </div>
                    </div>
 
-                           {/* Actions Buttons */}
-                           <div className="grid grid-cols-1 gap-3 pt-2">
+                           {/* Actions Buttons - Ultra Minimalist Mobile */}
+                           <div className="space-y-3 mt-4">
+                             {/* Preview - Clean White Button */}
                              <Link 
                                href={selectedTopic.lesson.video}
-                               className="flex items-center justify-center gap-2 py-4 bg-white text-black rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-100"
+                               className="flex items-center justify-between w-full p-4 bg-white rounded-xl active:scale-95 transition-transform group"
                              >
-                               <PlayCircle size={20} className="fill-current" />
-                               Preview Lesson
+                               <div className="flex items-center gap-3">
+                                 <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
+                                    <Play size={14} fill="currentColor" className="ml-0.5" />
+                                 </div>
+                                 <span className="text-black font-bold text-base">Preview Lesson</span>
+                               </div>
+                               <ArrowRight size={18} className="text-gray-400 group-hover:text-black" />
                              </Link>
+
+                             {/* Quiz - Clean Outline Button */}
                              <Link 
                                href={selectedTopic.lesson.quiz}
-                               className="flex items-center justify-center gap-2 py-4 bg-transparent border-2 border-white text-white rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-white/10"
+                               className="flex items-center justify-between w-full p-4 border border-gray-800 rounded-xl active:scale-95 transition-transform hover:bg-gray-900 group"
                              >
-                               <HelpCircle size={20} />
-                               Take Quiz
+                                <div className="flex items-center gap-3">
+                                 <div className="w-8 h-8 rounded-full border border-gray-600 text-gray-400 flex items-center justify-center group-hover:border-white group-hover:text-white transition-colors">
+                                    <HelpCircle size={14} />
+                                 </div>
+                                 <span className="text-white font-bold text-base">Take Quiz</span>
+                               </div>
+                               <ArrowRight size={18} className="text-gray-600 group-hover:text-white transition-colors" />
                              </Link>
                            </div>
              </div>
@@ -595,39 +608,39 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                       {currentTopic.lesson.desc}
                     </p>
 
-                    <div className="space-y-3">
-                      {/* Preview Button - Minimalist Black */}
+                    <div className="space-y-0 divide-y divide-gray-100 border-t border-b border-gray-100 my-8">
+                      {/* Preview Link - Ultra Minimalist */}
                       <Link
                         href={currentTopic.lesson.video}
-                        className="flex items-center justify-between w-full p-4 bg-black text-white rounded-xl hover:bg-gray-800 transition-all group"
+                        className="flex items-center justify-between py-5 group hover:pl-2 transition-all duration-300 cursor-pointer"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center">
-                            <Play size={14} fill="currentColor" className="ml-0.5" />
-                          </div>
-                          <div>
-                            <span className="font-bold block text-sm">Voir la preview</span>
-                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">3 min video</span>
-                          </div>
+                        <div className="flex items-center gap-4">
+                           <span className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                             <Play size={14} fill="currentColor" className="ml-0.5" />
+                           </span>
+                           <div>
+                             <span className="block font-bold text-gray-900 text-base group-hover:text-black">Voir la preview</span>
+                             <span className="text-[11px] text-gray-400 uppercase tracking-widest font-medium">3 min video</span>
+                           </div>
                         </div>
-                        <ArrowRight size={16} className="text-gray-500 group-hover:text-white transition-colors" />
+                        <ArrowRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all duration-300" />
                       </Link>
 
-                      {/* Quiz Button - Minimalist Outline */}
+                      {/* Quiz Link - Ultra Minimalist */}
                       <Link
                         href={currentTopic.lesson.quiz}
-                        className="flex items-center justify-between w-full p-4 border border-gray-200 text-gray-900 rounded-xl hover:border-black transition-all group bg-white"
+                        className="flex items-center justify-between py-5 group hover:pl-2 transition-all duration-300 cursor-pointer"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
-                            <HelpCircle size={14} />
-                          </div>
-                          <div>
-                            <span className="font-bold block text-sm">Faire le quiz</span>
-                            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Test rapide</span>
-                          </div>
+                        <div className="flex items-center gap-4">
+                           <span className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 group-hover:border-black group-hover:text-black transition-colors duration-300 bg-white">
+                             <HelpCircle size={16} />
+                           </span>
+                           <div>
+                             <span className="block font-bold text-gray-900 text-base group-hover:text-black">Faire le quiz</span>
+                             <span className="text-[11px] text-gray-400 uppercase tracking-widest font-medium">Test rapide</span>
+                           </div>
                         </div>
-                        <ArrowRight size={16} className="text-gray-300 group-hover:text-black transition-colors" />
+                        <ArrowRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all duration-300" />
                       </Link>
                     </div>
                   </div>
