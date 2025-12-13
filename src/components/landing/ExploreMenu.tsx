@@ -213,7 +213,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="fixed inset-0 z-40 bg-black pt-24 px-6 overflow-y-auto"
+      className="fixed inset-0 z-40 bg-black pt-28 px-6 overflow-y-auto"
     >
       <AnimatePresence mode="wait">
         {/* Level 1: Categories (Programs) */}
@@ -247,8 +247,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                     }}
                     className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
                   >
-                    <span className="text-xl font-bold text-white pl-2">{program.label}</span>
-                    <ChevronRight size={24} className="text-gray-600 group-hover:text-white transition-colors" />
+                    <span className="text-xl font-bold text-white pl-2 text-left">{program.label}</span>
+                    <ChevronRight size={24} className="text-gray-500 group-hover:text-white transition-colors" />
                   </button>
                 );
               })}
@@ -266,14 +266,14 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             className="space-y-8 pb-20"
           >
             {/* Back Header - Sticky */}
-            <div className="flex items-center gap-2 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
+            <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
               <button 
                 onClick={() => setView('categories')}
                 className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
               >
                 <ArrowLeft size={24} />
               </button>
-              <h3 className="text-xl font-bold text-white">{selectedProgram.label}</h3>
+              <h3 className="text-lg font-bold text-white truncate">{selectedProgram.label}</h3>
             </div>
 
             {/* Topics List */}
@@ -292,7 +292,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                     }}
                     className="w-full flex items-center justify-between py-5 active:bg-gray-900/50 transition-colors group text-left"
                   >
-                    <span className="text-lg font-medium text-gray-300 pl-2 group-hover:text-white">{topic.label}</span>
+                    <span className="text-lg font-medium text-gray-200 pl-2 group-hover:text-white">{topic.label}</span>
                     <ChevronRight size={20} className="text-gray-600 group-hover:text-white transition-colors" />
                   </button>
                 ))}
@@ -318,14 +318,17 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            className="space-y-8 pb-20"
          >
            {/* Back Header - Sticky */}
-           <div className="flex items-center gap-2 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
+           <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
              <button 
                onClick={() => setView('topics')}
                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
              >
                <ArrowLeft size={24} />
              </button>
-             <h3 className="text-xl font-bold text-white truncate max-w-[250px]">{selectedTopic.label}</h3>
+             <div className="flex flex-col overflow-hidden">
+                <span className="text-xs text-gray-500 uppercase tracking-wider truncate">{selectedProgram.label}</span>
+                <h3 className="text-lg font-bold text-white truncate">{selectedTopic.label}</h3>
+             </div>
            </div>
 
            {/* Lesson Content */}
