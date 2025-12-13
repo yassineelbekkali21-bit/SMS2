@@ -278,7 +278,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
 
             {/* Topics List */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest px-1 mb-4">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-4">
                 {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
               </h4>
 
@@ -292,8 +292,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                     }}
                     className="w-full flex items-center justify-between py-5 active:bg-gray-900/50 transition-colors group text-left"
                   >
-                    <span className="text-lg font-medium text-gray-200 pl-2 group-hover:text-white">{topic.label}</span>
-                    <ChevronRight size={20} className="text-gray-600 group-hover:text-white transition-colors" />
+                    <span className="text-lg font-medium text-white pl-2">{topic.label}</span>
+                    <ChevronRight size={20} className="text-gray-500 group-hover:text-white transition-colors" />
                   </button>
                 ))}
               </div>
@@ -321,12 +321,12 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
              <button 
                onClick={() => setView('topics')}
-               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
+               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white flex-shrink-0"
              >
                <ArrowLeft size={24} />
              </button>
              <div className="flex flex-col overflow-hidden">
-                <span className="text-xs text-gray-500 uppercase tracking-wider truncate">{selectedProgram.label}</span>
+                <span className="text-xs text-gray-400 uppercase tracking-wider truncate font-bold">{selectedProgram.label}</span>
                 <h3 className="text-lg font-bold text-white truncate">{selectedTopic.label}</h3>
              </div>
            </div>
@@ -345,7 +345,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                    <span className="text-white font-bold text-xl leading-tight block mb-2">
                      {selectedTopic.lesson.title}
                    </span>
-                   <p className="text-gray-400 text-base leading-relaxed">
+                   <p className="text-gray-300 text-base leading-relaxed">
                      {selectedTopic.lesson.desc}
                    </p>
                  </div>
