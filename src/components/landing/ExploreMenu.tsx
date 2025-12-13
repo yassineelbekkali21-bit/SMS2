@@ -502,21 +502,23 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                </h3>
              </div>
 
-             {/* Simple List */}
-             <div className="space-y-6">
+             {/* Modern Minimal List */}
+             <div className="space-y-10 mt-4 px-2">
                {/* @ts-ignore - Transitioning data structure */}
                {(selectedTopic.lessons || [selectedTopic.lesson]).map((lesson, idx) => (
-                 <div key={idx} className="flex items-start gap-4">
-                    <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white font-bold text-xs mt-1 border border-blue-500">
-                      {idx + 1}
-                    </span>
-                    <div>
-                      <h4 className="text-lg font-bold text-white mb-1 leading-tight text-left">
-                        {lesson.title}
-                      </h4>
-                      <p className="text-white text-base leading-relaxed text-left" style={{ opacity: 1, color: '#FFFFFF' }}>
-                        {lesson.desc}
-                      </p>
+                 <div key={idx} className="group">
+                    <div className="flex items-baseline gap-5">
+                      <span className="text-blue-500 font-mono text-xl font-bold opacity-60">
+                        0{idx + 1}
+                      </span>
+                      <div>
+                        <h4 className="text-xl font-bold text-white mb-2 leading-tight">
+                          {lesson.title}
+                        </h4>
+                        <p className="text-white text-base leading-relaxed opacity-80 font-light">
+                          {lesson.desc}
+                        </p>
+                      </div>
                     </div>
                  </div>
                ))}
