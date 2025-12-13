@@ -145,22 +145,19 @@ export function CurriculumSectionMultilang() {
                                     </span>
                                   </div>
 
-                                  {/* Interactive Badges */}
+                                  {/* Interactive Badges - Black & White */}
                                   <div className="flex items-center gap-2 pl-4">
-                                    {/* Alternating badges for demo purposes */}
-                                    {(i === 1 || i === 3) && (
-                                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all group/badge" title="Watch Preview">
-                                        <PlayCircle size={14} className="group-hover/badge:fill-current" />
-                                        <span className="hidden sm:inline">Preview</span>
-                                      </div>
-                                    )}
+                                    {/* Preview Badge */}
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-gray-900 cursor-pointer hover:bg-black hover:text-white hover:border-black transition-all group/badge" title="Watch Preview">
+                                      <PlayCircle size={14} className="group-hover/badge:fill-current" />
+                                      <span className="hidden sm:inline">Preview</span>
+                                    </div>
                                     
-                                    {(i === 2 || i === 4) && (
-                                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-purple-600 cursor-pointer hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all" title="Take Quiz">
-                                        <HelpCircle size={14} />
-                                        <span className="hidden sm:inline">Quiz</span>
-                                      </div>
-                                    )}
+                                    {/* Quiz Badge */}
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-gray-900 cursor-pointer hover:bg-black hover:text-white hover:border-black transition-all" title="Take Quiz">
+                                      <HelpCircle size={14} />
+                                      <span className="hidden sm:inline">Quiz</span>
+                                    </div>
                                   </div>
                                 </li>
                               ))}
