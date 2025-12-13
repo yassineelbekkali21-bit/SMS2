@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Play, PlayCircle, HelpCircle, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, PlayCircle, HelpCircle, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search, ChevronLeft, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
 
