@@ -168,7 +168,12 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 </button>
 
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={() => {
+                    if (isExploreOpen) {
+                      setIsExploreOpen(false);
+                    }
+                    setIsMenuOpen(!isMenuOpen);
+                  }}
                   className="p-2 text-white"
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
