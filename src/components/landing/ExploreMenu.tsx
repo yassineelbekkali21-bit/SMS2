@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Play, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, PlayCircle, HelpCircle, FileText, CheckCircle, GraduationCap, Target, Atom, Calculator, TrendingUp, BookOpen, Coins, PieChart, Search, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
 
@@ -354,23 +354,23 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                      </div>
                    </div>
 
-               {/* Actions Buttons */}
-               <div className="grid grid-cols-1 gap-3 pt-2">
-                 <Link 
-                   href={selectedTopic.lesson.video}
-                   className="flex items-center justify-center gap-2 py-4 bg-white text-black rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-100"
-                 >
-                   <Play size={18} fill="currentColor" />
-                   Preview Lesson
-                 </Link>
-                 <Link 
-                   href={selectedTopic.lesson.quiz}
-                   className="flex items-center justify-center gap-2 py-4 bg-gray-800 text-white border border-gray-700 rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-700"
-                 >
-                   <CheckCircle size={18} />
-                   Take Quiz
-                 </Link>
-               </div>
+                           {/* Actions Buttons */}
+                           <div className="grid grid-cols-1 gap-3 pt-2">
+                             <Link 
+                               href={selectedTopic.lesson.video}
+                               className="flex items-center justify-center gap-2 py-4 bg-white text-black rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-100"
+                             >
+                               <PlayCircle size={20} className="fill-current" />
+                               Preview Lesson
+                             </Link>
+                             <Link 
+                               href={selectedTopic.lesson.quiz}
+                               className="flex items-center justify-center gap-2 py-4 bg-transparent border-2 border-white text-white rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-white/10"
+                             >
+                               <HelpCircle size={20} />
+                               Take Quiz
+                             </Link>
+                           </div>
              </div>
            </div>
          </motion.div>
@@ -598,27 +598,27 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     <div className="space-y-4">
                       <Link
                         href={currentTopic.lesson.video}
-                        className="flex items-center gap-4 p-5 rounded-2xl bg-gray-900 text-white hover:bg-gray-800 transition-all group shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                        className="flex items-center gap-4 p-5 rounded-2xl bg-gray-900 text-white hover:bg-black transition-all group shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                       >
-                        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Play size={24} fill="currentColor" className="ml-1" />
+                        <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <PlayCircle size={24} className="fill-current" />
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-base">Voir la preview</span>
-                          <span className="text-xs text-gray-300 uppercase tracking-wider">3 min video</span>
+                          <span className="text-xs text-gray-400 uppercase tracking-wider">3 min video</span>
                         </div>
                       </Link>
 
                       <Link
                         href={currentTopic.lesson.quiz}
-                        className="flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-100 hover:border-gray-200 text-gray-700 hover:bg-gray-50 transition-all group"
+                        className="flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-200 hover:border-black text-gray-900 hover:bg-gray-50 transition-all group"
                       >
-                        <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                          <CheckCircle size={24} />
+                        <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                          <HelpCircle size={24} />
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-base">Faire le quiz</span>
-                          <span className="text-xs text-gray-400 uppercase tracking-wider">Test rapide</span>
+                          <span className="text-xs text-gray-500 uppercase tracking-wider">Test rapide</span>
                         </div>
                       </Link>
                     </div>
