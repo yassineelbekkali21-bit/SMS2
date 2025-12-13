@@ -132,23 +132,24 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
               </div>
 
               {/* Menu mobile */}
-              <div className="md:hidden flex items-center gap-2">
-                {/* Language Toggle Mobile - Same style as desktop */}
+              <div className="md:hidden flex items-center gap-3">
+                {/* Explore Button Mobile - Opens Menu */}
                 <button
-                  onClick={toggleLanguage}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-white font-semibold transition-colors"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white font-semibold transition-colors"
                 >
-                  <Globe size={16} />
-                  <span className="uppercase text-xs">{language === 'fr' ? 'EN' : 'FR'}</span>
+                  <span className="text-sm uppercase tracking-wide">{language === 'fr' ? 'Explorer' : 'Explore'}</span>
                 </button>
-                {/* CTA Button Mobile */}
+
+                {/* CTA Button Mobile - Icon Only */}
                 <button
                   onClick={handleWhatsAppClick}
-                  className="px-4 py-2 bg-white text-black rounded-full font-bold text-sm hover:bg-gray-100 transition-colors flex items-center gap-1.5"
+                  className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+                  aria-label={t('nav.start')}
                 >
-                  {t('nav.start')}
-                  <MessageCircle size={16} />
+                  <MessageCircle size={20} />
                 </button>
+
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="p-2 text-white"
@@ -212,6 +213,17 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   >
                     {t('nav.faq')}
                   </button>
+                  
+                  {/* Language Toggle Mobile - Moved inside menu */}
+                  <div className="pt-4 mt-4 border-t border-gray-800">
+                    <button
+                      onClick={toggleLanguage}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-white font-semibold transition-colors w-full justify-center"
+                    >
+                      <Globe size={18} />
+                      <span className="uppercase text-sm">{language === 'fr' ? 'Changer de langue (EN)' : 'Change language (FR)'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
