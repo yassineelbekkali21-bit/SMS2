@@ -388,7 +388,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                       }}
                       className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
                     >
-                      <span className="text-xl font-bold text-white pl-2 text-left">{program.label}</span>
+                      <span className="text-xl font-medium text-white pl-2 text-left">{program.label}</span>
                       <ChevronRight size={24} className="text-gray-500 group-hover:text-white transition-colors" />
                     </button>
                   );
@@ -505,9 +505,9 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                    <h4 className="text-2xl font-bold text-white mb-3 leading-tight">
                      {lesson.title}
                    </h4>
-                   <p className="text-gray-400 leading-relaxed text-base">
-                     {lesson.desc}
-                   </p>
+                  <p className="text-white leading-relaxed text-base" style={{ opacity: 0.9 }}>
+                    {lesson.desc}
+                  </p>
                  </div>
                ))}
              </div>
