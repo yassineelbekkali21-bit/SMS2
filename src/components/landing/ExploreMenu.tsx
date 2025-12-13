@@ -186,12 +186,14 @@ const exploreData = {
 // New Component: Mobile Overlay Navigation (MasterClass Style)
 export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { language } = useLanguage();
-  const [view, setView] = useState<'categories' | 'program'>('categories');
+  const [view, setView] = useState<'categories' | 'topics' | 'lesson'>('categories');
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
   // Fallback to FR if EN data is incomplete in this mock
   const data = exploreData[language] || exploreData['fr'];
   const selectedProgram = data.find(p => p.id === selectedProgramId);
+  const selectedTopic = selectedProgram?.topics.find(t => t.id === selectedTopicId);
 
   // Reset view when closing
   React.useEffect(() => {
@@ -199,6 +201,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       setTimeout(() => {
         setView('categories');
         setSelectedProgramId(null);
+        setSelectedTopicId(null);
       }, 300);
     }
   }, [isOpen]);
@@ -213,7 +216,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       className="fixed inset-0 z-40 bg-black pt-24 px-6 overflow-y-auto"
     >
       <AnimatePresence mode="wait">
-        {view === 'categories' ? (
+        {/* Level 1: Categories (Programs) */}
+        {view === 'categories' && (
           <motion.div
             key="categories"
             initial={{ opacity: 0, x: -20 }}
@@ -239,7 +243,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                     key={program.id}
                     onClick={() => {
                       setSelectedProgramId(program.id);
-                      setView('program');
+                      setView('topics');
                     }}
                     className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
                   >
@@ -257,12 +261,15 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               {language === 'fr' ? 'Fermer' : 'Close'}
             </button>
           </motion.div>
-        ) : (
+        )}
+
+        {/* Level 2: Topics List */}
+        {view === 'topics' && selectedProgram && (
           <motion.div
-            key="program"
+            key="topics"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            exit={{ opacity: 0, x: -20 }}
             className="space-y-8 pb-20"
           >
             {/* Back Header - Sticky */}
@@ -273,68 +280,101 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               >
                 <ArrowLeft size={24} />
               </button>
-              <h3 className="text-xl font-bold text-white">{selectedProgram?.label}</h3>
+              <h3 className="text-xl font-bold text-white">{selectedProgram.label}</h3>
             </div>
 
             {/* Topics List */}
-            <div className="space-y-8">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest px-1">
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest px-1 mb-4">
                 {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
               </h4>
 
-              {selectedProgram?.topics.map((topic) => (
-                <div key={topic.id} className="space-y-4">
-                  <h5 className="text-lg font-medium text-gray-400 px-1 border-l-2 border-blue-600 pl-3">
-                    {topic.label}
-                  </h5>
-                  
-                  {/* Lesson Card */}
-                  <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5 space-y-5">
-                    
-                    {/* Lesson Title (White) */}
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 min-w-[20px] text-blue-500">
-                        <Play size={20} fill="currentColor" />
-                      </div>
-                      <div>
-                        <span className="text-white font-bold text-lg leading-snug block">
-                          {topic.lesson.title}
-                        </span>
-                        <p className="text-gray-500 text-sm mt-1 leading-relaxed">
-                          {topic.lesson.desc}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Actions Buttons */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <Link 
-                        href={topic.lesson.video}
-                        className="flex items-center justify-center gap-2 py-3 bg-white text-black rounded-xl text-sm font-bold active:scale-95 transition-transform hover:bg-gray-100"
-                      >
-                        <Play size={16} fill="currentColor" />
-                        Preview
-                      </Link>
-                      <Link 
-                        href={topic.lesson.quiz}
-                        className="flex items-center justify-center gap-2 py-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-sm font-bold active:scale-95 transition-transform hover:bg-gray-700"
-                      >
-                        <CheckCircle size={16} />
-                        Quiz
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              <div className="space-y-0 divide-y divide-gray-800">
+                {selectedProgram.topics.map((topic) => (
+                  <button
+                    key={topic.id}
+                    onClick={() => {
+                      setSelectedTopicId(topic.id);
+                      setView('lesson');
+                    }}
+                    className="w-full flex items-center justify-between py-5 active:bg-gray-900/50 transition-colors group text-left"
+                  >
+                    <span className="text-lg font-medium text-gray-300 pl-2 group-hover:text-white">{topic.label}</span>
+                    <ChevronRight size={20} className="text-gray-600 group-hover:text-white transition-colors" />
+                  </button>
+                ))}
+              </div>
             </div>
 
             <Link 
-              href={`/program/${selectedProgram?.id}`}
-              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg shadow-blue-900/20 active:scale-95 transition-transform"
+              href={`/program/${selectedProgram.id}`}
+              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg shadow-blue-900/20 active:scale-95 transition-transform mt-8"
             >
                {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
             </Link>
           </motion.div>
+        )}
+
+        {/* Level 3: Lesson Details */}
+        {view === 'lesson' && selectedProgram && selectedTopic && (
+           <motion.div
+           key="lesson"
+           initial={{ opacity: 0, x: 20 }}
+           animate={{ opacity: 1, x: 0 }}
+           exit={{ opacity: 0, x: 20 }}
+           className="space-y-8 pb-20"
+         >
+           {/* Back Header - Sticky */}
+           <div className="flex items-center gap-2 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
+             <button 
+               onClick={() => setView('topics')}
+               className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
+             >
+               <ArrowLeft size={24} />
+             </button>
+             <h3 className="text-xl font-bold text-white truncate max-w-[250px]">{selectedTopic.label}</h3>
+           </div>
+
+           {/* Lesson Content */}
+           <div className="space-y-6">
+             {/* Lesson Card */}
+             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-6">
+               
+               {/* Lesson Title (White) */}
+               <div className="flex items-start gap-4">
+                 <div className="mt-1 min-w-[24px] w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                   <Play size={20} fill="currentColor" />
+                 </div>
+                 <div>
+                   <span className="text-white font-bold text-xl leading-tight block mb-2">
+                     {selectedTopic.lesson.title}
+                   </span>
+                   <p className="text-gray-400 text-base leading-relaxed">
+                     {selectedTopic.lesson.desc}
+                   </p>
+                 </div>
+               </div>
+
+               {/* Actions Buttons */}
+               <div className="grid grid-cols-1 gap-3 pt-2">
+                 <Link 
+                   href={selectedTopic.lesson.video}
+                   className="flex items-center justify-center gap-2 py-4 bg-white text-black rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-100"
+                 >
+                   <Play size={18} fill="currentColor" />
+                   Preview Lesson
+                 </Link>
+                 <Link 
+                   href={selectedTopic.lesson.quiz}
+                   className="flex items-center justify-center gap-2 py-4 bg-gray-800 text-white border border-gray-700 rounded-xl text-base font-bold active:scale-95 transition-transform hover:bg-gray-700"
+                 >
+                   <CheckCircle size={18} />
+                   Take Quiz
+                 </Link>
+               </div>
+             </div>
+           </div>
+         </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
