@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ChevronDown, CheckCircle2, FileText, Video, Users, ArrowRight } from 'lucide-react';
+import { ChevronDown, CheckCircle2, FileText, Video, Users, ArrowRight, PlayCircle, HelpCircle } from 'lucide-react';
 
 export function CurriculumSectionMultilang() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
   const subjects = [
@@ -130,15 +130,38 @@ export function CurriculumSectionMultilang() {
                             </p>
                           </div>
 
-                          {/* Right: Outcomes Checklist */}
+                          {/* Right: Outcomes Checklist with Previews */}
                           <div className="bg-gray-50 rounded-2xl p-6">
-                            <ul className="space-y-3">
+                            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
+                              {language === 'fr' ? 'Aperçu du programme' : 'Syllabus Preview'}
+                            </h4>
+                            <ul className="space-y-4">
                               {[1, 2, 3, 4].map((i) => (
-                                <li key={i} className="flex items-start gap-3">
-                                  <CheckCircle2 className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                                  <span className="text-gray-700 font-medium">
-                                    {t(`${subject.key}.outcomes.${i}`)}
-                                  </span>
+                                <li key={i} className="flex items-center justify-between group/item">
+                                  <div className="flex items-start gap-3">
+                                    <CheckCircle2 className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5 group-hover/item:text-blue-600 transition-colors" />
+                                    <span className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors">
+                                      {t(`${subject.key}.outcomes.${i}`)}
+                                    </span>
+                                  </div>
+
+                                  {/* Interactive Badges */}
+                                  <div className="flex items-center gap-2 pl-4">
+                                    {/* Alternating badges for demo purposes */}
+                                    {(i === 1 || i === 3) && (
+                                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all group/badge" title="Watch Preview">
+                                        <PlayCircle size={14} className="group-hover/badge:fill-current" />
+                                        <span className="hidden sm:inline">Preview</span>
+                                      </div>
+                                    )}
+                                    
+                                    {(i === 2 || i === 4) && (
+                                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-purple-600 cursor-pointer hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all" title="Take Quiz">
+                                        <HelpCircle size={14} />
+                                        <span className="hidden sm:inline">Quiz</span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </li>
                               ))}
                             </ul>
