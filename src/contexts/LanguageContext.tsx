@@ -42,7 +42,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.see_how': 'Voir comment ça marche en 2 minutes',
 
     // Pitch Section
-    'mentor.role': 'Founder of Science Made Simple',
+    'mentor.role': 'Founder',
     'mentor.label': 'Rencontre ton mentor',
     'mentor.title': 'De l\'échec à l\'excellence.',
     'mentor.quote': 'Ici, tu ne rejoins pas un cours. Tu rejoins une communauté pour mieux comprendre.',
@@ -280,7 +280,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.see_how': 'See how it works in 2 minutes',
 
     // Pitch Section
-    'mentor.role': 'Founder of Science Made Simple',
+    'mentor.role': 'Founder',
     'mentor.label': 'Meet your mentor',
     'mentor.title': 'From failure to excellence.',
     'mentor.quote': 'Here, you don\'t just join a course. You join a community to better understand.',
