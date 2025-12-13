@@ -334,56 +334,53 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
              </div>
            </div>
 
-           {/* Lesson Content */}
-           <div className="space-y-6">
-             {/* Lesson Card */}
-             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-6">
-               
-                   {/* Lesson Title (White) */}
-                   <div className="flex items-start gap-4">
-                     <div className="mt-1 min-w-[24px] w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                       <Play size={20} fill="currentColor" />
-                     </div>
-                     <div>
-                       <span className="font-bold text-xl leading-tight block mb-2" style={{ color: '#FFFFFF' }}>
-                         {selectedTopic.lesson.title}
-                       </span>
-                       <p className="text-base leading-relaxed" style={{ color: '#D1D5DB' }}>
-                         {selectedTopic.lesson.desc}
-                       </p>
-                     </div>
-                   </div>
+           {/* Lesson Content - Ultra Minimalist SMS DNA */}
+           <div className="pt-2">
+             {/* Header Info */}
+             <div className="mb-8 px-1">
+               <div className="flex items-center gap-2 mb-4">
+                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white text-black">
+                   <Play size={14} fill="currentColor" className="ml-0.5" />
+                 </span>
+                 <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">Lesson Preview</span>
+               </div>
+               <h4 className="text-2xl font-bold text-white mb-3 leading-tight">
+                 {selectedTopic.lesson.title}
+               </h4>
+               <p className="text-gray-400 leading-relaxed text-base">
+                 {selectedTopic.lesson.desc}
+               </p>
+             </div>
 
-                           {/* Actions Buttons - Ultra Minimalist Mobile */}
-                           <div className="space-y-3 mt-4">
-                             {/* Preview - Clean White Button */}
-                             <Link 
-                               href={selectedTopic.lesson.video}
-                               className="flex items-center justify-between w-full p-4 bg-white rounded-xl active:scale-95 transition-transform group"
-                             >
-                               <div className="flex items-center gap-3">
-                                 <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
-                                    <Play size={14} fill="currentColor" className="ml-0.5" />
-                                 </div>
-                                 <span className="text-black font-bold text-base">Preview Lesson</span>
-                               </div>
-                               <ArrowRight size={18} className="text-gray-400 group-hover:text-black" />
-                             </Link>
+             {/* Minimalist Action List */}
+             <div className="border-t border-gray-800 divide-y divide-gray-800">
+               {/* Preview Action */}
+               <Link 
+                 href={selectedTopic.lesson.video}
+                 className="flex items-center justify-between py-6 group active:bg-gray-900/50 transition-colors"
+               >
+                 <div className="flex items-center gap-4">
+                   <span className="text-white font-bold text-lg">Preview Lesson</span>
+                   <span className="text-xs font-bold text-gray-500 uppercase tracking-widest border border-gray-800 rounded-full px-2 py-0.5">3 min</span>
+                 </div>
+                 <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center transform group-active:scale-95 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.15)]">
+                   <Play size={16} fill="currentColor" className="ml-0.5" />
+                 </div>
+               </Link>
 
-                             {/* Quiz - Clean Outline Button */}
-                             <Link 
-                               href={selectedTopic.lesson.quiz}
-                               className="flex items-center justify-between w-full p-4 border border-gray-800 rounded-xl active:scale-95 transition-transform hover:bg-gray-900 group"
-                             >
-                                <div className="flex items-center gap-3">
-                                 <div className="w-8 h-8 rounded-full border border-gray-600 text-gray-400 flex items-center justify-center group-hover:border-white group-hover:text-white transition-colors">
-                                    <HelpCircle size={14} />
-                                 </div>
-                                 <span className="text-white font-bold text-base">Take Quiz</span>
-                               </div>
-                               <ArrowRight size={18} className="text-gray-600 group-hover:text-white transition-colors" />
-                             </Link>
-                           </div>
+               {/* Quiz Action */}
+               <Link 
+                 href={selectedTopic.lesson.quiz}
+                 className="flex items-center justify-between py-6 group active:bg-gray-900/50 transition-colors"
+               >
+                  <div className="flex items-center gap-4">
+                   <span className="text-white font-bold text-lg">Take Quiz</span>
+                   <span className="text-xs font-bold text-gray-500 uppercase tracking-widest border border-gray-800 rounded-full px-2 py-0.5">Test</span>
+                 </div>
+                 <div className="w-10 h-10 rounded-full border border-gray-700 text-white flex items-center justify-center transform group-active:scale-95 transition-transform bg-gray-900">
+                   <ArrowRight size={18} />
+                 </div>
+               </Link>
              </div>
            </div>
          </motion.div>
