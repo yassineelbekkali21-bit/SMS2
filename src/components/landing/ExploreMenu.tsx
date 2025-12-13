@@ -212,10 +212,11 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
   // Mobile version - Accordion style
   if (isMobile) {
     return (
-      <div className="space-y-3">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-white font-bold text-lg">
-            {language === 'fr' ? 'Explorer' : 'Explore'}
+      <div className="space-y-1">
+        <div className="flex items-center gap-2 mb-4 px-2">
+          <Search size={16} className="text-gray-400"/>
+          <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">
+            {language === 'fr' ? 'Programmes' : 'Programs'}
           </span>
         </div>
         
@@ -224,14 +225,16 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
           const isExpanded = expandedPrograms.includes(program.id);
           
           return (
-            <div key={program.id} className="border border-gray-700 rounded-lg overflow-hidden">
+            <div key={program.id} className="rounded-xl overflow-hidden bg-white/5 mb-2">
               <button
                 onClick={() => toggleProgram(program.id)}
-                className="w-full flex items-center justify-between p-3 bg-gray-800/50 hover:bg-gray-800 transition-colors"
+                className="w-full flex items-center justify-between p-4 active:bg-white/10 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <Icon size={20} className="text-blue-400" />
-                  <span className="text-white font-semibold">{program.label}</span>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+                    <Icon size={20} />
+                  </div>
+                  <span className="text-white font-bold text-base">{program.label}</span>
                 </div>
                 <ChevronDown 
                   size={20} 
@@ -246,19 +249,33 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     animate={{ height: 'auto' }}
                     exit={{ height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
+                    className="overflow-hidden bg-black/20"
                   >
-                    <div className="p-3 bg-gray-900/30 space-y-2">
+                    <div className="p-4 pt-0 space-y-4">
+                      {/* Topics List with Lesson Links */}
                       {program.topics.map((topic) => (
-                        <div key={topic.id} className="pl-2">
-                          <div className="text-gray-300 text-sm font-medium mb-1">
-                            {topic.label}
-                          </div>
-                          <div className="text-gray-400 text-xs pl-3">
-                            → {topic.lesson.title}
+                        <div key={topic.id} className="flex items-start gap-3 pl-2 border-l-2 border-gray-700 ml-5 py-1">
+                          <div className="flex-1">
+                            <p className="text-gray-300 font-medium text-sm">{topic.label}</p>
+                            <Link 
+                              href={topic.lesson.video} 
+                              className="flex items-center gap-2 mt-1.5 text-blue-400 text-xs font-bold hover:text-blue-300"
+                            >
+                              <Play size={12} fill="currentColor" />
+                              {topic.lesson.title}
+                            </Link>
                           </div>
                         </div>
                       ))}
+
+                      {/* Global Program CTA */}
+                      <Link 
+                        href={`/program/${program.id}`}
+                        className="w-full mt-2 py-3 bg-blue-600 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                      >
+                        {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
+                        <ChevronRight size={16} />
+                      </Link>
                     </div>
                   </motion.div>
                 )}
