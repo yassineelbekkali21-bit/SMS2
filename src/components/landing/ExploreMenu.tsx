@@ -232,9 +232,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             </div>
 
             {/* Categories List */}
-            <div className="space-y-2">
+            <div className="space-y-0 divide-y divide-gray-800">
               {data.map((program) => {
-                const Icon = program.icon;
                 return (
                   <button
                     key={program.id}
@@ -242,14 +241,9 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                       setSelectedProgramId(program.id);
                       setView('program');
                     }}
-                    className="w-full flex items-center justify-between py-4 border-b border-gray-800 active:bg-gray-900/50 transition-colors group"
+                    className="w-full flex items-center justify-between py-6 active:bg-gray-900/50 transition-colors group"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
-                        <Icon size={24} />
-                      </div>
-                      <span className="text-xl font-bold text-white">{program.label}</span>
-                    </div>
+                    <span className="text-xl font-bold text-white pl-2">{program.label}</span>
                     <ChevronRight size={24} className="text-gray-600 group-hover:text-white transition-colors" />
                   </button>
                 );
@@ -269,45 +263,74 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="space-y-8"
+            className="space-y-8 pb-20"
           >
-            {/* Back Header */}
-            <div className="flex items-center gap-4">
+            {/* Back Header - Sticky */}
+            <div className="flex items-center gap-2 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
               <button 
                 onClick={() => setView('categories')}
-                className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white"
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={24} />
               </button>
-              <h3 className="text-2xl font-bold text-white">{selectedProgram?.label}</h3>
+              <h3 className="text-xl font-bold text-white">{selectedProgram?.label}</h3>
             </div>
 
             {/* Topics List */}
-            <div className="space-y-4">
-              {selectedProgram?.topics.map((topic) => (
-                <div key={topic.id} className="bg-gray-900 rounded-2xl p-5 space-y-3">
-                  <div className="flex justify-between items-start">
-                    <h4 className="text-lg font-bold text-white">{topic.label}</h4>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-gray-400 text-sm">
-                    <Play size={14} className="text-blue-500" />
-                    <span>{topic.lesson.title}</span>
-                  </div>
+            <div className="space-y-8">
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest px-1">
+                {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
+              </h4>
 
-                  <Link 
-                    href={topic.lesson.video}
-                    className="block w-full text-center py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-bold transition-colors mt-2"
-                  >
-                    {language === 'fr' ? 'Voir la leçon' : 'Watch Lesson'}
-                  </Link>
+              {selectedProgram?.topics.map((topic) => (
+                <div key={topic.id} className="space-y-4">
+                  <h5 className="text-lg font-medium text-gray-400 px-1 border-l-2 border-blue-600 pl-3">
+                    {topic.label}
+                  </h5>
+                  
+                  {/* Lesson Card */}
+                  <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5 space-y-5">
+                    
+                    {/* Lesson Title (White) */}
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 min-w-[20px] text-blue-500">
+                        <Play size={20} fill="currentColor" />
+                      </div>
+                      <div>
+                        <span className="text-white font-bold text-lg leading-snug block">
+                          {topic.lesson.title}
+                        </span>
+                        <p className="text-gray-500 text-sm mt-1 leading-relaxed">
+                          {topic.lesson.desc}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link 
+                        href={topic.lesson.video}
+                        className="flex items-center justify-center gap-2 py-3 bg-white text-black rounded-xl text-sm font-bold active:scale-95 transition-transform hover:bg-gray-100"
+                      >
+                        <Play size={16} fill="currentColor" />
+                        Preview
+                      </Link>
+                      <Link 
+                        href={topic.lesson.quiz}
+                        className="flex items-center justify-center gap-2 py-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-sm font-bold active:scale-95 transition-transform hover:bg-gray-700"
+                      >
+                        <CheckCircle size={16} />
+                        Quiz
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
 
             <Link 
               href={`/program/${selectedProgram?.id}`}
-              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg"
+              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg shadow-blue-900/20 active:scale-95 transition-transform"
             >
                {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
             </Link>
