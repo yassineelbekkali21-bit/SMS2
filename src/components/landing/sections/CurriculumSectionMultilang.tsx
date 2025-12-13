@@ -134,7 +134,7 @@ export function CurriculumSectionMultilang() {
                           {/* Right: Outcomes Checklist with Previews */}
                           <div className="bg-gray-50 rounded-2xl p-6">
                             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
-                              {language === 'fr' ? 'Aperçu du programme' : 'Syllabus Preview'}
+                              {language === 'fr' ? 'Sujets tendances' : 'Trending Topics'}
                             </h4>
                             <ul className="space-y-4">
                               {[1, 2, 3, 4].map((i) => (

@@ -306,7 +306,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               </p>
               <Link 
                 href={`/assessment/${selectedProgram.id}`}
-                className="block w-full py-4 bg-white text-black text-center rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+                className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
               >
                  <span>{language === 'fr' ? `Se tester en ${selectedProgram.label.split(' ')[0]}` : `Test ${selectedProgram.label.split(' ')[0]} Skills`}</span>
                  <ArrowRight size={18} />
@@ -572,7 +572,7 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     </p>
                     <Link
                       href={`/assessment/${currentProgram.id}`}
-                      className="block w-full py-3 bg-black text-white text-center rounded-lg font-bold text-base hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl mb-3 flex items-center justify-center gap-2"
+                      className="block w-full py-3 bg-blue-600 text-white text-center rounded-lg font-bold text-base hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl mb-3 flex items-center justify-center gap-2"
                     >
                       <span>{language === 'fr' ? `Se tester en ${currentProgram.label.split(' ')[0]}` : `Test ${currentProgram.label.split(' ')[0]} Skills`}</span>
                       <ArrowRight size={16} />
