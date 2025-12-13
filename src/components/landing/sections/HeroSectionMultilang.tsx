@@ -134,16 +134,23 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
 
               {/* Menu mobile */}
               <div className="md:hidden flex items-center gap-3">
-                {/* Explore Button Mobile - Opens Overlay */}
+                {/* Explore Button Mobile - Toggle Overlay */}
                 <button
-                  onClick={() => setIsExploreOpen(true)}
-                  className="flex items-center gap-1 text-gray-300 hover:text-white font-semibold transition-colors mr-auto"
+                  onClick={() => setIsExploreOpen(!isExploreOpen)}
+                  className={`flex items-center gap-1 font-semibold transition-colors mr-auto ${
+                    isExploreOpen ? 'text-white' : 'text-gray-300 hover:text-white'
+                  }`}
                 >
-                  <span className="text-sm uppercase tracking-wide">{language === 'fr' ? 'Explorer' : 'Explore'}</span>
-                  <ChevronDown size={14} className="mt-0.5" />
+                  <span className="text-sm uppercase tracking-wide">
+                    {language === 'fr' ? 'Explorer' : 'Explore'}
+                  </span>
+                  <ChevronDown 
+                    size={14} 
+                    className={`mt-0.5 transition-transform duration-300 ${isExploreOpen ? 'rotate-180' : ''}`} 
+                  />
                 </button>
 
-                {/* CTA Button Mobile - Icon Only */}
+                {/* CTA Button Mobile - Icon Only - Hidden when explore is open to clean up header? No, keep it. */}
                 <button
                   onClick={handleWhatsAppClick}
                   className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"

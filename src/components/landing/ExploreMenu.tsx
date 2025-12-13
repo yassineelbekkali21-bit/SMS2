@@ -236,7 +236,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             </div>
 
             {/* Categories List */}
-            <div className="space-y-0 divide-y divide-gray-800">
+            <div className="space-y-0 divide-y divide-gray-800 pb-20">
               {data.map((program) => {
                 return (
                   <button
@@ -253,13 +253,6 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                 );
               })}
             </div>
-
-            <button 
-              onClick={onClose}
-              className="w-full py-4 text-gray-500 font-medium mt-8"
-            >
-              {language === 'fr' ? 'Fermer' : 'Close'}
-            </button>
           </motion.div>
         )}
 
