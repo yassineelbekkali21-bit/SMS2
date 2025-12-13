@@ -277,8 +277,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             </div>
 
             {/* Topics List */}
-            <div className="mt-6">
-              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-3">
+            <div className="mt-3">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-2">
                 {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
               </h4>
 
