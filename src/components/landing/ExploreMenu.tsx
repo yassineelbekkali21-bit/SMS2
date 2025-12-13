@@ -213,7 +213,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="fixed inset-0 z-[90] bg-black pt-32 px-6 overflow-y-auto"
+      className="fixed top-24 left-0 right-0 bottom-0 z-[90] bg-black px-6 py-6 overflow-y-auto"
     >
       <AnimatePresence mode="wait">
         {/* Level 1: Categories (Programs) */}
@@ -266,7 +266,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             className="space-y-8 pb-20"
           >
             {/* Back Header - Sticky */}
-            <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
+            <div className="flex items-center gap-3 sticky top-0 bg-black z-20 py-4 -mx-6 px-6 border-b border-gray-800">
               <button 
                 onClick={() => setView('categories')}
                 className="w-8 h-8 flex items-center justify-center text-white hover:text-gray-300"
@@ -318,7 +318,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            className="space-y-8 pb-20"
          >
            {/* Back Header - Sticky */}
-           <div className="flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur z-20 py-4 -mx-6 px-6 border-b border-gray-800">
+           <div className="flex items-center gap-3 sticky top-0 bg-black z-20 py-4 -mx-6 px-6 border-b border-gray-800">
              <button 
                onClick={() => setView('topics')}
                className="w-8 h-8 flex items-center justify-center text-white hover:text-gray-300 flex-shrink-0"
