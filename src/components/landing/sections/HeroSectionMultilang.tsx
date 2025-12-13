@@ -71,8 +71,8 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 </div>
               </button>
 
-              {/* Explore Menu - Visible on all screens */}
-              <div className="block">
+              {/* Explore Menu - Desktop Only */}
+              <div className="hidden md:block">
                 <ExploreMenu />
               </div>
               
@@ -162,6 +162,11 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
             {isMenuOpen && (
               <div className="md:hidden border-t border-gray-800 mt-4 pt-4 pb-4">
                 <div className="space-y-4">
+                  {/* Explore Menu Mobile */}
+                  <div className="border-b border-gray-800 pb-4">
+                    <ExploreMenu isMobile={true} onClose={() => setIsMenuOpen(false)} />
+                  </div>
+                  
                   <button 
                     onClick={() => {
                       scrollToSection('how-it-works');

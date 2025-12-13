@@ -183,12 +183,13 @@ const exploreData = {
   ]
 };
 
-export function ExploreMenu() {
+export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean; onClose?: () => void }) {
   const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeProgram, setActiveProgram] = useState<string>('physics');
   const [activeTopic, setActiveTopic] = useState<string>('mech');
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedPrograms, setExpandedPrograms] = useState<string[]>([]);
 
   // Fallback to FR if EN data is incomplete in this mock
   const data = exploreData[language] || exploreData['fr'];
@@ -200,6 +201,76 @@ export function ExploreMenu() {
   const topicExists = currentProgram.topics.find(t => t.id === activeTopic);
   const currentTopic = topicExists ? topicExists : currentProgram.topics[0];
 
+  const toggleProgram = (programId: string) => {
+    setExpandedPrograms(prev => 
+      prev.includes(programId) 
+        ? prev.filter(id => id !== programId)
+        : [...prev, programId]
+    );
+  };
+
+  // Mobile version - Accordion style
+  if (isMobile) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-white font-bold text-lg">
+            {language === 'fr' ? 'Explorer' : 'Explore'}
+          </span>
+        </div>
+        
+        {data.map((program) => {
+          const Icon = program.icon;
+          const isExpanded = expandedPrograms.includes(program.id);
+          
+          return (
+            <div key={program.id} className="border border-gray-700 rounded-lg overflow-hidden">
+              <button
+                onClick={() => toggleProgram(program.id)}
+                className="w-full flex items-center justify-between p-3 bg-gray-800/50 hover:bg-gray-800 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Icon size={20} className="text-blue-400" />
+                  <span className="text-white font-semibold">{program.label}</span>
+                </div>
+                <ChevronDown 
+                  size={20} 
+                  className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+                />
+              </button>
+              
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: 'auto' }}
+                    exit={{ height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-3 bg-gray-900/30 space-y-2">
+                      {program.topics.map((topic) => (
+                        <div key={topic.id} className="pl-2">
+                          <div className="text-gray-300 text-sm font-medium mb-1">
+                            {topic.label}
+                          </div>
+                          <div className="text-gray-400 text-xs pl-3">
+                            → {topic.lesson.title}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Desktop version - Original mega menu
   return (
     <div className="relative group" onMouseLeave={() => setIsOpen(false)}>
       {/* Trigger Button */}
