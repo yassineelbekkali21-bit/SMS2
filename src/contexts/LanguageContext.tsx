@@ -45,10 +45,10 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.role': 'Founder of Science Made Simple',
     'mentor.label': 'Rencontre ton mentor',
     'mentor.title': 'De l\'échec à l\'excellence.',
-    'mentor.quote': 'L\'excellence n\'est pas réservée aux génies. C\'est une méthode, et je vais te la donner.',
-    'mentor.bio1': 'Tout le monde peut réussir. Je te le garantis. Quelles que soient tes ambitions, quelles que soient tes difficultés, on y arrivera ensemble. Si tu es motivé, je vais te faire bosser dur, mais tu verras vite qu\'on peut dépasser ce que tu croyais possible.',
-    'mentor.bio2': 'On t\'expliquera les maths, la physique, la chimie et l\'économie comme personne ne te les a jamais expliquées. Pas de jargon. Pas de flou. Pas d\'ennui. Juste une méthode claire, directe, et des résultats concrets.',
-    'mentor.bio3': 'Nos étudiants ne se contentent pas de réussir : ils visent les meilleures écoles. Et ils y arrivent. Alors oui, ce sera exigeant. Mais tu ne seras jamais seul.',
+    'mentor.quote': 'Ici, tu ne rejoins pas un cours. Tu rejoins une communauté pour mieux comprendre.',
+    'mentor.bio1': 'Que tu sois en difficulté, que tu doutes, ou que tu veuilles simplement avancer plus sereinement, tu es au bon endroit. Tu rejoins des étudiants qui se posent les mêmes questions que toi, qui traversent les mêmes blocages, et qui progressent, étape par étape.',
+    'mentor.bio2': 'Pas de pression inutile. Pas de jargon. Pas besoin d\'être "bon" pour commencer. Juste une méthode claire, un cadre rassurant, et une progression qui a du sens.',
+    'mentor.bio3': 'Oui, il faudra travailler. Mais tu n\'avanceras jamais seul.',
     
     // Target Section (Who is SMS for?)
     'target.title': 'Pour qui est Science Made Simple ?',
@@ -281,10 +281,10 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.role': 'Founder of Science Made Simple',
     'mentor.label': 'Meet your mentor',
     'mentor.title': 'From failure to excellence.',
-    'mentor.quote': 'Excellence is not reserved for geniuses. It is a method, and I will give it to you.',
-    'mentor.bio1': 'Everyone can succeed. I guarantee it. Whatever your ambitions, whatever your difficulties, we will get there together. If you are motivated, I will make you work hard, but we will exceed what you thought possible.',
-    'mentor.bio2': 'We will explain math, physics, chemistry and economics like no one has ever explained them to you. No jargon. No blur. No boredom. Just a clear, direct method, and concrete results.',
-    'mentor.bio3': 'Our students don\'t just pass: they aim for the best schools. And they make it. So yes, it will be demanding. But you will never be alone.',
+    'mentor.quote': 'Here, you don\'t just join a course. You join a community to better understand.',
+    'mentor.bio1': 'Whether you\'re struggling, doubting, or simply want to move forward more peacefully, you\'re in the right place. You\'re joining students who ask the same questions as you, who face the same obstacles, and who progress, step by step.',
+    'mentor.bio2': 'No unnecessary pressure. No jargon. No need to be "good" to start. Just a clear method, a reassuring framework, and progress that makes sense.',
+    'mentor.bio3': 'Yes, you\'ll have to work. But you\'ll never move forward alone.',
 
     // Target Section (Who is SMS for?)
     'target.title': 'Who is Science Made Simple for?',
