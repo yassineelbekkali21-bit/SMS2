@@ -276,13 +276,13 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               <h3 className="text-xl font-bold truncate" style={{ color: '#FFFFFF' }}>{selectedProgram.label}</h3>
             </div>
 
-            {/* Topics List */}
+            {/* Topics List - Contextual */}
             <div className="mt-3">
               <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-2">
                 {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
               </h4>
 
-              <div className="space-y-0 divide-y divide-gray-800">
+              <div className="space-y-0 divide-y divide-gray-800 border-b border-gray-800 pb-4 mb-6">
                 {selectedProgram.topics.map((topic) => (
                   <button
                     key={topic.id}
@@ -290,21 +290,35 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                       setSelectedTopicId(topic.id);
                       setView('lesson');
                     }}
-                    className="w-full flex items-center justify-between py-5 active:bg-gray-900/50 transition-colors group text-left"
+                    className="w-full flex items-center justify-between py-4 active:bg-gray-900/50 transition-colors group text-left"
                   >
-                    <span className="text-lg font-medium text-white pl-2">{topic.label}</span>
-                    <ChevronRight size={20} className="text-gray-500 group-hover:text-white transition-colors" />
+                    <span className="text-base font-medium text-gray-300 pl-2">{topic.label}</span>
+                    <ChevronRight size={16} className="text-gray-600" />
                   </button>
                 ))}
               </div>
             </div>
 
-            <Link 
-              href={`/program/${selectedProgram.id}`}
-              className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg shadow-blue-900/20 active:scale-95 transition-transform mt-8"
-            >
-               {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
-            </Link>
+            {/* Assessment First CTA */}
+            <div className="px-1 space-y-4">
+              <p className="text-xs text-gray-500 text-center font-medium">
+                {language === 'fr' ? 'Teste tes bases sur les notions clés' : 'Test your basics on key concepts'}
+              </p>
+              <Link 
+                href={`/assessment/${selectedProgram.id}`}
+                className="block w-full py-4 bg-white text-black text-center rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+              >
+                 <span>{language === 'fr' ? `Se tester en ${selectedProgram.label.split(' ')[0]}` : `Test ${selectedProgram.label.split(' ')[0]} Skills`}</span>
+                 <ArrowRight size={18} />
+              </Link>
+              
+              <Link 
+                href={`/program/${selectedProgram.id}`}
+                className="block w-full text-center text-sm font-bold text-gray-600 hover:text-gray-400 transition-colors"
+              >
+                 {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
+              </Link>
+            </div>
           </motion.div>
         )}
 
@@ -334,54 +348,21 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
              </div>
            </div>
 
-           {/* Lesson Content - Ultra Minimalist SMS DNA */}
-           <div className="pt-2">
-             {/* Header Info */}
-             <div className="mb-8 px-1">
-               <div className="flex items-center gap-2 mb-4">
-                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white text-black">
-                   <Play size={14} fill="currentColor" className="ml-0.5" />
-                 </span>
-                 <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">Lesson Preview</span>
-               </div>
-               <h4 className="text-2xl font-bold text-white mb-3 leading-tight">
-                 {selectedTopic.lesson.title}
-               </h4>
-               <p className="text-gray-400 leading-relaxed text-base">
-                 {selectedTopic.lesson.desc}
-               </p>
-             </div>
-
-             {/* Minimalist Action List */}
-             <div className="border-t border-gray-800 divide-y divide-gray-800">
-               {/* Preview Action */}
-               <Link 
-                 href={selectedTopic.lesson.video}
-                 className="flex items-center justify-between py-6 group active:bg-gray-900/50 transition-colors"
-               >
-                 <div className="flex items-center gap-4">
-                   <span className="text-white font-bold text-lg">Preview Lesson</span>
-                   <span className="text-xs font-bold text-gray-500 uppercase tracking-widest border border-gray-800 rounded-full px-2 py-0.5">3 min</span>
-                 </div>
-                 <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center transform group-active:scale-95 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.15)]">
-                   <Play size={16} fill="currentColor" className="ml-0.5" />
-                 </div>
-               </Link>
-
-               {/* Quiz Action */}
-               <Link 
-                 href={selectedTopic.lesson.quiz}
-                 className="flex items-center justify-between py-6 group active:bg-gray-900/50 transition-colors"
-               >
-                  <div className="flex items-center gap-4">
-                   <span className="text-white font-bold text-lg">Take Quiz</span>
-                   <span className="text-xs font-bold text-gray-500 uppercase tracking-widest border border-gray-800 rounded-full px-2 py-0.5">Test</span>
-                 </div>
-                 <div className="w-10 h-10 rounded-full border border-gray-700 text-white flex items-center justify-center transform group-active:scale-95 transition-transform bg-gray-900">
-                   <ArrowRight size={18} />
-                 </div>
-               </Link>
-             </div>
+           {/* Lesson Content - Read Only Discovery */}
+           <div className="pt-10 px-2 flex flex-col items-center text-center">
+             <div className="w-16 h-1 bg-gray-800 rounded-full mb-8 opacity-20"></div>
+             
+             <span className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-4 border border-gray-800 px-3 py-1 rounded-full">
+               {language === 'fr' ? 'Notion Clé' : 'Key Concept'}
+             </span>
+             
+             <h4 className="text-3xl font-bold text-white mb-6 leading-tight">
+               {selectedTopic.lesson.title}
+             </h4>
+             
+             <p className="text-gray-400 leading-relaxed text-lg max-w-xs mx-auto">
+               {selectedTopic.lesson.desc}
+             </p>
            </div>
          </motion.div>
         )}
@@ -559,27 +540,49 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                   })}
                 </div>
 
-                {/* Column 2: Topics List */}
-                <div className="col-span-4 border-r border-gray-100 py-6 px-2 overflow-y-auto">
+                {/* Column 2: Topics List - Assessment First Strategy */}
+                <div className="col-span-4 border-r border-gray-100 py-6 px-2 flex flex-col h-full">
                   <div className="px-4 pb-4 text-sm font-bold text-gray-400 uppercase tracking-wider">
                     {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
                   </div>
-                  <div className="space-y-1">
+                  
+                  {/* Topics - Contextual Only */}
+                  <div className="space-y-1 overflow-y-auto flex-grow">
                     {currentProgram.topics.map((topic) => (
                       <button
                         key={topic.id}
                         onMouseEnter={() => setActiveTopic(topic.id)}
                         className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
                           currentTopic.id === topic.id
-                            ? 'bg-blue-50 text-blue-700' 
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'bg-gray-100 text-gray-900' 
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                         }`}
                       >
-                        <div className={`font-semibold text-lg ${currentTopic.id === topic.id ? 'text-blue-700' : 'text-gray-800'}`}>
+                        <div className={`font-semibold text-lg ${currentTopic.id === topic.id ? 'text-gray-900' : 'text-gray-500'}`}>
                           {topic.label}
                         </div>
                       </button>
                     ))}
+                  </div>
+
+                  {/* Level 2 CTA: Assessment First */}
+                  <div className="p-4 mt-auto border-t border-gray-100 bg-gray-50/50 rounded-xl mx-2">
+                    <p className="text-xs text-gray-500 mb-3 text-center font-medium">
+                      {language === 'fr' ? 'Teste tes bases sur les notions clés' : 'Test your basics on key concepts'}
+                    </p>
+                    <Link
+                      href={`/assessment/${currentProgram.id}`}
+                      className="block w-full py-3 bg-black text-white text-center rounded-lg font-bold text-base hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl mb-3 flex items-center justify-center gap-2"
+                    >
+                      <span>{language === 'fr' ? `Se tester en ${currentProgram.label.split(' ')[0]}` : `Test ${currentProgram.label.split(' ')[0]} Skills`}</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                    <Link
+                      href={`/program/${currentProgram.id}`}
+                      className="block w-full text-center text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
+                    </Link>
                   </div>
                 </div>
 
@@ -593,53 +596,17 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     })()}
                   </div>
 
-                  <div className="relative z-10">
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wider mb-4">
-                      {language === 'fr' ? 'Leçon Gratuite' : 'Free Lesson'}
+                  <div className="relative z-10 flex flex-col justify-center h-full">
+                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider mb-6 w-fit">
+                      {language === 'fr' ? 'Notion Clé' : 'Key Concept'}
                     </span>
                     
-                    <h4 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                    <h4 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
                       {currentTopic.lesson.title}
                     </h4>
-                    <p className="text-gray-500 mb-8 leading-relaxed text-lg">
+                    <p className="text-gray-500 leading-relaxed text-xl max-w-md">
                       {currentTopic.lesson.desc}
                     </p>
-
-                    <div className="space-y-0 divide-y divide-gray-100 border-t border-b border-gray-100 my-8">
-                      {/* Preview Link - Ultra Minimalist */}
-                      <Link
-                        href={currentTopic.lesson.video}
-                        className="flex items-center justify-between py-5 group hover:pl-2 transition-all duration-300 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-4">
-                           <span className="w-10 h-10 flex items-center justify-center rounded-full bg-black text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                             <Play size={14} fill="currentColor" className="ml-0.5" />
-                           </span>
-                           <div>
-                             <span className="block font-bold text-gray-900 text-base group-hover:text-black">Voir la preview</span>
-                             <span className="text-[11px] text-gray-400 uppercase tracking-widest font-medium">3 min video</span>
-                           </div>
-                        </div>
-                        <ArrowRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all duration-300" />
-                      </Link>
-
-                      {/* Quiz Link - Ultra Minimalist */}
-                      <Link
-                        href={currentTopic.lesson.quiz}
-                        className="flex items-center justify-between py-5 group hover:pl-2 transition-all duration-300 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-4">
-                           <span className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 group-hover:border-black group-hover:text-black transition-colors duration-300 bg-white">
-                             <HelpCircle size={16} />
-                           </span>
-                           <div>
-                             <span className="block font-bold text-gray-900 text-base group-hover:text-black">Faire le quiz</span>
-                             <span className="text-[11px] text-gray-400 uppercase tracking-widest font-medium">Test rapide</span>
-                           </div>
-                        </div>
-                        <ArrowRight size={18} className="text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all duration-300" />
-                      </Link>
-                    </div>
                   </div>
                 </div>
               </div>
