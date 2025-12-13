@@ -17,22 +17,38 @@ const exploreData = {
         { 
           id: 'mech', 
           label: 'Mécanique Classique', 
-          lesson: { title: 'Les 3 Lois de Newton', desc: 'Comprendre le mouvement et les forces fondamentales.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Les 3 Lois de Newton', desc: 'Comprendre le mouvement et les forces fondamentales.' },
+            { title: 'Énergie & Travail', desc: 'Théorème de l\'énergie cinétique et conservation.' },
+            { title: 'Cinématique', desc: 'Position, vitesse et accélération.' }
+          ]
         },
         { 
           id: 'elec', 
           label: 'Électricité & Magnétisme', 
-          lesson: { title: 'Loi d\'Ohm & Circuits', desc: 'Maîtriser les bases du courant et de la tension.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Loi d\'Ohm & Circuits', desc: 'Maîtriser les bases du courant et de la tension.' },
+            { title: 'Lois de Kirchhoff', desc: 'Analyser les circuits complexes (Mailles & Nœuds).' },
+            { title: 'Champs Électriques', desc: 'Forces de Coulomb et potentiel.' }
+          ]
         },
         { 
           id: 'thermo', 
           label: 'Thermodynamique', 
-          lesson: { title: 'Entropie & 2ème Principe', desc: 'Le désordre et l\'énergie expliqués simplement.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Entropie & 2ème Principe', desc: 'Le désordre et l\'énergie expliqués simplement.' },
+            { title: 'Cycles Thermodynamiques', desc: 'Carnot, Otto et rendement des machines.' },
+            { title: 'Gaz Parfaits', desc: 'Loi des gaz parfaits et transformations.' }
+          ]
         },
         { 
           id: 'waves', 
           label: 'Ondes & Optique', 
-          lesson: { title: 'Effet Doppler', desc: 'Comprendre la propagation des ondes sonores.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Effet Doppler', desc: 'Comprendre la propagation des ondes sonores.' },
+            { title: 'Interférences', desc: 'Diffraction et fentes de Young.' },
+            { title: 'Réfraction', desc: 'Lois de Snell-Descartes.' }
+          ]
         }
       ]
     },
@@ -44,17 +60,29 @@ const exploreData = {
         { 
           id: 'calc', 
           label: 'Analyse (Calculus)', 
-          lesson: { title: 'Les Intégrales', desc: 'Calculer des aires et volumes complexes.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Les Intégrales', desc: 'Calculer des aires et volumes complexes.' },
+            { title: 'Dérivées', desc: 'Taux de variation et optimisation.' },
+            { title: 'Limites', desc: 'Comportement asymptotique des fonctions.' }
+          ]
         },
         { 
           id: 'alg', 
           label: 'Algèbre Linéaire', 
-          lesson: { title: 'Matrices & Déterminants', desc: 'Résoudre des systèmes d\'équations linéaires.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Matrices & Déterminants', desc: 'Résoudre des systèmes d\'équations linéaires.' },
+            { title: 'Espaces Vectoriels', desc: 'Bases, dimensions et sous-espaces.' },
+            { title: 'Valeurs Propres', desc: 'Diagonalisation et applications.' }
+          ]
         },
         { 
           id: 'prob', 
           label: 'Probabilités', 
-          lesson: { title: 'Loi Normale', desc: 'Comprendre la distribution en cloche.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Loi Normale', desc: 'Comprendre la distribution en cloche.' },
+            { title: 'Théorème de Bayes', desc: 'Probabilités conditionnelles.' },
+            { title: 'Variables Aléatoires', desc: 'Espérance et variance.' }
+          ]
         }
       ]
     },
@@ -66,17 +94,29 @@ const exploreData = {
         { 
           id: 'org', 
           label: 'Chimie Organique', 
-          lesson: { title: 'Réactions S.N.1 vs S.N.2', desc: 'Mécanismes de substitution nucléophile.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Réactions S.N.1 vs S.N.2', desc: 'Mécanismes de substitution nucléophile.' },
+            { title: 'Stéréochimie', desc: 'Chiralité, énantiomères et configuration R/S.' },
+            { title: 'Alcools & Éthers', desc: 'Propriétés et réactivité.' }
+          ]
         },
         { 
           id: 'atom', 
           label: 'Atomistique', 
-          lesson: { title: 'Orbitales & Hybridation', desc: 'La structure électronique des atomes.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Orbitales & Hybridation', desc: 'La structure électronique des atomes.' },
+            { title: 'Lewis & VSEPR', desc: 'Géométrie des molécules.' },
+            { title: 'Nombres Quantiques', desc: 'Configuration électronique.' }
+          ]
         },
         { 
           id: 'acid', 
           label: 'Acides & Bases', 
-          lesson: { title: 'Calcul de pH & Tampons', desc: 'Équilibres en solution aqueuse.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Calcul de pH', desc: 'Solutions fortes, faibles et mélanges.' },
+            { title: 'Titrage', desc: 'Courbes de neutralisation et indicateurs.' },
+            { title: 'Solutions Tampons', desc: 'Maintien du pH et équation de Henderson.' }
+          ]
         }
       ]
     },
@@ -88,12 +128,20 @@ const exploreData = {
         { 
           id: 'micro', 
           label: 'Microéconomie', 
-          lesson: { title: 'Offre & Demande', desc: 'L\'équilibre du marché expliqué.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Offre & Demande', desc: 'L\'équilibre du marché expliqué.' },
+            { title: 'Élasticité', desc: 'Sensibilité aux prix et revenus.' },
+            { title: 'Théorie du Consommateur', desc: 'Utilité et contrainte budgétaire.' }
+          ]
         },
         { 
           id: 'macro', 
           label: 'Macroéconomie', 
-          lesson: { title: 'PIB & Inflation', desc: 'Les indicateurs économiques clés.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'PIB & Inflation', desc: 'Les indicateurs économiques clés.' },
+            { title: 'Modèle IS-LM', desc: 'Équilibre simultané des marchés.' },
+            { title: 'Politique Monétaire', desc: 'Rôle des banques centrales.' }
+          ]
         }
       ]
     },
@@ -105,12 +153,20 @@ const exploreData = {
         { 
           id: 'inf', 
           label: 'Inférence Statistique', 
-          lesson: { title: 'Tests d\'Hypothèses (P-value)', desc: 'Prendre des décisions basées sur les données.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Tests d\'Hypothèses (P-value)', desc: 'Prendre des décisions basées sur les données.' },
+            { title: 'T-test & Z-test', desc: 'Comparer des moyennes et proportions.' },
+            { title: 'Chi-carré', desc: 'Tests d\'indépendance et d\'ajustement.' }
+          ]
         },
         { 
           id: 'desc', 
           label: 'Statistiques Descriptives', 
-          lesson: { title: 'Moyenne, Médiane, Écart-type', desc: 'Résumer et visualiser les données.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Moyenne, Médiane, Écart-type', desc: 'Résumer et visualiser les données.' },
+            { title: 'Boxplots', desc: 'Visualiser la dispersion et les outliers.' },
+            { title: 'Corrélation', desc: 'Lien entre deux variables quantitatives.' }
+          ]
         }
       ]
     },
@@ -122,12 +178,20 @@ const exploreData = {
         { 
           id: 'gen', 
           label: 'Comptabilité Générale', 
-          lesson: { title: 'Le Bilan Comptable', desc: 'Actif, Passif et Capitaux Propres.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Le Bilan Comptable', desc: 'Actif, Passif et Capitaux Propres.' },
+            { title: 'Compte de Résultat', desc: 'Produits, charges et bénéfice.' },
+            { title: 'Écritures Comptables', desc: 'Débit, Crédit et Journal.' }
+          ]
         },
         { 
           id: 'fin', 
           label: 'Analyse Financière', 
-          lesson: { title: 'Ratios de Liquidité', desc: 'Évaluer la santé financière d\'une entreprise.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Ratios de Liquidité', desc: 'Évaluer la santé financière d\'une entreprise.' },
+            { title: 'Solvabilité', desc: 'Capacité à rembourser les dettes.' },
+            { title: 'Rentabilité', desc: 'ROI, ROE et marges.' }
+          ]
         }
       ]
     }
@@ -141,21 +205,32 @@ const exploreData = {
         { 
           id: 'mech', 
           label: 'Classical Mechanics', 
-          lesson: { title: 'Newton\'s 3 Laws', desc: 'Understand movement and fundamental forces.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Newton\'s 3 Laws', desc: 'Understand movement and fundamental forces.' },
+            { title: 'Energy & Work', desc: 'Kinetic energy theorem and conservation.' },
+            { title: 'Kinematics', desc: 'Position, velocity and acceleration.' }
+          ]
         },
         { 
           id: 'elec', 
           label: 'Electricity & Magnetism', 
-          lesson: { title: 'Ohm\'s Law & Circuits', desc: 'Master the basics of current and voltage.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Ohm\'s Law & Circuits', desc: 'Master the basics of current and voltage.' },
+            { title: 'Kirchhoff\'s Laws', desc: 'Analyze complex circuits.' },
+            { title: 'Electric Fields', desc: 'Coulomb forces and field lines.' }
+          ]
         },
         { 
           id: 'thermo', 
           label: 'Thermodynamics', 
-          lesson: { title: 'Entropy & 2nd Law', desc: 'Disorder and energy explained simply.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Entropy & 2nd Law', desc: 'Disorder and energy explained simply.' },
+            { title: 'Thermodynamic Cycles', desc: 'Carnot, Otto and efficiency.' },
+            { title: 'Ideal Gases', desc: 'Ideal gas law and transformations.' }
+          ]
         }
       ]
     },
-    // ... (Simplified EN for brevity, structure matches FR)
     {
       id: 'math',
       label: 'Mathematics Mastery',
@@ -164,7 +239,11 @@ const exploreData = {
         { 
           id: 'calc', 
           label: 'Calculus', 
-          lesson: { title: 'Integrals', desc: 'Calculating complex areas and volumes.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'Integrals', desc: 'Calculating complex areas and volumes.' },
+            { title: 'Derivatives', desc: 'Rate of change and optimization.' },
+            { title: 'Limits', desc: 'Asymptotic behavior of functions.' }
+          ]
         }
       ]
     },
@@ -176,7 +255,11 @@ const exploreData = {
         { 
           id: 'gen', 
           label: 'General Accounting', 
-          lesson: { title: 'The Balance Sheet', desc: 'Assets, Liabilities and Equity.', video: '#', quiz: '#' } 
+          lessons: [
+            { title: 'The Balance Sheet', desc: 'Assets, Liabilities and Equity.' },
+            { title: 'Income Statement', desc: 'Revenue, expenses and profit.' },
+            { title: 'Journal Entries', desc: 'Debit, Credit and Journal.' }
+          ]
         }
       ]
     }
@@ -349,20 +432,26 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            </div>
 
            {/* Lesson Content - Read Only Discovery */}
-           <div className="pt-10 px-2 flex flex-col items-center text-center">
+           <div className="pt-10 px-2 flex flex-col items-center text-center pb-20">
              <div className="w-16 h-1 bg-gray-800 rounded-full mb-8 opacity-20"></div>
              
-             <span className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-4 border border-gray-800 px-3 py-1 rounded-full">
-               {language === 'fr' ? 'Notion Clé' : 'Key Concept'}
+             <span className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-8 border border-gray-800 px-3 py-1 rounded-full">
+               {language === 'fr' ? 'Notions Clés' : 'Key Concepts'}
              </span>
              
-             <h4 className="text-3xl font-bold text-white mb-6 leading-tight">
-               {selectedTopic.lesson.title}
-             </h4>
-             
-             <p className="text-gray-400 leading-relaxed text-lg max-w-xs mx-auto">
-               {selectedTopic.lesson.desc}
-             </p>
+             <div className="space-y-10 w-full max-w-sm mx-auto">
+               {/* @ts-ignore - Transitioning data structure */}
+               {(selectedTopic.lessons || [selectedTopic.lesson]).map((lesson, idx) => (
+                 <div key={idx}>
+                   <h4 className="text-2xl font-bold text-white mb-3 leading-tight">
+                     {lesson.title}
+                   </h4>
+                   <p className="text-gray-400 leading-relaxed text-base">
+                     {lesson.desc}
+                   </p>
+                 </div>
+               ))}
+             </div>
            </div>
          </motion.div>
         )}
@@ -596,17 +685,24 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     })()}
                   </div>
 
-                  <div className="relative z-10 flex flex-col justify-center h-full">
-                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider mb-6 w-fit">
-                      {language === 'fr' ? 'Notion Clé' : 'Key Concept'}
+                  <div className="relative z-10 flex flex-col justify-center h-full overflow-y-auto max-h-[450px] pr-2">
+                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider mb-6 w-fit sticky top-0">
+                      {language === 'fr' ? 'Notions Clés' : 'Key Concepts'}
                     </span>
                     
-                    <h4 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                      {currentTopic.lesson.title}
-                    </h4>
-                    <p className="text-gray-500 leading-relaxed text-xl max-w-md">
-                      {currentTopic.lesson.desc}
-                    </p>
+                    <div className="space-y-8">
+                      {/* @ts-ignore - Transitioning data structure */}
+                      {(currentTopic.lessons || [currentTopic.lesson]).map((lesson, idx) => (
+                        <div key={idx} className="group">
+                          <h4 className="text-2xl font-bold text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors">
+                            {lesson.title}
+                          </h4>
+                          <p className="text-gray-500 leading-relaxed text-base">
+                            {lesson.desc}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

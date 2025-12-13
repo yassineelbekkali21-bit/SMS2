@@ -209,7 +209,7 @@ const translations: Record<Language, Record<string, string>> = {
     'start.title': 'Commence ton aventure aujourd\'hui.',
     'start.subtitle': 'Rejoins +2400 étudiants qui ont transformé leurs résultats.',
     'start.guarantee': 'Diagnostic gratuit • Sans engagement • Leçons offertes',
-    'start.cta_primary': 'Commencer gratuitement',
+    'start.cta_primary': 'On te répond personnellement',
     'start.cta_secondary': 'Explorer le programme',
 
     // WhatsApp Contact
