@@ -231,9 +231,6 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                 className="w-full flex items-center justify-between p-4 active:bg-white/10 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
-                    <Icon size={20} />
-                  </div>
                   <span className="text-white font-bold text-base">{program.label}</span>
                 </div>
                 <ChevronDown 
