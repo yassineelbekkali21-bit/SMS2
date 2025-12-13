@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronDown, CheckCircle2, FileText, Video, Users, ArrowRight, PlayCircle, HelpCircle } from 'lucide-react';
 
@@ -145,19 +146,15 @@ export function CurriculumSectionMultilang() {
                                     </span>
                                   </div>
 
-                                  {/* Interactive Badges - Black & White */}
-                                  <div className="flex items-center gap-2 pl-4">
-                                    {/* Preview Badge */}
-                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-gray-900 cursor-pointer hover:bg-black hover:text-white hover:border-black transition-all group/badge" title="Watch Preview">
-                                      <PlayCircle size={14} className="group-hover/badge:fill-current" />
-                                      <span className="hidden sm:inline">Preview</span>
-                                    </div>
-                                    
-                                    {/* Quiz Badge */}
-                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm text-xs font-bold text-gray-900 cursor-pointer hover:bg-black hover:text-white hover:border-black transition-all" title="Take Quiz">
-                                      <HelpCircle size={14} />
-                                      <span className="hidden sm:inline">Quiz</span>
-                                    </div>
+                                  {/* Assessment Link */}
+                                  <div className="flex items-center pl-4 shrink-0">
+                                    <Link
+                                      href={`/assessment/${subject.id}`}
+                                      className="text-xs font-bold text-gray-400 hover:text-black transition-colors flex items-center gap-1 group/link whitespace-nowrap"
+                                    >
+                                      {language === 'fr' ? 'Me tester' : 'Test myself'}
+                                      <ArrowRight size={12} className="group-hover/link:translate-x-0.5 transition-transform" />
+                                    </Link>
                                   </div>
                                 </li>
                               ))}
