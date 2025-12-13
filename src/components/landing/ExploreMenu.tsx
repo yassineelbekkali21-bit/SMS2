@@ -595,31 +595,39 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                       {currentTopic.lesson.desc}
                     </p>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3">
+                      {/* Preview Button - Minimalist Black */}
                       <Link
                         href={currentTopic.lesson.video}
-                        className="flex items-center gap-4 p-5 rounded-2xl bg-gray-900 text-white hover:bg-black transition-all group shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                        className="flex items-center justify-between w-full p-4 bg-black text-white rounded-xl hover:bg-gray-800 transition-all group"
                       >
-                        <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <PlayCircle size={24} className="fill-current" />
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center">
+                            <Play size={14} fill="currentColor" className="ml-0.5" />
+                          </div>
+                          <div>
+                            <span className="font-bold block text-sm">Voir la preview</span>
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">3 min video</span>
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-base">Voir la preview</span>
-                          <span className="text-xs text-gray-400 uppercase tracking-wider">3 min video</span>
-                        </div>
+                        <ArrowRight size={16} className="text-gray-500 group-hover:text-white transition-colors" />
                       </Link>
 
+                      {/* Quiz Button - Minimalist Outline */}
                       <Link
                         href={currentTopic.lesson.quiz}
-                        className="flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-200 hover:border-black text-gray-900 hover:bg-gray-50 transition-all group"
+                        className="flex items-center justify-between w-full p-4 border border-gray-200 text-gray-900 rounded-xl hover:border-black transition-all group bg-white"
                       >
-                        <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
-                          <HelpCircle size={24} />
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                            <HelpCircle size={14} />
+                          </div>
+                          <div>
+                            <span className="font-bold block text-sm">Faire le quiz</span>
+                            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Test rapide</span>
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-base">Faire le quiz</span>
-                          <span className="text-xs text-gray-500 uppercase tracking-wider">Test rapide</span>
-                        </div>
+                        <ArrowRight size={16} className="text-gray-300 group-hover:text-black transition-colors" />
                       </Link>
                     </div>
                   </div>

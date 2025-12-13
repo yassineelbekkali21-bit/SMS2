@@ -66,7 +66,10 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
             <div className="flex items-center justify-between">
               {/* Logo */}
               <button 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onClick={() => {
+                  if (isExploreOpen) setIsExploreOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="flex items-center gap-3 cursor-pointer"
                 aria-label="Retour en haut"
               >
