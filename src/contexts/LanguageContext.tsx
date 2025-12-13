@@ -46,9 +46,10 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.label': 'Rencontre ton mentor',
     'mentor.title': 'De l\'échec à l\'excellence.',
     'mentor.quote': 'Ici, tu ne rejoins pas un cours. Tu rejoins une communauté pour mieux comprendre.',
-    'mentor.bio1': 'Que tu sois en difficulté, que tu doutes, ou que tu veuilles simplement avancer plus sereinement, tu es au bon endroit. Tu rejoins des étudiants qui se posent les mêmes questions que toi, qui traversent les mêmes blocages, et qui progressent, étape par étape.',
-    'mentor.bio2': 'Pas de pression inutile. Pas de jargon. Pas besoin d\'être "bon" pour commencer. Juste une méthode claire, un cadre rassurant, et une progression qui a du sens.',
-    'mentor.bio3': 'Oui, il faudra travailler. Mais tu n\'avanceras jamais seul.',
+    'mentor.bio1': 'Que tu sois en difficulté, que tu doutes, ou que tu veuilles simplement avancer plus sereinement, tu es au bon endroit.',
+    'mentor.bio2': 'Tu rejoins des étudiants qui se posent les mêmes questions que toi, qui traversent les mêmes blocages, et qui progressent, étape par étape.',
+    'mentor.bio3': 'Pas de pression inutile. Pas de jargon. Pas besoin d\'être "bon" pour commencer. Juste une méthode claire, un cadre rassurant, et une progression qui a du sens.',
+    'mentor.bio4': 'Oui, il faudra travailler. Mais tu n\'avanceras jamais seul.',
     
     // Target Section (Who is SMS for?)
     'target.title': 'Pour qui est Science Made Simple ?',
@@ -282,9 +283,10 @@ const translations: Record<Language, Record<string, string>> = {
     'mentor.label': 'Meet your mentor',
     'mentor.title': 'From failure to excellence.',
     'mentor.quote': 'Here, you don\'t just join a course. You join a community to better understand.',
-    'mentor.bio1': 'Whether you\'re struggling, doubting, or simply want to move forward more peacefully, you\'re in the right place. You\'re joining students who ask the same questions as you, who face the same obstacles, and who progress, step by step.',
-    'mentor.bio2': 'No unnecessary pressure. No jargon. No need to be "good" to start. Just a clear method, a reassuring framework, and progress that makes sense.',
-    'mentor.bio3': 'Yes, you\'ll have to work. But you\'ll never move forward alone.',
+    'mentor.bio1': 'Whether you\'re struggling, doubting, or simply want to move forward more peacefully, you\'re in the right place.',
+    'mentor.bio2': 'You\'re joining students who ask the same questions as you, who face the same obstacles, and who progress, step by step.',
+    'mentor.bio3': 'No unnecessary pressure. No jargon. No need to be "good" to start. Just a clear method, a reassuring framework, and progress that makes sense.',
+    'mentor.bio4': 'Yes, you\'ll have to work. But you\'ll never move forward alone.',
 
     // Target Section (Who is SMS for?)
     'target.title': 'Who is Science Made Simple for?',

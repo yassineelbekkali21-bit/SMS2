@@ -62,6 +62,7 @@ export function MentorSectionMultilang() {
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio1')}</p>
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio2')}</p>
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio3')}</p>
+              <p style={{ color: '#FFFFFF' }}>{t('mentor.bio4')}</p>
             </div>
 
             <div className="mt-12 flex items-center gap-4 pt-8 border-t border-gray-800">
