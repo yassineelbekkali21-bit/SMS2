@@ -71,8 +71,8 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 </div>
               </button>
 
-              {/* Explore Menu - Centered between Logo and Tabs */}
-              <div className="hidden md:block">
+              {/* Explore Menu - Visible on all screens */}
+              <div className="block">
                 <ExploreMenu />
               </div>
               
