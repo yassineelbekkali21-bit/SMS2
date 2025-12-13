@@ -75,6 +75,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.physics.outcomes.2': 'Électricité & Magnétisme',
     'curriculum.physics.outcomes.3': 'Ondes & Optique',
     'curriculum.physics.outcomes.4': 'Thermodynamique',
+    'curriculum.physics.outcomes.5': 'Mécanique des Fluides',
+    'curriculum.physics.outcomes.6': 'Relativité Restreinte',
+    'curriculum.physics.outcomes.7': 'Physique Quantique',
+    'curriculum.physics.outcomes.8': 'Astrophysique',
 
     'curriculum.math.title': 'Mathematics Mastery',
     'curriculum.math.desc': 'Le langage universel des sciences. Ne subissez plus les calculs, apprenez à les lire et à les utiliser.',
@@ -82,6 +86,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.math.outcomes.2': 'Algèbre Linéaire',
     'curriculum.math.outcomes.3': 'Géométrie & Trigonométrie',
     'curriculum.math.outcomes.4': 'Logique & Raisonnement',
+    'curriculum.math.outcomes.5': 'Nombres Complexes',
+    'curriculum.math.outcomes.6': 'Suites & Séries',
+    'curriculum.math.outcomes.7': 'Équations Différentielles',
+    'curriculum.math.outcomes.8': 'Mathématiques Discrètes',
 
     'curriculum.chem.title': 'Chemistry Mastery',
     'curriculum.chem.desc': 'Comprenez ce qui compose le monde. Des atomes aux réactions complexes, tout devient limpide.',
@@ -89,6 +97,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.chem.outcomes.2': 'Chimie Organique',
     'curriculum.chem.outcomes.3': 'Cinétique & Équilibres',
     'curriculum.chem.outcomes.4': 'Acides-Bases & Solutions',
+    'curriculum.chem.outcomes.5': 'Thermochemistry',
+    'curriculum.chem.outcomes.6': 'Electrochemistry',
+    'curriculum.chem.outcomes.7': 'Solution Chemistry',
+    'curriculum.chem.outcomes.8': 'Solid State Chemistry',
 
     'curriculum.stats.title': 'Statistics Mastery',
     'curriculum.stats.desc': 'Faites parler les données. Indispensable pour l\'économie, la psychologie et les sciences sociales.',
@@ -96,6 +108,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.stats.outcomes.2': 'Probabilités & Combinatoire',
     'curriculum.stats.outcomes.3': 'Variables Aléatoires',
     'curriculum.stats.outcomes.4': 'Tests d\'Hypothèses',
+    'curriculum.stats.outcomes.5': 'Régression Linéaire',
+    'curriculum.stats.outcomes.6': 'Analyse de la Variance',
+    'curriculum.stats.outcomes.7': 'Séries Temporelles',
+    'curriculum.stats.outcomes.8': 'Échantillonnage',
 
     'curriculum.eco.title': 'Economics Mastery',
     'curriculum.eco.desc': 'Décryptez les mécanismes du marché. Microéconomie et Macroéconomie expliquées simplement.',
@@ -110,6 +126,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.accounting.outcomes.2': 'Analyse Financière',
     'curriculum.accounting.outcomes.3': 'Comptabilité de Gestion',
     'curriculum.accounting.outcomes.4': 'Fiscalité & Normes',
+    'curriculum.accounting.outcomes.5': 'Comptabilité Analytique',
+    'curriculum.accounting.outcomes.6': 'Trésorerie & Budget',
+    'curriculum.accounting.outcomes.7': 'Consolidation',
+    'curriculum.accounting.outcomes.8': 'Audit & Contrôle',
 
     // How it works
     'how.title': 'On t\'accompagne avec',
@@ -313,6 +333,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.physics.outcomes.2': 'Electricity & Magnetism',
     'curriculum.physics.outcomes.3': 'Waves & Optics',
     'curriculum.physics.outcomes.4': 'Thermodynamics',
+    'curriculum.physics.outcomes.5': 'Fluid Mechanics',
+    'curriculum.physics.outcomes.6': 'Special Relativity',
+    'curriculum.physics.outcomes.7': 'Quantum Physics',
+    'curriculum.physics.outcomes.8': 'Astrophysics',
 
     'curriculum.math.title': 'Mathematics Mastery',
     'curriculum.math.desc': 'The universal language of science. Don\'t suffer through calculations, learn to read and use them.',
@@ -320,6 +344,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.math.outcomes.2': 'Linear Algebra',
     'curriculum.math.outcomes.3': 'Geometry & Trigonometry',
     'curriculum.math.outcomes.4': 'Logic & Reasoning',
+    'curriculum.math.outcomes.5': 'Complex Numbers',
+    'curriculum.math.outcomes.6': 'Sequences & Series',
+    'curriculum.math.outcomes.7': 'Differential Equations',
+    'curriculum.math.outcomes.8': 'Discrete Math',
 
     'curriculum.chem.title': 'Chemistry Mastery',
     'curriculum.chem.desc': 'Understand what the world is made of. From atoms to complex reactions, everything becomes clear.',
@@ -334,6 +362,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.stats.outcomes.2': 'Probabilities & Combinatorics',
     'curriculum.stats.outcomes.3': 'Random Variables',
     'curriculum.stats.outcomes.4': 'Hypothesis Testing',
+    'curriculum.stats.outcomes.5': 'Linear Regression',
+    'curriculum.stats.outcomes.6': 'ANOVA',
+    'curriculum.stats.outcomes.7': 'Time Series',
+    'curriculum.stats.outcomes.8': 'Sampling',
 
     'curriculum.eco.title': 'Economics Mastery',
     'curriculum.eco.desc': 'Decipher market mechanisms. Microeconomics and Macroeconomics explained simply.',
@@ -341,6 +373,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.eco.outcomes.2': 'Consumer Behavior',
     'curriculum.eco.outcomes.3': 'Production & Costs',
     'curriculum.eco.outcomes.4': 'Economic Policies',
+    'curriculum.eco.outcomes.5': 'Money & Banking',
+    'curriculum.eco.outcomes.6': 'International Trade',
+    'curriculum.eco.outcomes.7': 'Growth & Cycles',
+    'curriculum.eco.outcomes.8': 'Game Theory',
 
     'curriculum.accounting.title': 'Accounting Mastery',
     'curriculum.accounting.desc': 'Master the language of business. From balance sheets to income statements, understand financial logic.',
@@ -348,6 +384,10 @@ const translations: Record<Language, Record<string, string>> = {
     'curriculum.accounting.outcomes.2': 'Financial Analysis',
     'curriculum.accounting.outcomes.3': 'Management Accounting',
     'curriculum.accounting.outcomes.4': 'Taxation & Standards',
+    'curriculum.accounting.outcomes.5': 'Cost Accounting',
+    'curriculum.accounting.outcomes.6': 'Treasury & Budget',
+    'curriculum.accounting.outcomes.7': 'Consolidation',
+    'curriculum.accounting.outcomes.8': 'Audit & Control',
 
     // How it works
     'how.title': 'We support you with',

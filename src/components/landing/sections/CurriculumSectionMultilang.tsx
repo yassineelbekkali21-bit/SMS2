@@ -137,7 +137,7 @@ export function CurriculumSectionMultilang() {
                               {language === 'fr' ? 'Sujets tendances' : 'Trending Topics'}
                             </h4>
                             <ul className="space-y-4">
-                              {[1, 2, 3, 4].map((i) => (
+                              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                                 <li key={i} className="flex items-center justify-between group/item">
                                   <div className="flex items-start gap-3">
                                     <CheckCircle2 className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5 group-hover/item:text-blue-600 transition-colors" />
