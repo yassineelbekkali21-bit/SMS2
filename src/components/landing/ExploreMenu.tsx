@@ -491,23 +491,35 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
            </div>
 
            {/* Lesson Content - Read Only Discovery */}
-           <div className="pt-10 px-2 flex flex-col items-center text-center pb-20">
-             <div className="w-16 h-1 bg-gray-800 rounded-full mb-8 opacity-20"></div>
-             
-             <span className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-8 border border-gray-800 px-3 py-1 rounded-full">
-               {language === 'fr' ? 'Notions Clés' : 'Key Concepts'}
-             </span>
-             
-             <div className="space-y-10 w-full max-w-sm mx-auto">
+           <div className="pt-6 px-4 pb-20">
+             {/* Header */}
+             <div className="text-center mb-8">
+               <span className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-2 block">
+                 {language === 'fr' ? 'Notions Clés' : 'Key Concepts'}
+               </span>
+               <h3 className="text-2xl font-bold text-white">
+                 {selectedTopic.label}
+               </h3>
+             </div>
+
+             {/* Cards List */}
+             <div className="space-y-4">
                {/* @ts-ignore - Transitioning data structure */}
                {(selectedTopic.lessons || [selectedTopic.lesson]).map((lesson, idx) => (
-                 <div key={idx}>
-                   <h4 className="text-2xl font-bold text-white mb-3 leading-tight">
-                     {lesson.title}
-                   </h4>
-                  <p className="text-white leading-relaxed text-base" style={{ opacity: 0.9 }}>
-                    {lesson.desc}
-                  </p>
+                 <div key={idx} className="bg-white/5 rounded-2xl p-5 border border-white/10 shadow-sm active:scale-[0.99] transition-transform">
+                   <div className="flex items-start gap-4">
+                      <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 text-blue-400 font-bold text-sm border border-blue-600/30">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <h4 className="text-lg font-bold text-white mb-2 leading-tight text-left">
+                          {lesson.title}
+                        </h4>
+                        <p className="text-gray-200 text-sm leading-relaxed text-left">
+                          {lesson.desc}
+                        </p>
+                      </div>
+                   </div>
                  </div>
                ))}
              </div>
