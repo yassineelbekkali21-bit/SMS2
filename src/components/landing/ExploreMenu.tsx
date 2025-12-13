@@ -266,15 +266,40 @@ const exploreData = {
   ]
 };
 
+const getFilteredData = (data: typeof exploreData.fr, term: string) => {
+  if (!term.trim()) return data;
+  const lowerTerm = term.toLowerCase().trim();
+  
+  return data.map(program => {
+    const programMatches = program.label.toLowerCase().includes(lowerTerm);
+    
+    const filteredTopics = program.topics.filter((topic) => {
+      const topicMatches = topic.label.toLowerCase().includes(lowerTerm);
+      const lessonMatches = (topic.lessons || [topic.lesson]).some((l: any) => 
+        l.title.toLowerCase().includes(lowerTerm) || 
+        l.desc.toLowerCase().includes(lowerTerm)
+      );
+      return programMatches || topicMatches || lessonMatches;
+    });
+
+    if (filteredTopics.length > 0) {
+      return { ...program, topics: filteredTopics };
+    }
+    return null;
+  }).filter((item): item is typeof exploreData.fr[0] => item !== null);
+};
+
 // New Component: Mobile Overlay Navigation (MasterClass Style)
 export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { language } = useLanguage();
   const [view, setView] = useState<'categories' | 'topics' | 'lesson'>('categories');
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fallback to FR if EN data is incomplete in this mock
-  const data = exploreData[language] || exploreData['fr'];
+  const rawData = exploreData[language] || exploreData['fr'];
+  const data = getFilteredData(rawData, searchTerm);
   const selectedProgram = data.find(p => p.id === selectedProgramId);
   const selectedTopic = selectedProgram?.topics.find(t => t.id === selectedTopicId);
 
@@ -315,6 +340,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                 type="text" 
                 placeholder={language === 'fr' ? "Rechercher..." : "Search..."}
                 className="w-full bg-gray-900 border border-gray-800 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-gray-700 transition-colors"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
@@ -469,14 +496,15 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
   const [expandedPrograms, setExpandedPrograms] = useState<string[]>([]);
 
   // Fallback to FR if EN data is incomplete in this mock
-  const data = exploreData[language] || exploreData['fr'];
+  const rawData = exploreData[language] || exploreData['fr'];
+  const data = getFilteredData(rawData, searchTerm);
   
   // Safe access to current program
   const currentProgram = data.find(p => p.id === activeProgram) || data[0];
   
   // Safe access to current topic - Reset to first topic if activeTopic doesn't belong to currentProgram
-  const topicExists = currentProgram.topics.find(t => t.id === activeTopic);
-  const currentTopic = topicExists ? topicExists : currentProgram.topics[0];
+  const topicExists = currentProgram?.topics.find(t => t.id === activeTopic);
+  const currentTopic = topicExists ? topicExists : currentProgram?.topics[0];
 
   const toggleProgram = (programId: string) => {
     setExpandedPrograms(prev => 
@@ -601,6 +629,18 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
               </div>
 
               <div className="grid grid-cols-12 h-[500px]">
+                {!currentProgram ? (
+                  <div className="col-span-12 flex flex-col items-center justify-center text-gray-400 h-full">
+                    <Search size={48} className="mb-4 opacity-20" />
+                    <p className="text-lg font-medium">
+                      {language === 'fr' ? 'Aucun résultat trouvé' : 'No results found'}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      {language === 'fr' ? 'Essaie avec un autre mot-clé' : 'Try another keyword'}
+                    </p>
+                  </div>
+                ) : (
+                  <>
                 {/* Column 1: Programs List */}
                 <div className="col-span-3 bg-gray-50 border-r border-gray-100 py-4 overflow-y-auto">
                   <div className="px-5 pb-3 text-sm font-bold text-gray-400 uppercase tracking-wider">
@@ -697,6 +737,8 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     </div>
                   </div>
                 </div>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
