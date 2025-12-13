@@ -263,7 +263,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-8 pb-20"
+            className="pb-20"
           >
             {/* Back Header - Sticky */}
             <div className="flex items-center gap-3 sticky top-0 bg-black z-20 py-4 -mx-6 px-6 border-b border-gray-800">
@@ -277,8 +277,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
             </div>
 
             {/* Topics List */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-4">
+            <div className="mt-6">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 mb-3">
                 {language === 'fr' ? 'Sujets Tendances' : 'Trending Topics'}
               </h4>
 
