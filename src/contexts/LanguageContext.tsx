@@ -186,7 +186,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Start Journey Section
     'start.title': 'Commence ton aventure aujourd\'hui.',
     'start.subtitle': 'Rejoins +2400 étudiants qui ont transformé leurs résultats.',
-    'start.guarantee': 'Diagnostic gratuit • Sans engagement • Satisfait ou remboursé',
+    'start.guarantee': 'Diagnostic gratuit • Sans engagement • Leçons offertes',
     'start.cta_primary': 'Commencer gratuitement',
     'start.cta_secondary': 'Explorer le programme',
 
@@ -422,7 +422,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Start Journey Section
     'start.title': 'Start your journey today.',
     'start.subtitle': 'Join +2400 students who transformed their results.',
-    'start.guarantee': 'Free diagnosis • No commitment • Money-back guarantee',
+    'start.guarantee': 'Free diagnosis • No commitment • Free lessons',
     'start.cta_primary': 'Start for free',
     'start.cta_secondary': 'Explore curriculum',
 
