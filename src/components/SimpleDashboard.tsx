@@ -559,12 +559,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   }, []); // Une seule fois au montage
 
   // 🎯 Vérifier si c'est la première visite pour afficher l'onboarding
-  useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
-    if (!hasSeenOnboarding) {
-      setShowOnboarding(true);
-    }
-  }, []);
+  // DÉSACTIVÉ TEMPORAIREMENT
+  // useEffect(() => {
+  //   const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
+  //   if (!hasSeenOnboarding) {
+  //     setShowOnboarding(true);
+  //   }
+  // }, []);
 
   // 🎯 Handler pour fermer l'onboarding
   const handleOnboardingComplete = () => {
