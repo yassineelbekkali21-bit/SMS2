@@ -94,6 +94,7 @@ import { StudyRoomButton } from './StudyRoomButton';
 import { TrendBadgeComponent } from './TrendBadge';
 import { smartSortFacultyCourses, CourseWithTrend } from '@/lib/faculty-sorting';
 import { FilterBar } from './FilterBar';
+import { OnboardingPopup } from './OnboardingPopup';
 import { 
   FilterState, 
   filterAndSortCourses, 
@@ -533,6 +534,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   // État pour la messagerie
   const [messagingContactId, setMessagingContactId] = useState<string | undefined>(undefined);
 
+  // 🎯 État pour l'onboarding popup (première visite)
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
   // 🎯 États pour le système XP et gamification
   const [userXPProfile, setUserXPProfile] = useState<UserXPProfile | null>(null);
   const [showGamifiedProfile, setShowGamifiedProfile] = useState(false);
@@ -553,6 +557,20 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     socialFeedService.startBuddySimulation();
     socialFeedService.startFounderSessionSimulation(); // Nouvelle simulation
   }, []); // Une seule fois au montage
+
+  // 🎯 Vérifier si c'est la première visite pour afficher l'onboarding
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  // 🎯 Handler pour fermer l'onboarding
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('sms_onboarding_completed', 'true');
+    setShowOnboarding(false);
+  };
 
   // 🎯 Initialiser le profil XP
   useEffect(() => {
@@ -3913,6 +3931,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           />
         </div>
       )}
+
+      {/* 🎓 Onboarding Popup (première visite - style MasterClass) */}
+      <OnboardingPopup
+        isOpen={showOnboarding}
+        onComplete={handleOnboardingComplete}
+      />
     </>
   );
 }
