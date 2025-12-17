@@ -91,15 +91,15 @@ export function WhyUsSectionMultilang() {
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
           
           {/* Left Card - Traditional (order-2 on mobile, order-1 on desktop) */}
-          <motion.div
+              <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+                viewport={{ once: true }}
             className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 order-2 md:order-1"
-          >
+              >
             <h3 className="text-2xl md:text-3xl font-light !text-gray-400 mb-6">
               {language === 'fr' ? 'Soutien Scolaire Traditionnel' : 'Traditional Tutoring'}
-            </h3>
+                    </h3>
             
             <div className="w-full h-px bg-gray-700 mb-6" />
             
@@ -120,16 +120,44 @@ export function WhyUsSectionMultilang() {
             viewport={{ once: true }}
             className="bg-[#F5F5F5] rounded-3xl p-5 md:p-5 ring-1 ring-gray-300 ring-offset-4 ring-offset-white relative md:-my-8 shadow-xl order-1 md:order-2"
           >
-            {/* Floating Favicon */}
-            <div className="absolute -top-6 -right-6 transform rotate-12 z-20">
-              <Image 
-                src="/favicon.svg" 
-                alt="Icon" 
-                width={70}
-                height={70}
-                className="object-contain"
+            {/* Floating Favicon with KPI-like animation */}
+            <motion.div 
+              className="absolute -top-6 -right-6 transform rotate-12 z-20 relative"
+              animate={{
+                boxShadow: [
+                  '0 0 10px rgba(37, 99, 235, 0.3)',
+                  '0 0 20px rgba(37, 99, 235, 0.5)',
+                  '0 0 10px rgba(37, 99, 235, 0.3)'
+                ]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              {/* Animated background gradient */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-blue-400/10 to-transparent rounded-full"
+                animate={{
+                  opacity: [0.2, 0.4, 0.2],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
               />
-            </div>
+              <div className="relative z-10">
+                <Image 
+                  src="/favicon.svg" 
+                  alt="Icon" 
+                  width={70}
+                  height={70}
+                  className="object-contain"
+                />
+              </div>
+            </motion.div>
 
             {/* Logo Text */}
             <div className="relative h-28 w-full max-w-sm mb-6">
@@ -139,8 +167,8 @@ export function WhyUsSectionMultilang() {
                 fill
                 className="object-contain object-left"
               />
-            </div>
-            
+        </div>
+
             <div className="w-full h-px bg-gray-300 mb-6" />
             
             <ul className="divide-y divide-gray-200">
@@ -174,7 +202,7 @@ export function WhyUsSectionMultilang() {
                   
                   <AnimatePresence>
                     {expandedIndex === index && (
-                      <motion.div
+        <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -194,12 +222,12 @@ export function WhyUsSectionMultilang() {
             {/* CTA Button */}
             <button
               onClick={handleWhatsAppClick}
-              className="w-full mt-10 px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className="w-full mt-10 px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-full font-bold text-base md:text-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
               {language === 'fr' ? 'Commencer maintenant' : 'Get Started Now'}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
-          </motion.div>
+        </motion.div>
         </div>
       </div>
     </section>
