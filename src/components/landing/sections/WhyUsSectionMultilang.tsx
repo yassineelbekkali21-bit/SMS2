@@ -120,44 +120,16 @@ export function WhyUsSectionMultilang() {
             viewport={{ once: true }}
             className="bg-[#F5F5F5] rounded-3xl p-5 md:p-5 ring-1 ring-gray-300 ring-offset-4 ring-offset-white relative md:-my-8 shadow-xl order-1 md:order-2"
           >
-            {/* Floating Favicon with KPI-like animation */}
-            <motion.div 
-              className="absolute -top-6 -right-6 transform rotate-12 z-20 relative"
-              animate={{
-                boxShadow: [
-                  '0 0 10px rgba(37, 99, 235, 0.3)',
-                  '0 0 20px rgba(37, 99, 235, 0.5)',
-                  '0 0 10px rgba(37, 99, 235, 0.3)'
-                ]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              {/* Animated background gradient */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-blue-400/10 to-transparent rounded-full"
-                animate={{
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
+            {/* Floating Favicon */}
+            <div className="absolute -top-6 -right-6 transform rotate-12 z-20">
+              <Image 
+                src="/favicon.svg" 
+                alt="Icon" 
+                width={70}
+                height={70}
+                className="object-contain"
               />
-              <div className="relative z-10">
-                <Image 
-                  src="/favicon.svg" 
-                  alt="Icon" 
-                  width={70}
-                  height={70}
-                  className="object-contain"
-                />
-              </div>
-            </motion.div>
+            </div>
 
             {/* Logo Text */}
             <div className="relative h-28 w-full max-w-sm mb-6">
