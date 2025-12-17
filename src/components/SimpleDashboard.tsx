@@ -559,13 +559,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   }, []); // Une seule fois au montage
 
   // 🎯 Vérifier si c'est la première visite pour afficher l'onboarding
-  // DÉSACTIVÉ TEMPORAIREMENT
-  // useEffect(() => {
-  //   const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
-  //   if (!hasSeenOnboarding) {
-  //     setShowOnboarding(true);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   // 🎯 Handler pour fermer l'onboarding
   const handleOnboardingComplete = () => {
@@ -2442,19 +2441,19 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           id="dashboard-container"
           className="min-h-screen pt-[73px] relative overflow-hidden"
         >
-          {/* Curseur animé personnalisé pour le dashboard */}
-          <TargetCursor 
+          {/* Curseur animé personnalisé pour le dashboard - DÉSACTIVÉ TEMPORAIREMENT */}
+          {/* <TargetCursor 
             spinDuration={2}
             hideDefaultCursor={true}
-          />
+          /> */}
           
-          {/* Style pour cacher le curseur uniquement dans le dashboard */}
-          <style dangerouslySetInnerHTML={{ __html: `
+          {/* Style pour cacher le curseur uniquement dans le dashboard - DÉSACTIVÉ */}
+          {/* <style dangerouslySetInnerHTML={{ __html: `
             #dashboard-container,
             #dashboard-container * {
               cursor: none !important;
             }
-          `}} />
+          `}} /> */}
           
           {/* Arrière-plan dynamique */}
           {selectedBackground !== 'default' ? (
@@ -3790,13 +3789,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       />
 
 
-      {/* Tour guidé d'onboarding */}
-      <OnboardingSpotlight
+      {/* Tour guidé d'onboarding - DÉSACTIVÉ TEMPORAIREMENT */}
+      {/* <OnboardingSpotlight
         isActive={onboardingTour.isTourActive}
         onComplete={onboardingTour.completeTour}
         onSkip={onboardingTour.skipTour}
         userName={user?.name || safeData.user?.name}
-      />
+      /> */}
 
       {/* Onboarding Buddy System */}
       <BuddyOnboarding
