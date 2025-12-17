@@ -154,15 +154,12 @@ export function OnboardingPopup({
             {/* Header */}
             <header className="sticky top-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Image 
-                    src="/favicon.svg" 
-                    alt="SMS" 
-                    width={36} 
-                    height={36}
-                  />
-                  <span className="text-white font-bold text-lg hidden md:block">Science Made Simple</span>
-                </div>
+                <Image 
+                  src="/favicon.svg" 
+                  alt="Science Made Simple" 
+                  width={50} 
+                  height={50}
+                />
                 
                 {/* Progress Steps */}
                 <div className="hidden md:flex items-center gap-8">
@@ -182,7 +179,7 @@ export function OnboardingPopup({
 
                 <button
                   onClick={onComplete}
-                  className="text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                  className="text-gray-300 hover:text-white text-sm font-medium transition-colors"
                 >
                   Skip
                 </button>
@@ -204,7 +201,7 @@ export function OnboardingPopup({
                       <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-2">
                         Courses for you
                       </h1>
-                      <p className="text-xl text-gray-400">
+                      <p className="text-xl text-gray-300">
                         from {interests.length} interests
                       </p>
                     </div>
@@ -218,15 +215,15 @@ export function OnboardingPopup({
                   {/* Benefits List */}
                   <ul className="space-y-4">
                     <li className="flex items-center gap-4">
-                      <Check className="w-5 h-5 text-gray-400" strokeWidth={2} />
+                      <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
                       <span className="text-white text-lg">All 200+ classes and categories</span>
                     </li>
                     <li className="flex items-center gap-4">
-                      <Check className="w-5 h-5 text-gray-400" strokeWidth={2} />
+                      <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
                       <span className="text-white text-lg">New classes added every month</span>
                     </li>
                     <li className="flex items-center gap-4">
-                      <Check className="w-5 h-5 text-gray-400" strokeWidth={2} />
+                      <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
                       <span className="text-white text-lg">Direct access to Zak via WhatsApp</span>
                     </li>
                   </ul>
@@ -264,7 +261,7 @@ export function OnboardingPopup({
                       Start Learning
                     </button>
 
-                    <p className="text-center text-gray-500 text-sm mt-5">
+                    <p className="text-center text-gray-400 text-sm mt-5">
                       No credit card required
                     </p>
                   </div>
@@ -290,7 +287,7 @@ export function OnboardingPopup({
                     <h2 className="text-3xl font-bold text-white mb-1">
                       {interests[0]}
                     </h2>
-                    <p className="text-gray-400 text-lg">
+                    <p className="text-gray-300 text-lg">
                       {recommendedCourses.filter(c => c.category.includes(interests[0])).length} courses · Master the fundamentals
                     </p>
                   </div>
@@ -300,14 +297,14 @@ export function OnboardingPopup({
                     <button
                       onClick={handleCarouselPrev}
                       disabled={carouselIndex === 0}
-                      className="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      className="w-12 h-12 rounded-full border border-gray-600 flex items-center justify-center text-gray-300 hover:border-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     >
                       <ChevronLeft size={24} />
                     </button>
                     <button
                       onClick={handleCarouselNext}
                       disabled={carouselIndex >= recommendedCourses.length - 4}
-                      className="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      className="w-12 h-12 rounded-full border border-gray-600 flex items-center justify-center text-gray-300 hover:border-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     >
                       <ChevronRight size={24} />
                     </button>
@@ -347,14 +344,6 @@ export function OnboardingPopup({
                           </div>
                         </div>
 
-                        {/* Course Info Below Card */}
-                        <p className="text-white font-medium text-sm mb-1 truncate">
-                          {course.subtitle}
-                        </p>
-                        <div className="flex items-center gap-2 text-gray-400 text-sm">
-                          <Play className="w-4 h-4" />
-                          <span>Watch Trailer</span>
-                        </div>
                       </div>
                     ))}
                   </motion.div>
