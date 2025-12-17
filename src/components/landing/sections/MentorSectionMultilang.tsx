@@ -58,7 +58,7 @@ export function MentorSectionMultilang() {
               </p>
             </div>
 
-            <div className="space-y-6 text-lg text-white leading-relaxed">
+            <div className="space-y-6 text-xl md:text-2xl text-white leading-relaxed">
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio1')}</p>
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio2')}</p>
               <p style={{ color: '#FFFFFF' }}>{t('mentor.bio3')}</p>
@@ -68,8 +68,8 @@ export function MentorSectionMultilang() {
 
             <div className="mt-12 flex items-center gap-4 pt-8 border-t border-gray-800">
               <div className="flex flex-col">
-                <span className="font-bold text-white text-xl" style={{ color: '#FFFFFF' }}>Zak</span>
-                <span className="text-white font-medium text-sm tracking-widest uppercase" style={{ color: '#FFFFFF' }}>{t('mentor.role')}</span>
+                <span className="font-bold text-white text-2xl md:text-3xl" style={{ color: '#FFFFFF' }}>Zak</span>
+                <span className="text-white font-medium text-base md:text-lg tracking-widest uppercase" style={{ color: '#FFFFFF' }}>{t('mentor.role')}</span>
               </div>
             </div>
           </motion.div>

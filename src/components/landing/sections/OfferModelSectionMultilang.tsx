@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Target, ArrowRight, Sparkles, Gift, Eye, CheckCircle } from 'lucide-react';
+import { GraduationCap, Target, ArrowRight, Sparkles, Gift, Eye, CheckCircle, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Badge {
@@ -97,14 +97,14 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
                 
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h4 
+                  <h4 
                       className={`font-bold text-lg ${
-                        highlight ? '!text-white' : 'text-gray-900'
-                      }`}
-                      style={{ fontSize: 'clamp(1.125rem, 3vw, 1.625rem)' }}
-                    >
-                      {block.title}
-                    </h4>
+                      highlight ? '!text-white' : 'text-gray-900'
+                    }`}
+                    style={{ fontSize: 'clamp(1.125rem, 3vw, 1.625rem)' }}
+                  >
+                    {block.title}
+                  </h4>
                     {/* Title Badge */}
                     {block.titleBadge && (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-sm font-bold uppercase tracking-wide ${
@@ -137,18 +137,20 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
                           highlight ? '!text-white' : 'text-gray-600'
                         } ${isBooster ? 'font-bold' : ''}`}>
                           <div className="flex items-start">
-                            <span className={`mr-2 mt-0.5 ${
-                              highlight ? 'text-gray-400' : 'text-gray-400'
-                            }`}>•</span>
+                            <Check size={18} className={`mr-2 mt-0.5 flex-shrink-0 ${
+                              highlight ? 'text-blue-400' : 'text-blue-600'
+                            }`} strokeWidth={3} />
                             <span>{text}</span>
                           </div>
                           
                           {/* Bullet Badge */}
                           {badge && (
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs md:text-sm font-bold uppercase tracking-wide ${
-                              highlight 
-                                ? 'bg-blue-600 bg-opacity-20 text-white border border-blue-600 border-opacity-30' 
-                                : 'bg-blue-50 text-blue-700 border border-blue-100'
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider ${
+                              badge.color === 'purple'
+                                ? 'text-gray-500 bg-gray-100 border border-gray-200'
+                                : highlight 
+                                  ? 'bg-blue-600 bg-opacity-20 text-white border border-blue-600 border-opacity-30' 
+                                  : 'bg-blue-50 text-blue-700 border border-blue-100'
                             }`}>
                               {badge.icon && <badge.icon size={14} />}
                               {badge.text}
@@ -191,6 +193,8 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
 export function OfferModelSectionMultilang() {
   const { language, t } = useLanguage();
 
+  const comingSoonBadge = { text: 'Coming soon', color: 'purple' as const };
+  
   const addonsBlock: OfferBlock = {
     title: 'Mastery Boosters',
     titleBadge: {
@@ -202,9 +206,9 @@ export function OfferModelSectionMultilang() {
       : 'Modules to accelerate your progress:',
     bullets: [
       t('offer.addons.1'),
-      t('offer.addons.2'),
-      t('offer.addons.3'),
-      t('offer.addons.4')
+      { text: t('offer.addons.2'), badge: comingSoonBadge },
+      { text: t('offer.addons.3'), badge: comingSoonBadge },
+      { text: t('offer.addons.4'), badge: comingSoonBadge }
     ],
     isAddons: true
   };
@@ -216,8 +220,8 @@ export function OfferModelSectionMultilang() {
       : 'Modules to accelerate your progress:',
     bullets: [
       t('offer.addons.1'),
-      t('offer.addons.2'),
-      t('offer.addons.3')
+      { text: t('offer.addons.2'), badge: comingSoonBadge },
+      { text: t('offer.addons.3'), badge: comingSoonBadge }
     ],
     isAddons: true
   };
@@ -232,29 +236,19 @@ export function OfferModelSectionMultilang() {
       intro: t('offer.mastery.block1.intro'),
       bullets: language === 'fr' 
         ? [
-            { text: "Diagnostic d'orientation", badge: { text: "Offert", icon: Gift } },
-            "Slides manuscrits & Q&A", 
-            "Exercices + corrections détaillées", 
-            "Accès à la communauté & aux cercles", 
-            "Support WhatsApp"
+            { text: "Diagnostic d'orientation personnalisé", badge: { text: "Offert", icon: Gift } },
+            "250+ slides manuscrits & sessions Q&A en direct", 
+            "500+ exercices types examens corrigés pas-à-pas", 
+            "Accès à la communauté et aux cercles", 
+            "Ton mentor dans ta poche"
           ]
         : [
-            { text: "Orientation Diagnosis", badge: { text: "Free", icon: Gift } },
-            "Handwritten slides & Q&A", 
-            "Exercises + detailed corrections", 
-            "Community & study circles access", 
-            "WhatsApp Support"
+            { text: "Personalized Orientation Diagnosis", badge: { text: "Free", icon: Gift } },
+            "250+ handwritten slides & live Q&A sessions", 
+            "500+ exam-style exercises with step-by-step solutions", 
+            "Access to the community & study circles", 
+            "Your mentor in your pocket"
           ]
-    },
-    {
-      title: t('offer.mastery.block2.title'),
-      intro: t('offer.mastery.block2.intro'),
-      bullets: language === 'fr'
-        ? ["Beginner", "Intermediate", "Advanced"]
-        : ["Beginner", "Intermediate", "Advanced"],
-      footer: language === 'fr' 
-        ? "(Le niveau est attribué automatiquement grâce au diagnostic.)"
-        : "(Level is automatically assigned through the diagnosis.)"
     },
     addonsBlock
   ];
@@ -268,8 +262,8 @@ export function OfferModelSectionMultilang() {
       },
       intro: t('offer.exam.block1.intro'),
       bullets: language === 'fr'
-        ? ["Slides manuscrits", "Exercices corrigés & entraînement progressif", "Accès communauté & Q&A", "Support WhatsApp"]
-        : ["Handwritten slides", "Corrected exercises & progressive training", "Community & Q&A access", "WhatsApp Support"]
+        ? ["Slides manuscrits ciblés sur ton exam", "Banque d'exercices calibrés sur tes épreuves", "Accès aux Cercles d'Étude intensifs", "Mentor dédié"]
+        : ["Handwritten slides focused on your exam", "Exercise bank calibrated to your exams", "Access to intensive Study Circles", "Dedicated mentor"]
     },
     addonsBlockExam
   ];

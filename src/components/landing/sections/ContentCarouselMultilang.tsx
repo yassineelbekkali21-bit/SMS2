@@ -224,10 +224,10 @@ export function ContentCarouselMultilang() {
                     </div>
                     <button
                       onClick={handleTestClick}
-                      className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
+                      className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
                       {t('carousel.test_btn')}
-                      <ArrowRight size={16} />
+                      <ArrowRight size={22} />
                     </button>
                   </div>
                 </div>
@@ -256,7 +256,7 @@ export function ContentCarouselMultilang() {
           <div className="p-4 md:hidden border-t border-gray-100 bg-gray-50/50">
             <button
               onClick={handleTestClick}
-              className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-base hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg"
+              className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               {t('carousel.test_btn')}
               <ArrowRight size={18} />

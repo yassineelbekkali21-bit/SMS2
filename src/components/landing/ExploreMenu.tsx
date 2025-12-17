@@ -448,7 +448,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               </p>
               <Link 
                 href={`/assessment/${selectedProgram.id}`}
-                className="block w-full py-4 bg-blue-600 text-white text-center rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+                className="block w-full py-4 bg-blue-600 text-white text-center rounded-full font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
               >
                  <span>{language === 'fr' ? `Se tester en ${selectedProgram.label.split(' ')[0]}` : `Test ${selectedProgram.label.split(' ')[0]} Skills`}</span>
                  <ArrowRight size={18} />
@@ -637,7 +637,7 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
         onMouseEnter={() => setIsOpen(true)}
         className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
       >
-        <span>{language === 'fr' ? 'Explorer' : 'Explore'}</span>
+        <span>{language === 'fr' ? 'Faire un quiz' : 'Take a quiz'}</span>
         <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -740,7 +740,7 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                     </p>
                     <Link
                       href={`/assessment/${currentProgram.id}`}
-                      className="block w-full py-3 bg-blue-600 text-white text-center rounded-lg font-bold text-base hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl mb-3 flex items-center justify-center gap-2"
+                      className="block w-full py-3 bg-blue-600 text-white text-center rounded-full font-bold text-base hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl mb-3 flex items-center justify-center gap-2"
                     >
                       <span>{language === 'fr' ? `Se tester en ${currentProgram.label.split(' ')[0]}` : `Test ${currentProgram.label.split(' ')[0]} Skills`}</span>
                       <ArrowRight size={16} />
@@ -765,7 +765,7 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
                       {/* @ts-ignore - Transitioning data structure */}
                       {(currentTopic.lessons || [currentTopic.lesson]).map((lesson, idx) => (
                         <div key={idx} className="group">
-                          <h4 className="text-2xl font-bold text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors">
+                          <h4 className="text-2xl font-bold !text-black mb-2 leading-tight">
                             {lesson.title}
                           </h4>
                           <p className="text-gray-500 leading-relaxed text-base">

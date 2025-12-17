@@ -51,19 +51,19 @@ export function StartJourneySectionMultilang() {
           {/* Primary Button */}
           <button
             onClick={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-blue-600/25 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             {t('start.cta_primary')}
-            <ArrowRight size={20} />
+            <ArrowRight size={22} />
           </button>
 
           {/* Secondary Button */}
           <button
             onClick={() => document.getElementById('curriculum')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full sm:w-auto px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 border border-gray-700"
+            className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             {t('start.cta_secondary')}
-            <Compass size={20} />
+            <Compass size={22} />
           </button>
         </motion.div>
       </div>

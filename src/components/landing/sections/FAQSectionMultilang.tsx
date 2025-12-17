@@ -125,7 +125,7 @@ export function FAQSectionMultilang() {
           </p>
           <button
             onClick={handleWhatsAppClick}
-            className="group px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-xl font-semibold text-base md:text-lg hover:bg-blue-700 transition-all inline-flex items-center gap-2 md:gap-3 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:scale-105"
+            className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
           >
             <MessageCircle size={20} className="group-hover:rotate-12 transition-transform" />
             {t('faq.cta')}

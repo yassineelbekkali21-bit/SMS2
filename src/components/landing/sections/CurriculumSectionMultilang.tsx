@@ -126,9 +126,17 @@ export function CurriculumSectionMultilang() {
                               </span>
                             </div>
                             
-                            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                            <p className="text-lg text-gray-700 leading-relaxed mb-8">
                               {t(`${subject.key}.desc`)}
                             </p>
+
+                            <Link
+                              href={`/assessment/${subject.id}`}
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:scale-105"
+                            >
+                              <span>{language === 'fr' ? `Se tester en ${t(`${subject.key}.title`)}` : `Test ${t(`${subject.key}.title`)} Skills`}</span>
+                              <ArrowRight size={18} />
+                            </Link>
                           </div>
 
                           {/* Right: Outcomes Checklist with Previews */}
@@ -144,17 +152,6 @@ export function CurriculumSectionMultilang() {
                                     <span className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors">
                                       {t(`${subject.key}.outcomes.${i}`)}
                                     </span>
-                                  </div>
-
-                                  {/* Assessment Link */}
-                                  <div className="flex items-center pl-4 shrink-0">
-                                    <Link
-                                      href={`/assessment/${subject.id}`}
-                                      className="text-xs font-bold text-gray-400 hover:text-black transition-colors flex items-center gap-1 group/link whitespace-nowrap"
-                                    >
-                                      {language === 'fr' ? 'Me tester' : 'Test myself'}
-                                      <ArrowRight size={12} className="group-hover/link:translate-x-0.5 transition-transform" />
-                                    </Link>
                                   </div>
                                 </li>
                               ))}
@@ -175,7 +172,7 @@ export function CurriculumSectionMultilang() {
         <div className="flex justify-center mt-16">
           <button
             onClick={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-blue-700 transition-all flex items-center gap-3 shadow-lg shadow-blue-600/30 hover:scale-105"
+            className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             {t('nav.start')}
             <ArrowRight size={20} />

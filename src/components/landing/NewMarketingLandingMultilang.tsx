@@ -15,6 +15,8 @@ import { MentorSectionMultilang } from './sections/MentorSectionMultilang';
 import { TargetSectionMultilang } from './sections/TargetSectionMultilang';
 import { CurriculumSectionMultilang } from './sections/CurriculumSectionMultilang';
 import { StartJourneySectionMultilang } from './sections/StartJourneySectionMultilang';
+import { MasteryBoostersSection } from './sections/MasteryBoostersSection';
+import { WhoIsSMSSectionMultilang } from './sections/WhoIsSMSSectionMultilang';
 
 interface NewMarketingLandingMultilangProps {
   onEnterApp?: () => void;
@@ -34,9 +36,11 @@ function LandingContent({ onEnterApp }: NewMarketingLandingMultilangProps) {
       {/* <TargetSectionMultilang /> */}
       <HowItWorksSectionMultilang />
       <WhyUsSectionMultilang />
+      <WhoIsSMSSectionMultilang />
       <TestimonialsSectionMultilang />
       <StartJourneySectionMultilang />
       <CurriculumSectionMultilang />
+      <MasteryBoostersSection />
       <OfferModelSectionMultilang />
       <WhatsAppContactFormMultilang />
       <FAQSectionMultilang />

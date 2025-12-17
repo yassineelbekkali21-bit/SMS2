@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Palette } from 'lucide-react';
 
-type Theme = 'blue' | 'purple' | 'turquoise' | 'coral' | 'mauve' | 'bluepremium';
+type Theme = 'blue' | 'purple' | 'turquoise' | 'coral' | 'mauve' | 'bluepremium' | 'yellow';
 
 export function ColorSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,11 +16,12 @@ export function ColorSwitcher() {
     { id: 'coral', color: '#FF6B6B', name: 'Corail' },
     { id: 'mauve', color: '#6d28d9', name: 'Mauve Premium' },
     { id: 'bluepremium', color: '#1e40af', name: 'Bleu Premium' },
+    { id: 'yellow', color: '#FFEB3B', name: 'Jaune Fluo' },
   ];
 
   useEffect(() => {
     // Nettoyer les anciennes classes
-    document.body.classList.remove('theme-blue', 'theme-purple', 'theme-turquoise', 'theme-coral', 'theme-mauve', 'theme-bluepremium');
+    document.body.classList.remove('theme-blue', 'theme-purple', 'theme-turquoise', 'theme-coral', 'theme-mauve', 'theme-bluepremium', 'theme-yellow');
     // Ajouter la nouvelle
     if (currentTheme !== 'blue') {
       document.body.classList.add(`theme-${currentTheme}`);
@@ -36,13 +37,14 @@ export function ColorSwitcher() {
         coral: '#FF6B6B',
         mauve: '#6d28d9',
         bluepremium: '#1e40af',
+        yellow: '#FFEB3B',
       };
       themeColorMeta.setAttribute('content', colors[currentTheme]);
     }
   }, [currentTheme]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex items-end gap-2">
+    <div className="fixed bottom-20 right-6 z-[100] flex items-end gap-2">
       {isOpen && (
         <div className="bg-white p-3 rounded-2xl shadow-2xl border border-gray-100 flex flex-col gap-3 mb-14 absolute bottom-0 right-0 w-max animate-in fade-in slide-in-from-bottom-4">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Theme Color</p>
