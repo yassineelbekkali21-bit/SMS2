@@ -11,15 +11,6 @@ export function MasteryBoostersSection() {
 
   const boosters = [
     {
-      id: 'path',
-      title: t('boosters.path.title'),
-      subtitle: t('boosters.path.subtitle'),
-      description: t('boosters.path.desc'),
-      icon: Map,
-      color: 'blue',
-      comingSoon: true
-    },
-    {
       id: 'planner',
       title: t('boosters.planner.title'),
       subtitle: t('boosters.planner.subtitle'),
@@ -27,6 +18,15 @@ export function MasteryBoostersSection() {
       icon: Calendar,
       color: 'purple',
       comingSoon: false
+    },
+    {
+      id: 'path',
+      title: t('boosters.path.title'),
+      subtitle: t('boosters.path.subtitle'),
+      description: t('boosters.path.desc'),
+      icon: Map,
+      color: 'blue',
+      comingSoon: true
     },
     {
       id: 'exams',
@@ -163,8 +163,51 @@ export function MasteryBoostersSection() {
                   {/* Content Area - Specific to each booster */}
                   <div className="flex-1 p-8 relative">
                     
-                    {/* 1. LEARNING PATH CREATOR VISUAL */}
+                    {/* 1. PLANNER VISUAL (maintenant en premier) */}
                     {activeTab === 0 && (
+                      <div className="h-full flex flex-col">
+                        <div className="flex justify-between items-center mb-6">
+                            <h4 className="font-bold text-gray-900">Your Week</h4>
+                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">Optimized for Energy</span>
+                        </div>
+                        <div className="space-y-3 flex-1">
+                             {[
+                                { day: 'Mon', task: 'Thermodynamics', time: '2h', type: 'Deep Work', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+                                { day: 'Tue', task: 'Math Practice', time: '1h', type: 'Review', color: 'bg-green-100 text-green-700 border-green-200' },
+                                { day: 'Wed', task: 'Physics Quiz', time: '30m', type: 'Quick', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+                                { day: 'Thu', task: 'Exam Simulation', time: '3h', type: 'Focus', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+                             ].map((item, i) => (
+                                <motion.div 
+                                    key={i}
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className={`p-3 rounded-xl border ${item.color} flex items-center justify-between`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-sm w-8">{item.day}</span>
+                                        <div className="h-4 w-px bg-current opacity-20"/>
+                                        <span className="font-medium text-sm">{item.task}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] uppercase font-bold tracking-wider opacity-70">{item.type}</span>
+                                        <span className="bg-white/50 px-2 py-0.5 rounded text-xs font-bold">{item.time}</span>
+                                    </div>
+                                </motion.div>
+                             ))}
+                        </div>
+                        <div className="mt-4 p-3 bg-gray-900 text-white rounded-xl text-xs flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Zap size={14} className="text-yellow-400"/>
+                                <span>AI adjusted based on your last quiz score</span>
+                            </div>
+                            <button className="font-bold hover:underline">View details</button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 2. LEARNING PATH CREATOR VISUAL (maintenant en second) */}
+                    {activeTab === 1 && (
                       <div className="h-full flex flex-col items-center justify-center relative">
                          {/* Path Nodes */}
                          <div className="absolute inset-0 flex items-center justify-center">
@@ -206,49 +249,6 @@ export function MasteryBoostersSection() {
                             <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><Target size={16}/></div>
                             <div><div className="text-xs font-bold text-gray-900">Mastery Exam</div><div className="text-[10px] text-gray-400">Locked</div></div>
                          </motion.div>
-                      </div>
-                    )}
-
-                    {/* 2. PLANNER VISUAL */}
-                    {activeTab === 1 && (
-                      <div className="h-full flex flex-col">
-                        <div className="flex justify-between items-center mb-6">
-                            <h4 className="font-bold text-gray-900">Your Week</h4>
-                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">Optimized for Energy</span>
-                        </div>
-                        <div className="space-y-3 flex-1">
-                             {[
-                                { day: 'Mon', task: 'Thermodynamics', time: '2h', type: 'Deep Work', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-                                { day: 'Tue', task: 'Math Practice', time: '1h', type: 'Review', color: 'bg-green-100 text-green-700 border-green-200' },
-                                { day: 'Wed', task: 'Physics Quiz', time: '30m', type: 'Quick', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-                                { day: 'Thu', task: 'Exam Simulation', time: '3h', type: 'Focus', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-                             ].map((item, i) => (
-                                <motion.div 
-                                    key={i}
-                                    initial={{ x: -20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className={`p-3 rounded-xl border ${item.color} flex items-center justify-between`}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <span className="font-bold text-sm w-8">{item.day}</span>
-                                        <div className="h-4 w-px bg-current opacity-20"/>
-                                        <span className="font-medium text-sm">{item.task}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[10px] uppercase font-bold tracking-wider opacity-70">{item.type}</span>
-                                        <span className="bg-white/50 px-2 py-0.5 rounded text-xs font-bold">{item.time}</span>
-                                    </div>
-                                </motion.div>
-                             ))}
-                        </div>
-                        <div className="mt-4 p-3 bg-gray-900 text-white rounded-xl text-xs flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Zap size={14} className="text-yellow-400"/>
-                                <span>AI adjusted based on your last quiz score</span>
-                            </div>
-                            <button className="font-bold hover:underline">View details</button>
-                        </div>
                       </div>
                     )}
 

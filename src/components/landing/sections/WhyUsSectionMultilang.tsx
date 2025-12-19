@@ -70,7 +70,7 @@ export function WhyUsSectionMultilang() {
 
   return (
     <section className="py-24 md:py-32 px-6 md:px-8 lg:px-10 bg-white overflow-hidden">
-      <div className="max-w-[1100px] mx-auto">
+      <div className="max-w-[1280px] mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -88,26 +88,34 @@ export function WhyUsSectionMultilang() {
         </motion.div>
 
         {/* Versus Cards */}
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
+        <div className="grid md:grid-cols-12 gap-6 md:gap-8 items-start">
           
           {/* Left Card - Traditional (order-2 on mobile, order-1 on desktop) */}
-              <motion.div
+          {/* Desktop: mt-[56px] aligne les lignes de séparation (dividers) des deux cartes */}
+          {/* Desktop: mb aligne le bas du bloc gauche avec le dernier item (avant CTA) */}
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-            className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 order-2 md:order-1"
-              >
+            viewport={{ once: true }}
+            className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 order-2 md:order-1 md:mt-[56px] md:mb-[85px] md:col-span-5"
+          >
             <h3 className="text-2xl md:text-3xl font-light !text-gray-400 mb-6">
               {language === 'fr' ? 'Soutien Scolaire Traditionnel' : 'Traditional Tutoring'}
-                    </h3>
+            </h3>
             
             <div className="w-full h-px bg-gray-700 mb-6" />
             
+            {/* Points - même taille de texte que la partie droite */}
             <ul className="divide-y divide-gray-800">
               {traditionalPoints.map((point, index) => (
-                <li key={index} className="flex items-center gap-4 py-5 first:pt-0 last:pb-0">
+                <li key={index} className="flex items-center gap-4 min-h-[56px] py-4 first:pt-0 last:pb-0">
                   <X className="w-5 h-5 text-gray-600 flex-shrink-0" strokeWidth={2} />
-                  <span className="text-gray-400 text-lg">{point}</span>
+                  <span 
+                    className="text-gray-400"
+                    style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.55rem)' }}
+                  >
+                    {point}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -118,7 +126,7 @@ export function WhyUsSectionMultilang() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-[#F5F5F5] rounded-3xl p-5 md:p-5 ring-1 ring-gray-300 ring-offset-4 ring-offset-white relative md:-my-8 shadow-xl order-1 md:order-2"
+            className="bg-[#F5F5F5] rounded-3xl p-5 md:p-8 ring-1 ring-gray-300 ring-offset-4 ring-offset-white relative shadow-xl order-1 md:order-2 md:col-span-7"
           >
             {/* Floating Favicon */}
             <div className="absolute -top-6 -right-6 transform rotate-12 z-20">
@@ -139,16 +147,17 @@ export function WhyUsSectionMultilang() {
                 fill
                 className="object-contain object-left"
               />
-        </div>
+            </div>
 
             <div className="w-full h-px bg-gray-300 mb-6" />
             
+            {/* Points avec accordion - hauteur minimale pour alignement */}
             <ul className="divide-y divide-gray-200">
               {smsPoints.map((point, index) => (
                 <li key={index} className="py-4 first:pt-0 last:pb-0">
                   <button
                     onClick={() => toggleExpand(index)}
-                    className="w-full flex items-center gap-4 text-left group"
+                    className="w-full flex items-center gap-4 text-left group min-h-[24px]"
                   >
                     <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
                       expandedIndex === index ? 'bg-blue-100' : 'bg-gray-200 group-hover:bg-blue-100'
@@ -174,7 +183,7 @@ export function WhyUsSectionMultilang() {
                   
                   <AnimatePresence>
                     {expandedIndex === index && (
-        <motion.div
+                      <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -199,7 +208,7 @@ export function WhyUsSectionMultilang() {
               {language === 'fr' ? 'Commencer maintenant' : 'Get Started Now'}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
-        </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>

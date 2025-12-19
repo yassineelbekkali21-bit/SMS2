@@ -323,7 +323,7 @@ export function SuggestedCourseCard({
         <div className="space-y-2">
           <AnimatePresence mode="wait">
             {showCompact ? (
-              /* Mode Compact : 2 boutons seulement */
+              /* Mode Compact : 2 boutons */
               <motion.div
                 key="compact"
                 initial={{ opacity: 0 }}
@@ -332,7 +332,7 @@ export function SuggestedCourseCard({
                 transition={{ duration: 0.2 }}
                 className="grid grid-cols-2 gap-2"
               >
-                {/* Se tester */}
+                {/* Je me teste */}
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -341,52 +341,37 @@ export function SuggestedCourseCard({
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
                 >
                   <Brain size={14} />
-                  <span className="text-xs">Tester</span>
+                  <span className="text-xs">Je me teste</span>
                 </motion.button>
 
-                {/* Débloquer */}
+                {/* Commencer */}
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onUnlock(course.id);
+                    onClick?.(course);
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-blue-700 hover:to-blue-800"
                 >
-                  <Lock size={14} />
-                  <span className="text-xs">Débloquer</span>
+                  <Play size={14} />
+                  <span className="text-xs">Commencer</span>
                 </motion.button>
               </motion.div>
             ) : (
-              /* Mode Normal : 3 boutons */
+              /* Mode Normal : 2 boutons */
               <motion.div
                 key="full"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="grid grid-cols-3 gap-2"
+                className="grid grid-cols-2 gap-2"
               >
-                {/* Aperçu */}
-                <motion.button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('🔍 Aperçu cliqué pour:', course.title);
-                    onPreview(course.id);
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
-                >
-                  <Eye size={14} />
-                  <span className="text-xs">Aperçu</span>
-                </motion.button>
-
-                {/* Se tester */}
+                {/* Je me teste */}
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -395,24 +380,24 @@ export function SuggestedCourseCard({
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-gray-900 hover:to-gray-800"
+                  className="flex items-center justify-center gap-1 py-3 px-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
                 >
                   <Brain size={14} />
-                  <span className="text-xs">Tester</span>
+                  <span className="text-xs">Je me teste</span>
                 </motion.button>
 
-                {/* Débloquer */}
+                {/* Commencer */}
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onUnlock(course.id);
+                    onClick?.(course);
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="flex items-center justify-center gap-1 py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:from-blue-700 hover:to-blue-800"
                 >
-                  <Lock size={14} />
-                  <span className="text-xs">Débloquer</span>
+                  <Play size={14} />
+                  <span className="text-xs">Commencer</span>
                 </motion.button>
               </motion.div>
             )}

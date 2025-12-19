@@ -395,41 +395,41 @@ export class AdvancedStudyRoomService {
       'course-forces': 'pack-physique-q1',
       'course-suites': 'pack-math-q1',
       'course-integrales': 'pack-math-q1',
-      'course-equilibres': 'pack-chimie-q1',
-      'course-reactions': 'pack-chimie-q1',
+      'course-equilibres': 'pack-chemistry',
+      'course-reactions': 'pack-chemistry',
       
       // Packs thématiques
-      'loi-gauss': 'pack-electromagnetisme',
-      'forces': 'pack-electromagnetisme',
-      'equilibres': 'pack-sciences',
-      'mecanique': 'pack-sciences',
-      'integrales': 'pack-mathematiques',
-      'analyse-math': 'pack-mathematiques',
-      'suites-limites': 'pack-mathematiques'
+      'loi-gauss': 'pack-physics',
+      'forces': 'pack-physics',
+      'equilibres': 'pack-chemistry',
+      'mecanique': 'pack-physics',
+      'integrales': 'pack-mathematics',
+      'analyse-math': 'pack-mathematics',
+      'suites-limites': 'pack-mathematics'
     };
-    return packMapping[courseId] || 'pack-general';
+    return packMapping[courseId] || 'pack-physics';
   }
 
   private static getPackNameById(courseId: string): string {
     const packNames: { [key: string]: string } = {
       // Packs Q1
-      'course-gauss': 'Pack Physique Q1',
-      'course-forces': 'Pack Physique Q1',
-      'course-suites': 'Pack Mathématiques Q1',
-      'course-integrales': 'Pack Mathématiques Q1',
-      'course-equilibres': 'Pack Chimie Q1',
-      'course-reactions': 'Pack Chimie Q1',
+      'course-gauss': 'Physique',
+      'course-forces': 'Physique',
+      'course-suites': 'Mathématiques',
+      'course-integrales': 'Mathématiques',
+      'course-equilibres': 'Chimie',
+      'course-reactions': 'Chimie',
       
       // Packs thématiques
-      'loi-gauss': 'Pack Électrostatique',
-      'forces': 'Pack Électrostatique',
-      'equilibres': 'Pack Sciences Expérimentales',
-      'mecanique': 'Pack Sciences Expérimentales',
-      'integrales': 'Pack Mathématiques Avancées',
-      'analyse-math': 'Pack Mathématiques Avancées',
-      'suites-limites': 'Pack Mathématiques Avancées'
+      'loi-gauss': 'Physique',
+      'forces': 'Physique',
+      'equilibres': 'Chimie',
+      'mecanique': 'Physique',
+      'integrales': 'Mathématiques',
+      'analyse-math': 'Mathématiques',
+      'suites-limites': 'Mathématiques'
     };
-    return packNames[courseId] || 'Pack Général';
+    return packNames[courseId] || 'Physique';
   }
 
   private static generateMockStudyRooms(): AdvancedStudyRoom[] {

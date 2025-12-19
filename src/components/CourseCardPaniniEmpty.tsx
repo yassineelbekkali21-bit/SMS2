@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Heart, Eye, Brain, Users, BookOpen, Lock } from 'lucide-react';
+import { Heart, Eye, Brain, Users, BookOpen, Play } from 'lucide-react';
 import { getCourseById } from '@/lib/mock-data';
 import { getCourseThumbnail } from '@/lib/course-thumbnails';
 import { Course } from '@/types';
@@ -111,38 +111,28 @@ export function CourseCardPaniniEmpty({
         }
       }}
     >
-      {/* Header avec image réelle du cours - plus visible et engageante */}
+      {/* Header avec image réelle du cours */}
       <div className="relative h-52 overflow-hidden transition-all duration-300">
         {courseThumbnail ? (
-          /* Image réelle du cours avec effet atténué mais gardant les couleurs */
+          /* Image réelle du cours */
           <div 
             className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300"
             style={{
-              backgroundImage: `url(${courseThumbnail})`,
-              filter: isHovered 
-                ? 'grayscale(50%) brightness(1.1) contrast(0.9)' // Plus de saturation au hover
-                : 'grayscale(50%) brightness(1.05) contrast(0.9)',
-              opacity: isHovered ? 0.8 : 0.65
+              backgroundImage: `url(${courseThumbnail})`
             }}
           >
-            {/* Overlay blanc plus léger pour conserver les couleurs */}
-            <div className="absolute inset-0 bg-white/50"></div>
-            
-            {/* Fin contour blanc pour donner de la "présence" */}
-            <div className="absolute inset-0 border border-white/30 rounded-3xl"></div>
+            {/* Overlay subtil */}
+            <div className="absolute inset-0 bg-black/10"></div>
           </div>
         ) : (
           /* Pattern de fallback si pas d'image */
           <div 
             className="w-full h-full transition-all duration-300"
             style={{
-              background: fallbackPattern,
-              filter: 'grayscale(60%)',
-              opacity: isHovered ? 0.8 : 0.6
+              background: fallbackPattern
             }}
           >
-            <div className="absolute inset-0 bg-white/50"></div>
-            <div className="absolute inset-0 border border-white/30 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-black/10"></div>
           </div>
         )}
 
@@ -193,48 +183,33 @@ export function CourseCardPaniniEmpty({
           </div>
         </div>
 
-            {/* Boutons - Aperçu + Se tester + Débloquer */}
-            <div className="grid grid-cols-3 gap-2">
-              <motion.button
-                onClick={handlePreviewClick}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
-              >
-                <Eye size={14} />
-                <span className="text-xs">Aperçu</span>
-              </motion.button>
-
+            {/* Boutons - Je me teste + Commencer */}
+            <div className="grid grid-cols-2 gap-2">
               <motion.button
                 onClick={handleTestClick}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                aria-label={`Tester mes connaissances sur le cours ${courseData.title}`}
-                className="py-3 px-3 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
+                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
               >
                 <Brain size={14} />
-                <span className="text-xs">Tester</span>
+                <span className="text-xs">Je me teste</span>
               </motion.button>
 
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEnroll?.(courseId);
+                  onOpenCourse?.(courseData as any);
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-blue-600/20 hover:shadow-xl hover:from-blue-700 hover:to-blue-800"
               >
-                <Lock size={14} />
-                <span className="text-xs">Débloquer</span>
+                <Play size={14} />
+                <span className="text-xs">Commencer</span>
               </motion.button>
             </div>
       </div>
 
-      {/* Effet de "carte découvrable" */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className={`absolute inset-2 border border-dashed border-gray-300/40 rounded-2xl transition-opacity duration-200 ${isHovered ? 'opacity-60' : 'opacity-30'}`}></div>
-      </div>
     </motion.div>
   );
 }

@@ -108,22 +108,22 @@ export const getLessonRecommendations = (lesson: Lesson) => {
   const getRecommendedPack = (): CoursePack => {
     // Logique de recommandation basée sur les matières
     if (lesson.courseId === '1' || lesson.courseId === '4') {
-      // Mathématiques ou Statistiques → Pack Mathématiques Avancées
-      return coursePacks.find(pack => pack.id === 'pack-math-advanced') || coursePacks[0];
+      // Mathématiques ou Statistiques → Pack Mathématiques
+      return coursePacks.find(pack => pack.id === 'pack-mathematics') || coursePacks[0];
     }
     
-    if (lesson.courseId === '2' || lesson.courseId === '3') {
-      // Physique ou Chimie → Pack Sciences
-      return coursePacks.find(pack => pack.id === 'pack-chimie-complete') || coursePacks[0];
+    if (lesson.courseId === '2') {
+      // Physique → Pack Physique
+      return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
     }
     
-    if (lesson.courseId === '5') {
-      // Économie → Pack Rentrée (qui inclut micro)
-      return coursePacks.find(pack => pack.id === 'pack-rentree') || coursePacks[0];
+    if (lesson.courseId === '3') {
+      // Chimie → Pack Chimie
+      return coursePacks.find(pack => pack.id === 'pack-chemistry') || coursePacks[0];
     }
     
-    // Par défaut, recommander le pack Excellence
-    return coursePacks.find(pack => pack.id === 'pack-excellence') || coursePacks[0];
+    // Par défaut, recommander le pack Physique
+    return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
   };
 
   return {
@@ -204,33 +204,35 @@ export const getCourseRecommendations = (course: Course) => {
   
   // Mapping cours -> pack recommandé basé sur la matière et le niveau
   const getRecommendedPack = (): CoursePack => {
-    // Mathématiques et Statistiques → Pack Mathématiques Avancées
-    if (course.id === '1' || course.id === '4' || course.title.toLowerCase().includes('math')) {
-      return coursePacks.find(pack => pack.id === 'pack-math-advanced') || coursePacks[0];
+    // Mathématiques et Statistiques → Pack Mathématiques
+    if (course.id === '1' || course.id === '4' || course.title.toLowerCase().includes('math') || course.title.toLowerCase().includes('intégral') || course.title.toLowerCase().includes('algèbre')) {
+      return coursePacks.find(pack => pack.id === 'pack-mathematics') || coursePacks[0];
     }
     
-    // Physique et Chimie → Pack Sciences Exactes  
-    if (course.id === '2' || course.id === '3' || course.title.toLowerCase().includes('physique') || course.title.toLowerCase().includes('chimie')) {
-      return coursePacks.find(pack => pack.id === 'pack-chimie-complete') || coursePacks[0];
+    // Physique → Pack Physique
+    if (course.id === '2' || course.title.toLowerCase().includes('physique') || course.title.toLowerCase().includes('gauss') || course.title.toLowerCase().includes('force') || course.title.toLowerCase().includes('mécan')) {
+      return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
     }
     
-    // Économie → Pack Rentrée
-    if (course.id === '5' || course.faculty === 'Économie' || course.title.toLowerCase().includes('économie')) {
-      return coursePacks.find(pack => pack.id === 'pack-rentree') || coursePacks[0];
+    // Chimie → Pack Chimie
+    if (course.id === '3' || course.title.toLowerCase().includes('chimie') || course.title.toLowerCase().includes('équilibre')) {
+      return coursePacks.find(pack => pack.id === 'pack-chemistry') || coursePacks[0];
     }
     
-    // Par défaut → Pack Excellence
-    return coursePacks.find(pack => pack.id === 'pack-excellence') || coursePacks[0];
+    // Par défaut → Pack Physique
+    return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
   };
 
   // Pack alternatif pour donner le choix
   const getAlternativePack = (mainPack: CoursePack): CoursePack => {
-    // Si le pack principal n'est pas Excellence, proposer Excellence
-    if (mainPack.id !== 'pack-excellence') {
-      return coursePacks.find(pack => pack.id === 'pack-excellence') || coursePacks[0];
+    // Proposer un pack différent
+    if (mainPack.id === 'pack-physics') {
+      return coursePacks.find(pack => pack.id === 'pack-mathematics') || coursePacks[0];
     }
-    // Sinon proposer le pack Mathématiques Avancées
-    return coursePacks.find(pack => pack.id === 'pack-math-advanced') || coursePacks[0];
+    if (mainPack.id === 'pack-mathematics') {
+      return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
+    }
+    return coursePacks.find(pack => pack.id === 'pack-physics') || coursePacks[0];
   };
 
   const recommendedPack = getRecommendedPack();

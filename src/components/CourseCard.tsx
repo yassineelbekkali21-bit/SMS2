@@ -360,24 +360,16 @@ export function CourseCard({
         {finalThumbnail ? (
           /* Image personnalisée */
           <div 
-            className={cn(
-              "w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300",
-              // Effet visuel seulement pour favoris non débloqués (pas partiellement débloqués)
-              cardState === 'favoriteNotUnlocked' && "grayscale-[0.5] opacity-60"
-            )}
+            className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300"
             style={{ backgroundImage: `url(${finalThumbnail})` }}
           >
             {/* Overlay subtil pour préserver la lisibilité */}
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
+            <div className="absolute inset-0 bg-black/10" />
           </div>
         ) : (
           /* Pattern génératif unique */
           <div 
-            className={cn(
-              "w-full h-full relative transition-all duration-300",
-              // Effet visuel seulement pour favoris non débloqués (pas partiellement débloqués)
-              cardState === 'favoriteNotUnlocked' && "grayscale-[0.5] opacity-60"
-            )}
+            className="w-full h-full relative transition-all duration-300"
             style={{
               background: `linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%), ${pattern}`,
             }}
@@ -598,22 +590,9 @@ export function CourseCard({
               <BookOpen size={16} />
               Continuer
             </motion.button>
-          ) : course.isPrimary ? (
-            /* Si favori non débloqué : Aperçu + Se tester + Débloquer côte à côte */
-            <div className="grid grid-cols-3 gap-2">
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPreview?.(course.id);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
-              >
-                <Eye size={14} />
-                <span className="text-xs">Aperçu</span>
-              </motion.button>
-
+          ) : (
+            /* Boutons : Je me teste + Commencer */
+            <div className="grid grid-cols-2 gap-2">
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -622,53 +601,23 @@ export function CourseCard({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 aria-label={`Tester mes connaissances sur le cours ${course.title}`}
-                className="py-3 px-3 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
+                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
               >
                 <Brain size={14} />
-                <span className="text-xs">Tester</span>
+                <span className="text-xs">Je me teste</span>
               </motion.button>
 
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEnroll?.(course.id);
+                  onOpenCourse?.(course);
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-blue-600/20 hover:shadow-xl hover:from-blue-700 hover:to-blue-800"
               >
-                <Lock size={14} />
-                <span className="text-xs">Débloquer</span>
-              </motion.button>
-            </div>
-          ) : (
-            /* Si cours normal non débloqué : Aperçu + Se tester - marges parfaitement égales */
-            <div className="grid grid-cols-2 gap-3">
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPreview?.(course.id);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
-              >
-                <Eye size={16} />
-                Aperçu
-              </motion.button>
-
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMiniQuiz(true);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                aria-label={`Tester mes connaissances sur le cours ${course.title}`}
-                className="py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-800 to-black text-white hover:shadow-xl focus:ring-gray-800/20 hover:from-gray-900 hover:to-gray-800"
-              >
-                <Brain size={16} />
-                Se tester
+                <Play size={14} />
+                <span className="text-xs">Commencer</span>
               </motion.button>
             </div>
           )}

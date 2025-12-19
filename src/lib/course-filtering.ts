@@ -1,7 +1,7 @@
 import { CourseWithTrend } from './faculty-sorting';
 
 // Types pour les filtres
-export type SubjectFilter = 'all' | 'physics' | 'chemistry' | 'mathematics' | 'biology';
+export type SubjectFilter = 'all' | 'physics' | 'chemistry' | 'mathematics' | 'biology' | 'economics' | 'informatics';
 export type TrendFilter = 'popular' | 'new' | 'recommended';
 export type SocialFilter = 'buddies' | 'most-followed' | 'not-followed';
 export type SortOption = 'students' | 'lessons' | 'date' | 'name';

@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
   ChevronDown, 
   ChevronUp, 
+  ChevronLeft,
+  ChevronRight,
   Star, 
   Trophy,
   Sparkles,
@@ -16,7 +18,8 @@ import {
   Gift,
   Zap,
   Clock,
-  Users
+  Users,
+  Play
 } from 'lucide-react';
 import { Course } from '@/types';
 import { CourseCard } from './CourseCard';
@@ -296,568 +299,204 @@ export function FavoritesPackCollection({
     </motion.div>
   );
 
+  // Scroll handlers for each pack
+  const scrollContainerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const handleScrollLeft = (packId: string) => {
+    const container = scrollContainerRefs.current[packId];
+    if (container) {
+      container.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollRight = (packId: string) => {
+    const container = scrollContainerRefs.current[packId];
+    if (container) {
+      container.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
+
+  // Get all courses for a pack (combine all types)
+  const getAllCoursesForPack = (pack: PackWithCourses) => {
+    const allCourses: { course: Course | null; courseId: string; type: string }[] = [];
+    
+    // Add unlocked courses
+    pack.unlockedCourses.forEach(course => {
+      allCourses.push({ course, courseId: course.id, type: 'unlocked' });
+    });
+    
+    // Add favorites not unlocked
+    pack.favoritesNotUnlocked.forEach(course => {
+      allCourses.push({ course, courseId: course.id, type: 'favorite' });
+    });
+    
+    // Add non-favorite but unlocked
+    pack.nonFavoriteButUnlocked.forEach(course => {
+      allCourses.push({ course, courseId: course.id, type: 'nonFavoriteUnlocked' });
+    });
+    
+    // Add non-favorite non-unlocked (panini style)
+    pack.nonFavoriteNonUnlocked.forEach(courseId => {
+      const mockCourse = getCourseById(courseId);
+      allCourses.push({ course: mockCourse || null, courseId, type: 'panini' });
+    });
+    
+    return allCourses;
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Barre de recherche locale */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Star className="text-gray-400" size={20} />
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Mes Cours Favoris</h2>
-          </div>
-        </div>
+    <div className="space-y-12">
+      {/* Mastery Programs - Style OnboardingPopup */}
+      {filteredPacks.map((pack, packIndex) => {
+        const allCourses = getAllCoursesForPack(pack);
         
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-          <input
-            type="text"
-            placeholder="Rechercher dans mes favoris..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="cursor-target pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-80"
-          />
-        </div>
-      </div>
-
-      {/* Packs avec cours */}
-      {filteredPacks.map((pack, packIndex) => (
-        <motion.div
-          key={pack.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: packIndex * 0.1 }}
-          className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm"
-        >
-          {/* En-tête du pack */}
-          <div 
-            className="cursor-target p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={() => togglePackCollapse(pack.id)}
+        return (
+          <motion.div
+            key={pack.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: packIndex * 0.1 }}
+            className="mb-12"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-bold text-gray-900">{pack.title}</h3>
-                  </div>
-                  <div className="mt-2">
-                    {/* Informations de progression */}
-                    <div className="flex items-center gap-6">
-                      {/* Ratio des cours débloqués */}
-                      <div className="flex items-center gap-2">
-                        <BookOpen size={14} className="text-gray-500 flex-shrink-0" />
-                        <span className="text-xs font-medium text-gray-600">
-                          {pack.purchasedCoursesCount}/{pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + pack.nonFavoriteNonUnlocked.length + pack.nonFavoriteButUnlocked.length} cours débloqués
-                        </span>
-                      </div>
-                      
-                      {/* Avatars des buddies */}
-                      <div className="flex items-center -space-x-1">
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-white shadow-sm flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">M</span>
-                        </div>
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-green-400 to-green-600 border border-white shadow-sm flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">A</span>
-                        </div>
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-white shadow-sm flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">L</span>
-                        </div>
-                        <div className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 border border-white shadow-sm flex items-center justify-center">
-                          <span className="text-xs font-medium">+2</span>
-                        </div>
-                      </div>
-                      
-                      {/* Progression des leçons lues avec barre */}
-                      {pack.ownedCourses.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
-                          <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <motion.div
-                              className="h-full bg-gradient-to-r from-green-400 to-green-600"
-                              initial={{ width: 0 }}
-                              animate={{ width: `${pack.lessonProgress}%` }}
-                              transition={{ duration: 1, delay: 0.7 }}
-                            />
-                          </div>
-                          <span className="text-xs font-medium text-green-600">
-                            {pack.lessonProgress > 0 
-                              ? `${pack.lessonProgress}% des leçons terminées`
-                              : ""
-                            }
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-
-                  </div>
-                </div>
+            {/* Row Header - Style OnboardingPopup */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  {pack.title}
+                  <span className="text-gray-500 font-normal text-lg ml-3">
+                    {pack.courses.length} cours
+                  </span>
+                </h2>
               </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {pack.isCompleted && (
-                    <div className="flex items-center gap-1.5 text-amber-600">
-                      <Trophy size={16} className="text-amber-500" />
-                      <span className="text-sm font-semibold">Pack complété</span>
-                    </div>
-                  )}
-                </div>
 
-                <div className="flex items-center gap-3">
-                  {/* Bouton CTA pour compléter le pack - N'apparaît QUE si le pack est replié */}
-                  {!pack.isCompleted && collapsedPacks.has(pack.id) && (
-                    <div className="flex flex-col items-center gap-1">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCompletePack?.(pack.id);
-                        }}
-                        className="cursor-target px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-blue-500"
-                      >
-                        Compléter pack
-                      </motion.button>
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="text-xs text-gray-500 flex items-center justify-center gap-1"
-                      >
-                        <span>💡</span>
-                        <span>Bonus offert</span>
-                      </motion.p>
-                    </div>
-                  )}
-                  
-                  {collapsedPacks.has(pack.id) ? (
-                    <ChevronDown className="text-gray-400" size={20} />
-                  ) : (
-                    <ChevronUp className="text-gray-400" size={20} />
-                  )}
+              {/* Controls */}
+              <div className="flex items-center gap-4">
+                {/* Bouton Tester mes connaissances */}
+                <button
+                  onClick={() => {
+                    const subject = pack.title.toLowerCase().includes('physi') ? 'physics' 
+                      : pack.title.toLowerCase().includes('math') ? 'math' 
+                      : 'chemistry';
+                    window.open(`/assessment/${subject}`, '_blank');
+                  }}
+                  className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-full transition-colors"
+                >
+                  Tester mes connaissances
+                </button>
+                
+                {/* Navigation Arrows */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleScrollLeft(pack.id)}
+                    className="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 hover:bg-gray-200 transition-all"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleScrollRight(pack.id)}
+                    className="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 hover:bg-gray-200 transition-all"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Contenu du pack (cours) */}
-          <AnimatePresence>
-            {!collapsedPacks.has(pack.id) && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="px-6 pb-6"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
-                  {/* 1. Les 2 premiers cours débloqués */}
-                  {pack.unlockedCourses.slice(0, 2).map((course, index) => (
-                    <motion.div
-                      key={`${pack.id}-unlocked-${course.id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <CourseCard 
-                        course={course}
-                        progress={progressData.find(p => p.courseId === course.id)}
-                        isDraggable={false}
-                        onToggleFavorite={onToggleFavorite}
-                        onPreview={onPreview}
-                        onEnroll={onEnroll}
-                        onOpenCourse={onOpenCourse}
-                        onOpenStaircaseView={onOpenStaircaseView}
-                        canAfford={true}
-                        isUnlocked={true}
-                        purchasedItems={purchasedItems}
-                        {...getStudyRoomProps(course)}
-                      />
-                    </motion.div>
-                  ))}
-
-                  {/* 1.5. Card CTA "Compléter pack" - TOUJOURS VISIBLE - Position 3-4 de la première ligne */}
-                  {!pack.isCompleted && (() => {
-                    // 🎯 Logique de titre dynamique contextuel
-                    const unlockedCount = pack.unlockedCourses.length;
-                    const totalCount = pack.courses.length;
-                    const remainingCount = totalCount - unlockedCount;
-                    const completionPercentage = Math.round((unlockedCount / totalCount) * 100);
-                    
-                    let dynamicTitle = '';
-                    let dynamicSubtitle = '';
-                    
-                    const packName = pack.title; // Nom dynamique du pack
-                    
-                    if (unlockedCount === 0) {
-                      // Aucun cours débloqué
-                      dynamicTitle = `Débloquez ${totalCount} cours pour valider le pack.`;
-                      dynamicSubtitle = `Commencez votre pack <strong class="font-semibold text-gray-900">${packName}</strong> dès maintenant.`;
-                    } else if (completionPercentage >= 75) {
-                      // Presque terminé (75%+)
-                      dynamicTitle = remainingCount === 1 
-                        ? "Plus qu'un cours avant la validation complète !"
-                        : `Plus que ${remainingCount} cours avant la validation complète !`;
-                      dynamicSubtitle = `Vous touchez au but ! Terminez votre pack <strong class="font-semibold text-gray-900">${packName}</strong>.`;
-                    } else if (completionPercentage >= 50) {
-                      // À mi-chemin (50-74%)
-                      dynamicTitle = `Plus que ${remainingCount} cours pour valider le pack.`;
-                      dynamicSubtitle = `Vous êtes à mi-parcours ! Continuez votre pack <strong class="font-semibold text-gray-900">${packName}</strong>.`;
-                    } else {
-                      // Début de parcours (<50%)
-                      dynamicTitle = `${remainingCount} cours restants pour valider le pack.`;
-                      dynamicSubtitle = `Poursuivez votre pack <strong class="font-semibold text-gray-900">${packName}</strong> et débloquez vos avantages.`;
+            {/* Course Cards Row - Horizontal Scroll */}
+            <div 
+              ref={(el) => { scrollContainerRefs.current[pack.id] = el; }}
+              className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {allCourses.map(({ course, courseId, type }, index) => (
+                <div
+                  key={`${pack.id}-${courseId}-${index}`}
+                  className="flex-shrink-0 w-52 group cursor-pointer"
+                  onClick={() => {
+                    if (course) {
+                      onOpenCourse(course);
                     }
-                    
-                    return (
-                      <motion.div
-                        key={`${pack.id}-cta-card`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="col-span-1 md:col-span-2"
-                      >
-                        <motion.div
-                          whileHover={{ y: -2, transition: { duration: 0.3, ease: "easeInOut" } }}
-                          className="relative h-full flex flex-col overflow-hidden group"
-                          style={{
-                            background: 'linear-gradient(135deg, #F8F9FB 0%, #EEF1F7 100%)',
-                            borderRadius: '20px',
-                            boxShadow: '0 8px 32px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04)'
-                          }}
-                        >
-                          {/* Glassmorphism overlay */}
-                          <div className="absolute inset-0" style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)',
-                            backdropFilter: 'blur(20px)',
-                            WebkitBackdropFilter: 'blur(20px)',
-                            borderRadius: '20px'
-                          }} />
-                          
-                          {/* Subtle border */}
-                          <div className="absolute inset-0 rounded-[20px]" style={{
-                            border: '1px solid rgba(255,255,255,0.5)',
-                            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8)'
-                          }} />
-                          
-                          {/* Trophy icon - ultra subtil en arrière-plan (opacity 0.08) */}
-                          <div className="absolute bottom-6 right-6 pointer-events-none" style={{ opacity: 0.08 }}>
-                            <Trophy className="w-32 h-32 text-gray-900" strokeWidth={1} />
-                          </div>
-                          
-                          <div className="relative p-8 flex flex-col h-full">
-                            {/* Header dynamique et contextuel */}
-                            <div className="mb-5">
-                              <h3 className="text-xl font-semibold text-gray-900 tracking-tight leading-tight mb-3" style={{ 
-                                fontFamily: 'Inter, -apple-system, SF Pro Display, system-ui, sans-serif', 
-                                fontWeight: 600,
-                                letterSpacing: '-0.02em'
-                              }}>
-                                {dynamicTitle}
-                              </h3>
-                              <p 
-                                className="text-sm text-gray-600 leading-relaxed" 
-                                style={{ 
-                                  fontFamily: 'Inter, -apple-system, system-ui, sans-serif', 
-                                  fontWeight: 400
-                                }}
-                                dangerouslySetInnerHTML={{ __html: dynamicSubtitle }}
-                              />
-                          </div>
-                          
-                          {/* Progress section compacte */}
-                          <div className="mb-6 space-y-4">
-                            {/* Barre de progression avec pourcentage à droite */}
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-3">
-                                  <span className="text-xs text-gray-500 font-medium">{pack.unlockedCourses.length} complétés</span>
-                                  <span className="text-xs text-gray-400">•</span>
-                                  <span className="text-xs text-gray-500 font-medium">{pack.courses.length - pack.unlockedCourses.length} restant{pack.courses.length - pack.unlockedCourses.length > 1 ? 's' : ''}</span>
-                                  <span className="text-xs text-gray-400">•</span>
-                                  <span className="text-xs text-gray-500 font-medium">≈ {Math.ceil((pack.courses.length - pack.unlockedCourses.length) * 0.75)} h</span>
-                                </div>
-                                <motion.span 
-                                  className="text-sm font-semibold text-gray-900 tabular-nums"
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ duration: 0.4 }}
-                                >
-                                  {Math.round((pack.unlockedCourses.length / pack.courses.length) * 100)}%
-                                </motion.span>
-                              </div>
-                              
-                              {/* Barre de progression noire */}
-                              <div className="relative w-full h-1.5 bg-gray-200/60 rounded-full overflow-hidden">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${(pack.unlockedCourses.length / pack.courses.length) * 100}%` }}
-                                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                                  className="absolute top-0 left-0 h-full rounded-full bg-gray-900"
-                                />
-                              </div>
-                            </div>
-                          </div>
+                  }}
+                >
+                  {/* Course Card - Style OnboardingPopup exact */}
+                  <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
+                    {/* Course Title Overlay */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-4">
+                      <h3 className="!text-white font-bold text-xl leading-tight tracking-tight mb-1">
+                        {course?.title || courseId}
+                      </h3>
+                      <div className="w-8 h-0.5 bg-white/40 mb-2" />
+                      <p className="!text-white/80 text-xs font-medium">
+                        {course?.description?.slice(0, 40) || 'Cours disponible'}...
+                      </p>
+                    </div>
 
-                          {/* Récompenses - entre progress bar et CTA */}
-                          <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.15 }}
-                            className="text-center text-sm text-gray-800 leading-relaxed font-medium px-2 mb-6"
-                            style={{ 
-                              fontFamily: 'Inter, system-ui, sans-serif'
-                            }}
-                          >
-                            Débloquez les <strong className="font-semibold text-gray-900">slides PDF</strong> de toutes les leçons du pack, votre <strong className="font-semibold text-gray-900">badge</strong>, vos <strong className="font-semibold text-gray-900">100 XP</strong> et <strong className="font-semibold text-gray-900">100 €</strong> sur votre prochaine recharge.
-                          </motion.p>
-
-                          {/* CTA Principal - Focus maximum */}
-                          <div className="mt-auto">
-                            <motion.button
-                              whileHover={{ 
-                                y: -2,
-                                boxShadow: '0 16px 40px rgba(37, 99, 235, 0.4), 0 6px 20px rgba(37, 99, 235, 0.25)',
-                                transition: { duration: 0.3, ease: "easeOut" }
-                              }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onCompletePack?.(pack.id);
-                              }}
-                              className="cursor-target w-full relative overflow-hidden group/btn"
-                              style={{
-                                padding: '16px 28px',
-                                background: 'linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%)',
-                                borderRadius: '14px',
-                                color: '#FFFFFF',
-                                fontSize: '15px',
-                                fontWeight: 600,
-                                fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-                                boxShadow: '0 6px 24px rgba(37, 99, 235, 0.3)',
-                                border: 'none',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px'
-                              }}
-                            >
-                              {/* Glow bleu au survol */}
-                              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-                              
-                              <span className="relative z-10">Compléter mon pack maintenant</span>
-                              <motion.span
-                                className="relative z-10"
-                                animate={{ x: [0, 4, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                                style={{ fontSize: '18px', lineHeight: 1 }}
-                              >
-                                →
-                              </motion.span>
-                            </motion.button>
-                          </div>
-
-                          {/* Zone inférieure compacte */}
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="mt-6 pt-5 border-t border-gray-200/60"
-                          >
-                            {/* Social proof discret */}
-                            <p className="text-[10px] text-gray-400 leading-relaxed" style={{ 
-                              fontFamily: 'Inter, system-ui, sans-serif'
-                            }}>
-                              142 étudiants ont déjà validé ce pack.
-                            </p>
-                          </motion.div>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                    );
-                  }
-                  )()}
-
-                  {/* 1. Reste des cours débloqués (à partir du 3ème) */}
-                  {pack.unlockedCourses.slice(2).map((course, index) => (
-                    <motion.div
-                      key={`${pack.id}-unlocked-${course.id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: (index + 2) * 0.1 }}
-                    >
-                      <CourseCard 
-                        course={course}
-                        progress={progressData.find(p => p.courseId === course.id)}
-                        isDraggable={false}
-                        onToggleFavorite={onToggleFavorite}
-                        onPreview={onPreview}
-                        onEnroll={onEnroll}
-                        onOpenCourse={onOpenCourse}
-                        onOpenStaircaseView={onOpenStaircaseView}
-                        canAfford={true}
-                        isUnlocked={true}
-                        purchasedItems={purchasedItems}
-                        {...getStudyRoomProps(course)}
-                      />
-                    </motion.div>
-                  ))}
-                  
-                  {/* 2. Favoris non débloqués - PRIORITÉ 2 */}
-                  {pack.favoritesNotUnlocked.map((course, index) => (
-                    <motion.div
-                      key={`${pack.id}-favorite-${course.id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: (pack.unlockedCourses.length + index) * 0.1 }}
-                    >
-                      <CourseCard 
-                        course={course}
-                        progress={progressData.find(p => p.courseId === course.id)}
-                        isDraggable={false}
-                        onToggleFavorite={onToggleFavorite}
-                        onPreview={onPreview}
-                        onEnroll={onEnroll}
-                        onOpenCourse={onOpenCourse}
-                        onOpenStaircaseView={onOpenStaircaseView}
-                        canAfford={true}
-                        isUnlocked={false}
-                        purchasedItems={purchasedItems}
-                        {...getStudyRoomProps(course)}
-                      />
-                    </motion.div>
-                  ))}
-
-                  {/* 2.5. Non favoris mais débloqués - PRIORITÉ 2.5 */}
-                  {pack.nonFavoriteButUnlocked.map((course, index) => (
-                    <motion.div
-                      key={`${pack.id}-non-favorite-unlocked-${course.id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: (pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index) * 0.1 }}
-                    >
-                      <CourseCard 
-                        course={course}
-                        progress={progressData.find(p => p.courseId === course.id)}
-                        isDraggable={false}
-                        onToggleFavorite={onToggleFavorite}
-                        onPreview={onPreview}
-                        onEnroll={onEnroll}
-                        onOpenCourse={onOpenCourse}
-                        onOpenStaircaseView={onOpenStaircaseView}
-                        canAfford={true}
-                        isUnlocked={true}
-                        purchasedItems={purchasedItems}
-                        {...getStudyRoomProps(course)}
-                      />
-                    </motion.div>
-                  ))}
-                  
-                  {/* 3. Cours non favoris/non débloqués (état Panini gris) - PRIORITÉ 3 */}
-                  {pack.nonFavoriteNonUnlocked.map((courseId, index) => {
-                    return (
-                    <motion.div
-                      key={`${pack.id}-panini-empty-${courseId}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: (pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index) * 0.1 }}
-                    >
-                      <CourseCardPaniniEmpty 
-                        courseId={courseId}
-                        animationDelay={(pack.unlockedCourses.length + pack.favoritesNotUnlocked.length + index) * 0.1}
-                        onToggleFavorite={onToggleFavorite}
-                        onPreview={onPreview}
-                        onTest={(courseId) => {
-                          // Pour l'instant, on peut rediriger vers le preview ou implémenter une modale de test
-                          console.log('Test course:', courseId);
-                          onPreview(courseId); // Temporaire
-                        }}
-                        onOpenCourse={onOpenCourse}
-                      />
-                    </motion.div>
-                    );
-                  })}
+                    {/* Play Button on Hover */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                        <Play className="w-6 h-6 text-gray-900 ml-0.5" fill="currentColor" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      ))}
+              ))}
+            </div>
+          </motion.div>
+        );
+      })}
 
-      {/* Cours individuels (hors pack) */}
+      {/* Cours individuels (hors pack) - même style */}
       {filteredUnpackagedCourses.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: filteredPacks.length * 0.1 }}
-          className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm"
+          className="mb-12"
         >
-          {/* En-tête du bloc Cours Individuels */}
-          <div 
-            className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={() => setIsIndividualCoursesCollapsed(!isIndividualCoursesCollapsed)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-xl flex items-center justify-center text-white">
-                  <BookOpen size={20} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">Cours Individuels</h3>
-                  <p className="text-gray-600 text-sm">
-                    {filteredUnpackagedCourses.length} cours favoris hors collection
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                {isIndividualCoursesCollapsed ? (
-                  <ChevronDown className="text-gray-400" size={20} />
-                ) : (
-                  <ChevronUp className="text-gray-400" size={20} />
-                )}
-              </div>
+          {/* Row Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                Cours Individuels
+                <span className="text-gray-500 font-normal text-lg ml-3">
+                  {filteredUnpackagedCourses.length} cours
+                </span>
+              </h2>
             </div>
           </div>
 
-          {/* Contenu des cours individuels */}
-          <AnimatePresence>
-            {!isIndividualCoursesCollapsed && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="px-6 pb-6"
+          {/* Course Cards Row */}
+          <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+            {filteredUnpackagedCourses.map((course, index) => (
+              <div
+                key={course.id}
+                className="flex-shrink-0 w-52 group cursor-pointer"
+                onClick={() => onOpenCourse(course)}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
-                  {filteredUnpackagedCourses.map((course, index) => (
-                    <motion.div
-                      key={course.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <SuggestedCourseCard 
-                        course={course}
-                        enrolledStudents={Math.floor(Math.random() * 200) + 50}
-                        reason="Cours favori"
-                        onUnlock={onEnroll}
-                        onPreview={onPreview}
-                        onToggleFavorite={onToggleFavorite}
-                        onClick={onOpenCourse}
-                      />
-                    </motion.div>
-                  ))}
+                <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
+                  <div className="absolute inset-0 flex flex-col justify-end p-4">
+                    <h3 className="!text-white font-bold text-xl leading-tight tracking-tight mb-1">
+                      {course.title}
+                    </h3>
+                    <div className="w-8 h-0.5 bg-white/40 mb-2" />
+                    <p className="!text-white/80 text-xs font-medium">
+                      {course.description?.slice(0, 40)}...
+                    </p>
+                  </div>
+
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                      <Play className="w-6 h-6 text-gray-900 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </motion.div>
       )}
 
-      {/* État vide */}
-      {/* Résultats de recherche vides */}
+      {/* État vide - Recherche */}
       {searchQuery && filteredPacks.length === 0 && filteredUnpackagedCourses.length === 0 && favoriteCourses.length > 0 && (
         <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
           <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">

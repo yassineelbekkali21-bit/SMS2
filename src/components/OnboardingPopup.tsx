@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Play, Clock, ArrowRight, ChevronLeft, ChevronRight, X, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
+import { LeadCaptureModal } from './LeadCaptureModal';
 
 // Program types (one-time purchase, lifetime access)
 interface Program {
@@ -85,6 +86,7 @@ interface OnboardingPopupProps {
   onComplete: () => void;
   recommendedCourses?: RecommendedCourse[];
   interests?: string[];
+  initialPhase?: 'loading' | 'results' | 'membership-intro' | 'membership-plans';
 }
 
 // Mock data for recommended courses
@@ -115,14 +117,16 @@ export function OnboardingPopup({
   isOpen, 
   onComplete, 
   recommendedCourses = defaultCourses,
-  interests = defaultInterests 
+  interests = defaultInterests,
+  initialPhase = 'loading'
 }: OnboardingPopupProps) {
-  const [phase, setPhase] = useState<'loading' | 'results' | 'membership-intro' | 'membership-plans'>('loading');
+  const [phase, setPhase] = useState<'loading' | 'results' | 'membership-intro' | 'membership-plans'>(initialPhase);
   const [loadingStep, setLoadingStep] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>(['physics', 'mathematics', 'chemistry']);
   const [boostersEnabled, setBoostersEnabled] = useState<boolean>(false);
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
 
   // Calculate totals
   const programsTotal = selectedPrograms.reduce((sum, id) => {
@@ -144,11 +148,19 @@ export function OnboardingPopup({
     'Building your custom results...'
   ];
 
+  // Reset phase when popup opens with a specific initialPhase
+  useEffect(() => {
+    if (isOpen) {
+      setPhase(initialPhase);
+      if (initialPhase === 'loading') {
+        setLoadingStep(0);
+      }
+    }
+  }, [isOpen, initialPhase]);
+
   // Loading animation sequence
   useEffect(() => {
     if (!isOpen) {
-      setPhase('loading');
-      setLoadingStep(0);
       return;
     }
 
@@ -187,7 +199,7 @@ export function OnboardingPopup({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-black"
+        className="fixed inset-0 z-[100] bg-[#0d1317] overflow-y-auto overflow-x-hidden"
       >
         {/* Loading Phase */}
         {phase === 'loading' && (
@@ -211,7 +223,7 @@ export function OnboardingPopup({
               className="mb-16"
             >
               <Image 
-                src="/favicon.svg" 
+                src="/brand/onboarding-logo.svg" 
                 alt="Science Made Simple" 
                 width={140} 
                 height={140}
@@ -226,12 +238,10 @@ export function OnboardingPopup({
                   key={message}
                   initial={{ opacity: 0.2 }}
                   animate={{ 
-                    opacity: loadingStep >= index ? 1 : 0.2
+                    opacity: loadingStep >= index ? 1 : 0.3
                   }}
                   transition={{ duration: 0.5 }}
-                  className={`text-2xl md:text-3xl font-bold transition-colors duration-500 ${
-                    loadingStep >= index ? 'text-white' : 'text-gray-600'
-                  }`}
+                  className="text-2xl md:text-3xl font-bold !text-white"
                 >
                   {message}
                 </motion.p>
@@ -245,16 +255,16 @@ export function OnboardingPopup({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="h-full overflow-y-auto"
+            className="min-h-full"
           >
             {/* Header */}
-            <header className="sticky top-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Image 
-                  src="/favicon.svg" 
+                  src="/brand/onboarding-logo.svg" 
                   alt="Science Made Simple" 
-                  width={50} 
-                  height={50}
+                  width={85} 
+                  height={85}
                 />
                 
                 {/* Progress Steps */}
@@ -290,7 +300,7 @@ export function OnboardingPopup({
                 <div className="lg:col-span-7">
                   {/* Course Count + Title */}
                   <div className="flex items-start gap-6 mb-10">
-                    <div className="w-24 h-24 rounded-full border-4 border-blue-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-24 h-24 rounded-full border-4 border-cyan-500 flex items-center justify-center flex-shrink-0">
                       <span className="text-5xl font-bold text-white">{recommendedCourses.length}</span>
                     </div>
                     <div>
@@ -330,7 +340,7 @@ export function OnboardingPopup({
                   <div className="bg-[#141414] rounded-xl p-6 border border-gray-800">
                     {/* Success Message */}
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                         <Check className="w-5 h-5 text-white" strokeWidth={3} />
                       </div>
                       <span className="text-white text-base">
@@ -340,7 +350,7 @@ export function OnboardingPopup({
 
                     {/* CTA Buttons */}
                     <button
-                      onClick={onComplete}
+                      onClick={() => setShowLeadCapture(true)}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all mb-3"
                     >
                       Débloquer 10h gratuites
@@ -373,17 +383,32 @@ export function OnboardingPopup({
                       </div>
 
                       {/* Carousel Controls */}
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-4">
+                        {/* Bouton Tester mes connaissances */}
                         <button
-                          className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                          onClick={() => {
+                            const subject = interest.toLowerCase().includes('physics') ? 'physics' 
+                              : interest.toLowerCase().includes('math') ? 'math' 
+                              : 'chemistry';
+                            window.open(`/assessment/${subject}`, '_blank');
+                          }}
+                          className="px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-full transition-colors"
                         >
-                          <ChevronLeft size={20} />
+                          Tester mes connaissances
                         </button>
-                        <button
-                          className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
-                        >
-                          <ChevronRight size={20} />
-                        </button>
+                        
+                        <div className="flex gap-2">
+                          <button
+                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+                          <button
+                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -430,16 +455,16 @@ export function OnboardingPopup({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="h-full overflow-y-auto"
+            className="min-h-full"
           >
             {/* Header */}
-            <header className="sticky top-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Image 
-                  src="/favicon.svg" 
+                  src="/brand/onboarding-logo.svg" 
                   alt="Science Made Simple" 
-                  width={50} 
-                  height={50}
+                  width={85} 
+                  height={85}
                 />
                 
                 {/* Progress Steps */}
@@ -472,7 +497,6 @@ export function OnboardingPopup({
               <p className="text-center">
                 <span className="text-blue-400 font-bold">LIFETIME ACCESS</span>
                 <span className="text-white ml-2">Paiement unique</span>
-                <span className="text-gray-400 ml-3">· Pas d'abonnement</span>
               </p>
             </div>
 
@@ -523,16 +547,16 @@ export function OnboardingPopup({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="h-full overflow-y-auto"
+            className="min-h-full"
           >
             {/* Header */}
-            <header className="sticky top-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Image 
-                  src="/favicon.svg" 
+                  src="/brand/onboarding-logo.svg" 
                   alt="Science Made Simple" 
-                  width={50} 
-                  height={50}
+                  width={85} 
+                  height={85}
                 />
                 
                 {/* Progress Steps */}
@@ -761,7 +785,18 @@ export function OnboardingPopup({
             </div>
           </motion.div>
         )}
+
+        {/* Lead Capture Modal */}
+        <LeadCaptureModal
+          isOpen={showLeadCapture}
+          onClose={() => setShowLeadCapture(false)}
+          onSuccess={() => {
+            setShowLeadCapture(false);
+            onComplete();
+          }}
+        />
       </motion.div>
     </AnimatePresence>
   );
 }
+

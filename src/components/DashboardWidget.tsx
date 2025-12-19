@@ -24,7 +24,7 @@ export function DashboardWidget() {
         className="flex items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 font-bold text-sm group"
       >
         <LayoutDashboard size={18} className="group-hover:rotate-12 transition-transform" />
-        <span>Dashboard</span>
+        <span>Post Diagnostic</span>
       </Link>
     </motion.div>
   );

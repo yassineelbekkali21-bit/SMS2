@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import TargetCursor from './TargetCursor';
 import BlurText from './BlurText';
 import { 
@@ -28,6 +29,7 @@ import {
   Calendar,
   Home,
   Wallet,
+  Lock,
   Sparkles,
   HelpCircle,
   MoreHorizontal,
@@ -37,7 +39,8 @@ import {
   UserCheck,
   Zap,
   Video,
-  Calculator
+  Calculator,
+  CheckCircle
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -88,7 +91,7 @@ import { CourseStaircaseView } from './CourseStaircaseView';
 import { IntegratedCourseViewer } from './IntegratedCourseViewer';
 import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, PurchaseOption, CourseStudyRoom, BuddySystem } from '@/types';
 import { PersonalProfileSection } from './PersonalProfileSection';
-import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons } from '@/lib/mock-data';
+import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons, mockDashboardData } from '@/lib/mock-data';
 import { ProgressionBonusService } from '@/lib/progression-bonus-service';
 import { StudyRoomButton } from './StudyRoomButton';
 import { TrendBadgeComponent } from './TrendBadge';
@@ -97,6 +100,7 @@ import { FilterBar } from './FilterBar';
 import { OnboardingPopup } from './OnboardingPopup';
 import { 
   FilterState, 
+  SubjectFilter,
   filterAndSortCourses, 
   getFilterCounts 
 } from '@/lib/course-filtering';
@@ -136,15 +140,12 @@ interface SimpleDashboardProps {
   onLogout?: () => void;
 }
 
-// Composant de métrique simple avec animations
+// Composant de métrique style MasterClass - Light Mode
 const SimpleMetric = ({ 
   icon: Icon, 
   value, 
   label, 
   accent = false,
-  animated = false,
-  animationType = 'none',
-  subtitle
 }: { 
   icon: any;
   value: string | number;
@@ -154,87 +155,31 @@ const SimpleMetric = ({
   animationType?: 'glow' | 'flame' | 'pulse' | 'none';
   subtitle?: string;
 }) => (
-  <motion.div 
-    className={`p-6 ${accent ? 'bg-black text-white' : 'bg-white border border-gray-200'} rounded-lg relative overflow-hidden`}
-    whileHover={{ scale: 1.02 }}
-    transition={{ duration: 0.2 }}
+  <div 
+    className={`py-5 px-6 rounded-2xl border ${
+      accent 
+        ? 'bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700' 
+        : 'bg-white border-gray-200'
+    }`}
   >
-    {/* Animation de fond pour streak et amis */}
-    {animated && animationType === 'flame' && (
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-transparent"
-        animate={{
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    )}
-    {animated && animationType === 'glow' && (
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent"
-        animate={{
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    )}
-    {animated && animationType === 'pulse' && (
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent"
-        animate={{
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    )}
-
-    <div className="flex items-center gap-4 relative z-10">
-      <motion.div 
-        className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-        accent ? 'bg-white/20' : 'bg-gray-100'
+    <div className="flex items-center gap-4">
+      <div 
+        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+          accent ? 'bg-white/10' : 'bg-gray-100'
         }`}
-        animate={animated ? {
-          boxShadow: animationType === 'flame' 
-            ? ['0 0 10px rgba(251, 146, 60, 0.3)', '0 0 20px rgba(239, 68, 68, 0.5)', '0 0 10px rgba(251, 146, 60, 0.3)']
-            : animationType === 'glow'
-            ? ['0 0 10px rgba(34, 197, 94, 0.3)', '0 0 20px rgba(16, 185, 129, 0.5)', '0 0 10px rgba(34, 197, 94, 0.3)']
-            : undefined
-        } : {}}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
       >
-        <Icon size={20} className={accent ? 'text-white' : 'text-gray-600'} />
-      </motion.div>
+        <Icon size={18} className={accent ? 'text-white' : 'text-gray-500'} />
+      </div>
       <div>
-        <div className={`text-2xl font-bold ${accent ? 'text-white' : 'text-gray-900'}`}>
+        <div className={`text-xl font-bold ${accent ? 'text-white' : 'text-gray-900'}`}>
           {value}
         </div>
-        <div className={`text-sm ${accent ? 'text-gray-300' : 'text-gray-500'}`}>
+        <div className={`text-sm ${accent ? 'text-gray-400' : 'text-gray-500'}`}>
           {label}
         </div>
-        {subtitle && (
-          <div className={`text-xs mt-1 ${accent ? 'text-gray-400' : 'text-gray-400'}`}>
-            {subtitle}
       </div>
-        )}
     </div>
   </div>
-  </motion.div>
 );
 
 // Footer moderne et simple
@@ -476,22 +421,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     onLogout
   } = props;
   
-  // Vérification et valeurs par défaut pour data
-  const safeData = data || {
-    primaryCourses: [],
-    suggestedCourses: [],
-    user: user || {
-      id: 'guest',
-      name: 'Étudiant',
-      year: 'Invité',
-      faculty: 'Non défini',
-      wallet: { balance: 0 }
-    },
-    facultyStats: {
-      totalStudents: 0
-    },
-    progress: []
-  };
+  // Vérification et valeurs par défaut pour data - utiliser mockDashboardData si non fourni
+  const safeData = data || mockDashboardData;
   
   const [primaryCourses, setPrimaryCourses] = useState(safeData.primaryCourses || []);
   const [suggestedExpanded, setSuggestedExpanded] = useState(true);
@@ -518,6 +449,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     sortBy: 'students',
     sortOrder: 'desc'
   });
+  
+  // État pour le topic sélectionné (deuxième ligne de filtres)
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   // États du composant
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -536,6 +470,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // 🎯 État pour l'onboarding popup (première visite)
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingInitialPhase, setOnboardingInitialPhase] = useState<'loading' | 'results' | 'membership-intro' | 'membership-plans'>('loading');
 
   // 🎯 États pour le système XP et gamification
   const [userXPProfile, setUserXPProfile] = useState<UserXPProfile | null>(null);
@@ -1061,18 +996,16 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     }
   }, [onboardingTour.hasCompletedTour, user?.id, safeData.user?.id, showBuddyOnboarding]);
 
-  // Tri intelligent des cours de la faculté (après déclaration de unlockedCourses)
+  // Tri intelligent des cours de la faculté - tous les cours du catalogue
   const smartSortedCourses = useMemo(() => {
     const coursesToSort = safeData.suggestedCourses
       .filter(suggestion => suggestion && suggestion.course && suggestion.course.id) // Filtrer les cours invalides
-      .filter(suggestion => !favorites.includes(suggestion.course.id)) // Filtrer les cours déjà favoris
-      .filter(suggestion => !unlockedCourses.includes(suggestion.course.id)) // Filtrer les cours déjà débloqués
       .map(suggestion => suggestion.course); // Extraire les cours des suggestions
     
     console.log('🎯 SMART SORT: coursesToSort:', coursesToSort.map(c => ({ id: c.id, title: c.title })));
     
     return smartSortFacultyCourses(coursesToSort);
-  }, [safeData.suggestedCourses, favorites, unlockedCourses]);
+  }, [safeData.suggestedCourses]);
 
   // Filtrage et tri final des cours de la faculté
   const filteredFacultyCourses = useMemo(() => {
@@ -2382,7 +2315,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   
   const navigationItems = [
     { id: 'courses', label: 'Mes cours', icon: BookOpen, hasAccess: true },
-    { id: 'unlock', label: 'Débloquer', icon: Brain, hasAccess: true },
     { 
       id: 'planning', 
       label: 'Planification', 
@@ -2485,9 +2417,10 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           >
         {/* Header épuré bord à bord - pleine largeur */}
       <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="px-6 py-0">
+          <div className="flex items-center justify-between relative">
+            {/* Left - Logo */}
+            <div className="flex items-center gap-4 flex-shrink-0">
               <button 
                 onClick={() => setSidebarOpen(true)}
                 className="cursor-target w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
@@ -2496,29 +2429,20 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               </button>
 
               
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 flex items-center justify-center">
-                  {/* Espace réservé pour le logo */}
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold text-gray-900">Science Made Simple</h1>
+              <div className="flex items-center">
+                <div className="relative h-[84px] w-[500px]">
+                  <Image 
+                    src="/brand/sms-text-logo.svg" 
+                    alt="Science Made Simple"
+                    fill
+                    className="object-contain object-left"
+                  />
                 </div>
               </div>
             </div>
             
-            {/* Crédits et notifications */}
-            <div className="hidden md:flex items-center gap-4">
-              {/* Portefeuille */}
-              {(user?.wallet || safeData.user?.wallet) && (
-                <div data-tour="wallet">
-                  <WalletBalance 
-                    balance={WalletService.getTotalBalance(safeData.user?.id || 'user-default').walletBalance}
-                    onAddFunds={() => setShowWalletTopUp(true)}
-                    userId={safeData.user?.id || 'user-default'}
-                    key={walletUpdateTrigger} // Force re-render after purchase
-                  />
-                </div>
-              )}
+            {/* Widgets centrés au milieu de la page */}
+            <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
               
                   {/* Widget XP */}
                   {userXPProfile && (
@@ -2542,17 +2466,32 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     />
                   </div>
 
-              {/* Widget Social Unifié */}
+              {/* Widget Social Unifié (Buddy) */}
               <UnifiedSocialWidget
                 userId={user?.id || 'current_user'}
                 onNavigateToCommunity={() => setActiveSection('community')}
                 onNavigateToSection={setActiveSection}
                />
-
-              {/* Widget des paramètres */}
             </div>
 
+            {/* Right - Timer + Finish Sign Up + Avatar */}
             <div className="flex items-center gap-4">
+              {/* Timer - Style urgence */}
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
+                <Clock size={18} className="text-gray-700" />
+                <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
+              </div>
+
+              {/* Finish Sign Up CTA */}
+              <button
+                onClick={() => {
+                  setOnboardingInitialPhase('membership-intro');
+                  setShowOnboarding(true);
+                }}
+                className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
+              >
+                Finish Sign Up
+              </button>
               {/* Profil utilisateur avec paramètres */}
               <div className="relative" ref={settingsRef}>
                 <button 
@@ -2903,6 +2842,17 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             </div>
           </div>
 
+          {/* Logo en bas de la sidebar */}
+          <div className="mt-auto p-6 border-t border-gray-100">
+            <div className="relative h-[100px] w-full">
+              <Image 
+                src="/brand/sms-logo2.svg" 
+                alt="Science Made Simple"
+                fill
+                className="object-contain object-left"
+              />
+            </div>
+          </div>
         </nav>
 
         {/* Contenu principal bord à bord avec marge pour sidebar fixe */}
@@ -3002,58 +2952,38 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             </div>
           ) : activeSection === 'courses' ? (
             <div className="p-8">
-              {/* Message d'accueil motivant */}
-              <div className="mb-12">
-                <BlurText
-                  text={`Salut ${safeData.user.name.split(' ')[0]} ! ${
-                    averageProgress >= 75 ? '🌟 Tu es sur une lancée incroyable !' : 
-                    averageProgress >= 50 ? '🔥 Ta détermination paye vraiment !' : 
-                    averageProgress > 0 ? '💪 Chaque effort compte, tu progresses !' : 
-                    '🚀 Prêt à conquérir de nouveaux savoirs ?'
-                  }`}
-                  delay={50}
-                  animateBy="words"
-                  direction="top"
-                  as="h2"
-                  className="text-2xl font-bold text-gray-900 mb-2"
-                />
+              {/* Message d'accueil style MasterClass */}
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                  Bienvenue, {safeData.user.name.split(' ')[0]}
+                </h2>
+                <p className="text-gray-500 text-lg">
+                  Continue ta progression et atteins tes objectifs.
+                </p>
               </div>
 
-            {/* Métriques simplifiées - Mix Motivation + Social */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
-              {/* 1. Cours actifs / totaux */}
+            {/* Métriques style MasterClass - Light Mode */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
               <SimpleMetric
                 icon={BookOpen}
                 value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
                 label="Cours actifs"
                 accent={true}
               />
-              
-              {/* 2. Day Streak avec animation flamme */}
               <SimpleMetric
                 icon={Flame}
                 value={`${7} jours`}
                 label="Day Streak"
-                animated={true}
-                animationType="flame"
               />
-              
-              {/* 3. Buddies connectés avec animation glow */}
               <SimpleMetric
                 icon={UserCheck}
                 value={`${3}/${8}`}
                 label="Buddies connectés"
-                animated={true}
-                animationType="glow"
               />
-              
-              {/* 4. Objectif du jour avec animation pulse */}
               <SimpleMetric
                 icon={Zap}
                 value="200 XP"
                 label="Objectif du jour"
-                animated={true}
-                animationType="pulse"
               />
             </div>
 
@@ -3095,24 +3025,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   className="flex items-center justify-between cursor-pointer"
                   onClick={() => setSuggestedExpanded(!suggestedExpanded)}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <Users size={20} className="text-gray-600" />
-                    </div>
-                    <div data-tour="faculty-courses">
-                      <h2 className="text-xl font-bold text-gray-900">
-                        Les étudiants de votre faculté suivent également les cours suivants
-                      </h2>
-                      <p className="text-gray-500 text-sm">
-                        Basé sur {safeData.facultyStats.totalStudents} étudiants de {safeData.user.faculty}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-500">
-                      {filteredFacultyCourses.length} cours affichés sur {smartSortedCourses.length} disponibles
-                    </span>
-                    {suggestedExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  <div data-tour="faculty-courses">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                      Explore le catalogue
+                      <span className="text-gray-500 font-normal text-lg ml-3">
+                        {smartSortedCourses.length} cours
+                      </span>
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -3125,8 +3044,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {/* Filtres horizontaux avec icônes - Une ligne */}
-                    <div className="mb-6 pb-4 border-b border-gray-200">
+                    {/* Anciens filtres - MASQUÉS */}
+                    <div className="hidden mb-6 pb-4 border-b border-gray-200">
                       {/* Structure avec labels alignés et filtres en dessous */}
                       <div className="flex items-start gap-8 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         {/* Groupe MATIÈRES */}
@@ -3351,54 +3270,350 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       </div>
                     </div>
 
-                    {/* Grille des cours filtrés */}
-                    {filteredFacultyCourses.length > 0 ? (
-                      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-12 pt-6 transition-all duration-300 ${
-                        isScrolledCompact ? 'gap-6' : 'gap-8'
-                      }`}>
-                        <AnimatePresence mode="popLayout">
-                          {filteredFacultyCourses.map((course: CourseWithTrend, index: number) => (
-                            <motion.div
-                              key={course.id}
-                              layout
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -20 }}
-                              transition={{ 
-                                layout: { duration: 0.3 },
-                                opacity: { duration: 0.2 },
-                                y: { duration: 0.2, delay: 0.05 * Math.min(index, 12) }
-                              }}
-                              className="mt-3 relative"
-                            >
-                              {/* Badge de tendance */}
-                              <TrendBadgeComponent 
-                                badge={course.trendBadge || null} 
-                                animationDelay={0.1 + 0.05 * Math.min(index, 12)}
-                              />
-                              
-                              <SuggestedCourseCard
-                                course={course}
-                                enrolledStudents={course.studentCount || 0}
-                                reason={`${course.studentCount || 0} étudiants de ${safeData.user.faculty}`}
-                                onUnlock={handleDirectCourseUnlock}
-                                onPreview={handlePreviewCourse}
-                                onToggleFavorite={handleToggleFavorite}
-                                onClick={(courseId) => {
-                                  const foundCourse = filteredFacultyCourses.find((c: CourseWithTrend) => c.id === courseId);
-                                  if (foundCourse) {
-                                    handleOpenIntegratedViewer(foundCourse);
-                                  }
-                                }}
-                                canAfford={true}
-                                isUnlocked={unlockedCourses.includes(course.id)}
-                                isCompactMode={isScrolledCompact}
-                              />
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
+                    {/* Row 1: Mastery Programs (statique) */}
+                    <div className="flex flex-wrap gap-3 mb-4">
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['all'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border ${
+                          facultyFilters.subjects.includes('all') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <BookOpen size={16} />
+                        Tout voir
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['physics'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border ${
+                          facultyFilters.subjects.includes('physics') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <Zap size={16} />
+                        Physique
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['mathematics'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border ${
+                          facultyFilters.subjects.includes('mathematics') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <Calculator size={16} />
+                        Mathématiques
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['chemistry'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border ${
+                          facultyFilters.subjects.includes('chemistry') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <FileText size={16} />
+                        Chimie
+                      </button>
+                      
+                      {/* Mastery Programs verrouillés */}
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['economics'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border relative ${
+                          facultyFilters.subjects.includes('economics') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <TrendingUp size={16} />
+                        Économie
+                        <Lock size={12} className="text-gray-400" />
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['biology'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border relative ${
+                          facultyFilters.subjects.includes('biology') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <Brain size={16} />
+                        Biologie
+                        <Lock size={12} className="text-gray-400" />
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setFacultyFilters({ ...facultyFilters, subjects: ['informatics'], trends: [], social: [] }); setSelectedTopic(null); }}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border relative ${
+                          facultyFilters.subjects.includes('informatics') 
+                            ? 'bg-gray-900 text-white border-gray-900' 
+                            : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        <Settings size={16} />
+                        Informatique
+                        <Lock size={12} className="text-gray-400" />
+                      </button>
+                    </div>
+
+                    {/* Row 2: Sujets/Topics (dynamique - apparaît quand un Mastery Program est sélectionné) */}
+                    {(facultyFilters.subjects.includes('physics') || 
+                      facultyFilters.subjects.includes('mathematics') || 
+                      facultyFilters.subjects.includes('chemistry')) && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex flex-wrap gap-3 mb-8"
+                      >
+                        {/* Topics pour Physique */}
+                        {facultyFilters.subjects.includes('physics') && (
+                          <>
+                            {['Électrostatique', 'Mécanique', 'Thermodynamique', 'Optique', 'Électromagnétisme'].map(topic => (
+                              <button 
+                                key={topic}
+                                onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
+                                className={`px-5 py-3 rounded-full text-sm font-medium transition-all border ${
+                                  selectedTopic === topic 
+                                    ? 'bg-gray-900 text-white border-gray-900' 
+                                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                                }`}
+                              >
+                                {topic}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                        
+                        {/* Topics pour Mathématiques */}
+                        {facultyFilters.subjects.includes('mathematics') && (
+                          <>
+                            {['Analyse', 'Algèbre linéaire', 'Probabilités', 'Statistiques', 'Géométrie'].map(topic => (
+                              <button 
+                                key={topic}
+                                onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
+                                className={`px-5 py-3 rounded-full text-sm font-medium transition-all border ${
+                                  selectedTopic === topic 
+                                    ? 'bg-gray-900 text-white border-gray-900' 
+                                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                                }`}
+                              >
+                                {topic}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                        
+                        {/* Topics pour Chimie */}
+                        {facultyFilters.subjects.includes('chemistry') && (
+                          <>
+                            {['Chimie organique', 'Chimie inorganique', 'Biochimie', 'Thermochimie', 'Cinétique'].map(topic => (
+                              <button 
+                                key={topic}
+                                onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
+                                className={`px-5 py-3 rounded-full text-sm font-medium transition-all border ${
+                                  selectedTopic === topic 
+                                    ? 'bg-gray-900 text-white border-gray-900' 
+                                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                                }`}
+                              >
+                                {topic}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+
+                    {/* Espacement si pas de row 2 */}
+                    {!(facultyFilters.subjects.includes('physics') || 
+                      facultyFilters.subjects.includes('mathematics') || 
+                      facultyFilters.subjects.includes('chemistry')) && (
+                      <div className="mb-4" />
+                    )}
+
+                    {/* Grille de cours - 8 max par ligne */}
+                    {/* Détection des programmes verrouillés */}
+                    {(() => {
+                      const lockedPrograms: Array<'economics' | 'biology' | 'informatics'> = ['economics', 'biology', 'informatics'];
+                      const isLockedProgram = lockedPrograms.some(p => facultyFilters.subjects.includes(p as SubjectFilter));
+                      
+                      // Cours mockés pour les programmes verrouillés
+                      const lockedCourses: Record<string, Array<{id: string, title: string, description: string}>> = {
+                        economics: [
+                          { id: 'eco-1', title: 'Microéconomie', description: 'Théorie du consommateur et du producteur' },
+                          { id: 'eco-2', title: 'Macroéconomie', description: 'Modèles économiques et politiques' },
+                          { id: 'eco-3', title: 'Économétrie', description: 'Méthodes statistiques appliquées' },
+                          { id: 'eco-4', title: 'Finance d\'entreprise', description: 'Gestion financière et investissements' },
+                        ],
+                        biology: [
+                          { id: 'bio-1', title: 'Biologie Cellulaire', description: 'Structure et fonction des cellules' },
+                          { id: 'bio-2', title: 'Génétique', description: 'Hérédité et expression des gènes' },
+                          { id: 'bio-3', title: 'Biochimie', description: 'Réactions chimiques du vivant' },
+                          { id: 'bio-4', title: 'Physiologie', description: 'Fonctionnement des organismes' },
+                        ],
+                        informatics: [
+                          { id: 'info-1', title: 'Algorithmique', description: 'Conception et analyse d\'algorithmes' },
+                          { id: 'info-2', title: 'Programmation', description: 'Langages et paradigmes' },
+                          { id: 'info-3', title: 'Bases de données', description: 'SQL et modélisation' },
+                          { id: 'info-4', title: 'Réseaux', description: 'Architecture et protocoles' },
+                        ],
+                      };
+                      
+                      const currentLockedCourses = lockedPrograms
+                        .filter(p => facultyFilters.subjects.includes(p as SubjectFilter))
+                        .flatMap(p => lockedCourses[p] || []);
+                      
+                      if (isLockedProgram && currentLockedCourses.length > 0) {
+                        return (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-5">
+                            {currentLockedCourses.map((course) => (
+                              <div
+                                key={course.id}
+                                className="group cursor-pointer relative"
+                              >
+                                {/* Tooltip flottant premium - Style MasterClass */}
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all duration-500 z-50 pointer-events-none group-hover:pointer-events-auto">
+                                  <div className="bg-[#0a0a0a] rounded-2xl shadow-2xl shadow-black/50 border border-amber-500/20 p-5 w-72 transform scale-95 group-hover:scale-100 transition-transform duration-500">
+                                    {/* Flèche vers le bas */}
+                                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#0a0a0a] border-r border-b border-amber-500/20 transform rotate-45" />
+                                    
+                                    {/* Header avec badge premium */}
+                                    <div className="flex items-center justify-between mb-4">
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                                          <Sparkles size={14} className="text-black" />
+                                        </div>
+                                        <span className="text-amber-400 text-xs font-semibold tracking-widest uppercase">Essai Gratuit</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Titre élégant */}
+                                    <h4 className="text-white font-bold text-lg mb-1 leading-snug">{course.title}</h4>
+                                    <p className="text-gray-500 text-xs mb-4">Mastery Program</p>
+                                    
+                                    {/* Avantages avec icônes */}
+                                    <div className="space-y-2 mb-5">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center">
+                                          <Clock size={10} className="text-amber-400" />
+                                        </div>
+                                        <span className="text-gray-300 text-sm">10 heures d'accès</span>
+                                      </div>
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center">
+                                          <CheckCircle size={10} className="text-amber-400" />
+                                        </div>
+                                        <span className="text-gray-300 text-sm">Sans engagement</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Bouton principal premium */}
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOnboardingInitialPhase('membership-intro');
+                                        setShowOnboarding(true);
+                                      }}
+                                      className="w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl text-sm font-bold hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/25"
+                                    >
+                                      Commencer maintenant
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Carte principale - Style MasterClass */}
+                                <div className="relative aspect-[3/4] bg-[#0d0d0d] rounded-2xl overflow-hidden mb-3 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-amber-500/10 border border-white/5 group-hover:border-amber-500/30">
+                                  {/* Pattern subtil en arrière-plan */}
+                                  <div className="absolute inset-0 opacity-30">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 via-transparent to-gray-900/50" />
+                                  </div>
+                                  
+                                  {/* Icône centrale élégante */}
+                                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                                    <div className="relative">
+                                      {/* Cercle externe avec glow */}
+                                      <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center group-hover:border-amber-500/50 group-hover:shadow-lg group-hover:shadow-amber-500/20 transition-all duration-500">
+                                        {/* Icône Play au hover, Lock par défaut */}
+                                        <div className="relative">
+                                          <Lock className="w-8 h-8 text-white/40 group-hover:opacity-0 transition-opacity duration-300" />
+                                          <Play className="w-8 h-8 text-amber-400 absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-1" fill="currentColor" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Gradient overlay cinématique */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+                                  
+                                  {/* Contenu texte premium */}
+                                  <div className="absolute inset-0 flex flex-col justify-end p-4 z-20">
+                                    {/* Ligne décorative amber */}
+                                    <div className="w-8 h-0.5 bg-amber-500 mb-3 group-hover:w-12 transition-all duration-500" />
+                                    
+                                    <h3 className="!text-white font-bold text-lg leading-tight tracking-tight mb-1 drop-shadow-lg">
+                                      {course.title}
+                                    </h3>
+                                    <p className="!text-white/70 text-xs">
+                                      {course.description?.slice(0, 35)}...
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      
+                      return filteredFacultyCourses.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+                        {filteredFacultyCourses.map((course: CourseWithTrend) => (
+                          <div
+                            key={course.id}
+                            className="group cursor-pointer"
+                            onClick={() => handleOpenIntegratedViewer(course)}
+                          >
+                            <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
+                              {/* Image de fond si disponible */}
+                              {course.thumbnail && (
+                                <img 
+                                  src={course.thumbnail} 
+                                  alt={course.title}
+                                  className="absolute inset-0 w-full h-full object-cover opacity-60"
+                                />
+                              )}
+                              {/* Gradient overlay */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                              {/* Contenu texte */}
+                              <div className="absolute inset-0 flex flex-col justify-end p-4">
+                                <h3 className="!text-white font-bold text-lg leading-tight tracking-tight mb-1">
+                                  {course.title}
+                                </h3>
+                                <div className="w-8 h-0.5 bg-white/40 mb-2" />
+                                <p className="!text-white/80 text-xs font-medium">
+                                  {course.description?.slice(0, 40)}...
+                                </p>
+                              </div>
+                              {/* Play button on hover */}
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                                  <Play className="w-6 h-6 text-gray-900 ml-0.5" fill="currentColor" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ) : (
+                    ) : null;
+                    })()}
+                    
+                    {/* Message si aucun cours */}
+                    {filteredFacultyCourses.length === 0 && !(['economics', 'biology', 'informatics'] as const).some(p => facultyFilters.subjects.includes(p)) && (
                       /* Message de feedback pour zéro résultat */
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -3430,41 +3645,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       </motion.div>
                     )}
 
-                    {/* CTA Explorer tout le catalogue */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8 text-center border border-gray-200"
-                    >
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-2xl">👉</span>
-                        <h3 className="text-xl font-bold text-gray-900">
-                          Explorer tout le catalogue
-                        </h3>
-                      </div>
-                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                        Découvrez tous nos cours, packs et offres spéciales. Plus de choix, plus d'opportunités d'apprentissage.
-                      </p>
-                      <button
-                        onClick={() => setActiveSection('unlock')}
-                        className="inline-flex items-center gap-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-8 py-4 rounded-xl font-medium hover:from-gray-800 hover:to-gray-700 transition-all shadow-lg hover:shadow-xl group"
-                      >
-                        <Brain size={20} />
-                        <span>Accéder au catalogue complet</span>
-                        <motion.div
-                          animate={{ x: [0, 4, 0] }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                          className="group-hover:animate-pulse"
-                        >
-                          →
-                        </motion.div>
-                      </button>
-                    </motion.div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -3501,11 +3681,15 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               exit={{ x: -320 }}
               className="fixed left-0 top-0 bottom-0 w-80 bg-white z-50 lg:hidden"
             >
-              <div className="p-6">
+              <div className="p-6 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <Brain size={20} />
-                    <span className="font-bold">Science Made Simple</span>
+                  <div className="relative h-8 w-40">
+                    <Image 
+                      src="/brand/sms-text-logo.svg" 
+                      alt="Science Made Simple"
+                      fill
+                      className="object-contain object-left"
+                    />
                   </div>
                   <button onClick={() => setSidebarOpen(false)}>
                     <X size={20} />
@@ -3574,6 +3758,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       </button>
                     );
                   })}
+                </div>
+                
+                {/* Logo en bas de la sidebar mobile */}
+                <div className="mt-auto pt-6 border-t border-gray-100">
+                  <div className="relative h-16 w-full">
+                    <Image 
+                      src="/brand/sms-logo2.svg" 
+                      alt="Science Made Simple"
+                      fill
+                      className="object-contain object-left"
+                    />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -3903,8 +4099,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         />
       )}
 
-      {/* 🧪 Panel de test XP (développement uniquement) */}
-      {process.env.NODE_ENV === 'development' && (
+      {/* 🧪 Panel de test XP (développement uniquement) - MASQUÉ */}
+      {false && process.env.NODE_ENV === 'development' && (
         <XPTestPanel />
       )}
 
@@ -3936,6 +4132,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       <OnboardingPopup
         isOpen={showOnboarding}
         onComplete={handleOnboardingComplete}
+        initialPhase={onboardingInitialPhase}
       />
     </>
   );

@@ -50,6 +50,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { Course, Lesson, User, PurchaseOption } from '@/types';
+import Image from 'next/image';
 import { IdentityVerificationModal } from './IdentityVerificationModal';
 import { IdentityVerificationTrigger } from './IdentityVerificationTrigger';
 import { IdentityVerificationService } from '@/lib/identity-verification-service';
@@ -58,6 +59,7 @@ import { WalletService } from '@/lib/wallet-service';
 import { WalletBalance } from './WalletBalance';
 import { XPService, UserXPProfile } from '@/lib/xp-service';
 import XPWidget from './XPWidget';
+import { XPHeaderWidget } from './XPHeaderWidget';
 import SocialFeedIcon from './SocialFeedIcon';
 import SocialFeedPanel from './SocialFeedPanel';
 import { StudyRoomHeaderWidget } from './StudyRoomHeaderWidget';
@@ -599,14 +601,9 @@ const LessonDetailBlock: React.FC<{
   // Déterminer si les slides PDF sont accessibles
   const canAccessSlides = hasFullPack || isPreviewLesson;
 
-  const handleSlidesPreview = () => {
-    if (isPreviewLesson && !hasFullPack) {
-      // Aperçu limité pour les 2 premières leçons
-      alert(`📄 Aperçu des slides PDF - "${lesson.title}"\n\nVous visualisez un extrait des slides de cette leçon.\nPour accéder à tous les slides PDF de tous les cours, débloquez le Pack Électrostatique complet.`);
-    } else if (hasFullPack) {
-      // Accès complet aux slides
-      alert(`📄 Slides PDF complets - "${lesson.title}"\n\nAccès à tous les slides PDF de cette leçon grâce à votre Pack Électrostatique.`);
-    }
+  const handleSlidesDownload = () => {
+    // Téléchargement des slides
+    alert(`📄 Slides PDF - "${lesson.title}"\n\nTéléchargement des slides de cette leçon...`);
   };
 
   return (
@@ -675,7 +672,7 @@ const LessonDetailBlock: React.FC<{
                     </p>
                   </div>
                   <button
-                    onClick={handleSlidesPreview}
+                    onClick={handleSlidesDownload}
                     title="Télécharger cette leçon"
                     className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"
                   >
@@ -683,20 +680,7 @@ const LessonDetailBlock: React.FC<{
                   </button>
                 </div>
 
-                {/* Ligne secondaire - Upsell Pack Électrostatique */}
-                <div className="flex items-start gap-3">
-                  <Library size={18} className="text-gray-900 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Pour accéder à l'intégralité des slides de toutes vos leçons et cours, débloquez le{' '}
-                    <button
-                      onClick={onOpenUpsell}
-                      className="font-medium text-purple-700 hover:text-purple-800 hover:underline transition-all duration-200 cursor-pointer"
-                    >
-                      Pack Électrostatique
-                    </button>.
-                  </p>
                 </div>
-              </div>
             )}
 
             {/* Progression si en cours */}
@@ -782,10 +766,10 @@ const LessonDetailBlock: React.FC<{
             {/* Message de statut */}
             <div className="text-sm text-gray-600 text-center lg:text-center mb-2">
               {lesson.isOwned ? 
-                "Leçon débloquée - Accès complet" : 
+                "Leçon disponible - Accès complet" : 
                 lesson.quizCompleted ?
-                  `Quiz fait (${lesson.quizScore}%) - Aperçu disponible` :
-                  "Quiz et aperçu gratuits disponibles"
+                  `Quiz fait (${lesson.quizScore}%)` :
+                  "Quiz disponible"
               }
             </div>
             
@@ -801,18 +785,9 @@ const LessonDetailBlock: React.FC<{
                 <span className="text-sm">Je me teste</span>
               </button>
               
-              {/* Bouton Aperçu - Mobile */}
-              <button
-                onClick={onShowPreview}
-                className="flex-1 bg-blue-50 border-2 border-blue-200 hover:bg-blue-100 hover:border-blue-300 text-blue-700 px-3 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
-                title={lesson.isOwned ? "Aperçu + accès complet" : "Aperçu vidéo gratuit"}
-              >
-                <Eye size={16} />
-                <span className="text-sm">Aperçu</span>
-              </button>
-            </div>
+              </div>
             
-            {/* Bouton principal - Débloquer ou Commencer */}
+            {/* Bouton principal - Commencer */}
             <button
               onClick={() => {
                 console.log('🚀 Button clicked! Calling onLessonPurchaseCheck with lesson:', lesson);
@@ -820,15 +795,11 @@ const LessonDetailBlock: React.FC<{
               }}
               className="w-full px-4 py-3 lg:py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:from-gray-800 hover:to-gray-700"
             >
-              {lesson.isOwned ? <Play size={16} /> : <Lock size={16} />}
+              <Play size={16} />
               <span className="text-sm lg:text-base">
-                {lesson.isOwned ? (
-                  lesson.isCompleted ? 'Revoir' : 
-                  lesson.isInProgress ? 'Continuer' : 
-                  'Commencer'
-                ) : (
-                  `Débloquer (${lesson.price}€)`
-                )}
+                {lesson.isCompleted ? 'Revoir' : 
+                 lesson.isInProgress ? 'Continuer' : 
+                 'Commencer'}
               </span>
             </button>
             
@@ -844,15 +815,6 @@ const LessonDetailBlock: React.FC<{
                 <span className="text-sm">Je me teste</span>
               </button>
               
-              {/* Bouton Aperçu - Desktop */}
-              <button
-                onClick={onShowPreview}
-                className="w-full bg-blue-50 border-2 border-blue-200 hover:bg-blue-100 hover:border-blue-300 text-blue-700 px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
-                title={lesson.isOwned ? "Aperçu + accès complet" : "Aperçu vidéo gratuit"}
-              >
-                <Eye size={16} />
-                <span className="text-sm">Aperçu</span>
-              </button>
             </div>
           </div>
         </div>
@@ -944,7 +906,6 @@ export function IntegratedCourseViewer({
   // Navigation items - identiques au dashboard principal
   const navigationItems = [
     { id: 'courses', label: 'Mes cours', icon: BookOpen },
-    { id: 'unlock', label: 'Débloquer', icon: Brain },
     { id: 'planning', label: 'Planification', icon: Calendar },
     { id: 'study-rooms', label: 'Study Rooms', icon: Globe },
     { id: 'community', label: 'Communauté', icon: Users },
@@ -1321,42 +1282,38 @@ export function IntegratedCourseViewer({
           {currentView === 'map' ? (
             /* Vue Map Intégrée */
             <>
-              {/* Header identique à la landing */}
+              {/* Header IDENTIQUE au SimpleDashboard */}
               <header className="bg-white border-b border-gray-200 flex-shrink-0 z-40">
-                <div className="px-6 py-4">
-                  <div className="flex items-center justify-center">
-                    {/* Menu burger mobile uniquement */}
+                <div className="px-6 py-0">
+                  <div className="flex items-center justify-between relative">
+                    {/* Left - Logo */}
+                    <div className="flex items-center gap-4 flex-shrink-0">
                       <button 
                         onClick={() => setSidebarOpen(true)}
-                      className="absolute left-6 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
                       >
                         <Menu size={20} />
                       </button>
-
-                    {/* Widgets centrés */}
-                    <div className="flex items-center gap-4">
-                      {/* Portefeuille */}
-                      {user?.wallet && (
-                        <div data-tour="wallet">
-                          <WalletBalance 
-                            balance={WalletService.getTotalBalance(user?.id || 'user-default').walletBalance}
-                            onAddFunds={() => setShowWalletTopUp(true)}
-                            userId={user?.id || 'user-default'}
-                            key={walletUpdateTrigger} // Force re-render after purchase
+                      <div className="flex items-center">
+                        <div className="relative h-[84px] w-[500px]">
+                          <Image 
+                            src="/brand/sms-text-logo.svg" 
+                            alt="Science Made Simple"
+                            fill
+                            className="object-contain object-left"
                           />
                         </div>
-                      )}
-
-                      {/* Widget XP avec compteur */}
+                      </div>
+                    </div>
+                    
+                    {/* Widgets centrés au milieu de la page */}
+                    <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
+                      {/* Widget XP */}
                       {userXPProfile && (
-                        <div data-tour="xp-widget">
-                          <button 
-                            onClick={() => setShowSocialFeed(true)}
-                            className="text-blue-600 font-bold text-sm hover:text-blue-700 transition-colors"
-                          >
-                            Niveau {userXPProfile.currentLevel.level} • {userXPProfile.totalXP} XP{userXPProfile.dailyStreak > 0 ? ` • 🔥 ${userXPProfile.dailyStreak}j` : ''}
-                          </button>
-                        </div>
+                        <XPHeaderWidget
+                          profile={userXPProfile}
+                          onClick={() => setShowSocialFeed(true)}
+                        />
                       )}
 
                       {/* Fil Social */}
@@ -1367,12 +1324,51 @@ export function IntegratedCourseViewer({
                         />
                       </div>
 
+                      {/* Widget Social Unifié (Buddy) */}
+                      <UnifiedSocialWidget
+                        userId={user?.id || 'current_user'}
+                        onNavigateToCommunity={() => {
+                          onClose();
+                          onNavigateToSection?.('community');
+                        }}
+                        onNavigateToSection={(section) => {
+                          onClose();
+                          onNavigateToSection?.(section);
+                        }}
+                      />
+                    </div>
+
+                    {/* Right - Timer + Finish Sign Up + Avatar */}
+                    <div className="flex items-center gap-4">
+                      {/* Timer - Style urgence */}
+                      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
+                        <Clock size={18} className="text-gray-700" />
+                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
+                      </div>
+
+                      {/* Finish Sign Up CTA */}
+                      <button
+                        onClick={() => {
+                          // Retourner au dashboard et ouvrir l'onboarding
+                          onClose();
+                        }}
+                        className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
+                      >
+                        Finish Sign Up
+                      </button>
+
+                      {/* Profil utilisateur avec initiale */}
+                      <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold">
+                        {user?.name?.charAt(0) || 'U'}
+                      </div>
+
                       {/* Bouton retour */}
                       <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
-                        <ArrowLeft size={20} className="text-gray-600" />
+                        <ArrowLeft size={18} className="text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700 hidden md:inline">Retour</span>
                       </button>
                     </div>
                   </div>
@@ -1381,11 +1377,11 @@ export function IntegratedCourseViewer({
 
               {/* Contenu avec sidebar */}
               <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar identique au dashboard */}
-                <aside className={`w-64 bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300 lg:translate-x-0 ${
+                {/* Sidebar identique au SimpleDashboard */}
+                <aside className={`w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 lg:translate-x-0 ${
                   sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 } fixed lg:relative top-0 left-0 h-full z-30`}>
-                  <div className="p-6">
+                  <div className="p-6 flex-1 overflow-y-auto">
                     <div className="space-y-2">
                       {navigationItems.map((item) => (
                         <button
@@ -1413,6 +1409,17 @@ export function IntegratedCourseViewer({
                       ))}
                     </div>
                   </div>
+                  {/* Logo en bas de la sidebar */}
+                  <div className="p-6 border-t border-gray-100">
+                    <div className="relative h-[100px] w-full">
+                      <Image 
+                        src="/brand/sms-logo2.svg" 
+                        alt="Science Made Simple"
+                        fill
+                        className="object-contain object-left"
+                      />
+                    </div>
+                  </div>
                 </aside>
 
                 {/* Overlay mobile */}
@@ -1423,7 +1430,7 @@ export function IntegratedCourseViewer({
                   />
                 )}
 
-                {/* Contenu principal */}
+                {/* Contenu principal - Map */}
                 <main className="flex-1 overflow-y-auto">
                   {/* KPIs de progression */}
                   <div className="p-6 bg-white border-b border-gray-200">
@@ -2870,7 +2877,7 @@ export function IntegratedCourseViewer({
                   </motion.div>
                   <h4 className="text-xl font-bold text-gray-900 mb-3">Test non disponible</h4>
                   <p className="text-gray-600 mb-6 leading-relaxed">
-                    Aucun test n'est encore disponible pour cette leçon. Essayez l'aperçu vidéo en attendant !
+                    Aucun test n'est encore disponible pour cette leçon. Continuez votre apprentissage !
                   </p>
                   <motion.button
                     onClick={() => setShowQuiz(false)}
@@ -3138,23 +3145,22 @@ export function IntegratedCourseViewer({
                         </li>
                       </ul>
 
-                      {/* Bouton débloquer principal */}
+                      {/* Bouton commencer principal */}
                       <motion.button
                         onClick={() => {
                           setShowPreview(false);
-                          // Ici on pourrait ouvrir l'upsell modal
                         }}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-violet-600 to-purple-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
                       >
-                        🔓 Débloquer le cours complet
+                        ▶️ Commencer le cours
                       </motion.button>
                     </motion.div>
 
                     <div className="text-center">
                       <p className="text-sm text-gray-500 mb-4">
-                        Aperçu gratuit - Débloque le cours pour voir l'intégralité
+                        Accès complet à tout le contenu
                       </p>
                       
                       {/* Statistiques */}

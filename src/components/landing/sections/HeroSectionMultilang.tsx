@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { VideoModal } from '@/components/VideoModal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ExploreMenu, MobileExploreOverlay } from '../ExploreMenu';
+import { LogoIntro, LogoIntroVariant } from '../logo-intro';
 
 interface HeroSectionProps {
   onEnterApp?: () => void;
@@ -19,6 +20,8 @@ const WHATSAPP_NUMBER = '32477025622';
 export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: HeroSectionProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const [logoAnimation, setLogoAnimation] = useState<LogoIntroVariant>('star-shoot');
+  const [logoKey, setLogoKey] = useState(0);
   const { language, setLanguage, t } = useLanguage();
 
   const WHATSAPP_DEFAULT_MESSAGE = language === 'fr' 
@@ -334,10 +337,10 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
 
               <button
                 onClick={handleWhatsAppClick}
-                className="w-full md:w-auto px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="w-full md:w-auto px-16 py-6 bg-black text-white rounded-full font-bold text-3xl hover:bg-gray-900 transition-colors flex items-center justify-center gap-4"
               >
                 {t('hero.cta')}
-                <MessageCircle size={22} />
+                <MessageCircle size={32} />
               </button>
 
               <p className="text-sm md:text-base text-gray-500 mt-4 font-medium flex items-center gap-2">
@@ -354,34 +357,139 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
               className="flex items-center justify-center lg:justify-start"
             >
               <div className="w-full max-w-[750px]">
+                {/* Animation Variant Switcher - Hidden for production, using star-shoot as default */}
+                {/* Uncomment below to enable animation picker in dev mode */}
+                {false && (
+                <div className="space-y-2 mb-4">
+                  {/* Classic Variants */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {([
+                      { id: 'netflix-punch', label: 'A · Netflix' },
+                      { id: 'community-assemble', label: 'C · Community' },
+                      { id: 'scan-hud', label: 'D · Scan' },
+                      { id: 'blur-focus', label: 'E · Focus' },
+                      { id: 'tilt-3d', label: 'F · 3D' },
+                    ] as const).map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => {
+                          setLogoAnimation(v.id);
+                          setLogoKey(prev => prev + 1);
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
+                          logoAnimation === v.id
+                            ? 'bg-gray-900 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Sticker Variants */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {([
+                      { id: 'sticker-slap', label: 'G · Slap 🎯' },
+                      { id: 'sticker-stamp', label: 'I · Stamp' },
+                      { id: 'sticker-drop', label: 'J · Drop' },
+                      { id: 'sticker-wiggle', label: 'K · Wiggle' },
+                      { id: 'sticker-zoom', label: 'L · Zoom' },
+                    ] as const).map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => {
+                          setLogoAnimation(v.id as LogoIntroVariant);
+                          setLogoKey(prev => prev + 1);
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all border ${
+                          logoAnimation === v.id
+                            ? 'bg-amber-500 text-white border-amber-500'
+                            : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                        }`}
+                      >
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                  {/* DrawSVG Variants */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {([
+                      { id: 'hand-drawn', label: 'B · Manuscrit ✏️' },
+                      { id: 'sticker-peel', label: 'H · Peel ✏️' },
+                      { id: 'draw-reveal', label: 'M · Reveal ✏️' },
+                      { id: 'draw-write', label: 'N · Write ✏️' },
+                      { id: 'draw-neon', label: 'O · Neon ✏️' },
+                    ] as const).map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => {
+                          setLogoAnimation(v.id as LogoIntroVariant);
+                          setLogoKey(prev => prev + 1);
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all border ${
+                          logoAnimation === v.id
+                            ? 'bg-emerald-500 text-white border-emerald-500'
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                        }`}
+                      >
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Star Variants - L'étoile comme quête */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {([
+                      { id: 'draw-star', label: 'P · Quest ⭐' },
+                      { id: 'star-orbit', label: 'Q · Orbit 🌙' },
+                      { id: 'star-spiral', label: 'R · Spiral 🌀' },
+                      { id: 'star-bounce', label: 'S · Bounce 🏀' },
+                      { id: 'star-shoot', label: 'T · Shoot 💫' },
+                      { id: 'star-pulse', label: 'U · Pulse 💓' },
+                      { id: 'star-magnet', label: 'V · Magnet 🧲' },
+                    ] as const).map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => {
+                          setLogoAnimation(v.id as LogoIntroVariant);
+                          setLogoKey(prev => prev + 1);
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all border ${
+                          logoAnimation === v.id
+                            ? 'bg-yellow-500 text-white border-yellow-500'
+                            : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                        }`}
+                      >
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                )}
+
                 <div 
-                  className="relative w-full aspect-[4/5] md:aspect-video lg:aspect-[4/5] max-h-[400px] lg:max-h-[500px] bg-gray-50 rounded-3xl overflow-hidden cursor-pointer group shadow-2xl border-4 border-gray-100"
+                  className="relative w-full aspect-[4/5] md:aspect-video lg:aspect-[4/5] max-h-[400px] lg:max-h-[500px] rounded-3xl overflow-hidden cursor-pointer group shadow-2xl border-4 border-gray-800"
                   onClick={() => setIsVideoOpen(true)}
                 >
-                  {/* Logo Thumbnail */}
-                  <div className="absolute inset-0 flex items-center justify-center p-20 opacity-80">
-                    <div className="relative w-full h-full">
-                      <Image 
-                        src="/brand/sms-logo2.svg" 
-                        alt="Science Made Simple"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                  </div>
+                  {/* Animated Logo Intro - Professional GSAP Animation */}
+                  <LogoIntro 
+                    key={logoKey}
+                    variant={logoAnimation}
+                    autoPlay={true}
+                    loop={true}
+                    loopDelay={2500}
+                    darkMode={true}
+                    onCue={(cue, time) => {
+                      // Hook for SFX - can connect to audio player here
+                      console.log(`🔊 SFX: ${cue} at ${time.toFixed(2)}s`);
+                    }}
+                  />
 
-                  {/* Voile gris */}
-                  <div className="absolute inset-0 bg-gray-900/20 group-hover:bg-gray-900/30 transition-all duration-300 backdrop-blur-[2px]"></div>
-
-                  {/* Play Button */}
-                  <div className="absolute inset-0 flex items-center justify-center z-10">
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="w-20 h-20 md:w-24 md:h-24 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300">
                       <Play className="text-blue-600 ml-1" size={40} />
                     </div>
                   </div>
-
-                  {/* Overlay gradient en bas */}
-                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 
                 <div className="text-center mt-6">

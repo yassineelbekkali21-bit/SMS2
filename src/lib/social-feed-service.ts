@@ -93,7 +93,7 @@ const mockBuddyActivities: SocialEvent[] = [
     userName: 'Thomas',
     userAvatar: '/avatars/thomas.jpg',
     emoji: '🎯',
-    message: 'a complété 75% du pack "Électrostatique"',
+    message: 'a complété 75% du programme "Physique"',
     timestamp: new Date(Date.now() - 1000 * 60 * 4), // 4 min ago
     isRead: false,
     clickableLink: {
@@ -236,8 +236,8 @@ const mockFacultyActivities: SocialEvent[] = [
     isRead: false,
     clickableLink: {
       type: 'pack',
-      id: 'pack-electromagnetisme',
-      title: 'Électrostatique'
+      id: 'pack-physics',
+      title: 'Physique'
     }
   },
   {

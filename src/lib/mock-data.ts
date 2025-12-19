@@ -460,7 +460,7 @@ export const mockCourses: Course[] = [
     previewDuration: '5-10 min',
     tags: ['chimie', 'équilibres', 'thermodynamique'],
     difficulty: 'intermediate',
-    packId: 'pack-electromagnetisme'
+    packId: 'pack-chemistry'
   },
   {
     id: 'course-einstein-relativity',
@@ -1191,70 +1191,69 @@ export function generateUpsellOptions(lessonId: string, courseId?: string): Purc
   let lessonTitle = 'Les fondamentaux essentiels';
   let courseTitle = 'Cours Complet';
   let targetCourseId = courseId || 'course-gauss'; // Utiliser le courseId passé ou défaut
-  let packTitle = 'Électrostatique';
-  let packId = 'pack-electromagnetisme';
-  let packDescription = 'Formation complète en électrostatique';
+  let packTitle = 'Physique';
+  let packId = 'pack-physics';
+  let packDescription = 'Maîtrisez tous les fondamentaux de la physique universitaire';
   let courseFeatures = ['Toutes les leçons du cours', 'Accès aux Study Rooms', 'Garantie de réussite', 'Support prioritaire'];
-  let packFeatures = ['Tous les cours d\'électrostatique', 'Study Rooms premium', 'Coaching personnalisé', 'Planificateur inclus'];
+  let packFeatures = ['Tous les cours de physique', 'Study Rooms premium', 'Coaching personnalisé', 'Accès à vie'];
   
   // 🎯 SPÉCIALISATION PAR COURS (utilise courseId au lieu de lessonId)
-  if (targetCourseId === 'course-equilibres') {
-    // Équilibres Chimiques
-    lessonTitle = 'Équilibres Chimiques : fondamentaux essentiels';
-    courseTitle = 'Cours "Équilibres Chimiques"';
-    packTitle = 'Électrostatique';
-    packId = 'pack-electromagnetisme';
-    packDescription = 'Formation complète en électrostatique et chimie';
+  if (targetCourseId === 'course-equilibres' || targetCourseId.includes('chimie')) {
+    // Chimie
+    lessonTitle = 'Chimie : fondamentaux essentiels';
+    courseTitle = 'Cours Chimie';
+    packTitle = 'Chimie';
+    packId = 'pack-chemistry';
+    packDescription = 'De la chimie générale à la chimie organique';
     courseFeatures = [
-      'Toutes les leçons d\'Équilibres Chimiques',
-      'Calculs d\'équilibres avancés',
+      'Toutes les leçons de Chimie',
+      'Équilibres chimiques',
       'Applications industrielles',
       'Accès aux Study Rooms'
     ];
     packFeatures = [
-      'Équilibres Chimiques + Loi de Gauss + Forces',
-      'Approche multidisciplinaire',
+      'Chimie générale + Organique + Équilibres',
+      'Approche complète',
       'Study Rooms premium',
-      'Planificateur automatique'
+      'Accès à vie'
     ];
-  } else if (targetCourseId.includes('math') || targetCourseId.includes('analyse')) {
-    lessonTitle = 'Analyse Mathématique I : fondamentaux essentiels';
-    courseTitle = 'Cours "Analyse Mathématique I"';
+  } else if (targetCourseId.includes('math') || targetCourseId.includes('analyse') || targetCourseId.includes('integral') || targetCourseId.includes('algebre')) {
+    lessonTitle = 'Mathématiques : fondamentaux essentiels';
+    courseTitle = 'Cours Mathématiques';
     targetCourseId = 'course-math-analyse-1';
-    packTitle = 'Pack Mathématiques Avancées';
-    packId = 'pack-mathematiques';
-    packDescription = 'Pack complet pour exceller en mathématiques universitaires';
+    packTitle = 'Mathématiques';
+    packId = 'pack-mathematics';
+    packDescription = 'Tous les outils mathématiques pour réussir en sciences';
     courseFeatures = [
-      'Toutes les leçons d\'Analyse Mathématique I',
+      'Toutes les leçons de Mathématiques',
       'Méthodes de calcul avancées',
       'Exercices d\'application',
       'Accès aux Study Rooms'
     ];
     packFeatures = [
-      'Analyse I & Intégrales',
+      'Analyse + Algèbre + Statistiques',
       'Méthodes avancées incluses',
       'Coaching personnalisé',
-      'Planificateur stratégique',
-      'Garantie satisfaction 100%'
+      'Accès à vie'
     ];
   }
-  // Spécialisation pour la Loi de Gauss (le cas principal demandé)
-  else if (lessonId.includes('gauss') || lessonId.includes('electrostatique')) {
-    lessonTitle = 'Loi de Gauss : calcul de champ pour points, fils, plaques et sphères';
-    courseTitle = 'Cours "Loi de Gauss"';
-    packTitle = 'Électrostatique';
-    packDescription = 'Formation complète : de la loi de Coulomb aux applications avancées';
+  // Spécialisation pour la Physique
+  else if (lessonId.includes('gauss') || lessonId.includes('physique') || lessonId.includes('force') || lessonId.includes('mecan')) {
+    lessonTitle = 'Physique : fondamentaux essentiels';
+    courseTitle = 'Cours Physique';
+    packTitle = 'Physique';
+    packDescription = 'Maîtrisez tous les fondamentaux de la physique universitaire';
     courseFeatures = [
-      'Toutes les leçons du cours Loi de Gauss',
-      'Calculs pour toutes géométries',
+      'Toutes les leçons de Physique',
+      'Mécanique et électromagnétisme',
       'Exercices d\'application',
       'Accès aux Study Rooms'
     ];
     packFeatures = [
-      'Loi de Gauss + Potentiel + Dipôles',
+      'Mécanique + Électromagnétisme + Optique',
       'Préparation examens complète',
       'Study Rooms premium',
-      'Planificateur automatique'
+      'Accès à vie'
     ];
   }
   
@@ -1651,86 +1650,78 @@ export const getMockVideoQuizzes = (lessonId: string): VideoQuizQuestion[] => {
 
 export const mockCoursePacks: CoursePack[] = [
   {
-    id: 'pack-electromagnetisme',
-    title: 'Électrostatique',
-    description: 'Maîtrisez l\'électrostatique et l\'électromagnétisme avec ce pack expert',
-    courses: ['course-gauss', 'course-forces', 'course-equilibres'], // Loi de Gauss + Forces + Équilibres Chimiques
-    creditCost: 1200, // Prix en euros
-    originalCreditCost: 1400, // Prix séparé
-    badge: 'Populaire',
-    icon: '',
-    color: 'from-blue-400 to-purple-500',
-    features: [
-      'Loi de Gauss complète',
-      'Forces et champs électriques',
-      'Équilibres chimiques',
-      'Exercices pratiques inclus',
-      'Support WhatsApp prioritaire',
-      'Planificateur stratégique inclus'
-    ]
-  },
-  {
-    id: 'pack-mathematiques',
-    title: 'Mathématiques Avancées',
-    description: 'Pack complet pour exceller en mathématiques universitaires',
-    courses: ['course-integrales', 'course-math-analyse-1'], // Intégrales + Analyse
-    creditCost: 1200,
-    originalCreditCost: 1400,
-    badge: 'Valeur ajoutée',
-    icon: '',
-    color: 'from-green-400 to-blue-500',
-    features: [
-      'Analyse I & Intégrales',
-      'Méthodes avancées incluses',
-      'Coaching personnalisé',
-      'Planificateur stratégique',
-      'Garantie satisfaction 100%'
-    ]
-  },
-  {
-    id: 'pack-sciences',
-    title: 'Sciences Expérimentales',
-    description: 'Physique et chimie réunies pour une approche complète des sciences',
-    courses: ['course-physique-mecanique', 'course-chimie-generale'], // Mécanique + Chimie
-    creditCost: 1200,
-    originalCreditCost: 1400,
-    badge: 'Nouveau',
-    icon: '',
-    color: 'from-purple-400 to-pink-500',
-    features: [
-      'Mécanique classique',
-      'Chimie générale complète',
-      'Exercices types d\'examen',
-      'Session de rattrapage incluse',
-      'Accès mobile optimisé'
-    ]
-  },
-  {
-    id: 'pack-premium-all',
-    title: 'Premium Excellence',
-    description: 'L\'excellence académique avec un accompagnement VIP complet',
+    id: 'pack-physics',
+    title: 'Physique',
+    description: 'Maîtrisez tous les fondamentaux de la physique universitaire',
     courses: [
       'course-gauss', 
-      'course-equilibres', 
-      'course-integrales', 
-      'course-forces',
-      'course-math-analyse-1',
-      'course-physique-mecanique'
-    ], // Tous les cours principaux
-    creditCost: 2500,
-    originalCreditCost: 4200, // 6 cours × 700€
-    badge: 'Pack Premium',
-    icon: '',
-    color: 'from-yellow-400 to-orange-500',
+      'course-forces', 
+      'course-physique-mecanique', 
+      'course-thermodynamique', 
+      'course-optique', 
+      'course-electromagnetisme'
+    ],
+    creditCost: 999,
+    originalCreditCost: 1200,
+    badge: 'Populaire',
+    icon: '⚛️',
+    color: 'from-blue-500 to-indigo-600',
     features: [
-      'Tous les cours inclus (6 matières)',
-      'Coaching personnalisé hebdomadaire',
-      'Accès anticipé aux nouveautés',
-      'Support prioritaire 24/7',
-      'Planificateur stratégique premium',
-      'Révisions intensives pré-examens',
-      'Study Rooms VIP',
-      'Garantie satisfaction 100%'
+      'Mécanique classique',
+      'Électromagnétisme complet',
+      'Thermodynamique',
+      'Optique géométrique et ondulatoire',
+      'Exercices types d\'examen',
+      'Accès à vie'
+    ]
+  },
+  {
+    id: 'pack-mathematics',
+    title: 'Mathématiques',
+    description: 'Tous les outils mathématiques pour réussir en sciences',
+    courses: [
+      'course-suites',
+      'course-integrales', 
+      'course-math-analyse-1',
+      'course-algebre-lineaire',
+      'course-statistiques',
+      'course-geometrie-analytique'
+    ],
+    creditCost: 1099,
+    originalCreditCost: 1400,
+    badge: 'Essentiel',
+    icon: '📐',
+    color: 'from-emerald-500 to-teal-600',
+    features: [
+      'Analyse et calcul intégral',
+      'Algèbre linéaire',
+      'Statistiques et probabilités',
+      'Géométrie analytique',
+      'Méthodes de résolution',
+      'Accès à vie'
+    ]
+  },
+  {
+    id: 'pack-chemistry',
+    title: 'Chimie',
+    description: 'De la chimie générale à la chimie organique',
+    courses: [
+      'course-equilibres', 
+      'course-chimie-generale', 
+      'course-chimie-organique'
+    ],
+    creditCost: 799,
+    originalCreditCost: 1000,
+    badge: 'Complet',
+    icon: '🧪',
+    color: 'from-pink-500 to-rose-600',
+    features: [
+      'Chimie générale',
+      'Équilibres chimiques',
+      'Chimie organique',
+      'Réactions et mécanismes',
+      'Exercices pratiques',
+      'Accès à vie'
     ]
   }
 ];
