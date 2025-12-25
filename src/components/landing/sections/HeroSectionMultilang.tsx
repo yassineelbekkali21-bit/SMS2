@@ -2,27 +2,42 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Play, MessageCircle, Globe, CheckCircle, ChevronDown } from 'lucide-react';
+import { Menu, X, Play, MessageCircle, CheckCircle, Target, Search, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { VideoModal } from '@/components/VideoModal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ExploreMenu, MobileExploreOverlay } from '../ExploreMenu';
 import { LogoIntro, LogoIntroVariant } from '../logo-intro';
+import DiagnosticFlow from '@/components/DiagnosticFlow';
 
 interface HeroSectionProps {
   onEnterApp?: () => void;
+  onDiagnosticComplete?: (data: Record<string, unknown>) => void;
   isMenuOpen: boolean;
   setIsMenuOpen: (open: boolean) => void;
 }
 
 const WHATSAPP_NUMBER = '32477025622';
 
-export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: HeroSectionProps) {
+export function HeroSectionMultilang({ onEnterApp, onDiagnosticComplete, isMenuOpen, setIsMenuOpen }: HeroSectionProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [logoAnimation, setLogoAnimation] = useState<LogoIntroVariant>('star-shoot');
   const [logoKey, setLogoKey] = useState(0);
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
+
+  const handleDiagnosticComplete = (data: Record<string, unknown>) => {
+    setIsDiagnosticOpen(false);
+    if (onDiagnosticComplete) {
+      onDiagnosticComplete(data);
+    }
+    // Par défaut, ouvrir l'app avec les données
+    if (onEnterApp) {
+      onEnterApp();
+    }
+  };
 
   const WHATSAPP_DEFAULT_MESSAGE = language === 'fr' 
     ? 'Salut 👋 J\'aimerais un diagnostic personnalisé pour voir comment Science Made Simple peut m\'aider.'
@@ -48,10 +63,6 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
     }
   };
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'fr' ? 'en' : 'fr');
-  };
-
   return (
     <>
       {/* Navigation */}
@@ -60,10 +71,10 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
           ? 'top-0 left-0 right-0 md:top-4 md:px-6' 
           : 'top-2 px-3 md:top-4 md:px-6'
       }`}>
-        <div className={`transition-all duration-300 shadow-2xl ${
+        <div className={`transition-all duration-300 shadow-2xl noise-overlay-strong ${
           isExploreOpen 
-            ? 'bg-black w-full md:max-w-[1600px] md:mx-auto md:rounded-3xl' 
-            : 'bg-black rounded-2xl md:rounded-3xl max-w-[1600px] mx-auto'
+            ? 'bg-[#0d1317] w-full md:max-w-[1600px] md:mx-auto md:rounded-3xl' 
+            : 'bg-[#0d1317] rounded-2xl md:rounded-3xl max-w-[1600px] mx-auto'
         }`}>
           <div className="px-3 md:px-6 py-2 md:py-1">
             <div className="flex items-center justify-between">
@@ -123,32 +134,17 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                 >
                   {t('nav.contact')}
                 </button>
-                <button
-                  onClick={() => scrollToSection('faq')}
-                  className="text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
-                >
-                  {t('nav.faq')}
-                </button>
               </div>
 
-              {/* Right side: Language + CTA */}
+              {/* Right side: CTA */}
               <div className="hidden md:flex items-center gap-4">
-                {/* Language Toggle */}
+                {/* CTA Button - Diagnostic */}
                 <button
-                  onClick={toggleLanguage}
-                  className="flex items-center gap-2 px-5 py-3 bg-gray-800 hover:bg-gray-700 rounded-full text-white font-semibold transition-colors"
+                  onClick={() => setIsDiagnosticOpen(true)}
+                  className="px-8 py-4 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white rounded-full font-semibold text-xl transition-all flex items-center gap-2 shadow-lg shadow-[#00c2ff]/25"
                 >
-                  <Globe size={22} />
-                  <span className="uppercase text-base">{language === 'fr' ? 'EN' : 'FR'}</span>
-                </button>
-
-                {/* CTA Button */}
-                <button
-                  onClick={handleWhatsAppClick}
-                  className="px-8 py-4 bg-white text-black rounded-full font-bold text-xl hover:bg-gray-100 transition-colors flex items-center gap-2"
-                >
-                  {t('nav.start')}
-                  <MessageCircle size={22} />
+                  <Target size={22} />
+                  {language === 'fr' ? 'Diagnostic gratuit' : 'Free Diagnostic'}
                 </button>
               </div>
 
@@ -164,19 +160,16 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   <span className="text-sm uppercase tracking-wide">
                     {language === 'fr' ? 'Explorer' : 'Explore'}
                   </span>
-                  <ChevronDown 
-                    size={14} 
-                    className={`mt-0.5 transition-transform duration-300 ${isExploreOpen ? 'rotate-180' : ''}`} 
-                  />
+                  <Search size={14} />
                 </button>
 
-                {/* CTA Button Mobile - Icon Only - Hidden when explore is open to clean up header? No, keep it. */}
+                {/* CTA Button Mobile - Diagnostic */}
                 <button
-                  onClick={handleWhatsAppClick}
-                  className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-                  aria-label={t('nav.start')}
+                  onClick={() => setIsDiagnosticOpen(true)}
+                  className="w-10 h-10 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white rounded-full flex items-center justify-center transition-all shadow-lg shadow-[#00c2ff]/25"
+                  aria-label="Diagnostic gratuit"
                 >
-                  <MessageCircle size={20} />
+                  <Target size={20} />
                 </button>
 
                 <button
@@ -245,26 +238,6 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
                   >
                     {t('nav.contact')}
                   </button>
-                  <button 
-                    onClick={() => {
-                      scrollToSection('faq');
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left text-gray-300 hover:text-white py-2"
-                  >
-                    {t('nav.faq')}
-                  </button>
-                  
-                  {/* Language Toggle Mobile - Moved inside menu */}
-                  <div className="pt-4 mt-4 border-t border-gray-800">
-                    <button
-                      onClick={toggleLanguage}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-white font-semibold transition-colors w-full justify-center"
-                    >
-                      <Globe size={18} />
-                      <span className="uppercase text-sm">{language === 'fr' ? 'Changer de langue (EN)' : 'Change language (FR)'}</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             )}
@@ -282,71 +255,68 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {/* Social Proof au-dessus du titre */}
-              <div className="flex items-center gap-3 mb-6">
+              {/* Titre principal */}
+              <h1 
+                className="font-title text-6xl mb-6 md:mb-8 leading-[1.05] tracking-wide"
+                style={{ fontSize: 'clamp(2.5rem, 8vw, 72px)' }}
+              >
+                {language === 'fr' ? (
+                  <>Redecouvrez la science, gagnez en confiance.</>
+                ) : (
+                  <>Rediscover science, gain confidence.</>
+                )}
+              </h1>
+
+              {/* Texte descriptif */}
+              <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
+                {language === 'fr' 
+                  ? "Passez de la confusion a la maitrise, avec des cours qui transforment chaque difficulte en opportunite. Essayez gratuitement et remarquez la difference."
+                  : "Go from confusion to mastery, with courses that transform every difficulty into opportunity. Try it free and notice the difference."
+                }
+              </p>
+
+              {/* Social Proof - Après le texte */}
+              <div className="flex items-center gap-3 mb-8">
                 <div className="flex -space-x-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 border-2 border-white"></div>
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 border-2 border-white"></div>
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 border-2 border-white"></div>
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 border-2 border-white"></div>
                 </div>
-                <p className="text-base md:text-[1.375rem] text-gray-600 font-medium">
+                <p className="text-base md:text-lg text-gray-600 font-medium">
                   <span className="font-bold text-gray-900">+2,400</span> {t('hero.social_proof')}
                 </p>
               </div>
 
-              <h1 
-                className="text-6xl font-black text-gray-900 mb-6 md:mb-8 leading-[1.05] tracking-tight"
-                style={{ fontSize: 'clamp(2.3rem, 8vw, 4.5rem)' }}
-              >
-                {t('hero.title.line1')} <span className="text-blue-600">{t('hero.title.line2.highlight')}</span>
-              </h1>
-
-              {/* Liste à puces visuelle */}
-              <ul className="space-y-4 mb-10">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="text-gray-900 flex-shrink-0 mt-1" size={24} />
-                  <span className="text-xl md:text-2xl text-gray-700">
-                    <span className="font-bold text-gray-900">{t('hero.bullet1.bold')}</span> {t('hero.bullet1.text')}
+              {/* CTA Button + Microcopy aligned */}
+              <div className="inline-flex flex-col items-start">
+                <Link
+                  href="/diagnostic"
+                  className="group relative w-full py-5 px-8 bg-black text-white rounded-full font-semibold text-xl transition-all duration-300 flex items-center justify-center gap-3 overflow-hidden hover:scale-105 shadow-lg hover:shadow-2xl"
+                >
+                  {/* Shine effect */}
+                  <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-12" />
+                  <span className="relative z-10 flex items-center gap-3">
+                    {language === 'fr' ? 'Construis ton parcours sur mesure' : 'Build your personalized learning path'}
+                    <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform duration-300" />
                   </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="text-gray-900 flex-shrink-0 mt-1" size={24} />
-                  <span className="text-xl md:text-2xl text-gray-700">
-                    <span className="font-bold text-gray-900">{t('hero.bullet2.bold')}</span> {t('hero.bullet2.text')}
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="text-gray-900 flex-shrink-0 mt-1" size={24} />
-                  <span className="text-xl md:text-2xl text-gray-700">
-                    <span className="font-bold text-gray-900">{t('hero.bullet3.bold')}</span> {t('hero.bullet3.text')}
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="text-gray-900 flex-shrink-0 mt-1" size={24} />
-                  <span className="text-xl md:text-2xl text-gray-700">
-                    <span className="font-bold text-gray-900">{t('hero.bullet4.bold')}</span> {t('hero.bullet4.text')}
-                  </span>
-                </li>
-              </ul>
+                </Link>
 
-              <p className="text-2xl md:text-[1.75rem] font-black tracking-tight text-gray-900 mb-8 leading-tight">
-                {t('hero.subtitle.line2')} <br className="hidden md:inline" />
-                {t('hero.subtitle.line2.highlight')}
-              </p>
-
-              <button
-                onClick={handleWhatsAppClick}
-                className="w-full md:w-auto px-16 py-6 bg-black text-white rounded-full font-bold text-3xl hover:bg-gray-900 transition-colors flex items-center justify-center gap-4"
-              >
-                {t('hero.cta')}
-                <MessageCircle size={32} />
-              </button>
-
-              <p className="text-sm md:text-base text-gray-500 mt-4 font-medium flex items-center gap-2">
-                <CheckCircle size={16} className="text-green-500" />
-                {t('hero.microcopy')}
-              </p>
+                <div className="mt-6 flex flex-wrap items-center gap-4 md:gap-6">
+                  <span className="text-lg md:text-xl text-gray-700 font-medium flex items-center gap-2">
+                    <CheckCircle size={22} className="text-green-500 flex-shrink-0" />
+                    {language === 'fr' ? 'Paiement unique' : 'One-time payment'}
+                  </span>
+                  <span className="text-lg md:text-xl text-gray-700 font-medium flex items-center gap-2">
+                    <CheckCircle size={22} className="text-green-500 flex-shrink-0" />
+                    {language === 'fr' ? 'Accès à vie' : 'Lifetime access'}
+                  </span>
+                  <span className="text-lg md:text-xl text-gray-700 font-medium flex items-center gap-2">
+                    <CheckCircle size={22} className="text-green-500 flex-shrink-0" />
+                    {language === 'fr' ? 'Sans engagement' : 'No commitment'}
+                  </span>
+                </div>
+              </div>
             </motion.div>
 
             {/* Right Column - VSL Video (Légèrement réduite) */}
@@ -510,6 +480,13 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen }: 
         isOpen={isVideoOpen}
         onClose={() => setIsVideoOpen(false)}
         videoUrl="https://www.youtube.com/embed/MY_aGubAcdk"
+      />
+
+      {/* Diagnostic Flow - MasterClass Style */}
+      <DiagnosticFlow
+        isOpen={isDiagnosticOpen}
+        onClose={() => setIsDiagnosticOpen(false)}
+        onComplete={handleDiagnosticComplete}
       />
     </>
   );
