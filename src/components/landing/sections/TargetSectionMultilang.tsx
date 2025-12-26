@@ -18,8 +18,8 @@ export function TargetSectionMultilang() {
         
         <div className="text-center mb-16">
           <h2 
-            className="text-4xl font-bold text-gray-900 mb-6"
-            style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+            className="font-title text-4xl mb-6 tracking-wide"
+            style={{ fontSize: 'clamp(1.75rem, 5vw, 52px)' }}
           >
             {t('target.title')}
           </h2>
@@ -89,7 +89,7 @@ export function TargetSectionMultilang() {
         <div className="flex justify-center">
           <button
             onClick={handleWhatsAppClick}
-            className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-lg transition-all flex items-center gap-2 shadow-lg hover:shadow-blue-600/30"
+            className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold text-lg transition-all flex items-center gap-2 shadow-lg hover:shadow-blue-600/30"
           >
             {t('target.cta')}
             <ArrowRight className="group-hover:translate-x-1 transition-transform" />

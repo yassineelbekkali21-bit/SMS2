@@ -105,8 +105,8 @@ export function TestimonialsSection() {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold text-gray-900 mb-4"
           >
-            Ils ont transformé leurs résultats grâce à Science Made Simple.<br />
-            <span className="text-blue-600">Demain, c'est peut-être toi.</span>
+            Ils ont transformé leurs résultats.<br />
+            <span className="text-blue-600">Demain, ce sera peut-être toi.</span>
           </motion.h2>
         </div>
 

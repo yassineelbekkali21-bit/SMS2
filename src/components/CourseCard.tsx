@@ -20,7 +20,10 @@ import {
   Brain,
   Layers3,
   FlaskConical,
-  Video
+  Video,
+  MessageCircle,
+  UserPlus,
+  Calendar
 } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -574,39 +577,70 @@ export function CourseCard({
           </div>
         </div>
 
-        {/* Actions principales - Design cohérent */}
-        <div className="flex gap-3 pt-4">
-          {course.isOwned || cardState === 'partiallyUnlocked' ? (
-            /* Si cours débloqué ou partiellement débloqué : bouton Continuer unique */
+        {/* Actions rapides - Grille 2x2 */}
+        <div className="grid grid-cols-4 gap-2 pt-4">
+          {/* Study Room */}
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              onJoinStudyRoom?.(course.id);
+            }}
+            whileHover={{ scale: 1.08, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex flex-col items-center justify-center p-3 bg-gray-100 hover:bg-emerald-100 text-gray-600 hover:text-emerald-600 rounded-xl transition-all duration-200"
+            title="Study Room"
+          >
+            <Video size={18} />
+            <span className="text-[10px] mt-1 font-medium">Room</span>
+          </motion.button>
+
+          {/* Messages */}
             <motion.button
               onClick={(e) => {
                 e.stopPropagation();
-                onOpenCourse?.(course);
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:shadow-xl focus:ring-gray-900/20 hover:from-gray-800 hover:to-gray-700"
-            >
-              <BookOpen size={16} />
-              Continuer
+              console.log('Open messages for course:', course.id);
+            }}
+            whileHover={{ scale: 1.08, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex flex-col items-center justify-center p-3 bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-600 rounded-xl transition-all duration-200"
+            title="Messages"
+          >
+            <MessageCircle size={18} />
+            <span className="text-[10px] mt-1 font-medium">Chat</span>
             </motion.button>
-          ) : (
-            /* Boutons : Je me teste + Commencer */
-            <div className="grid grid-cols-2 gap-2">
+
+          {/* Invitation */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setShowMiniQuiz(true);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                aria-label={`Tester mes connaissances sur le cours ${course.title}`}
-                className="py-3 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-gray-500/20"
-              >
-                <Brain size={14} />
-                <span className="text-xs">Je me teste</span>
+              console.log('Invite to course:', course.id);
+            }}
+            whileHover={{ scale: 1.08, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex flex-col items-center justify-center p-3 bg-gray-100 hover:bg-purple-100 text-gray-600 hover:text-purple-600 rounded-xl transition-all duration-200"
+            title="Inviter"
+          >
+            <UserPlus size={18} />
+            <span className="text-[10px] mt-1 font-medium">Inviter</span>
               </motion.button>
 
+          {/* Planner */}
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log('Open planner for course:', course.id);
+            }}
+            whileHover={{ scale: 1.08, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex flex-col items-center justify-center p-3 bg-gray-100 hover:bg-amber-100 text-gray-600 hover:text-amber-600 rounded-xl transition-all duration-200"
+            title="Planning"
+          >
+            <Calendar size={18} />
+            <span className="text-[10px] mt-1 font-medium">Plan</span>
+          </motion.button>
+        </div>
+
+        {/* Bouton principal - Continuer/Commencer */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -614,14 +648,24 @@ export function CourseCard({
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="py-3 px-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none focus:ring-4 focus:ring-blue-600/20 hover:shadow-xl hover:from-blue-700 hover:to-blue-800"
-              >
-                <Play size={14} />
-                <span className="text-xs">Commencer</span>
-              </motion.button>
-            </div>
+          className={`w-full py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 ${
+            course.isOwned || cardState === 'partiallyUnlocked'
+              ? 'bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:shadow-xl focus:ring-gray-900/20 hover:from-gray-800 hover:to-gray-700'
+              : 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:shadow-xl focus:ring-cyan-500/20 hover:from-cyan-600 hover:to-cyan-700'
+          }`}
+        >
+          {course.isOwned || cardState === 'partiallyUnlocked' ? (
+            <>
+              <BookOpen size={16} />
+              Continuer
+            </>
+          ) : (
+            <>
+              <Play size={16} />
+              Commencer
+            </>
           )}
-        </div>
+        </motion.button>
       </div>
 
       {/* Mini Quiz Modal */}

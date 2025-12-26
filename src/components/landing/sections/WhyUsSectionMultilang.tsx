@@ -79,11 +79,11 @@ export function WhyUsSectionMultilang() {
           className="text-center mb-16"
         >
           <h2 
-            className="text-4xl font-bold text-gray-900 leading-tight"
-            style={{ fontSize: 'clamp(1.2rem, 6vw, 3rem)' }}
+            className="font-title text-4xl leading-tight tracking-wide"
+            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)' }}
           >
             {t('why.title')}<br />
-            <span className="text-blue-600">{t('why.title.highlight')}</span>.
+            <span>{t('why.title.highlight')}</span>.
           </h2>
         </motion.div>
 
@@ -93,15 +93,15 @@ export function WhyUsSectionMultilang() {
           {/* Left Card - Traditional (order-2 on mobile, order-1 on desktop) */}
           {/* Desktop: mt-[56px] aligne les lignes de séparation (dividers) des deux cartes */}
           {/* Desktop: mb aligne le bas du bloc gauche avec le dernier item (avant CTA) */}
-          <motion.div
+              <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 order-2 md:order-1 md:mt-[56px] md:mb-[85px] md:col-span-5"
+                viewport={{ once: true }}
+            className="bg-[#0d1317] rounded-3xl p-8 md:p-10 order-2 md:order-1 md:mt-[56px] md:mb-[85px] md:col-span-5 noise-overlay-strong"
           >
-            <h3 className="text-2xl md:text-3xl font-light !text-gray-400 mb-6">
+            <h3 className="text-2xl md:text-3xl font-medium !text-gray-400 mb-6">
               {language === 'fr' ? 'Soutien Scolaire Traditionnel' : 'Traditional Tutoring'}
-            </h3>
+                    </h3>
             
             <div className="w-full h-px bg-gray-700 mb-6" />
             
@@ -137,7 +137,7 @@ export function WhyUsSectionMultilang() {
                 height={70}
                 className="object-contain"
               />
-            </div>
+                  </div>
 
             {/* Logo Text */}
             <div className="relative h-28 w-full max-w-sm mb-6">
@@ -147,7 +147,7 @@ export function WhyUsSectionMultilang() {
                 fill
                 className="object-contain object-left"
               />
-            </div>
+                </div>
 
             <div className="w-full h-px bg-gray-300 mb-6" />
             
@@ -165,7 +165,7 @@ export function WhyUsSectionMultilang() {
                       <Check className={`w-5 h-5 transition-colors ${
                         expandedIndex === index ? 'text-blue-600' : 'text-gray-800 group-hover:text-blue-600'
                       }`} strokeWidth={3} />
-                    </div>
+        </div>
                     <span 
                       className={`flex-1 transition-colors ${
                         expandedIndex === index ? 'text-blue-600' : 'text-gray-800 group-hover:text-blue-600'
@@ -183,7 +183,7 @@ export function WhyUsSectionMultilang() {
                   
                   <AnimatePresence>
                     {expandedIndex === index && (
-                      <motion.div
+        <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -201,14 +201,14 @@ export function WhyUsSectionMultilang() {
             </ul>
 
             {/* CTA Button */}
-            <button
-              onClick={handleWhatsAppClick}
-              className="w-full mt-10 px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-full font-bold text-base md:text-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-            >
+          <button
+            onClick={handleWhatsAppClick}
+              className="w-full mt-10 px-6 md:px-8 py-3 md:py-4 bg-blue-600 text-white rounded-full font-semibold text-base md:text-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+          >
               {language === 'fr' ? 'Commencer maintenant' : 'Get Started Now'}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </motion.div>
+          </button>
+        </motion.div>
         </div>
       </div>
     </section>

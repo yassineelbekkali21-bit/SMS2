@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft,
   Play,
-  Lock,
   Target,
   BookOpen,
   Zap,
@@ -47,7 +46,9 @@ import {
   Info,
   Check,
   ThumbsUp,
-  Lightbulb
+  Lightbulb,
+  ArrowRight,
+  List
 } from 'lucide-react';
 import { Course, Lesson, User, PurchaseOption } from '@/types';
 import Image from 'next/image';
@@ -80,6 +81,8 @@ import { WalletTopUp } from './WalletTopUp';
 import { AdvancedStudyRoomService } from '@/lib/advanced-studyroom-service';
 import { AdvancedStudyRoom } from '@/types';
 import { WebRTCStudyRoom } from './WebRTCStudyRoom';
+import { DocumentUploadWidget } from './DocumentUploadWidget';
+import { BoostersWidget } from './BoostersWidget';
 
 interface IntegratedCourseViewerProps {
   course: Course | null;
@@ -96,43 +99,13 @@ interface IntegratedCourseViewerProps {
   userXPProfile?: UserXPProfile | null;
 }
 
-// Fonds d'écran prédéfinis
+// Fond d'écran unique - Blanc épuré MasterClass style
 const backgroundOptions = [
   {
-    id: 'pastel-gradient',
-    name: 'Dégradé Pastel',
-    style: 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50',
-    preview: 'linear-gradient(135deg, #dbeafe 0%, #f3e8ff 50%, #fdf2f8 100%)'
-  },
-  {
-    id: 'science-lab',
-    name: 'Ambiance Science',
-    style: 'bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50',
-    preview: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #e0f7fa 100%)'
-  },
-  {
-    id: 'nature-green',
-    name: 'Nature Zen',
-    style: 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50',
-    preview: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #f0fdfa 100%)'
-  },
-  {
-    id: 'warm-sunset',
-    name: 'Coucher de Soleil',
-    style: 'bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50',
-    preview: 'linear-gradient(135deg, #fff7ed 0%, #fffbeb 50%, #fefce8 100%)'
-  },
-  {
-    id: 'minimal-gray',
-    name: 'Minimaliste',
-    style: 'bg-gradient-to-br from-gray-50 via-slate-50 to-zinc-50',
-    preview: 'linear-gradient(135deg, #f9fafb 0%, #f8fafc 50%, #fafafa 100%)'
-  },
-  {
-    id: 'deep-focus',
-    name: 'Concentration',
-    style: 'bg-gradient-to-br from-indigo-50 via-slate-50 to-gray-50',
-    preview: 'linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #f9fafb 100%)'
+    id: 'minimal-white',
+    name: 'Blanc Épuré',
+    style: 'bg-white',
+    preview: '#ffffff'
   }
 ];
 
@@ -195,17 +168,17 @@ const CourseNode: React.FC<{
     // 3. IGNORER lesson.isAccessible pour forcer l'achat
     // (lesson.isAccessible est trop permissif dans les données mock)
     
-    console.log('🔑 ICÔNE: Leçon', lesson.id, 'VERROUILLÉE - isOwned:', lesson.isOwned, 'isAccessible:', lesson.isAccessible);
-    return 'locked';
+    // Plus d'état verrouillé - toutes les leçons sont disponibles
+    return 'available';
   };
   
   const state = getNodeState();
   
   const getDifficultyColor = () => {
     switch (lesson.difficulty) {
-      case 'beginner': return 'bg-green-400';
-      case 'intermediate': return 'bg-yellow-400';
-      case 'advanced': return 'bg-red-400';
+      case 'beginner': return 'bg-gray-300';
+      case 'intermediate': return 'bg-gray-500';
+      case 'advanced': return 'bg-gray-700';
       default: return 'bg-gray-400';
     }
   };
@@ -213,55 +186,35 @@ const CourseNode: React.FC<{
   const getNodeStyle = () => {
     switch (state) {
       case 'completed':
-        return 'bg-white border-2 border-green-300 shadow-lg text-green-600';
+        return 'bg-white border-2 border-gray-900 shadow-lg text-gray-900';
       case 'inProgress':
-        return 'bg-white border-2 border-blue-300 shadow-lg text-blue-600';
+        return 'bg-[#48c6ed] border-2 border-[#48c6ed] shadow-lg text-white';
       case 'available':
-        return 'bg-white border-2 border-gray-300 shadow-md text-gray-700 hover:border-gray-400';
-      case 'locked':
-        return 'bg-gray-100 border-2 border-gray-200 text-gray-400';
+        return 'bg-white border-2 border-gray-300 shadow-md text-gray-700 hover:border-[#48c6ed]';
     }
   };
   
   const getIcon = () => {
     switch (state) {
       case 'completed': 
-        return <CheckCircle size={20} className="text-green-500" />;
+        return <CheckCircle size={20} className="text-gray-900" />;
       case 'inProgress': 
-        return <Play size={20} className="text-blue-500 animate-pulse" />;
+        return <Play size={20} className="text-white animate-pulse" />;
       case 'available': 
         return (
           <div className="relative">
-            <div className="w-4 h-4 border-2 border-current rounded-full" />
+            <div className="w-4 h-4 border-2 border-gray-700 rounded-full" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-2 h-2 bg-current rounded-full opacity-60" />
+              <div className="w-2 h-2 bg-gray-700 rounded-full" />
             </div>
           </div>
         );
-      case 'locked': 
-        return <Lock size={16} className="text-gray-400" />;
     }
   };
 
   const getShortTitle = (title: string): string => {
-    // Extraire un titre court basé sur le titre complet
-    if (title.toLowerCase().includes('gauss')) return 'Gauss';
-    if (title.toLowerCase().includes('intégrale')) return 'Intégrales';
-    if (title.toLowerCase().includes('suite')) return 'Suites';
-    if (title.toLowerCase().includes('limite')) return 'Limites';
-    if (title.toLowerCase().includes('force')) return 'Forces';
-    if (title.toLowerCase().includes('mouvement')) return 'Mouvement';
-    if (title.toLowerCase().includes('champ')) return 'Champs';
-    if (title.toLowerCase().includes('potentiel')) return 'Potentiels';
-    if (title.toLowerCase().includes('énergie')) return 'Énergie';
-    if (title.toLowerCase().includes('fondament')) return 'Bases';
-    
-    // Sinon, prendre les 2 premiers mots ou 10 premiers caractères
-    const words = title.split(' ');
-    if (words.length >= 2) {
-      return words.slice(0, 2).join(' ');
-    }
-    return title.length > 10 ? title.substring(0, 10) + '...' : title;
+    // Retourner le titre complet pour une meilleure lisibilité
+    return title;
   };
 
   return (
@@ -304,42 +257,18 @@ const CourseNode: React.FC<{
       >
         {getIcon()}
         
-        {/* Tooltip au survol */}
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-40">
-          {(() => {
-            switch (state) {
-              case 'completed': 
-                return 'Leçon terminée ✅';
-              case 'inProgress': 
-                return 'Leçon en cours ▶️ - Cliquez pour continuer';
-              case 'available': 
-                return 'Leçon débloquée 🔓 - Cliquez pour commencer';
-              case 'locked': 
-                return 'Leçon verrouillée 🔒 - Cliquez pour débloquer';
-            }
-          })()}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
-        </div>
         
         {/* Numéro */}
         <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-gray-700">
           {lesson.order}
         </div>
         
-        {/* Label titre court */}
-        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 text-center max-w-20">
-          {getShortTitle(lesson.title)}
+        {/* Label titre complet */}
+        <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 text-xs text-gray-700 text-center w-28 leading-tight font-medium">
+          {lesson.title}
         </div>
         
-        {/* Badge XP */}
-        {state !== 'locked' && (
-          <div className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
-            +{lesson.xpReward}
-          </div>
-        )}
         
-        {/* Badge difficulté */}
-        <div className={`absolute -bottom-2 -left-2 w-2.5 h-2.5 ${getDifficultyColor()} rounded-full`} />
         
         {/* Étincelles pour complétées */}
         {state === 'completed' && (
@@ -348,7 +277,7 @@ const CourseNode: React.FC<{
             animate={{ rotate: [0, 180, 360] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="text-yellow-400" size={12} />
+            <Sparkles className="text-[#48c6ed]" size={12} />
           </motion.div>
         )}
       </motion.button>
@@ -453,14 +382,14 @@ const BackgroundSelector: React.FC<{
                   onClick={() => onSelect(bg.id)}
                   className={`relative h-16 rounded-xl border-2 overflow-hidden transition-all ${
                     selectedBackground === bg.id 
-                      ? 'border-blue-500 ring-2 ring-blue-200' 
+                      ? 'border-[#48c6ed] ring-2 ring-blue-200' 
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   style={{ background: bg.preview }}
                 >
                   {selectedBackground === bg.id && (
-                    <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-                      <CheckCircle className="text-blue-600" size={20} />
+                    <div className="absolute inset-0 bg-[#48c6ed]/20 flex items-center justify-center">
+                      <CheckCircle className="text-[#48c6ed]" size={20} />
                     </div>
                   )}
                 </button>
@@ -496,7 +425,7 @@ const LessonDetailBlock: React.FC<{
   const getStatusInfo = () => {
     if (lesson.isCompleted) return { 
       text: 'Terminée', 
-      color: 'bg-green-50 text-green-700 border-green-200',
+      color: 'bg-gray-50 text-gray-700 border-gray-200',
       icon: CheckCircle,
       description: 'Vous avez terminé cette leçon avec succès'
     };
@@ -510,7 +439,7 @@ const LessonDetailBlock: React.FC<{
     };
     if (lesson.quizCompleted) return {
       text: `Quiz fait (${lesson.quizScore}%)`,
-      color: 'bg-gray-50 text-purple-700 border-gray-200',
+      color: 'bg-gray-50 text-gray-700 border-gray-200',
       icon: Brain,
       description: 'Quiz terminé - débloquez la leçon pour continuer'
     };
@@ -526,19 +455,19 @@ const LessonDetailBlock: React.FC<{
     switch (lesson.difficulty) {
       case 'beginner': return { 
         text: 'Facile', 
-        color: 'bg-green-100 text-green-800',
+        color: 'bg-gray-100 text-gray-800',
         description: 'Parfait pour débuter',
         estimatedTime: '10-15 min'
       };
       case 'intermediate': return { 
         text: 'Intermédiaire', 
-        color: 'bg-yellow-100 text-yellow-800',
+        color: 'bg-gray-100 text-gray-700',
         description: 'Demande un peu de concentration',
         estimatedTime: '20-25 min'
       };
       case 'advanced': return { 
         text: 'Avancé', 
-        color: 'bg-red-100 text-red-800',
+        color: 'bg-gray-100 text-gray-700',
         description: 'Niveau expert requis',
         estimatedTime: '30-45 min'
       };
@@ -598,12 +527,19 @@ const LessonDetailBlock: React.FC<{
   // Vérifier si c'est une des 2 premières leçons (aperçu gratuit)
   const isPreviewLesson = lesson.order <= 2;
   
-  // Déterminer si les slides PDF sont accessibles
-  const canAccessSlides = hasFullPack || isPreviewLesson;
+  // Les slides sont accessibles pour toutes les leçons
+  const canAccessSlides = true;
 
   const handleSlidesDownload = () => {
-    // Téléchargement des slides
-    alert(`📄 Slides PDF - "${lesson.title}"\n\nTéléchargement des slides de cette leçon...`);
+    // Téléchargement des slides via lien direct
+    const url = lesson.slidesUrl || `/slides/${lesson.id}-slides.pdf`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${lesson.title.replace(/[^a-zA-Z0-9]/g, '_')}_slides.pdf`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -615,84 +551,56 @@ const LessonDetailBlock: React.FC<{
       className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden"
     >
       {/* Header avec gradient */}
-      <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-4 border-b border-gray-100">
+      <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-5 border-b border-gray-100">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <StatusIcon size={18} className={lesson.isCompleted ? 'text-green-600' : lesson.isInProgress ? 'text-blue-600' : 'text-gray-600'} />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">{lesson.title}</h3>
-                <p className="text-sm text-gray-600">Étape {lesson.order} • {status.description}</p>
-              </div>
+            <div className="flex items-center gap-4">
+              <h3 className="text-2xl font-bold text-gray-900">{lesson.title}</h3>
+              {/* Lien Slides - Style texte */}
+              {canAccessSlides && (
+                <button
+                  onClick={handleSlidesDownload}
+                  className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  <Download size={16} />
+                  <span className="text-sm">Télécharger les slides</span>
+                </button>
+              )}
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all"
           >
-            <X size={16} className="text-gray-400" />
+            <X size={20} className="text-gray-400" />
           </button>
         </div>
 
-        {/* Badges de statut */}
-        <div className="flex items-center gap-3">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium border ${status.color}`}>
-            {status.text}
-          </span>
-          {lesson.isInProgress && (
-            <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-              {safeProgressPercentage}% terminé
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Contenu principal - Layout avec boutons à droite */}
-      <div className="p-3 lg:p-4">
-        <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+      <div className="p-4 lg:p-6">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           {/* Contenu principal à gauche */}
           <div className="flex-1">
             {/* Description */}
-            <div className="mb-4">
-              <p className="text-gray-700 leading-relaxed text-sm">{lesson.description}</p>
-            </div>
-
-            {/* Bloc Slides PDF - Design épuré avec lien cliquable */}
-            {canAccessSlides && (
-              <div className="mb-4 p-4 rounded-2xl" style={{ backgroundColor: '#F4F8FF' }}>
-                {/* Ligne principale - Slides de la leçon */}
-                <div className="flex items-center gap-3 mb-4">
-                  <FileText size={20} className="text-blue-600" />
-                  <div className="flex-1">
-                    <h4 className="text-base font-bold text-gray-900 mb-1">Slides de la leçon</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Téléchargez les slides complets de cette leçon pour réviser efficacement et ancrer vos apprentissages.
-                    </p>
-                  </div>
-                  <button
-                    onClick={handleSlidesDownload}
-                    title="Télécharger cette leçon"
-                    className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"
-                  >
-                    <Download size={18} />
-                  </button>
-                </div>
-
-                </div>
+            {lesson.description && (
+              <div className="mb-5">
+                <p className="text-gray-700 leading-relaxed text-base">{lesson.description}</p>
+              </div>
             )}
+
 
             {/* Progression si en cours */}
             {lesson.isInProgress && (
-              <div className="mb-4">
+              <div className="mb-5">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900">{safeProgressPercentage}% terminé</span>
-                  <span className="text-xs text-gray-500">{lessons.filter(l => l.isCompleted).length}/{lessons.length}</span>
+                  <span className="text-base font-medium text-gray-900">{safeProgressPercentage}% terminé</span>
+                  <span className="text-sm text-gray-500">{lessons.filter(l => l.isCompleted).length}/{lessons.length}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <motion.div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
+                    className="bg-gray-900 h-2.5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${safeProgressPercentage}%` }}
                     transition={{ duration: 1 }}
@@ -703,89 +611,75 @@ const LessonDetailBlock: React.FC<{
 
             {/* Objectifs */}
             {lesson.objectives && lesson.objectives.length > 0 && (
-              <div className="mb-4">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <Target size={16} className="text-blue-600" />
+              <div className="mb-5">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-lg">
+                  <Target size={20} className="text-gray-700" />
                   Ce que vous allez apprendre
                 </h4>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {lesson.objectives.map((objective, index) => (
                     <li key={`lesson-objective-${index}`} className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                      <span className="text-gray-700 text-sm">{objective}</span>
+                      <div className="w-2 h-2 bg-gray-900 rounded-full mt-2 flex-shrink-0" />
+                      <span className="text-gray-700 text-base">{objective}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {/* Métriques détaillées */}
-            <div className="bg-gray-50 rounded-xl p-3 mb-4">
-              <h4 className="font-semibold text-gray-900 mb-3">Informations détaillées</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Métriques */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-gray-600 mb-1">
-                    <Clock size={14} />
-                    <span className="text-xs font-medium">Durée</span>
+                  <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
+                    <Clock size={18} />
+                    <span className="text-sm font-medium">Durée</span>
                   </div>
-                  <div className="text-sm font-bold text-gray-900">{lesson.duration} min</div>
-                  <div className="text-xs text-gray-500">{difficulty?.estimatedTime}</div>
+                  <div className="text-lg font-bold text-gray-900">{lesson.duration} min</div>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
-                    <Zap size={14} />
-                    <span className="text-xs font-medium">Récompense</span>
+                  <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
+                    <Zap size={18} />
+                    <span className="text-sm font-medium">Récompense</span>
                   </div>
-                  <div className="text-sm font-bold text-gray-900">+{lesson.xpReward} XP</div>
-                  <div className="text-xs text-gray-500">Points d'expérience</div>
+                  <div className="text-lg font-bold text-gray-900">+{lesson.xpReward} XP</div>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-orange-600 mb-1">
-                    <Star size={14} />
-                    <span className="text-xs font-medium">Niveau</span>
+                  <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
+                    <Star size={18} />
+                    <span className="text-sm font-medium">Niveau</span>
                   </div>
-                  <div className="text-sm font-bold text-gray-900">{difficulty?.text || 'Non défini'}</div>
-                  <div className="text-xs text-gray-500">{difficulty?.description || ''}</div>
+                  <div className="text-lg font-bold text-gray-900">{difficulty?.text || 'Non défini'}</div>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
-                    <BookOpen size={14} />
-                    <span className="text-xs font-medium">Type</span>
+                  <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
+                    <BookOpen size={18} />
+                    <span className="text-sm font-medium">Type</span>
                   </div>
-                  <div className="text-sm font-bold text-gray-900">
+                  <div className="text-lg font-bold text-gray-900">
                     {lesson.type === 'video' ? 'Vidéo' : lesson.type === 'exercise' ? 'Exercice' : 'Quiz'}
                   </div>
-                  <div className="text-xs text-gray-500">Format du contenu</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Boutons d'action à droite - Version précédente restaurée */}
-          <div className="flex flex-col lg:flex-col gap-3 min-w-full lg:min-w-[180px] lg:max-w-[200px]">
-            {/* Message de statut */}
-            <div className="text-sm text-gray-600 text-center lg:text-center mb-2">
-              {lesson.isOwned ? 
-                "Leçon disponible - Accès complet" : 
-                lesson.quizCompleted ?
-                  `Quiz fait (${lesson.quizScore}%)` :
-                  "Quiz disponible"
-              }
-            </div>
+          {/* Boutons d'action à droite */}
+          <div className="flex flex-col lg:flex-col gap-4 min-w-full lg:min-w-[200px] lg:max-w-[220px]">
             
             {/* Sur mobile : disposition horizontale des boutons secondaires */}
-            <div className="flex lg:hidden gap-2 mb-3">
+            <div className="flex lg:hidden gap-3 mb-3">
               {/* Bouton Je me teste - Mobile */}
               <button
                 onClick={onShowQuiz}
-                className="flex-1 bg-gray-50 border-2 border-gray-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-3 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 hover:border-gray-400 text-gray-700 px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
                 title={lesson.isOwned ? "Test complet accessible" : "Test gratuit disponible"}
               >
-                <HelpCircle size={16} />
-                <span className="text-sm">Je me teste</span>
+                <HelpCircle size={18} />
+                <span className="text-base">Je me teste</span>
               </button>
               
-              </div>
+            </div>
             
             {/* Bouton principal - Commencer */}
             <button
@@ -793,26 +687,26 @@ const LessonDetailBlock: React.FC<{
                 console.log('🚀 Button clicked! Calling onLessonPurchaseCheck with lesson:', lesson);
                 onLessonPurchaseCheck(lesson);
               }}
-              className="w-full px-4 py-3 lg:py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:from-gray-800 hover:to-gray-700"
+              className="w-full px-5 py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl bg-gray-900 text-white hover:bg-gray-800"
             >
-              <Play size={16} />
-              <span className="text-sm lg:text-base">
+              <Play size={20} />
+              <span className="text-base">
                 {lesson.isCompleted ? 'Revoir' : 
-                 lesson.isInProgress ? 'Continuer' : 
+                  lesson.isInProgress ? 'Continuer' : 
                  'Commencer'}
               </span>
             </button>
             
             {/* Sur desktop : disposition verticale des boutons secondaires */}
-            <div className="hidden lg:flex lg:flex-col gap-3">
+            <div className="hidden lg:flex lg:flex-col gap-4">
               {/* Bouton Je me teste - Desktop */}
               <button
                 onClick={onShowQuiz}
-                className="w-full bg-gray-50 border-2 border-gray-200 hover:bg-purple-100 hover:border-purple-300 text-purple-700 px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                className="w-full bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 hover:border-gray-400 text-gray-700 px-5 py-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
                 title={lesson.isOwned ? "Test complet accessible" : "Test gratuit disponible"}
               >
-                <HelpCircle size={16} />
-                <span className="text-sm">Je me teste</span>
+                <HelpCircle size={18} />
+                <span className="text-base">Je me teste</span>
               </button>
               
             </div>
@@ -901,11 +795,14 @@ export function IntegratedCourseViewer({
   const [showCommunity, setShowCommunity] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showGuestPassModal, setShowGuestPassModal] = useState(false);
+  const [showMobileLessonNav, setShowMobileLessonNav] = useState(false);
+  const [guestPassEmails, setGuestPassEmails] = useState('');
   const [expandedBentoCard, setExpandedBentoCard] = useState<string | null>(null);
 
   // Navigation items - identiques au dashboard principal
   const navigationItems = [
-    { id: 'courses', label: 'Mes cours', icon: BookOpen },
+    { id: 'courses', label: 'Mes cours', icon: BookOpen, isActive: true },
     { id: 'planning', label: 'Planification', icon: Calendar },
     { id: 'study-rooms', label: 'Study Rooms', icon: Globe },
     { id: 'community', label: 'Communauté', icon: Users },
@@ -937,7 +834,7 @@ export function IntegratedCourseViewer({
           id: '1',
           courseId: course.id,
           title: 'Les fondamentaux essentiels',
-          description: 'Découvrez les concepts de base qui forment le socle solide de votre apprentissage. Cette leçon introductive vous permettra de maîtriser les notions clés avant d\'aborder des sujets plus complexes.',
+          description: '',
           duration: 15,
           type: 'video',
           order: 1,
@@ -946,6 +843,7 @@ export function IntegratedCourseViewer({
           progress: 0,
           hasPreview: true,
           videoUrl: 'https://example.com/video1.mp4',
+          slidesUrl: '/slides/lesson-1-fondamentaux.pdf',
           documents: [],
           xpReward: 25,
           difficulty: 'beginner',
@@ -975,6 +873,7 @@ export function IntegratedCourseViewer({
           progress: 0,
           hasPreview: true,
           videoUrl: 'https://example.com/video2.mp4',
+          slidesUrl: '/slides/lesson-2-techniques-avancees.pdf',
           documents: [],
           xpReward: 35,
           difficulty: 'intermediate',
@@ -1006,6 +905,7 @@ export function IntegratedCourseViewer({
           isAccessible: false,
           progress: 0,
           hasPreview: false,
+          slidesUrl: '/slides/lesson-3-mise-en-pratique.pdf',
           documents: [],
           xpReward: 40,
           difficulty: 'intermediate',
@@ -1037,6 +937,7 @@ export function IntegratedCourseViewer({
           isAccessible: false,
           progress: 0,
           hasPreview: false,
+          slidesUrl: '/slides/lesson-4-projet-synthese.pdf',
           documents: [],
           xpReward: 50,
           difficulty: 'advanced',
@@ -1068,6 +969,7 @@ export function IntegratedCourseViewer({
           isAccessible: false,
           progress: 0,
           hasPreview: false,
+          slidesUrl: '/slides/lesson-5-evaluation-finale.pdf',
           documents: [],
           xpReward: 60,
           difficulty: 'advanced',
@@ -1158,31 +1060,9 @@ export function IntegratedCourseViewer({
 
   // Handlers pour le système d'upsell
   const handleLessonPurchaseCheck = (lesson: Lesson) => {
-    console.log('🔥 handleLessonPurchaseCheck called with lesson:', lesson);
-    console.log('🔥 lesson.isOwned:', lesson.isOwned);
-    console.log('🔥 Current lessons state:', lessons.map(l => ({ id: l.id, isOwned: l.isOwned })));
-    
-    if (!lesson.isOwned) {
-      console.log('🔥 Lesson not owned, opening upsell modal...');
-      // La leçon n'est pas achetée, ouvrir l'upsell modal
-      setSelectedLessonForPurchase(lesson);
-      const options = generateUpsellOptions(lesson.id, lesson.courseId);
-      console.log('🔥 Generated upsell options:', options);
-      setUpsellOptions(options);
-      setShowPurchaseUpsell(true);
-      console.log('🔥 Should show purchase upsell modal now');
-      
-      // Log des états après mise à jour (avec un petit délai)
-      setTimeout(() => {
-        console.log('🔥 State check - showPurchaseUpsell:', showPurchaseUpsell);
-        console.log('🔥 State check - selectedLessonForPurchase:', selectedLessonForPurchase);
-        console.log('🔥 State check - upsellOptions:', upsellOptions);
-      }, 100);
-    } else {
-      console.log('🔥 Lesson already owned, starting lesson...');
-      // La leçon est achetée, procéder normalement
+    // Démarrer directement la leçon sans vérifier la propriété ni ouvrir la modal d'upsell
+    console.log('🚀 Starting lesson directly:', lesson.title);
       handleStartLesson();
-    }
   };
 
   const handlePurchase = (option: PurchaseOption) => {
@@ -1294,10 +1174,14 @@ export function IntegratedCourseViewer({
                       >
                         <Menu size={20} />
                       </button>
-                      <div className="flex items-center">
+                      <div 
+                        className="flex items-center cursor-pointer"
+                        onClick={onClose}
+                        title="Retour au dashboard"
+                      >
                         <div className="relative h-[84px] w-[500px]">
                           <Image 
-                            src="/brand/sms-text-logo.svg" 
+                            src="/brand/logo-app.svg" 
                             alt="Science Made Simple"
                             fill
                             className="object-contain object-left"
@@ -1305,14 +1189,14 @@ export function IntegratedCourseViewer({
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Widgets centrés au milieu de la page */}
                     <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
                       {/* Widget XP */}
                       {userXPProfile && (
                         <XPHeaderWidget
                           profile={userXPProfile}
-                          onClick={() => setShowSocialFeed(true)}
+                            onClick={() => setShowSocialFeed(true)}
                         />
                       )}
 
@@ -1338,13 +1222,23 @@ export function IntegratedCourseViewer({
                       />
                     </div>
 
-                    {/* Right - Timer + Finish Sign Up + Avatar */}
+                    {/* Right - Timer + Guest Pass + Finish Sign Up + Avatar */}
                     <div className="flex items-center gap-4">
                       {/* Timer - Style urgence */}
                       <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
                         <Clock size={18} className="text-gray-700" />
-                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
+                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
                       </div>
+
+                      {/* Bouton Guest Pass / Parrainage */}
+                      <button
+                        onClick={() => setShowGuestPassModal(true)}
+                        className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full transition-colors"
+                        title="Inviter des amis et gagner des heures gratuites"
+                      >
+                        <Gift size={18} />
+                        <span className="text-sm font-medium">Inviter</span>
+                      </button>
 
                       {/* Finish Sign Up CTA */}
                       <button
@@ -1352,7 +1246,7 @@ export function IntegratedCourseViewer({
                           // Retourner au dashboard et ouvrir l'onboarding
                           onClose();
                         }}
-                        className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
+                        className="hidden md:block px-5 py-2.5 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-semibold rounded-full transition-colors text-sm"
                       >
                         Finish Sign Up
                       </button>
@@ -1361,15 +1255,6 @@ export function IntegratedCourseViewer({
                       <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold">
                         {user?.name?.charAt(0) || 'U'}
                       </div>
-
-                      {/* Bouton retour */}
-                      <button
-                        onClick={onClose}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        <ArrowLeft size={18} className="text-gray-600" />
-                        <span className="text-sm font-medium text-gray-700 hidden md:inline">Retour</span>
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1377,10 +1262,8 @@ export function IntegratedCourseViewer({
 
               {/* Contenu avec sidebar */}
               <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar identique au SimpleDashboard */}
-                <aside className={`w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 lg:translate-x-0 ${
-                  sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                } fixed lg:relative top-0 left-0 h-full z-30`}>
+                {/* Sidebar identique au SimpleDashboard - Hidden on mobile */}
+                <aside className={`hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col`}>
                   <div className="p-6 flex-1 overflow-y-auto">
                     <div className="space-y-2">
                       {navigationItems.map((item) => (
@@ -1389,6 +1272,8 @@ export function IntegratedCourseViewer({
                           onClick={() => {
                             if (item.isExternal && item.id === 'whatsapp') {
                               window.open('https://wa.me/33123456789', '_blank');
+                            } else if (item.isActive) {
+                              // Déjà sur cette section
                             } else {
                             onClose(); // Fermer le viewer
                             onNavigateToSection?.(item.id); // Naviguer vers la section
@@ -1396,19 +1281,28 @@ export function IntegratedCourseViewer({
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
                             item.id === 'whatsapp'
-                              ? 'bg-green-500 text-white hover:bg-green-600'
+                              ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
+                              : item.isActive
+                              ? 'bg-black text-white'
                               : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                           }`}
                         >
                           <item.icon size={20} />
                           <span className="font-medium">{item.label}</span>
                           {item.hasNotification && (
-                            <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
+                            <span className="ml-auto w-2 h-2 bg-[#48c6ed] rounded-full"></span>
                           )}
                         </button>
                       ))}
                     </div>
                   </div>
+
+                  {/* Widgets en bas de la sidebar */}
+                  <div className="px-4 py-4 border-t border-gray-100 space-y-3">
+                    <DocumentUploadWidget floating={false} />
+                    <BoostersWidget floating={false} />
+                  </div>
+
                   {/* Logo en bas de la sidebar */}
                   <div className="p-6 border-t border-gray-100">
                     <div className="relative h-[100px] w-full">
@@ -1433,46 +1327,44 @@ export function IntegratedCourseViewer({
                 {/* Contenu principal - Map */}
                 <main className="flex-1 overflow-y-auto">
                   {/* KPIs de progression */}
-                  <div className="p-6 bg-white border-b border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <h2 className="text-2xl font-bold text-gray-900">{course.title}</h2>
-                          <p className="text-gray-600">Votre parcours d'apprentissage</p>
+                  <div className="px-4 md:px-6 py-4 md:py-6 bg-white border-b border-gray-200">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h2 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{course.title}</h2>
+                          <p className="text-xs md:text-base text-gray-600">Votre parcours d'apprentissage</p>
                         </div>
-                        
-                        {/* Bouton favori */}
+                        {/* Bouton favori - à côté du titre */}
                         <motion.button
                           onClick={handleToggleFavorite}
-                          className="p-2 rounded-full hover:bg-gray-100 transition-colors group"
+                          className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors group flex-shrink-0"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           title={isFavorite(course.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
                         >
                           <Heart 
-                            size={24} 
-                            className={`transition-colors ${
+                            size={20} 
+                            className={`md:w-6 md:h-6 transition-colors ${
                               isFavorite(course.id) 
-                                ? 'text-red-500 fill-current' 
+                                ? 'text-red-500 fill-red-500' 
                                 : 'text-gray-400 hover:text-red-400'
                             }`}
                           />
                         </motion.button>
-
-                        {/* Study Room Button - always visible */}
-                        <motion.button
-                          key="study-room-btn-map"
+                      </div>
+                      
+                      {/* Study Room Link */}
+                      <div className="mr-0 sm:mr-4">
+                        <button
                           onClick={() => {
                             console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
                             
                             if (courseStudyRoomInfo) {
-                              // Si la room est scheduled, la démarrer
                               let roomToJoin = courseStudyRoomInfo.room;
                               if (courseStudyRoomInfo.room.status === 'scheduled') {
                                 roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
                               }
                               
-                              // Rejoindre directement la Study Room
                               const success = AdvancedStudyRoomService.joinStudyRoom(
                                 roomToJoin.id, 
                                 user?.id || 'user-default', 
@@ -1485,82 +1377,132 @@ export function IntegratedCourseViewer({
                                 alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
                               }
                             } else {
-                              // Si pas de room, aller au module Study Rooms
                               onClose();
                               if (onNavigateToSection) {
                                 onNavigateToSection('study-rooms');
                               }
                             }
                           }}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all group relative ${
-                            courseStudyRoomInfo?.isActive 
-                              ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
-                              : 'bg-gray-900 hover:bg-gray-800'
-                          } text-white`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Ouvrir Study Room'}
+                          className="flex items-center gap-1.5 md:gap-2 transition-colors text-gray-900 hover:text-gray-700"
+                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Lancer une session d\'étude'}
                         >
-                          <Users size={18} className="text-white" strokeWidth={2.5} />
-                          <span className="text-sm font-medium">
+                          <Users size={16} strokeWidth={2} className="md:w-[18px] md:h-[18px]" />
+                          <span className="text-xs md:text-sm font-medium">
                             {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
                           </span>
                           
-                          {courseStudyRoomInfo?.isActive && courseStudyRoomInfo.participantCount > 0 && (
-                            <motion.span 
-                              key="participant-badge-map"
-                              className="absolute -top-1 -right-1 bg-white text-green-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                            >
-                              {courseStudyRoomInfo.participantCount}
-                            </motion.span>
+                          {courseStudyRoomInfo?.isActive ? (
+                            <span className="px-1 md:px-1.5 py-0.5 bg-red-500 text-white text-[8px] md:text-[10px] font-bold uppercase rounded">
+                              Live
+                            </span>
+                          ) : (
+                            <span className="text-[#48c6ed]">+</span>
                           )}
-                          
-                          {courseStudyRoomInfo?.isActive && (
-                            <motion.div 
-                              key="pulse-dot-map"
-                              className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full"
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ repeat: Infinity, duration: 2 }}
-                            />
-                          )}
-                        </motion.button>
-                      </div>
-                      
-                      <div className="flex items-center gap-8">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">Niveau {currentLevel}</div>
-                          <div className="text-sm text-gray-600">{totalXP} / {totalPossibleXP} XP</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">{completedLessons}/{lessons.length}</div>
-                          <div className="text-sm text-gray-600">Étapes</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">{Math.round(progressPercentage)}%</div>
-                          <div className="text-sm text-gray-600">Progression</div>
-                        </div>
+                        </button>
                       </div>
                     </div>
                     
-                    {/* Barre de progression XP */}
-                    <div className="mt-6">
-                      <div className="w-full bg-gray-200 rounded-full h-3">
-                        <motion.div 
-                          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${safeXPPercentage}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                        />
+                  </div>
+
+                  {/* Vue mobile - Liste de leçons */}
+                  <div className="lg:hidden p-4">
+                    <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-gray-900">Navigation du cours</h3>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Clock size={14} />
+                          <span>{lessons.length} leçons</span>
+                        </div>
                       </div>
+                      
+                      {/* Barre de progression */}
+                      <div className="mb-2">
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span className="text-gray-600">Progression globale</span>
+                          <span className="font-semibold text-[#48c6ed]">{Math.round((lessons.filter(l => l.isCompleted).length / lessons.length) * 100)}% terminé</span>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-[#48c6ed] rounded-full transition-all"
+                            style={{ width: `${(lessons.filter(l => l.isCompleted).length / lessons.length) * 100}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">{lessons.filter(l => l.isCompleted).length} sur {lessons.length} leçons terminées</p>
+                      </div>
+                    </div>
+                    
+                    {/* Liste des leçons mobile */}
+                    <div className="space-y-2">
+                      {lessons.map((lesson, index) => {
+                        const isCurrentLesson = lesson.isInProgress || (!lesson.isCompleted && index === lessons.findIndex(l => !l.isCompleted));
+                        const isLocked = !lesson.isCompleted && !isCurrentLesson && index > 0;
+                        
+                        return (
+                          <button
+                            key={lesson.id}
+                            onClick={() => {
+                              if (!isLocked) {
+                                handleNodeClick(lesson);
+                              }
+                            }}
+                            className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                              selectedLessonForDetail?.id === lesson.id
+                                ? 'border-[#48c6ed] bg-[#48c6ed]/5'
+                                : isCurrentLesson
+                                ? 'border-[#48c6ed]/50 bg-white'
+                                : lesson.isCompleted
+                                ? 'border-green-200 bg-green-50/50'
+                                : 'border-gray-200 bg-white'
+                            } ${isLocked ? 'opacity-60' : ''}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                                lesson.isCompleted
+                                  ? 'bg-green-500 text-white'
+                                  : isCurrentLesson
+                                  ? 'bg-[#48c6ed] text-white'
+                                  : 'bg-gray-200 text-gray-500'
+                              }`}>
+                                {lesson.isCompleted ? (
+                                  <Check size={18} />
+                                ) : isLocked ? (
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
+                                  </svg>
+                                ) : (
+                                  index + 1
+                                )}
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  {!isLocked && !lesson.isCompleted && (
+                                    <Play size={14} className="text-[#48c6ed] flex-shrink-0" />
+                                  )}
+                                  <h4 className="font-semibold text-gray-900 truncate">{lesson.title}</h4>
+                                </div>
+                                <p className="text-sm text-gray-500">{lesson.duration} min</p>
+                              </div>
+                              
+                              <div className="flex-shrink-0">
+                                {lesson.isCompleted ? (
+                                  <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Terminé</span>
+                                ) : isCurrentLesson ? (
+                                  <span className="text-xs font-medium text-[#48c6ed] bg-[#48c6ed]/10 px-2 py-1 rounded-full">En cours</span>
+                                ) : isLocked ? (
+                                  <span className="text-xs font-medium text-gray-400">Verrouillée</span>
+                                ) : null}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  {/* Bloc map avec fond personnalisable */}
-                  <div className={`relative min-h-[350px] ${selectedBg?.style}`}>
-                    <div className="relative p-8">
+                  {/* Bloc map avec fond personnalisable et scroll - Desktop only */}
+                  <div className={`hidden lg:block relative min-h-[400px] overflow-auto ${selectedBg?.style}`}>
+                    <div className="relative p-8 min-w-[1100px] min-h-[450px]">
                       {/* Chemin et nodes */}
                       <CoursePath path={coursePath} lessons={lessons} />
                       
@@ -1580,7 +1522,7 @@ export function IntegratedCourseViewer({
                   </div>
 
                   {/* Bloc de détail sous la map */}
-                  <div className="p-6">
+                  <div className="p-4 lg:p-6">
                     <AnimatePresence>
                       {selectedLessonForDetail && (() => {
                         // Trouver la version à jour de la leçon dans le state lessons
@@ -1617,10 +1559,8 @@ export function IntegratedCourseViewer({
                             setShowPurchaseUpsell(true);
                           }}
                           onClose={() => {
-                            // Toujours garder une leçon sélectionnée - revenir à la première
-                            if (lessons.length > 0) {
-                              setSelectedLessonForDetail(lessons[0]);
-                            }
+                            // Fermer le panneau de détail
+                            setSelectedLessonForDetail(null);
                           }}
                           />
                         );
@@ -1631,181 +1571,329 @@ export function IntegratedCourseViewer({
               </div>
             </>
           ) : selectedLesson ? (
-            /* Vue Leçon avec structure cohérente */
+            /* Vue Leçon avec header SimpleDashboard */
             <>
-              {/* Header identique à la landing */}
-              <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-                <div className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+              {/* Header identique au SimpleDashboard */}
+              <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
+                <div className="px-3 md:px-6 py-0">
+                  <div className="flex items-center justify-between relative">
+                    {/* Left - Logo */}
+                    <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                       <button 
                         onClick={() => setSidebarOpen(true)}
-                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+                        className="cursor-target w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
                       >
                         <Menu size={20} />
                       </button>
                       
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                          <Brain className="text-white" size={16} />
-                        </div>
-                        <div>
-                          <h1 className="text-lg font-bold text-gray-900">Science Made Simple</h1>
-                          <p className="text-xs text-gray-500">{selectedLesson.title}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="hidden md:flex items-center gap-4">
-                        <button
-                          onClick={handleBackToMap}
-                          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                          <ArrowLeft size={16} />
-                          Retour au parcours
-                        </button>
-                        
-                        <div className="text-sm text-gray-600">
-                          Étape {selectedLesson.order} • {selectedLesson.duration} min
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        {/* Portefeuille */}
-                        {user?.wallet && (
-                          <div data-tour="wallet">
-                            <WalletBalance 
-                              balance={WalletService.getTotalBalance(user?.id || 'user-default').walletBalance}
-                              onAddFunds={() => setShowWalletTopUp(true)}
-                              userId={user?.id || 'user-default'}
-                              key={walletUpdateTrigger}
-                            />
-                        </div>
-                        )}
-                        
-                        {/* Widget XP avec compteur */}
-                        {userXPProfile && (
-                          <div data-tour="xp-widget">
-                        <button
-                              onClick={() => setShowSocialFeed(true)}
-                              className="text-blue-600 font-bold text-sm hover:text-blue-700 transition-colors"
-                        >
-                              Niveau {userXPProfile.currentLevel.level} • {userXPProfile.totalXP} XP{userXPProfile.dailyStreak > 0 ? ` • 🔥 ${userXPProfile.dailyStreak}j` : ''}
-                        </button>
-                          </div>
-                        )}
-
-                        {/* Fil Social */}
-                        <div data-tour="social-feed">
-                          <SocialFeedIcon 
-                            onClick={() => setShowSocialFeed(true)}
-                            className="text-gray-600 hover:text-gray-900"
+                      <div 
+                        className="flex items-center cursor-pointer"
+                        onClick={onClose}
+                        title="Retour au dashboard"
+                      >
+                        <div className="relative h-[50px] w-[120px] md:h-[84px] md:w-[500px]">
+                          <Image 
+                            src="/brand/logo-app.svg" 
+                            alt="Science Made Simple"
+                            fill
+                            className="object-contain object-left"
                           />
                         </div>
+                        </div>
                       </div>
+                    
+                    {/* Widgets centrés au milieu de la page */}
+                    <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
+                      
+                      {/* Widget XP */}
+                      {userXPProfile && (
+                        <XPHeaderWidget
+                          profile={userXPProfile}
+                          onClick={() => {
+                            setShowSocialFeed(true);
+                          }}
+                        />
+                      )}
+
+                      {/* Fil Social */}
+                      <div data-tour="social-feed">
+                        <SocialFeedIcon 
+                          onClick={() => {
+                            setShowSocialFeed(true);
+                          }}
+                          className="text-gray-600 hover:text-gray-900"
+                        />
                     </div>
-                  </div>
+                    
+                      {/* Widget Social Unifié (Buddy) */}
+                      <UnifiedSocialWidget
+                        userId={user?.id || 'current_user'}
+                        onNavigateToCommunity={() => {
+                          onClose();
+                          onNavigateToSection?.('community');
+                        }}
+                        onNavigateToSection={(section) => {
+                          onClose();
+                          onNavigateToSection?.(section);
+                        }}
+                      />
+                    </div>
+
+                    {/* Mobile widgets */}
+                    <div className="flex md:hidden items-center gap-2">
+                      {userXPProfile && (
+                        <button
+                          onClick={() => setShowSocialFeed(true)}
+                          className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full"
+                        >
+                          <Zap size={14} className="text-yellow-500" />
+                          <span className="text-xs font-bold text-gray-900">{userXPProfile.totalXP}</span>
+                        </button>
+                      )}
+                      <SocialFeedIcon 
+                        onClick={() => setShowSocialFeed(true)}
+                        className="text-gray-600 hover:text-gray-900"
+                      />
+                    </div>
+
+                    {/* Right - Timer + Guest Pass + Finish Sign Up + Avatar */}
+                    <div className="flex items-center gap-2 md:gap-4">
+                      {/* Timer - Style urgence */}
+                      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
+                        <Clock size={18} className="text-gray-700" />
+                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
+                      </div>
+
+                      {/* Bouton Guest Pass / Parrainage */}
+                        <button
+                        onClick={() => setShowGuestPassModal(true)}
+                        className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full transition-colors"
+                        title="Inviter des amis et gagner des heures gratuites"
+                        >
+                        <Gift size={18} />
+                        <span className="text-sm font-medium">Inviter</span>
+                        </button>
+                        
+                      {/* Finish Sign Up CTA */}
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onNavigateToSection?.('planning');
+                        }}
+                        className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
+                      >
+                        Finish Sign Up
+                      </button>
+
+                      {/* Profil utilisateur avec initiale */}
+                      <div className="w-9 h-9 md:w-10 md:h-10 bg-black rounded-full flex items-center justify-center text-white font-bold text-sm md:text-base">
+                        {user?.name?.charAt(0) || 'U'}
+                        </div>
+                      </div>
+                        </div>
                 </div>
               </header>
 
-              {/* Contenu avec sidebar */}
-              <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar identique au dashboard */}
-                <aside className={`w-64 bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300 lg:translate-x-0 ${
-                  sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                } fixed lg:relative top-0 left-0 h-full z-30`}>
-                  <div className="p-6">
+              {/* Contenu avec sidebar - Padding pour header fixe */}
+              <div className="flex flex-1 overflow-hidden pt-[60px] md:pt-[84px]">
+                {/* Sidebar identique au SimpleDashboard - Hidden on mobile */}
+                <nav className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed left-0 top-[85px] h-[calc(100vh-85px)] z-30">
+                  <div className="p-6 flex-1 overflow-y-auto">
                     <div className="space-y-2">
-                      {navigationItems.map((item) => (
+                      {navigationItems.map((item) => {
+                        const IconComponent = item.icon;
+                        const isActive = item.isActive;
+                        
+                        return (
+                        <button
+                            key={item.id}
+                            onClick={() => {
+                              if (item.isExternal && item.id === 'whatsapp') {
+                                window.open('https://wa.me/33123456789', '_blank');
+                              } else {
+                                onClose(); // Fermer le viewer
+                                onNavigateToSection?.(item.id); // Naviguer vers la section
+                              }
+                            }}
+                            className={`cursor-target w-full flex items-center gap-3 p-3 rounded-lg transition-all relative group ${
+                              item.id === 'whatsapp'
+                                ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
+                                : isActive
+                                ? 'bg-black text-white' 
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            <div className="relative">
+                              <IconComponent size={20} />
+                              {/* Badge de notification */}
+                              {item.hasNotification && (
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                              )}
+                            </div>
+                            <span className="font-medium">{item.label}</span>
+                        </button>
+                        );
+                      })}
+                          </div>
+                  </div>
+
+                  {/* Widgets + Logo en bas de la sidebar */}
+                  <div className="mt-auto border-t border-gray-100">
+                    {/* Mini-zone Upload Documents + Boosters */}
+                    <div className="px-4 py-4 space-y-2">
+                      <DocumentUploadWidget 
+                        floating={false}
+                        ownedPrograms={Array.from(purchasedItems).filter(item => 
+                          typeof item === 'string' && item.startsWith('pack-')
+                        ).map(item => item.replace('pack-', ''))}
+                        onCoursesDetected={(courses) => {
+                          console.log('📚 Nouveaux cours détectés:', courses);
+                          courses.forEach(course => {
+                            if (course.isOwned) {
+                              console.log('✅ Cours ajouté aux favoris:', course.title);
+                            } else {
+                              console.log('🔒 Cours ajouté (locked):', course.title);
+                            }
+                          });
+                        }}
+                      />
+                      <BoostersWidget floating={false} />
+                        </div>
+                    
+                    {/* Logo */}
+                    <div className="p-6 pt-2">
+                      <div className="relative h-[100px] w-full">
+                        <Image 
+                          src="/brand/sms-logo2.svg" 
+                          alt="Science Made Simple"
+                          fill
+                          className="object-contain object-left"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </nav>
+
+                {/* Sidebar mobile */}
+                <AnimatePresence>
+                  {sidebarOpen && (
+                    <motion.div
+                      initial={{ x: '-100%' }}
+                      animate={{ x: 0 }}
+                      exit={{ x: '-100%' }}
+                      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                      className="md:hidden fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-40 overflow-y-auto"
+                    >
+                  <div className="p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h2 className="text-lg font-bold text-gray-900">Menu</h2>
+                          <button
+                            onClick={() => setSidebarOpen(false)}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100"
+                          >
+                            <X size={20} className="text-gray-500" />
+                          </button>
+                        </div>
+                    <div className="space-y-2">
+                          {navigationItems.map((item) => {
+                            const IconComponent = item.icon;
+                            const isActive = item.isActive;
+                            
+                            return (
                         <button
                           key={item.id}
                           onClick={() => {
                             if (item.isExternal && item.id === 'whatsapp') {
                               window.open('https://wa.me/33123456789', '_blank');
+                                    setSidebarOpen(false);
                             } else {
-                            onClose(); // Fermer le viewer
-                            onNavigateToSection?.(item.id); // Naviguer vers la section
+                                    onClose();
+                                    onNavigateToSection?.(item.id);
+                                    setSidebarOpen(false);
                             }
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all relative ${
                             item.id === 'whatsapp'
-                              ? 'bg-green-500 text-white hover:bg-green-600'
-                              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                          }`}
-                        >
-                          <item.icon size={20} />
-                          <span className="font-medium">{item.label}</span>
+                                    ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
+                                    : isActive
+                                    ? 'bg-black text-white' 
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                }`}
+                              >
+                                <div className="relative">
+                                  <IconComponent size={20} />
                           {item.hasNotification && (
-                            <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                           )}
+                                </div>
+                                <span className="font-medium">{item.label}</span>
                         </button>
-                      ))}
+                            );
+                          })}
                     </div>
                   </div>
-                </aside>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Overlay mobile */}
                 {sidebarOpen && (
                   <div 
-                    className="lg:hidden fixed inset-0 bg-black/50 z-20"
+                    className="md:hidden fixed inset-0 bg-black/50 z-30"
                     onClick={() => setSidebarOpen(false)}
                   />
                 )}
 
                 {/* Contenu principal leçon - Layout Web 3.0 */}
-                <main className="flex-1 overflow-hidden">
+                <main className="flex-1 md:ml-64 overflow-hidden">
                   {/* Header avec breadcrumb */}
-                  <div className="bg-white border-b border-gray-100 px-8 py-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
+                  <div className="bg-white border-b border-gray-100 px-4 md:px-8 py-3 md:py-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-2 md:gap-4">
                         <button
                           onClick={handleBackToMap}
-                          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                          className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                         >
-                          <ArrowLeft size={16} />
+                          <ArrowLeft size={14} className="md:w-4 md:h-4" />
                           <span className="hidden sm:block">Retour au parcours</span>
                         </button>
-                        <div className="h-4 w-px bg-gray-300"></div>
-                        <div>
-                          <h1 className="text-xl font-bold text-gray-900">{selectedLesson.title}</h1>
-                          <p className="text-sm text-gray-600">Leçon {selectedLesson.order} • {course?.title}</p>
+                        <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
+                        <div className="flex-1 min-w-0">
+                          <h1 className="text-base md:text-xl font-bold text-gray-900 truncate">{selectedLesson.title}</h1>
+                          <p className="text-xs md:text-sm text-gray-600">Leçon {selectedLesson.order} • {course?.title}</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3 justify-end">
                         {/* Bouton favori dans la vue leçon */}
                         <motion.button
                           onClick={handleToggleFavorite}
-                          className="p-2 rounded-full hover:bg-gray-100 transition-colors group"
+                          className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors group"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           title={isFavorite(course.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
                         >
                           <Heart 
-                            size={20} 
-                            className={`transition-colors ${
+                            size={18} 
+                            className={`md:w-5 md:h-5 transition-colors ${
                               isFavorite(course.id) 
-                                ? 'text-red-500 fill-current' 
+                                ? 'text-red-500 fill-red-500' 
                                 : 'text-gray-400 hover:text-red-400'
                             }`}
                           />
                         </motion.button>
                         
-                        {/* Study Room Button */}
-                        <motion.button
-                          key="study-room-btn-lesson"
+                        {/* Study Room Link */}
+                        <button
                           onClick={() => {
                             console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
                             
                             if (courseStudyRoomInfo) {
-                              // Si la room est scheduled, la démarrer
                               let roomToJoin = courseStudyRoomInfo.room;
                               if (courseStudyRoomInfo.room.status === 'scheduled') {
                                 roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
                               }
                               
-                              // Rejoindre directement la Study Room
                               const success = AdvancedStudyRoomService.joinStudyRoom(
                                 roomToJoin.id, 
                                 user?.id || 'user-default', 
@@ -1818,59 +1906,105 @@ export function IntegratedCourseViewer({
                                 alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
                               }
                             } else {
-                              // Si pas de room, aller au module Study Rooms
                               onClose();
                               if (onNavigateToSection) {
                                 onNavigateToSection('study-rooms');
                               }
                             }
                           }}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all group relative ${
-                            courseStudyRoomInfo?.isActive 
-                              ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
-                              : 'bg-gray-900 hover:bg-gray-800'
-                          } text-white`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Ouvrir Study Room'}
+                          className="flex items-center gap-1 md:gap-2 transition-colors text-gray-900 hover:text-gray-700"
+                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Lancer une session d\'étude'}
                         >
-                          <Users size={16} className="text-white" strokeWidth={2.5} />
-                          <span className="text-xs font-medium hidden sm:inline">
+                          <Users size={14} strokeWidth={2} className="md:w-4 md:h-4" />
+                          <span className="text-xs md:text-sm font-medium hidden sm:inline">
                             {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
                           </span>
                           
-                          {courseStudyRoomInfo?.isActive && courseStudyRoomInfo.participantCount > 0 && (
-                            <motion.span 
-                              key="participant-badge-lesson"
-                              className="absolute -top-1 -right-1 bg-white text-green-600 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center sm:w-5 sm:h-5 sm:text-xs"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                            >
-                              {courseStudyRoomInfo.participantCount}
-                            </motion.span>
+                          {courseStudyRoomInfo?.isActive ? (
+                            <span className="px-1 md:px-1.5 py-0.5 bg-red-500 text-white text-[8px] md:text-[10px] font-bold uppercase rounded">
+                              Live
+                            </span>
+                          ) : (
+                            <span className="text-[#48c6ed] text-sm">+</span>
                           )}
-                          
-                          {courseStudyRoomInfo?.isActive && (
-                            <motion.div 
-                              key="pulse-dot-lesson"
-                              className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full"
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ repeat: Infinity, duration: 2 }}
-                            />
-                          )}
-                        </motion.button>
+                        </button>
                       </div>
                     </div>
                   </div>
 
                   {/* Layout principal - Cinéma + Sidebar */}
-                  <div className="flex bg-gray-50 overflow-hidden" style={{ height: 'calc(100vh - 160px)' }}>
+                  <div className="flex bg-gray-50 overflow-hidden relative" style={{ height: 'calc(100vh - 120px)' }}>
+                    {/* Bouton mobile pour afficher les leçons */}
+                    <button
+                      onClick={() => setShowMobileLessonNav(true)}
+                      className="lg:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-gray-900 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-800 transition-colors"
+                      aria-label="Voir les leçons"
+                    >
+                      <List size={24} />
+                    </button>
+
+                    {/* Panel mobile des leçons */}
+                    <AnimatePresence>
+                      {showMobileLessonNav && (
+                        <>
+                          {/* Overlay */}
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+                            onClick={() => setShowMobileLessonNav(false)}
+                          />
+                          {/* Panel */}
+                          <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="lg:hidden fixed inset-y-0 right-0 w-[85%] max-w-[380px] bg-white z-50 overflow-y-auto shadow-2xl"
+                          >
+                            <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10">
+                              <h3 className="font-bold text-gray-900">Navigation des leçons</h3>
+                              <button
+                                onClick={() => setShowMobileLessonNav(false)}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100"
+                              >
+                                <X size={20} className="text-gray-500" />
+                              </button>
+                            </div>
+                            <div className="p-4 space-y-4">
+                              <LessonNavigator
+                                course={course}
+                                lessons={lessons}
+                                currentLessonId={selectedLesson.id}
+                                onLessonSelect={(lessonId) => {
+                                  const lesson = lessons.find(l => l.id === lessonId);
+                                  if (lesson && (lesson.isOwned || purchasedItems.has(lessonId))) {
+                                    setSelectedLesson(lesson);
+                                    setSelectedLessonForDetail(lesson);
+                                    setShowMobileLessonNav(false);
+                                  }
+                                }}
+                                purchasedItems={purchasedItems}
+                              />
+                              <WhatsAppCTA
+                                courseId={course?.id || ''}
+                                courseName={course?.title || ''}
+                                activeStudents={124}
+                                weeklyQuestions={37}
+                                isVeryActive={true}
+                              />
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+
                     {/* Zone vidéo principale - Cinéma */}
-                    <div className="flex-1 p-8 overflow-y-auto">
+                    <div className="flex-1 p-3 md:p-8 overflow-y-auto">
                       <div className="flex flex-col">
                         {/* Lecteur vidéo immersif */}
-                        <div className="aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl mb-6">
+                        <div className="aspect-video bg-black rounded-xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl mb-4 md:mb-6">
                           <VideoWithQuiz 
                             videoUrl={selectedLesson.videoUrl}
                             questions={[]} // Utilise les questions par défaut du composant
@@ -1886,11 +2020,11 @@ export function IntegratedCourseViewer({
 
 
                         {/* Détails de la leçon sous la vidéo */}
-                        <div className="space-y-8 pb-16">
+                        <div className="space-y-4 md:space-y-8 pb-16">
                           {/* Bento Grid - Ressources de la leçon */}
-                          <div className="space-y-4">
+                          <div className="space-y-3 md:space-y-4">
                             {/* Bento Grid Layout avec ordre dynamique */}
-                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-[200px]">
+                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-3 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
                               
                               {/* Card 1: Description - Medium (spans 3 columns, 1 row) */}
                             <motion.div
@@ -1926,7 +2060,7 @@ export function IntegratedCourseViewer({
                                     <p className="text-xs text-gray-600 opacity-60 line-clamp-3">
                                       {selectedLesson?.description || "Découvrez les concepts clés et l'approche pédagogique de cette leçon..."}
                                     </p>
-                                    <div className="absolute bottom-2 right-2 text-xs text-blue-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-2 right-2 text-xs text-[#48c6ed] font-semibold flex items-center gap-1">
                                       Lire plus
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -1948,7 +2082,7 @@ export function IntegratedCourseViewer({
                                 </div>
                                       <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 bg-clip-text text-transparent">Description de la leçon</h3>
                               </div>
-                                    <p className="text-gray-700 leading-relaxed border-l-4 border-blue-500 pl-4">
+                                    <p className="text-gray-700 leading-relaxed border-l-4 border-[#48c6ed] pl-4">
                                       {selectedLesson?.description || "Cette leçon couvre les fondamentaux essentiels du sujet. Vous apprendrez à maîtriser les concepts de base et à les appliquer dans des situations pratiques."}
                                     </p>
                                   </motion.div>
@@ -1978,7 +2112,7 @@ export function IntegratedCourseViewer({
                                 {expandedBentoCard !== 'objectives' && (
                                   <div className="relative h-full flex flex-col">
                                     <div className="flex items-center gap-3 mb-3">
-                                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                                      <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg">
                                         <Target size={18} className="text-white" />
                               </div>
                                       <div>
@@ -1998,7 +2132,7 @@ export function IntegratedCourseViewer({
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="absolute bottom-2 right-2 text-xs text-green-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-2 right-2 text-xs text-gray-900 font-semibold flex items-center gap-1">
                                       Voir tous
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -2015,10 +2149,10 @@ export function IntegratedCourseViewer({
                                     className="relative h-full overflow-y-auto"
                               >
                                 <div className="flex items-center gap-3 mb-4">
-                                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
+                                      <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg shadow-gray-200">
                                         <Target size={20} className="text-white" />
                                   </div>
-                                      <h3 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Objectifs d'apprentissage</h3>
+                                      <h3 className="text-xl font-bold text-gray-900">Objectifs d'apprentissage</h3>
                                 </div>
                                     <div className="space-y-4">
                                       {(selectedLesson?.objectives || [
@@ -2026,8 +2160,8 @@ export function IntegratedCourseViewer({
                                         "Savoir appliquer les méthodes dans des cas pratiques",
                                         "Résoudre des exercices de complexité croissante"
                                       ]).map((objective, index) => (
-                                        <div key={index} className="flex items-start gap-3 border-l-4 border-green-500 pl-3">
-                                          <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 shadow-md">
+                                        <div key={index} className="flex items-start gap-3 border-l-4 border-[#48c6ed] pl-3">
+                                          <div className="w-7 h-7 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 shadow-md">
                                         {index + 1}
                                       </div>
                                           <span className="text-base text-gray-700 leading-relaxed">{objective}</span>
@@ -2061,7 +2195,7 @@ export function IntegratedCourseViewer({
                                 {expandedBentoCard !== 'essentials' && (
                                   <div className="relative h-full flex flex-col">
                               <div className="flex items-center gap-3 mb-4">
-                                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                                      <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
                                         <BookOpen size={20} className="text-white" />
                                 </div>
                                       <div>
@@ -2084,7 +2218,7 @@ export function IntegratedCourseViewer({
                                       </div>
                                     </div>
                                     
-                                    <div className="absolute bottom-4 right-4 text-xs text-purple-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-4 right-4 text-xs text-gray-600 font-semibold flex items-center gap-1">
                                       Voir plus
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -2109,7 +2243,7 @@ export function IntegratedCourseViewer({
                               {/* Header */}
                               <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-4">
-                                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
                                     <BookOpen size={18} className="text-white" />
                                 </div>
                                   <div>
@@ -2135,7 +2269,7 @@ export function IntegratedCourseViewer({
                                   }}
                                 >
                                   {/* Ambient glow */}
-                                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-gray-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                   
                                   <div className="relative flex items-start gap-4">
                                     <motion.div 
@@ -2320,7 +2454,7 @@ export function IntegratedCourseViewer({
                                   </div>
                                 </div>
                                     
-                                    <div className="absolute bottom-4 right-4 text-xs text-blue-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-4 right-4 text-xs text-[#48c6ed] font-semibold flex items-center gap-1">
                                       Contribuer
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -2482,7 +2616,7 @@ export function IntegratedCourseViewer({
                                 {expandedBentoCard !== 'qa' && (
                                   <div className="relative h-full flex flex-col">
                                     <div className="flex items-center gap-3 mb-3">
-                                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                                      <div className="w-10 h-10 bg-[#48c6ed] rounded-xl flex items-center justify-center shadow-lg">
                                         <MessageSquare size={18} className="text-white" />
                                       </div>
                                       <div>
@@ -2508,7 +2642,7 @@ export function IntegratedCourseViewer({
                                       </div>
                                     </div>
                                     
-                                    <div className="absolute bottom-2 right-2 text-xs text-orange-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-2 right-2 text-xs text-gray-600 font-semibold flex items-center gap-1">
                                       Voir tout
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -2533,7 +2667,7 @@ export function IntegratedCourseViewer({
                                       {/* Header */}
                                       <div className="flex items-center justify-between mb-8">
                               <div className="flex items-center gap-4">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                                          <div className="w-10 h-10 bg-[#48c6ed] rounded-xl flex items-center justify-center shadow-lg">
                                             <MessageSquare size={18} className="text-white" />
                                 </div>
                                           <div>
@@ -2675,7 +2809,7 @@ export function IntegratedCourseViewer({
                                   <div className="relative h-full flex flex-col">
                                     <div className="flex items-center justify-between mb-3">
                                       <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
                                           <Award size={18} className="text-white" />
                                 </div>
                                         <div>
@@ -2699,7 +2833,7 @@ export function IntegratedCourseViewer({
                                 </div>
                                   </div>
                                     
-                                    <div className="absolute bottom-2 right-2 text-xs text-purple-600 font-semibold flex items-center gap-1">
+                                    <div className="absolute bottom-2 right-2 text-xs text-gray-600 font-semibold flex items-center gap-1">
                                       Commencer
                                       <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
                                         →
@@ -2724,7 +2858,7 @@ export function IntegratedCourseViewer({
                                       {/* Header */}
                                       <div className="flex items-center justify-between mb-8">
                                         <div className="flex items-center gap-4">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
+                                          <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
                                             <Award size={18} className="text-white" />
                                           </div>
                                           <div>
@@ -2794,8 +2928,8 @@ export function IntegratedCourseViewer({
                       </div>
                     </div>
 
-                    {/* Sidebar Web 3.0 - Navigation et détails */}
-                    <div className="w-[420px] bg-gray-50 border-l border-gray-200 flex flex-col overflow-hidden">
+                    {/* Sidebar Web 3.0 - Navigation et détails - Hidden on mobile */}
+                    <div className="hidden lg:flex w-[320px] xl:w-[420px] bg-gray-50 border-l border-gray-200 flex-col overflow-hidden">
                       <div className="p-6 space-y-6 overflow-y-auto">
                         {/* Navigation des leçons */}
                         <LessonNavigator
@@ -2862,7 +2996,7 @@ export function IntegratedCourseViewer({
               >
                 <div className="text-center">
                   <motion.div
-                    className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+                    className="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
                     animate={{ 
                       scale: [1, 1.1, 1],
                       rotate: [0, 5, -5, 0]
@@ -2988,17 +3122,17 @@ export function IntegratedCourseViewer({
               {/* Header élégant */}
               <div className="relative overflow-hidden bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
                 {/* Pattern de fond */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-green-500/10" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-gray-50/20" />
                 
                 {/* Particules animées */}
                 <motion.div 
-                  className="absolute top-4 left-16 w-1.5 h-1.5 bg-amber-400/40 rounded-full"
+                  className="absolute top-4 left-16 w-1.5 h-1.5 bg-[#48c6ed]/40 rounded-full"
                   animate={{ y: [0, -6, 0], opacity: [0.4, 0.7, 0.4] }}
                   transition={{ duration: 3, repeat: Infinity }}
                 />
                 <motion.div 
-                  className="absolute top-6 right-24 w-1 h-1 bg-emerald-400/30 rounded-full"
+                  className="absolute top-6 right-24 w-1 h-1 bg-gray-400/30 rounded-full"
                   animate={{ y: [0, -4, 0], opacity: [0.3, 0.6, 0.3] }}
                   transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
                 />
@@ -3007,7 +3141,7 @@ export function IntegratedCourseViewer({
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-4 left-6 flex items-center gap-2 bg-amber-500/90 backdrop-blur-sm text-amber-900 px-4 py-2 rounded-full shadow-lg border border-amber-400/50"
+                  className="absolute top-4 left-6 flex items-center gap-2 bg-[#48c6ed]/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full shadow-lg border border-[#48c6ed]/50"
                 >
                   <Clock size={16} />
                   <span className="text-sm font-bold">7:23 / 10:00</span>
@@ -3033,7 +3167,7 @@ export function IntegratedCourseViewer({
                       className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg flex items-center justify-center"
                     >
                       <Eye size={32} className="text-white drop-shadow-lg" />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#48c6ed] rounded-full flex items-center justify-center shadow-lg">
                         <Gift size={16} className="text-white" />
                       </div>
                     </motion.div>
@@ -3046,7 +3180,7 @@ export function IntegratedCourseViewer({
                         transition={{ delay: 0.1 }}
                         className="flex items-center gap-3"
                       >
-                        <div className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
+                        <div className="flex items-center gap-2 bg-[#48c6ed] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
                           <Sparkles size={16} />
                           Aperçu Gratuit
                         </div>
@@ -3089,7 +3223,7 @@ export function IntegratedCourseViewer({
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+                        className="w-24 h-24 bg-[#48c6ed] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
                       >
                         <Play size={32} className="text-white ml-1" />
                       </motion.div>
@@ -3101,7 +3235,7 @@ export function IntegratedCourseViewer({
                   <div className="absolute bottom-0 left-0 right-0 bg-black/20 backdrop-blur-sm p-4">
                     <div className="w-full bg-white/20 rounded-full h-2 mb-2">
                       <motion.div 
-                        className="bg-blue-500 h-2 rounded-full"
+                        className="bg-[#48c6ed] h-2 rounded-full"
                         initial={{ width: "0%" }}
                         animate={{ width: "33%" }}
                         transition={{ duration: 1, delay: 0.5 }}
@@ -3119,28 +3253,28 @@ export function IntegratedCourseViewer({
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-200/50"
+                      className="bg-gray-50 p-6 rounded-2xl border border-gray-200"
                     >
                       <div className="flex items-center gap-3 mb-4">
-                        <Crown size={24} className="text-amber-600" />
+                        <Crown size={24} className="text-gray-600" />
                         <h3 className="text-lg font-bold text-gray-900">Accès Complet</h3>
                       </div>
                       
                       <ul className="space-y-3 mb-6">
                         <li className="flex items-center gap-3 text-sm text-gray-700">
-                          <CheckCircle size={16} className="text-green-500" />
+                          <CheckCircle size={16} className="text-gray-900" />
                           Accès illimité à vie
                         </li>
                         <li className="flex items-center gap-3 text-sm text-gray-700">
-                          <CheckCircle size={16} className="text-green-500" />
+                          <CheckCircle size={16} className="text-gray-900" />
                           Support communautaire 24/7
                         </li>
                         <li className="flex items-center gap-3 text-sm text-gray-700">
-                          <CheckCircle size={16} className="text-green-500" />
+                          <CheckCircle size={16} className="text-gray-900" />
                           Certificat de completion
                         </li>
                         <li className="flex items-center gap-3 text-sm text-gray-700">
-                          <CheckCircle size={16} className="text-green-500" />
+                          <CheckCircle size={16} className="text-gray-900" />
                           Mises à jour gratuites
                         </li>
                       </ul>
@@ -3166,7 +3300,7 @@ export function IntegratedCourseViewer({
                       {/* Statistiques */}
                       <div className="flex justify-center gap-4 text-xs text-gray-400">
                         <div className="flex items-center gap-1">
-                          <Star size={12} className="text-amber-400" />
+                          <Star size={12} className="text-[#48c6ed]" />
                           <span>4.9/5</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -3274,6 +3408,88 @@ export function IntegratedCourseViewer({
               console.log('Kick participant:', participantId);
             }}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Modal Guest Pass / Parrainage */}
+      <AnimatePresence>
+        {showGuestPassModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowGuestPassModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Badge Pass */}
+              <div className="flex justify-center mb-6">
+                <div className="bg-gray-900 rounded-2xl px-6 py-4 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Gift size={32} className="text-[#48c6ed]" />
+                  </div>
+                  <span className="text-white text-sm font-bold tracking-wider uppercase">Pass Invité 14 jours</span>
+                </div>
+              </div>
+
+              {/* Titre */}
+              <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+                Apprendre, c'est mieux à plusieurs
+              </h2>
+
+              {/* Description */}
+              <p className="text-gray-600 text-center mb-6 leading-relaxed">
+                Partage ton pass exclusif avec tes amis. S'ils s'inscrivent dans les 14 jours, 
+                tu gagnes <span className="font-bold text-gray-900">+2h de contenu gratuit</span> ajoutées à ton compteur !
+              </p>
+
+              {/* Input emails */}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={guestPassEmails}
+                  onChange={(e) => setGuestPassEmails(e.target.value)}
+                  placeholder="Emails séparés par des virgules"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                />
+              </div>
+
+              {/* Bouton Envoyer */}
+              <button
+                onClick={() => {
+                  if (guestPassEmails.trim()) {
+                    // Simuler l'envoi
+                    alert(`✉️ Invitations envoyées à : ${guestPassEmails}\n\nTu recevras +2h pour chaque ami qui s'inscrit dans les 14 jours !`);
+                    setGuestPassEmails('');
+                    setShowGuestPassModal(false);
+                  }
+                }}
+                className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+              >
+                Envoyer les invitations
+              </button>
+
+              {/* Lien Passer */}
+              <button
+                onClick={() => setShowGuestPassModal(false)}
+                className="w-full text-center text-gray-900 font-semibold hover:text-gray-600 transition-colors"
+              >
+                Passer pour l'instant
+              </button>
+
+              {/* Terms */}
+              <p className="text-center text-gray-400 text-sm mt-4 underline cursor-pointer hover:text-gray-600">
+                Conditions du Pass Invité
+              </p>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 

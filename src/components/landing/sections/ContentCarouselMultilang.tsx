@@ -110,11 +110,11 @@ export function ContentCarouselMultilang() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-bold text-gray-900 mb-3"
-            style={{ fontSize: 'clamp(2rem, 4.5vw, 3.25rem)' }}
+            className="font-title text-4xl mb-3 tracking-wide"
+            style={{ fontSize: 'clamp(1.75rem, 4.5vw, 52px)' }}
           >
             {t('carousel.title')}<br />
-            {t('carousel.title.line2.part1')} <span className="text-blue-600">{t('carousel.title.line2.highlight1')}</span>{t('carousel.title.line2.part2')} <span className="text-blue-600">{t('carousel.title.line2.highlight2')}</span>.
+            {t('carousel.title.line2.part1')} <span>{t('carousel.title.line2.highlight1')}</span>{t('carousel.title.line2.part2')} <span>{t('carousel.title.line2.highlight2')}</span>.
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -224,7 +224,7 @@ export function ContentCarouselMultilang() {
                     </div>
                     <button
                       onClick={handleTestClick}
-                      className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+                      className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
                       {t('carousel.test_btn')}
                       <ArrowRight size={22} />
@@ -256,7 +256,7 @@ export function ContentCarouselMultilang() {
           <div className="p-4 md:hidden border-t border-gray-100 bg-gray-50/50">
             <button
               onClick={handleTestClick}
-              className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="w-full px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               {t('carousel.test_btn')}
               <ArrowRight size={18} />

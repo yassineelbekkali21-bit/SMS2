@@ -20,15 +20,17 @@ import { WhoIsSMSSectionMultilang } from './sections/WhoIsSMSSectionMultilang';
 
 interface NewMarketingLandingMultilangProps {
   onEnterApp?: () => void;
+  onDiagnosticComplete?: (data: Record<string, unknown>) => void;
 }
 
-function LandingContent({ onEnterApp }: NewMarketingLandingMultilangProps) {
+function LandingContent({ onEnterApp, onDiagnosticComplete }: NewMarketingLandingMultilangProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white">
       <HeroSectionMultilang 
         onEnterApp={onEnterApp}
+        onDiagnosticComplete={onDiagnosticComplete}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
       />
@@ -49,10 +51,10 @@ function LandingContent({ onEnterApp }: NewMarketingLandingMultilangProps) {
   );
 }
 
-export function NewMarketingLandingMultilang({ onEnterApp }: NewMarketingLandingMultilangProps) {
+export function NewMarketingLandingMultilang({ onEnterApp, onDiagnosticComplete }: NewMarketingLandingMultilangProps) {
   return (
     <LanguageProvider>
-      <LandingContent onEnterApp={onEnterApp} />
+      <LandingContent onEnterApp={onEnterApp} onDiagnosticComplete={onDiagnosticComplete} />
     </LanguageProvider>
   );
 }

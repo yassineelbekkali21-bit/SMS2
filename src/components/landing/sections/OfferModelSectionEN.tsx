@@ -141,7 +141,7 @@ export function OfferModelSectionEN() {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold text-gray-900 mb-5"
           >
-            Two ambitions, <span className="text-blue-600">one platform</span>.
+            Two ambitions, <span>one platform</span>.
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}

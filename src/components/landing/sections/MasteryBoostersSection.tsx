@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, Calendar, FileCheck, Users, ArrowRight, CheckCircle2, Clock, Zap, BrainCircuit, Target, MessageCircle, BarChart3 } from 'lucide-react';
+import { Map, Calendar, FileCheck, Users, ArrowRight, CheckCircle2, Clock, Zap, BrainCircuit, Target, MessageCircle, BarChart3, Mic, MicOff, Video, VideoOff, Monitor, Volume2, LogOut, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export function MasteryBoostersSection() {
@@ -57,17 +57,16 @@ export function MasteryBoostersSection() {
   }, [boosters.length]);
 
   return (
-    <section className="py-24 bg-gray-50 overflow-hidden">
+    <section className="py-24 bg-gray-100 overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6">
         
         {/* Header */}
         <div className="text-center mb-20">
           <h2 
-            className="text-4xl font-bold text-gray-900 mb-6 leading-tight"
-            style={{ fontSize: 'clamp(1.2rem, 6vw, 3rem)' }}
+            className="font-title text-4xl mb-6 leading-tight tracking-wide"
+            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)' }}
           >
-            {t('boosters.title')}<br />
-            <span className="text-blue-600">{t('boosters.title.highlight')}</span>.
+            {t('boosters.title')} <span>{t('boosters.title.highlight')}</span>.
           </h2>
         </div>
 
@@ -107,12 +106,12 @@ export function MasteryBoostersSection() {
                     </div>
                     
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`text-lg font-bold transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                      <div className="flex items-center gap-2">
+                        <h3 className={`text-lg font-bold transition-colors whitespace-nowrap ${isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`}>
                           {booster.title}
                         </h3>
                         {booster.comingSoon && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider text-gray-500 bg-gray-100 border border-gray-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider text-gray-500 bg-gray-100 border border-gray-200 whitespace-nowrap flex-shrink-0">
                             Coming soon
                           </span>
                         )}
@@ -302,47 +301,128 @@ export function MasteryBoostersSection() {
                       </div>
                     )}
 
-                    {/* 4. COMMUNITY VISUAL */}
+                    {/* 4. STUDY ROOMS VISUAL - Video Conference Style */}
                     {activeTab === 3 && (
-                      <div className="h-full relative overflow-hidden flex flex-col justify-end">
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 z-10" />
-                        
-                        <div className="space-y-4 pb-4">
-                            {[
-                                { user: 'Sarah', text: 'Stuck on Q3!', type: 'question', color: 'bg-white' },
-                                { user: 'Mentor Yassine', text: 'Check the 2nd law. Here is a hint...', type: 'mentor', color: 'bg-blue-50 border-blue-100' },
-                                { user: 'Tom', text: 'Thanks! That clicked.', type: 'reply', color: 'bg-white' },
-                            ].map((msg, i) => (
-                                <motion.div 
-                                    key={i}
-                                    initial={{ x: -20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    transition={{ delay: i * 0.2 }}
-                                    className={`p-4 rounded-2xl border shadow-sm max-w-[80%] ${msg.type === 'mentor' ? 'ml-auto border-blue-200 bg-blue-50' : 'mr-auto border-gray-100 bg-white'}`}
+                      <div className="h-full flex flex-col">
+                        {/* Main Video Area */}
+                        <div className="flex-1 flex gap-3">
+                          {/* Sidebar - Participants & Chat */}
+                          <div className="w-[140px] flex flex-col gap-2">
+                            {/* Participants */}
+                            <div className="bg-gray-100 rounded-xl p-2">
+                              <div className="text-[10px] font-bold text-gray-500 mb-2 flex items-center gap-1">
+                                <Users size={10} /> 3 Present
+                              </div>
+                              {[
+                                { name: 'Yassine (Host)', isMuted: false, hasVideo: true },
+                                { name: 'Sarah', isMuted: true, hasVideo: true },
+                                { name: 'Tom', isMuted: false, hasVideo: false },
+                              ].map((p, i) => (
+                                <motion.div
+                                  key={i}
+                                  initial={{ x: -10, opacity: 0 }}
+                                  animate={{ x: 0, opacity: 1 }}
+                                  transition={{ delay: i * 0.1 }}
+                                  className="flex items-center gap-2 py-1.5 px-1 text-[10px]"
                                 >
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${msg.type === 'mentor' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
-                                            {msg.user[0]}
-                                        </div>
-                                        <span className="text-xs font-bold text-gray-900">{msg.user}</span>
-                                        {msg.type === 'mentor' && <span className="bg-blue-200 text-blue-800 text-[10px] px-1.5 rounded font-bold">STAFF</span>}
-                                    </div>
-                                    <p className="text-sm text-gray-600">{msg.text}</p>
+                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold ${i === 0 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                                    {p.name[0]}
+                                  </div>
+                                  <span className="text-gray-700 truncate flex-1">{p.name}</span>
+                                  {p.isMuted && <MicOff size={10} className="text-gray-400" />}
                                 </motion.div>
-                            ))}
+                              ))}
+                            </div>
+                            
+                            {/* Mini Chat */}
+                            <div className="flex-1 bg-gray-100 rounded-xl p-2 flex flex-col">
+                              <div className="text-[10px] font-bold text-gray-500 mb-2 flex items-center gap-1">
+                                <MessageSquare size={10} /> Chat
+                              </div>
+                              <div className="flex-1 space-y-1 text-[9px] overflow-hidden">
+                                <div className="bg-white rounded p-1.5"><span className="font-bold text-blue-600">Yassine:</span> <span className="text-gray-600">Welcome!</span></div>
+                                <div className="bg-white rounded p-1.5"><span className="font-bold">Sarah:</span> <span className="text-gray-600">Question about Q3</span></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Main Content - Whiteboard */}
+                          <div className="flex-1 bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden">
+                            <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Monitor size={14} className="text-gray-400" />
+                                <span className="text-xs font-bold text-gray-700">Tableau blanc partagé</span>
+                              </div>
+                              <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Live</span>
+                            </div>
+                            <div className="flex-1 p-4 relative">
+                              {/* Whiteboard content simulation */}
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-gray-400 text-xs absolute top-4 left-4"
+                              >
+                                ∫ f(x)dx = F(x) + C
+                              </motion.div>
+                              <motion.div
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 2 }}
+                                className="absolute top-12 left-4"
+                              >
+                                <svg width="200" height="80" viewBox="0 0 200 80">
+                                  <motion.path
+                                    d="M 10 60 Q 50 10, 100 40 T 190 30"
+                                    fill="none"
+                                    stroke="#3B82F6"
+                                    strokeWidth="2"
+                                    initial={{ pathLength: 0 }}
+                                    animate={{ pathLength: 1 }}
+                                    transition={{ duration: 1.5, delay: 0.5 }}
+                                  />
+                                </svg>
+                              </motion.div>
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 1 }}
+                                className="absolute bottom-8 right-8 bg-yellow-100 border border-yellow-300 rounded-lg p-2 text-xs text-yellow-800"
+                              >
+                                💡 Hint: Use substitution!
+                              </motion.div>
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="relative z-20 bg-white p-3 rounded-xl border border-gray-200 shadow-lg flex items-center gap-3 mt-4">
-                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                                <Users size={16} className="text-gray-400"/>
-                            </div>
-                            <div className="flex-1 h-8 bg-gray-50 rounded-lg border border-gray-100 flex items-center px-3 text-sm text-gray-400">
-                                Ask a question...
-                            </div>
-                            <button className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                                <ArrowRight size={16} />
+                        {/* Bottom Controls Bar */}
+                        <motion.div 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                          className="mt-3 bg-white rounded-xl border border-gray-200 shadow-lg p-2 flex items-center justify-center gap-2"
+                        >
+                          {[
+                            { icon: Mic, label: 'Mute', active: true },
+                            { icon: Video, label: 'Video', active: true },
+                            { icon: Monitor, label: 'Whiteboard', active: true, highlight: true },
+                            { icon: Volume2, label: 'Speaker', active: true },
+                            { icon: LogOut, label: 'Leave', active: false, danger: true },
+                          ].map((ctrl, i) => (
+                            <button
+                              key={i}
+                              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors ${
+                                ctrl.danger 
+                                  ? 'hover:bg-red-50 text-gray-500 hover:text-red-600' 
+                                  : ctrl.highlight 
+                                    ? 'bg-blue-50 text-blue-600' 
+                                    : 'hover:bg-gray-100 text-gray-500'
+                              }`}
+                            >
+                              <ctrl.icon size={16} />
+                              <span className="text-[9px] font-medium">{ctrl.label}</span>
                             </button>
-                        </div>
+                          ))}
+                        </motion.div>
                       </div>
                     )}
                     

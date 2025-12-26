@@ -1,6 +1,61 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
 @import "tailwindcss";
+
+/* ========================================================================
+   TYPOGRAPHIE SMS - CUSTOM FONTS
+   - Parafina Black: Titres de section (uppercase)
+   - DM Sans Regular: Corps de texte
+   - DM Sans SemiBold: Boutons CTA et Header
+   ======================================================================== */
+
+/* Parafina Black S - Pour les titres de section */
+@font-face {
+  font-family: 'Parafina';
+  src: url('/fonts/Parafina Black S.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Variables de police */
+:root {
+  --font-parafina: 'Parafina', sans-serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+}
+
+/* ========================================================================
+   NOISE TEXTURE OVERLAY - Grain effect pour sections dark
+   ======================================================================== */
+
+/* Noise texture overlay class */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+.noise-overlay > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Variante plus intense */
+.noise-overlay-strong::before {
+  opacity: 0.09;
+}
+
+/* Variante subtile */
+.noise-overlay-subtle::before {
+  opacity: 0.02;
+}
 
 /* ========================================================================
    SCIENCE MADE SIMPLE - MONOCHROME PREMIUM 2025
@@ -51,14 +106,48 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Bricolage Grotesque', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-dm-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 400;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   line-height: 1.6;
   font-synthesis: none;
+}
+
+/* ========================================================================
+   UTILITY CLASSES - TYPOGRAPHY
+   ======================================================================== */
+
+/* Titres de section - Parafina Black UPPERCASE */
+.font-title,
+.section-title {
+  font-family: var(--font-parafina), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #1A1A1A;
+}
+
+/* Corps de texte - DM Sans Regular */
+.font-body {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 400;
+}
+
+/* Boutons CTA et Header - DM Sans SemiBold */
+.font-cta,
+.font-header {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 600;
+}
+
+/* Appliquer DM Sans SemiBold aux boutons par défaut */
+button,
+[role="button"],
+.btn {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 600;
 }
 
 /* Safari-specific fixes */
@@ -112,7 +201,7 @@ p, span, div, h1, h2, h3, h4, h5, h6 {
    ======================================================================== */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -137,14 +226,14 @@ h3 {
   letter-spacing: -0.015em;
 }
 
-/* Utility class for Bricolage Grotesque */
+/* Utility class for display font */
 .font-display,
 .font-bricolage {
-  font-family: 'Bricolage Grotesque', system-ui, sans-serif !important;
+  font-family: var(--font-dm-sans), system-ui, sans-serif !important;
 }
 
 p {
-  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
   line-height: 1.7;
   color: var(--sms-gray-600);
   font-weight: 400;
@@ -158,6 +247,16 @@ p {
 *:focus-visible {
   outline: 2px solid var(--sms-black);
   outline-offset: 2px;
+}
+
+/* Pas de outline pour les inputs de recherche */
+input[type="text"]:focus,
+input[type="text"]:focus-visible,
+input[type="search"]:focus,
+input[type="search"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 
 /* ========================================================================
@@ -744,3 +843,63 @@ body.theme-yellow .group:hover .group-hover\:bg-blue-100 { background-color: #FF
 body.theme-yellow .to-blue-700 { --tw-gradient-to: #FDD835 !important; }
 body.theme-yellow .hover\:from-blue-700:hover { --tw-gradient-from: #FDD835 !important; }
 body.theme-yellow .hover\:to-blue-800:hover { --tw-gradient-to: #F9A825 !important; }
+
+/* MINT NEON THEME (#32FFC3) */
+body.theme-mint .text-blue-600 { color: #32ffc3 !important; }
+body.theme-mint .bg-blue-600 { background-color: #32ffc3 !important; }
+body.theme-mint .border-blue-600 { border-color: #32ffc3 !important; }
+body.theme-mint .hover\:bg-blue-700:hover { background-color: #12e6a7 !important; }
+body.theme-mint .bg-blue-50 { background-color: #e8fff8 !important; }
+body.theme-mint .bg-blue-100 { background-color: #c6ffef !important; }
+body.theme-mint .border-blue-100 { border-color: #c6ffef !important; }
+body.theme-mint .text-blue-700 { color: #0f9f79 !important; }
+body.theme-mint .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(50, 255, 195, 0.3) !important; }
+body.theme-mint .from-blue-600 { --tw-gradient-from: #32ffc3 !important; }
+body.theme-mint .to-blue-600 { --tw-gradient-to: #12e6a7 !important; }
+body.theme-mint .from-blue-100 { --tw-gradient-from: #c6ffef !important; }
+body.theme-mint .to-purple-100 { --tw-gradient-to: #e0fff6 !important; }
+body.theme-mint .group:hover .group-hover\:text-blue-600 { color: #32ffc3 !important; }
+body.theme-mint .group:hover .group-hover\:bg-blue-100 { background-color: #c6ffef !important; }
+body.theme-mint .to-blue-700 { --tw-gradient-to: #0f9f79 !important; }
+body.theme-mint .hover\:from-blue-700:hover { --tw-gradient-from: #12e6a7 !important; }
+body.theme-mint .hover\:to-blue-800:hover { --tw-gradient-to: #0b7a5b !important; }
+
+/* SKY BLUE THEME (#48C6ED) */
+body.theme-sky .text-blue-600 { color: #48c6ed !important; }
+body.theme-sky .bg-blue-600 { background-color: #48c6ed !important; }
+body.theme-sky .border-blue-600 { border-color: #48c6ed !important; }
+body.theme-sky .hover\:bg-blue-700:hover { background-color: #2bb3de !important; }
+body.theme-sky .bg-blue-50 { background-color: #eaf8fd !important; }
+body.theme-sky .bg-blue-100 { background-color: #d0f0fa !important; }
+body.theme-sky .border-blue-100 { border-color: #d0f0fa !important; }
+body.theme-sky .text-blue-700 { color: #1a9bc7 !important; }
+body.theme-sky .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(72, 198, 237, 0.3) !important; }
+body.theme-sky .from-blue-600 { --tw-gradient-from: #48c6ed !important; }
+body.theme-sky .to-blue-600 { --tw-gradient-to: #2bb3de !important; }
+body.theme-sky .from-blue-100 { --tw-gradient-from: #d0f0fa !important; }
+body.theme-sky .to-purple-100 { --tw-gradient-to: #e0f4fc !important; }
+body.theme-sky .group:hover .group-hover\:text-blue-600 { color: #48c6ed !important; }
+body.theme-sky .group:hover .group-hover\:bg-blue-100 { background-color: #d0f0fa !important; }
+body.theme-sky .to-blue-700 { --tw-gradient-to: #1a9bc7 !important; }
+body.theme-sky .hover\:from-blue-700:hover { --tw-gradient-from: #2bb3de !important; }
+body.theme-sky .hover\:to-blue-800:hover { --tw-gradient-to: #1580a6 !important; }
+
+/* CYAN SMS THEME (#00C2FF) - Default */
+body.theme-cyan .text-blue-600 { color: #00c2ff !important; }
+body.theme-cyan .bg-blue-600 { background-color: #00c2ff !important; }
+body.theme-cyan .border-blue-600 { border-color: #00c2ff !important; }
+body.theme-cyan .hover\:bg-blue-700:hover { background-color: #00a8e0 !important; }
+body.theme-cyan .bg-blue-50 { background-color: #e6f9ff !important; }
+body.theme-cyan .bg-blue-100 { background-color: #ccf3ff !important; }
+body.theme-cyan .border-blue-100 { border-color: #ccf3ff !important; }
+body.theme-cyan .text-blue-700 { color: #0090c7 !important; }
+body.theme-cyan .shadow-blue-600\/30 { box-shadow: 0 10px 15px -3px rgba(0, 194, 255, 0.3) !important; }
+body.theme-cyan .from-blue-600 { --tw-gradient-from: #00c2ff !important; }
+body.theme-cyan .to-blue-600 { --tw-gradient-to: #00a8e0 !important; }
+body.theme-cyan .from-blue-100 { --tw-gradient-from: #ccf3ff !important; }
+body.theme-cyan .to-purple-100 { --tw-gradient-to: #d6f5ff !important; }
+body.theme-cyan .group:hover .group-hover\:text-blue-600 { color: #00c2ff !important; }
+body.theme-cyan .group:hover .group-hover\:bg-blue-100 { background-color: #ccf3ff !important; }
+body.theme-cyan .to-blue-700 { --tw-gradient-to: #0090c7 !important; }
+body.theme-cyan .hover\:from-blue-700:hover { --tw-gradient-from: #00a8e0 !important; }
+body.theme-cyan .hover\:to-blue-800:hover { --tw-gradient-to: #007099 !important; }

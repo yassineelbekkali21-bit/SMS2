@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "smsyeb"
+    "default": "smsyeb",
+    "landing-b": "sms-mvp-2"
   }
 }

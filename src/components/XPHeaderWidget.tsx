@@ -17,7 +17,7 @@ export function XPHeaderWidget({ profile, onClick }: XPHeaderWidgetProps) {
         Niveau {profile.currentLevel.level}
       </span>
       <span className="text-gray-400">•</span>
-      <span className="text-sm font-bold text-blue-600">
+      <span className="text-sm font-bold text-gray-900">
         {profile.totalXP.toLocaleString()} XP
       </span>
       {profile.dailyStreak > 3 && (

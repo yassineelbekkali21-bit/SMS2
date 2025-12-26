@@ -221,7 +221,7 @@ export function UnifiedSocialWidget({
       >
         <Users 
           size={18} 
-          className={`transition-colors ${hasActivity ? 'text-blue-600' : 'text-gray-600'} group-hover:text-gray-900`} 
+          className="text-gray-900 transition-colors" 
         />
         
         {/* Badge pour activité */}

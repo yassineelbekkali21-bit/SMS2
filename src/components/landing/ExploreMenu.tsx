@@ -638,7 +638,7 @@ export function ExploreMenu({ isMobile = false, onClose }: { isMobile?: boolean;
         className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition-colors font-semibold text-2xl"
       >
         <span>{language === 'fr' ? 'Explorer' : 'Explore'}</span>
-        <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <Search size={20} />
       </button>
 
       {/* Dropdown Menu - SMS Identity (White) */}

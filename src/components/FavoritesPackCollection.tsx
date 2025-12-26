@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
   ChevronDown, 
   ChevronUp, 
-  ChevronLeft,
-  ChevronRight,
   Star, 
   Trophy,
   Sparkles,
@@ -226,17 +224,6 @@ export function FavoritesPackCollection({
     return packs;
   }, [favoriteCourses, availablePacks, progressData, purchasedItems]);
 
-  // Cours favoris qui n'appartiennent à aucun pack
-  const unpackagedCourses = useMemo(() => {
-    const allPackCourseIds = new Set(
-      availablePacks.flatMap(pack => pack.courses)
-    );
-    
-    return favoriteCourses.filter(course => 
-      !allPackCourseIds.has(course.id)
-    );
-  }, [favoriteCourses, availablePacks]);
-
   // Filtrer selon la recherche
   const filteredPacks = useMemo(() => {
     if (!searchQuery.trim()) return packsWithCourses;
@@ -249,15 +236,6 @@ export function FavoritesPackCollection({
       )
     );
   }, [packsWithCourses, searchQuery]);
-
-  const filteredUnpackagedCourses = useMemo(() => {
-    if (!searchQuery.trim()) return unpackagedCourses;
-    
-    const query = searchQuery.toLowerCase();
-    return unpackagedCourses.filter(course => 
-      course.title.toLowerCase().includes(query)
-    );
-  }, [unpackagedCourses, searchQuery]);
 
   const togglePackCollapse = (packId: string) => {
     const newCollapsed = new Set(collapsedPacks);
@@ -298,23 +276,6 @@ export function FavoritesPackCollection({
       <div className="absolute top-3 right-3 w-6 h-6 bg-gray-200 rounded-full"></div>
     </motion.div>
   );
-
-  // Scroll handlers for each pack
-  const scrollContainerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-
-  const handleScrollLeft = (packId: string) => {
-    const container = scrollContainerRefs.current[packId];
-    if (container) {
-      container.scrollBy({ left: -300, behavior: 'smooth' });
-    }
-  };
-
-  const handleScrollRight = (packId: string) => {
-    const container = scrollContainerRefs.current[packId];
-    if (container) {
-      container.scrollBy({ left: 300, behavior: 'smooth' });
-    }
-  };
 
   // Get all courses for a pack (combine all types)
   const getAllCoursesForPack = (pack: PackWithCourses) => {
@@ -384,34 +345,17 @@ export function FavoritesPackCollection({
                   Tester mes connaissances
                 </button>
                 
-                {/* Navigation Arrows */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleScrollLeft(pack.id)}
-                    className="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 hover:bg-gray-200 transition-all"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button
-                    onClick={() => handleScrollRight(pack.id)}
-                    className="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 hover:bg-gray-200 transition-all"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
               </div>
             </div>
 
             {/* Course Cards Row - Horizontal Scroll */}
             <div 
-              ref={(el) => { scrollContainerRefs.current[pack.id] = el; }}
-              className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="grid grid-cols-7 gap-4"
             >
               {allCourses.map(({ course, courseId, type }, index) => (
                 <div
                   key={`${pack.id}-${courseId}-${index}`}
-                  className="flex-shrink-0 w-52 group cursor-pointer"
+                  className="group cursor-pointer"
                   onClick={() => {
                     if (course) {
                       onOpenCourse(course);
@@ -445,59 +389,8 @@ export function FavoritesPackCollection({
         );
       })}
 
-      {/* Cours individuels (hors pack) - même style */}
-      {filteredUnpackagedCourses.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: filteredPacks.length * 0.1 }}
-          className="mb-12"
-        >
-          {/* Row Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                Cours Individuels
-                <span className="text-gray-500 font-normal text-lg ml-3">
-                  {filteredUnpackagedCourses.length} cours
-                </span>
-              </h2>
-            </div>
-          </div>
-
-          {/* Course Cards Row */}
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
-            {filteredUnpackagedCourses.map((course, index) => (
-              <div
-                key={course.id}
-                className="flex-shrink-0 w-52 group cursor-pointer"
-                onClick={() => onOpenCourse(course)}
-              >
-                <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
-                  <div className="absolute inset-0 flex flex-col justify-end p-4">
-                    <h3 className="!text-white font-bold text-xl leading-tight tracking-tight mb-1">
-                      {course.title}
-                    </h3>
-                    <div className="w-8 h-0.5 bg-white/40 mb-2" />
-                    <p className="!text-white/80 text-xs font-medium">
-                      {course.description?.slice(0, 40)}...
-                    </p>
-                  </div>
-
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                      <Play className="w-6 h-6 text-gray-900 ml-0.5" fill="currentColor" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
       {/* État vide - Recherche */}
-      {searchQuery && filteredPacks.length === 0 && filteredUnpackagedCourses.length === 0 && favoriteCourses.length > 0 && (
+      {searchQuery && filteredPacks.length === 0 && favoriteCourses.length > 0 && (
         <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
           <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
             <Search className="text-gray-400" size={32} />

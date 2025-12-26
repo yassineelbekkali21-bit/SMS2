@@ -86,7 +86,7 @@ export function WhatsAppContactForm() {
           >
             C'est ici que ça commence,
             <br />
-            <span className="text-blue-600">on te répond sur WhatsApp</span>
+            <span>on te répond sur WhatsApp</span>
           </motion.h2>
 
           {/* 3 points de réassurance */}

@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, MessageCircle } from 'lucide-react';
+import { ChevronDown, MessageCircle, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const WHATSAPP_NUMBER = '32477025622';
@@ -43,8 +44,8 @@ export function FAQSectionMultilang() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-black text-black mb-3"
-            style={{ fontSize: 'clamp(1.75rem, 4vw, 3rem)' }}
+            className="font-title text-4xl md:text-5xl mb-3 tracking-wide"
+            style={{ fontSize: 'clamp(1.75rem, 4vw, 52px)' }}
           >
             {t('faq.title')}
           </motion.h2>
@@ -113,24 +114,6 @@ export function FAQSectionMultilang() {
           ))}
         </div>
 
-        {/* CTA WhatsApp */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-12 md:mt-16 text-center"
-        >
-          <p className="text-gray-500 mb-4 text-sm md:text-base">
-            {language === 'fr' ? 'Une autre question ?' : 'Another question?'}
-          </p>
-          <button
-            onClick={handleWhatsAppClick}
-            className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
-          >
-            <MessageCircle size={20} className="group-hover:rotate-12 transition-transform" />
-            {t('faq.cta')}
-          </button>
-        </motion.div>
       </div>
     </section>
   );

@@ -2,68 +2,66 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowRight, Compass } from 'lucide-react';
 
 export function StartJourneySectionMultilang() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
-    <section className="py-20 bg-black text-white text-center">
-      <div className="max-w-4xl mx-auto px-6">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-bold mb-6 text-white"
-          style={{ fontSize: 'clamp(1.25rem, 6.5vw, 3.25rem)', color: '#FFFFFF' }}
-        >
-          {t('start.title')}
-        </motion.h2>
-        
+    <section className="py-12 md:py-16 bg-[#0d1317] text-white noise-overlay-strong">
+      <div className="max-w-3xl mx-auto px-6">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
+          className="text-center mb-10"
         >
+          <h2 
+            className="font-title mb-4 tracking-wide whitespace-nowrap"
+            style={{ fontSize: 'clamp(1.5rem, 5vw, 52px)', color: '#FFFFFF' }}
+          >
+            <span className="block">{t('start.title')}</span>
+            <span className="block">{t('start.title.line2')}</span>
+          </h2>
           <p 
-            className="text-xl md:text-2xl text-white mb-2 font-medium"
-            style={{ color: '#FFFFFF' }}
+            className="text-lg md:text-xl mb-3 font-medium"
+            style={{ color: '#e0e0e0' }}
           >
             {t('start.subtitle')}
           </p>
           <p 
-            className="text-sm md:text-base text-white mb-10"
-            style={{ color: '#FFFFFF' }}
+            className="text-base"
+            style={{ color: '#b0b0b0' }}
           >
             {t('start.guarantee')}
           </p>
         </motion.div>
 
+        {/* CTA Buttons */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3"
         >
-          {/* Primary Button */}
-          <button
-            onClick={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+          <Link
+            href="/diagnostic"
+            className="w-full sm:w-auto px-6 py-3.5 bg-[#00c2ff] text-white rounded-full font-semibold text-base hover:bg-[#00c2ff]/90 transition-colors flex items-center justify-center gap-2"
           >
-            {t('start.cta_primary')}
-            <ArrowRight size={22} />
-          </button>
+            {language === 'fr' ? 'Commencer maintenant' : 'Start now'}
+            <ArrowRight size={18} />
+          </Link>
 
-          {/* Secondary Button */}
           <button
             onClick={() => document.getElementById('curriculum')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 bg-transparent text-white border border-gray-600 rounded-full font-semibold text-base hover:bg-white/10 hover:border-gray-500 transition-colors flex items-center justify-center gap-2"
           >
-            {t('start.cta_secondary')}
-            <Compass size={22} />
+            {language === 'fr' ? 'Voir le programme' : 'See the program'}
+            <Compass size={18} />
           </button>
         </motion.div>
       </div>

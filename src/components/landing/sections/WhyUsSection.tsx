@@ -58,7 +58,7 @@ export function WhyUsSection() {
         >
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Pourquoi on t'offre pas juste des cours.<br />
-            Mais on t'offre une <span className="text-blue-600">transformation</span>.
+            Mais on t'offre une <span>transformation</span>.
           </h2>
         </motion.div>
 

@@ -13,6 +13,7 @@ import {
   Users, 
   ChevronDown, 
   ChevronUp, 
+  ChevronRight,
   Menu, 
   X,
   Search,
@@ -40,7 +41,9 @@ import {
   Zap,
   Video,
   Calculator,
-  CheckCircle
+  CheckCircle,
+  Gift,
+  Check
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -95,6 +98,7 @@ import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, get
 import { ProgressionBonusService } from '@/lib/progression-bonus-service';
 import { StudyRoomButton } from './StudyRoomButton';
 import { TrendBadgeComponent } from './TrendBadge';
+import { NetflixCatalogSection } from './NetflixCatalogSection';
 import { smartSortFacultyCourses, CourseWithTrend } from '@/lib/faculty-sorting';
 import { FilterBar } from './FilterBar';
 import { OnboardingPopup } from './OnboardingPopup';
@@ -978,6 +982,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   
   // État pour les Rapports Parents
   const [showParentReportsSettings, setShowParentReportsSettings] = useState(false);
+  const [showGuestPassModal, setShowGuestPassModal] = useState(false);
+  const [guestPassEmails, setGuestPassEmails] = useState('');
   
   // Vérifier si l'utilisateur a terminé le buddy onboarding
   useEffect(() => {
@@ -2371,7 +2377,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
       ) : (
         <div 
           id="dashboard-container"
-          className="min-h-screen pt-[73px] relative overflow-hidden"
+          className="min-h-screen pt-[72px] md:pt-[85px] relative overflow-x-clip overflow-y-visible"
         >
           {/* Curseur animé personnalisé pour le dashboard - DÉSACTIVÉ TEMPORAIREMENT */}
           {/* <TargetCursor 
@@ -2417,8 +2423,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           >
         {/* Header épuré bord à bord - pleine largeur */}
       <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-        <div className="px-6 py-0">
-          <div className="flex items-center justify-between relative">
+        <div className="px-4 md:px-6">
+          <div className="flex items-center justify-between relative h-[72px] md:h-[85px]">
             {/* Left - Logo */}
             <div className="flex items-center gap-4 flex-shrink-0">
               <button 
@@ -2429,15 +2435,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               </button>
 
               
-              <div className="flex items-center">
-                <div className="relative h-[84px] w-[500px]">
-                  <Image 
-                    src="/brand/sms-text-logo.svg" 
-                    alt="Science Made Simple"
-                    fill
-                    className="object-contain object-left"
-                  />
-                </div>
+              <div className="relative h-[55px] w-[120px] md:h-[85px] md:w-[340px]">
+                <Image 
+                  src="/brand/sms-logo2.svg" 
+                  alt="Science Made Simple"
+                  fill
+                  className="object-contain object-left"
+                />
               </div>
             </div>
             
@@ -2474,13 +2478,22 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                />
             </div>
 
-            {/* Right - Timer + Finish Sign Up + Avatar */}
+            {/* Right - Timer + Inviter + Finish Sign Up + Avatar */}
             <div className="flex items-center gap-4">
               {/* Timer - Style urgence */}
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
-                <Clock size={18} className="text-gray-700" />
-                <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
+              <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
+                <Clock size={22} className="text-gray-700" />
+                <span className="text-xl font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
               </div>
+
+              {/* Bouton Inviter - Ouvre le popup Pass amis */}
+              <button
+                onClick={() => setShowGuestPassModal(true)}
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-medium transition-colors"
+              >
+                <Users size={16} />
+                <span>Inviter</span>
+              </button>
 
               {/* Finish Sign Up CTA */}
               <button
@@ -2842,21 +2855,27 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             </div>
           </div>
 
-          {/* Logo en bas de la sidebar */}
-          <div className="mt-auto p-6 border-t border-gray-100">
-            <div className="relative h-[100px] w-full">
-              <Image 
-                src="/brand/sms-logo2.svg" 
-                alt="Science Made Simple"
-                fill
-                className="object-contain object-left"
-              />
-            </div>
+          {/* Section du bas - Boosters uniquement */}
+          <div className="mt-auto mb-[220px] border-t border-gray-100">
+            {/* Mastery Boosters */}
+            <button 
+              className="w-full flex items-center gap-3 px-4 py-6 hover:bg-gray-50 transition-colors text-left"
+              onClick={() => setActiveSection('boosters')}
+            >
+              <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <Plus size={18} className="text-gray-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900">Mastery Boosters</p>
+                <p className="text-xs text-gray-500 truncate">Booste ton apprent...</p>
+              </div>
+              <ChevronRight size={16} className="text-gray-400" />
+            </button>
           </div>
         </nav>
 
         {/* Contenu principal bord à bord avec marge pour sidebar fixe */}
-        <main className="flex-1 md:ml-64 pt-0 pb-16 md:pb-0">
+        <main className="flex-1 md:ml-64 pt-0 pb-16 md:pb-0 min-w-0">
           {(activeSection === 'planning' || forceShowPlanner) ? (
             <StrategicPlannerCompact
               plannerAccess={plannerState.plannerAccess}
@@ -2951,41 +2970,43 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               />
             </div>
           ) : activeSection === 'courses' ? (
-            <div className="p-8">
-              {/* Message d'accueil style MasterClass */}
-              <div className="mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 mb-1">
-                  Bienvenue, {safeData.user.name.split(' ')[0]}
-                </h2>
-                <p className="text-gray-500 text-lg">
-                  Continue ta progression et atteins tes objectifs.
-                </p>
-              </div>
-
-            {/* Métriques style MasterClass - Light Mode */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-              <SimpleMetric
-                icon={BookOpen}
-                value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
-                label="Cours actifs"
-                accent={true}
-              />
-              <SimpleMetric
-                icon={Flame}
-                value={`${7} jours`}
-                label="Day Streak"
-              />
-              <SimpleMetric
-                icon={UserCheck}
-                value={`${3}/${8}`}
-                label="Buddies connectés"
-              />
-              <SimpleMetric
-                icon={Zap}
-                value="200 XP"
-                label="Objectif du jour"
-              />
-            </div>
+            <div className="px-4 md:px-6 lg:px-8 py-6 overflow-visible">
+              {/* Message d'accueil + Métriques - MASQUÉ */}
+            {false && (
+              <>
+                <div className="mb-10">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                    Bienvenue, {safeData.user.name.split(' ')[0]}
+                  </h2>
+                  <p className="text-gray-500 text-lg">
+                    Continue ta progression et atteins tes objectifs.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+                  <SimpleMetric
+                    icon={BookOpen}
+                    value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
+                    label="Cours actifs"
+                    accent={true}
+                  />
+                  <SimpleMetric
+                    icon={Flame}
+                    value={`${7} jours`}
+                    label="Day Streak"
+                  />
+                  <SimpleMetric
+                    icon={UserCheck}
+                    value={`${3}/${8}`}
+                    label="Buddies connectés"
+                  />
+                  <SimpleMetric
+                    icon={Zap}
+                    value="200 XP"
+                    label="Objectif du jour"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Section Profil Personnalisé - MASQUÉ TEMPORAIREMENT */}
             {false && (
@@ -3002,6 +3023,19 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               </section>
             )}
 
+            {/* ================================================================ */}
+            {/* NOUVEAU CATALOGUE NETFLIX */}
+            {/* ================================================================ */}
+            <NetflixCatalogSection
+              onCourseClick={handleOpenIntegratedViewer}
+              onToggleFavorite={handleToggleFavorite}
+            />
+
+            {/* ================================================================ */}
+            {/* ANCIENNES SECTIONS - MASQUÉES */}
+            {/* ================================================================ */}
+            {false && (
+            <>
             {/* Section Mes Cours Favoris - Nouvelle organisation par pack */}
             <section className="mb-16" data-tour="mes-cours">
               <FavoritesPackCollection
@@ -3649,9 +3683,10 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 )}
               </AnimatePresence>
             </section>
+            </>
+            )}
             
-              {/* Footer moderne */}
-              <ModernFooter />
+              {/* Footer supprimé */}
             </div>
           ) : (
             <div className="p-6">
@@ -3760,17 +3795,6 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   })}
                 </div>
                 
-                {/* Logo en bas de la sidebar mobile */}
-                <div className="mt-auto pt-6 border-t border-gray-100">
-                  <div className="relative h-16 w-full">
-                    <Image 
-                      src="/brand/sms-logo2.svg" 
-                      alt="Science Made Simple"
-                      fill
-                      className="object-contain object-left"
-                    />
-                  </div>
-                </div>
               </div>
             </motion.div>
           </>
@@ -4134,6 +4158,87 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         onComplete={handleOnboardingComplete}
         initialPhase={onboardingInitialPhase}
       />
+
+      {/* 🎁 Modal Guest Pass / Pass amis */}
+      <AnimatePresence>
+        {showGuestPassModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowGuestPassModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Badge Pass */}
+              <div className="flex justify-center mb-6">
+                <div className="bg-gray-900 rounded-2xl px-6 py-4 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Gift size={32} className="text-[#48c6ed]" />
+                  </div>
+                  <span className="text-white text-sm font-bold tracking-wider uppercase">Pass Invité 14 jours</span>
+                </div>
+              </div>
+
+              {/* Titre */}
+              <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+                Apprendre, c'est mieux à plusieurs
+              </h2>
+
+              {/* Description */}
+              <p className="text-gray-600 text-center mb-6 leading-relaxed">
+                Partage ton pass exclusif avec tes amis. S'ils s'inscrivent dans les 14 jours, 
+                tu gagnes <span className="font-bold text-gray-900">+2h de contenu gratuit</span> ajoutées à ton compteur !
+              </p>
+
+              {/* Input emails */}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={guestPassEmails}
+                  onChange={(e) => setGuestPassEmails(e.target.value)}
+                  placeholder="Emails séparés par des virgules"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                />
+              </div>
+
+              {/* Bouton Envoyer */}
+              <button
+                onClick={() => {
+                  if (guestPassEmails.trim()) {
+                    alert(`✉️ Invitations envoyées à : ${guestPassEmails}\n\nTu recevras +2h pour chaque ami qui s'inscrit dans les 14 jours !`);
+                    setGuestPassEmails('');
+                    setShowGuestPassModal(false);
+                  }
+                }}
+                className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+              >
+                Envoyer les invitations
+              </button>
+
+              {/* Lien Passer */}
+              <button
+                onClick={() => setShowGuestPassModal(false)}
+                className="w-full text-center text-gray-900 font-semibold hover:text-gray-600 transition-colors"
+              >
+                Passer pour l'instant
+              </button>
+
+              {/* Terms */}
+              <p className="text-center text-gray-400 text-sm mt-4 underline cursor-pointer hover:text-gray-600">
+                Conditions du Pass Invité
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

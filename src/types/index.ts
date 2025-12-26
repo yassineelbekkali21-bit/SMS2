@@ -146,6 +146,7 @@ export interface Lesson {
   previewAvailable: boolean; // Alias pour consistance
   previewUrl?: string;
   videoUrl?: string;
+  slidesUrl?: string; // URL des slides PDF de la leçon
   documents?: LessonDocument[]; // Optionnel
   quiz?: Quiz;
   videoQuizzes?: VideoQuizQuestion[];

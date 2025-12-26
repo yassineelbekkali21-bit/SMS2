@@ -143,9 +143,9 @@ export function OnboardingPopup({
   };
 
   const loadingMessages = [
-    'Understanding your goals...',
-    'Selecting your top content...',
-    'Building your custom results...'
+    'Analyse de ton profil...',
+    'Sélection de ton contenu personnalisé...',
+    'Préparation de ton diagnostic...'
   ];
 
   // Reset phase when popup opens with a specific initialPhase
@@ -268,20 +268,36 @@ export function OnboardingPopup({
                 />
                 
                 {/* Progress Steps */}
-                <div className="hidden md:flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-blue-600 rounded-full" />
-                    <span className="text-blue-600 text-sm font-medium">Diagnostic</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-blue-600 rounded-full" />
-                    <span className="text-blue-600 text-sm font-medium">Objectifs</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-white rounded-full" />
-                    <span className="text-white text-sm font-medium">Cours pour toi</span>
-                  </div>
+                <div className="flex items-center gap-3">
+                  {['Tes cours', 'Offre', 'Finaliser'].map((step, idx) => {
+                    const isCompleted = idx < 0; // Phase results = step 0
+                    const isCurrent = idx === 0;
+                    return (
+                      <React.Fragment key={step}>
+                        <div className="flex flex-col items-center">
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-blue-600' 
+                              : isCurrent 
+                                ? 'bg-blue-600 ring-[5px] ring-blue-600/30' 
+                                : 'bg-gray-600'
+                          }`} />
+                          <span className={`text-[11px] md:text-sm mt-2 font-semibold hidden md:block !text-white ${
+                            isCompleted || isCurrent ? 'opacity-100' : 'opacity-50'
+                          }`}>
+                            {step}
+                          </span>
+                        </div>
+                        {idx < 2 && (
+                          <div className={`w-14 md:w-24 h-1.5 rounded-full ${
+                            isCompleted ? 'bg-blue-600' : 'bg-gray-700'
+                          }`} />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
+                
 
                 <button
                   onClick={onComplete}
@@ -300,8 +316,13 @@ export function OnboardingPopup({
                 <div className="lg:col-span-7">
                   {/* Course Count + Title */}
                   <div className="flex items-start gap-6 mb-10">
-                    <div className="w-24 h-24 rounded-full border-4 border-cyan-500 flex items-center justify-center flex-shrink-0">
-                      <span className="text-5xl font-bold text-white">{recommendedCourses.length}</span>
+                    {/* Badge nombre de cours prescrits - format carré arrondi, accent thème */}
+                    <div className="flex items-center gap-5 flex-shrink-0">
+                      <div className="w-24 h-24 rounded-2xl border-[3px] border-blue-600 flex items-center justify-center">
+                        <span className="text-5xl md:text-6xl font-extrabold text-white leading-none">
+                          {recommendedCourses.length}
+                        </span>
+                      </div>
                     </div>
                     <div>
                       <h1 className="text-4xl md:text-5xl font-bold !text-white leading-tight mb-2">
@@ -322,15 +343,15 @@ export function OnboardingPopup({
                   <ul className="space-y-4">
                     <li className="flex items-center gap-4">
                       <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
-                      <span className="text-white text-lg">Accès à tous les Mastery Programs</span>
+                      <span className="text-white text-lg">Paiement unique. Accès à vie.</span>
                     </li>
                     <li className="flex items-center gap-4">
                       <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
-                      <span className="text-white text-lg">Nouveaux cours ajoutés chaque mois</span>
+                      <span className="text-white text-lg">Mises à jour gratuites incluses à vie</span>
                     </li>
                     <li className="flex items-center gap-4">
                       <Check className="w-5 h-5 text-gray-300" strokeWidth={2} />
-                      <span className="text-white text-lg">Accès direct à Zak via WhatsApp</span>
+                      <span className="text-white text-lg">14 jours satisfait ou remboursé</span>
                     </li>
                   </ul>
                 </div>
@@ -357,9 +378,9 @@ export function OnboardingPopup({
                     </button>
                     <button
                       onClick={() => setPhase('membership-intro')}
-                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-lg text-sm transition-all shadow-lg shadow-orange-500/25"
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all shadow-lg shadow-orange-500/30"
                     >
-                      Finalise ton inscription → <span className="underline">6 semaines de Boosters GRATUITES</span>
+                      Finalise ton inscription
                     </button>
                   </div>
                 </div>
@@ -468,19 +489,34 @@ export function OnboardingPopup({
                 />
                 
                 {/* Progress Steps */}
-                <div className="hidden md:flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-blue-600 rounded-full" />
-                    <span className="text-blue-600 text-sm font-medium">Membership</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-gray-600 rounded-full" />
-                    <span className="text-gray-500 text-sm font-medium">Account</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-gray-600 rounded-full" />
-                    <span className="text-gray-500 text-sm font-medium">Payment</span>
-                  </div>
+                <div className="flex items-center gap-3">
+                  {['Tes cours', 'Offre', 'Finaliser'].map((step, idx) => {
+                    const isCompleted = idx < 1; // Phase membership-intro = step 1
+                    const isCurrent = idx === 1;
+                    return (
+                      <React.Fragment key={step}>
+                        <div className="flex flex-col items-center">
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-blue-600' 
+                              : isCurrent 
+                                ? 'bg-blue-600 ring-[5px] ring-blue-600/30' 
+                                : 'bg-gray-600'
+                          }`} />
+                          <span className={`text-[11px] md:text-sm mt-2 font-semibold hidden md:block !text-white ${
+                            isCompleted || isCurrent ? 'opacity-100' : 'opacity-50'
+                          }`}>
+                            {step}
+                          </span>
+                        </div>
+                        {idx < 2 && (
+                          <div className={`w-14 md:w-24 h-1.5 rounded-full ${
+                            isCompleted ? 'bg-blue-600' : 'bg-gray-700'
+                          }`} />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
 
                 <button
@@ -560,15 +596,34 @@ export function OnboardingPopup({
                 />
                 
                 {/* Progress Steps */}
-                <div className="hidden md:flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-blue-600 rounded-full" />
-                    <span className="text-blue-600 text-sm font-medium">Sélection</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-1 bg-gray-600 rounded-full" />
-                    <span className="text-gray-500 text-sm font-medium">Paiement</span>
-                  </div>
+                <div className="flex items-center gap-3">
+                  {['Tes cours', 'Offre', 'Finaliser'].map((step, idx) => {
+                    const isCompleted = idx < 2; // Phase membership-plans = step 2
+                    const isCurrent = idx === 2;
+                    return (
+                      <React.Fragment key={step}>
+                        <div className="flex flex-col items-center">
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-blue-600' 
+                              : isCurrent 
+                                ? 'bg-blue-600 ring-[5px] ring-blue-600/30' 
+                                : 'bg-gray-600'
+                          }`} />
+                          <span className={`text-[11px] md:text-sm mt-2 font-semibold hidden md:block !text-white ${
+                            isCompleted || isCurrent ? 'opacity-100' : 'opacity-50'
+                          }`}>
+                            {step}
+                          </span>
+                        </div>
+                        {idx < 2 && (
+                          <div className={`w-14 md:w-24 h-1.5 rounded-full ${
+                            isCompleted ? 'bg-blue-600' : 'bg-gray-700'
+                          }`} />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
 
                 <button

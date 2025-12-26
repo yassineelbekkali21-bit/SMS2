@@ -34,12 +34,12 @@ export function HowItWorksSectionMultilang() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl font-bold text-gray-900 mb-4 md:mb-8 leading-tight"
-            style={{ fontSize: 'clamp(1.4rem, 7vw, 3.75rem)' }}
+            className="font-title text-5xl mb-4 md:mb-8 leading-tight tracking-wide"
+            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)' }}
           >
             {t('how.title')}
             <br className="hidden md:block" />
-            <span className="text-blue-600 block md:inline mt-2 md:mt-0">{t('how.title.highlight')}</span>
+            <span className="block md:inline mt-2 md:mt-0">{t('how.title.highlight')}</span>
           </motion.h2>
         </div>
 

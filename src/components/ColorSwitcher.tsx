@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { Palette } from 'lucide-react';
 
-type Theme = 'blue' | 'purple' | 'turquoise' | 'coral' | 'mauve' | 'bluepremium' | 'yellow';
+type Theme = 'blue' | 'purple' | 'turquoise' | 'coral' | 'mauve' | 'bluepremium' | 'yellow' | 'mint' | 'sky' | 'cyan';
 
 export function ColorSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<Theme>('turquoise');
+  const [currentTheme, setCurrentTheme] = useState<Theme>('cyan');
 
   const themes: { id: Theme; color: string; name: string }[] = [
+    { id: 'cyan', color: '#00C2FF', name: 'Cyan SMS' },
     { id: 'blue', color: '#2563EB', name: 'SMS Blue' },
     { id: 'purple', color: '#7C3AED', name: 'Revolut' },
     { id: 'turquoise', color: '#0891b2', name: 'Turquoise' },
@@ -17,11 +18,24 @@ export function ColorSwitcher() {
     { id: 'mauve', color: '#6d28d9', name: 'Mauve Premium' },
     { id: 'bluepremium', color: '#1e40af', name: 'Bleu Premium' },
     { id: 'yellow', color: '#FFEB3B', name: 'Jaune Fluo' },
+    { id: 'mint', color: '#32FFC3', name: 'Mint Neon' },
+    { id: 'sky', color: '#48C6ED', name: 'Sky Blue' },
   ];
 
   useEffect(() => {
     // Nettoyer les anciennes classes
-    document.body.classList.remove('theme-blue', 'theme-purple', 'theme-turquoise', 'theme-coral', 'theme-mauve', 'theme-bluepremium', 'theme-yellow');
+    document.body.classList.remove(
+      'theme-blue',
+      'theme-purple',
+      'theme-turquoise',
+      'theme-coral',
+      'theme-mauve',
+      'theme-bluepremium',
+      'theme-yellow',
+      'theme-mint',
+      'theme-sky',
+      'theme-cyan'
+    );
     // Ajouter la nouvelle
     if (currentTheme !== 'blue') {
       document.body.classList.add(`theme-${currentTheme}`);
@@ -31,6 +45,7 @@ export function ColorSwitcher() {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
       const colors: Record<Theme, string> = {
+        cyan: '#00C2FF',
         blue: '#2563EB',
         purple: '#7C3AED',
         turquoise: '#0891b2',
@@ -38,6 +53,8 @@ export function ColorSwitcher() {
         mauve: '#6d28d9',
         bluepremium: '#1e40af',
         yellow: '#FFEB3B',
+        mint: '#32FFC3',
+        sky: '#48C6ED',
       };
       themeColorMeta.setAttribute('content', colors[currentTheme]);
     }

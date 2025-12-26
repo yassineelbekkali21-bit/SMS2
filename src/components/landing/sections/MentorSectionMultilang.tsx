@@ -66,7 +66,7 @@ export function MentorSectionMultilang() {
             </h2>
 
             {/* Short bio - 3 phrases */}
-            <div className="space-y-4 text-base md:text-lg leading-relaxed mb-6">
+            <div className="space-y-4 leading-relaxed mb-6" style={{ fontSize: '16px' }}>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio1}</p>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio2}</p>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio3}</p>

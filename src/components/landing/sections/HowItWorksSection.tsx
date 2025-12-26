@@ -61,7 +61,7 @@ export function HowItWorksSection() {
           >
             Comment on t'aide à passer de la
             <br />
-            <span className="text-blue-600">confusion à la maîtrise</span>
+            <span>confusion à la maîtrise</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}

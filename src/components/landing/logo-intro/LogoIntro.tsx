@@ -313,10 +313,10 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
           }),
         } as React.CSSProperties}
       >
-        {/* SVG Outline for DrawSVG animations */}
+        {/* SVG Outline for DrawSVG animations - Parfaitement superposé */}
         {usesDrawSVG && (
           <div 
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0"
             style={{
               filter: variant === 'draw-neon' 
                 ? 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))'
@@ -329,27 +329,29 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
               strokeWidth={variant === 'draw-neon' ? 4 : 3}
               fillColor={darkMode ? '#ffffff' : '#1a1a2e'}
               showFill={false}
-              className="w-full h-full p-4"
+              className="w-full h-full"
             />
           </div>
         )}
         
-        {/* Filled Logo (hidden during draw, shown after) */}
-        <Image 
-          src="/brand/sms-logo.svg" 
-          alt="Science Made Simple"
-          fill
-          className={`object-contain transition-opacity duration-300 ${
-            usesDrawSVG ? 'opacity-0' : ''
-          }`}
-          style={{
-            filter: darkMode 
-              ? 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))' 
-              : 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-          }}
-          id="logo-filled"
-          priority
-        />
+        {/* Filled Logo complet (avec contour blanc + SMS + texte Science Made Simple) */}
+        <div className="absolute inset-0">
+          <Image 
+            src="/brand/sms-logobis.svg" 
+            alt="Science Made Simple"
+            fill
+            className={`object-contain transition-opacity duration-300 ${
+              usesDrawSVG ? 'opacity-0' : ''
+            }`}
+            style={{
+              filter: darkMode 
+                ? 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))' 
+                : 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+            }}
+            id="logo-filled"
+            priority
+          />
+        </div>
       </div>
 
       {/* Flash overlay */}
@@ -358,36 +360,6 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
         className="absolute inset-0 bg-white opacity-0 pointer-events-none z-20"
         style={{ willChange: 'opacity' }}
       />
-
-      {/* Tagline */}
-      <div 
-        className={`
-          absolute bottom-6 left-0 right-0 text-center
-          ${darkMode ? 'text-gray-500' : 'text-gray-400'}
-        `}
-      >
-        <p 
-          className="text-xs font-medium tracking-[0.3em] uppercase opacity-0"
-          style={{
-            animation: autoPlay ? `fadeInUp 0.6s ease-out ${durationTotal - 0.4}s forwards` : 'none',
-          }}
-        >
-          Learn Different
-        </p>
-      </div>
-
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };

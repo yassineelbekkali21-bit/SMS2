@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { GraduationCap, Target, ArrowRight, Sparkles, Gift, Eye, CheckCircle, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -26,12 +27,13 @@ interface OfferCardProps {
   subtitle: string;
   blocks: OfferBlock[];
   ctaText: string;
-  ctaAction: () => void;
+  ctaHref?: string;
+  ctaAction?: () => void;
   delay?: number;
   highlight?: boolean;
 }
 
-function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, delay = 0, highlight = false }: OfferCardProps) {
+function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaHref, ctaAction, delay = 0, highlight = false }: OfferCardProps) {
   const { language } = useLanguage();
   
   return (
@@ -174,17 +176,31 @@ function OfferCard({ icon: Icon, title, subtitle, blocks, ctaText, ctaAction, de
           ))}
         </div>
 
-        <button
-          onClick={ctaAction}
-          className={`w-full mt-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg md:text-2xl ${
-            highlight 
-              ? 'bg-blue-600 text-white hover:bg-blue-700' 
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
-          {ctaText}
-          <ArrowRight size={20} />
-        </button>
+        {ctaHref ? (
+          <Link
+            href={ctaHref}
+            className={`w-full mt-6 py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg md:text-2xl ${
+              highlight 
+                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {ctaText}
+            <ArrowRight size={20} />
+          </Link>
+        ) : (
+          <button
+            onClick={ctaAction}
+            className={`w-full mt-6 py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg md:text-2xl ${
+              highlight 
+                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {ctaText}
+            <ArrowRight size={20} />
+          </button>
+        )}
       </div>
     </motion.div>
   );
@@ -269,17 +285,17 @@ export function OfferModelSectionMultilang() {
   ];
 
   return (
-    <section id="offre" className="py-6 md:py-8 px-4 md:px-6 lg:px-8 bg-gray-50 flex items-center scroll-mt-40">
+    <section id="offre" className="py-6 md:py-8 px-4 md:px-6 lg:px-8 bg-white flex items-center scroll-mt-40">
       <div className="max-w-[1280px] mx-auto w-full">
         <div className="text-center mb-10 md:mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold text-gray-900 leading-tight"
-            style={{ fontSize: 'clamp(1.25rem, 6.5vw, 3.25rem)' }}
+            className="font-title text-3xl leading-tight tracking-wide"
+            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)' }}
           >
-            {t('offer.title')} <span className="text-blue-600">{t('offer.title.highlight')}</span>.
+            {t('offer.title')} <span>{t('offer.title.highlight')}</span>.
           </motion.h2>
         </div>
 
@@ -290,8 +306,8 @@ export function OfferModelSectionMultilang() {
             title={t('offer.mastery.title')}
             subtitle={''}
             blocks={masteryProgramsBlocks}
-            ctaText={t('offer.mastery.cta')}
-            ctaAction={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
+            ctaText={language === 'fr' ? 'Voir si c\'est fait pour moi' : 'See if it\'s right for me'}
+            ctaHref="/diagnostic"
             delay={0}
           />
 
@@ -300,8 +316,8 @@ export function OfferModelSectionMultilang() {
             title={t('offer.exam.title')}
             subtitle={''}
             blocks={examPrepBlocks}
-            ctaText={t('offer.exam.cta')}
-            ctaAction={() => document.getElementById('whatsapp-contact')?.scrollIntoView({ behavior: 'smooth' })}
+            ctaText={language === 'fr' ? 'Voir si c\'est fait pour moi' : 'See if it\'s right for me'}
+            ctaHref="/diagnostic"
             delay={0.15}
             highlight={true}
           />
