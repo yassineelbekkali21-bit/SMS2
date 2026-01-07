@@ -895,27 +895,36 @@ export function OnboardingPopup({
               </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-16">
+            <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-16">
               {/* Main Content Grid */}
-              <div className="grid lg:grid-cols-12 gap-6 md:gap-12 mb-8 md:mb-16">
+              <div className="grid lg:grid-cols-12 gap-4 md:gap-12 mb-6 md:mb-16">
                 
                 {/* Left Column - Info */}
                 <div className="lg:col-span-7">
-                  {/* Course Count + Title */}
-                  <div className="flex items-start gap-4 md:gap-6 mb-6 md:mb-10">
-                    {/* Badge nombre de cours prescrits - format carré arrondi, accent thème */}
-                    <div className="flex items-center gap-5 flex-shrink-0">
-                      <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center">
-                        <span className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
+                  {/* Course Count + Title - Stack on mobile */}
+                  <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-6 mb-4 md:mb-10">
+                    {/* Badge + Title row on mobile */}
+                    <div className="flex items-center gap-3 md:gap-5">
+                      <div className="w-14 h-14 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
                           {recommendedCourses.length}
                         </span>
                       </div>
+                      <div className="md:hidden">
+                        <h1 className="text-lg font-black !text-white leading-tight uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
+                          Parcours conçus pour toi
+                        </h1>
+                        <p className="text-xs !text-white/70">
+                          basés sur {interests.length} Mastery Programs
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h1 className="text-2xl md:text-4xl lg:text-5xl font-black !text-white leading-tight mb-1 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
+                    {/* Desktop title */}
+                    <div className="hidden md:block">
+                      <h1 className="text-4xl lg:text-5xl font-black !text-white leading-tight mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
                         Parcours conçus pour toi
                       </h1>
-                      <p className="text-sm md:text-lg !text-white">
+                      <p className="text-lg !text-white">
                         basés sur {interests.length} Mastery Programs
                       </p>
                     </div>
@@ -939,10 +948,9 @@ export function OnboardingPopup({
                           }}
                         >
                           <div className="flex items-center justify-between mb-0.5 md:mb-1">
-                            <span className="text-base md:text-lg font-semibold !text-white">{program.name}</span>
-                            <span className="text-base md:text-lg font-bold text-white">{program.price}€</span>
+                            <span className="text-sm md:text-lg font-semibold !text-white">{program.name}</span>
                           </div>
-                          <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                          <p className="text-[11px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                             {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • {programCourses.length} parcours créés pour toi
                           </p>
                         </div>
@@ -952,14 +960,14 @@ export function OnboardingPopup({
                 </div>
 
                 {/* Right Column - CTA Card */}
-                <div className="lg:col-span-5 mt-4 lg:mt-0">
-                  <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
+                <div className="lg:col-span-5 mt-3 lg:mt-0">
+                  <div className="bg-[#141414] rounded-xl p-3 md:p-6 border border-gray-800">
                     {/* Success Message */}
-                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                      <div className="w-6 h-6 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
+                    <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6">
+                      <div className="w-5 h-5 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 md:w-5 md:h-5 text-white" strokeWidth={3} />
                       </div>
-                      <span className="text-white text-sm md:text-base">
+                      <span className="text-white text-xs md:text-base">
                         Paiement unique. Accès à vie.
                       </span>
                     </div>
@@ -967,26 +975,26 @@ export function OnboardingPopup({
                     {/* CTA Buttons */}
                     <button
                       onClick={() => setShowLeadCapture(true)}
-                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full text-base md:text-lg transition-all mb-2 md:mb-3 flex items-center justify-center gap-2"
+                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-2.5 md:py-4 px-4 md:px-8 rounded-full text-sm md:text-lg transition-all mb-2 md:mb-3 flex items-center justify-center gap-2"
                     >
-                      Débloquer 10h gratuites
-                      <ArrowRight size={18} className="md:w-5 md:h-5" />
+                      <span className="truncate">Débloquer 10h gratuites</span>
+                      <ArrowRight size={16} className="flex-shrink-0 md:w-5 md:h-5" />
                     </button>
                     <button
                       onClick={() => setPhase('membership-plans')}
-                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 px-4 md:px-6 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
+                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2 md:py-3 px-3 md:px-6 rounded-full text-xs md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-1.5 md:gap-2"
                     >
-                      Débloquer mes programmes
-                      <span className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/50 flex items-center justify-center">
-                        <ArrowRight size={10} className="md:w-3 md:h-3" />
+                      <span className="truncate">Débloquer mes programmes</span>
+                      <span className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
+                        <ArrowRight size={8} className="md:w-3 md:h-3" />
                       </span>
                     </button>
                   </div>
                   
                   {/* Social proof - Students counter */}
-                  <div className="flex items-center justify-center gap-2 mt-3 md:mt-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div className="flex items-center justify-center gap-2 mt-2 md:mt-4">
+                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full" />
+                    <p className="text-[10px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                       <span className="font-bold text-white">127</span> étudiants ont rejoint cette semaine
                     </p>
                   </div>
@@ -1001,21 +1009,19 @@ export function OnboardingPopup({
                   : 'chemistry';
                 
                 return (
-                  <div key={interest} id={`carousel-${programId}`} className="mb-10 md:mb-16 scroll-mt-32 md:scroll-mt-48">
+                  <div key={interest} id={`carousel-${programId}`} className="mb-8 md:mb-16 scroll-mt-24 md:scroll-mt-48">
                     {/* Row Header */}
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-6 gap-3">
-                      <div className="flex items-center gap-2 md:gap-4">
-                        <h2 className="text-lg md:text-3xl font-bold !text-white">
-                          {interest}
-                          <span className="!text-white font-normal text-sm md:text-lg ml-2 md:ml-3">
-                            {coursesForProgram.length} parcours
-                          </span>
-                        </h2>
-                      </div>
+                    <div className="flex items-center justify-between mb-3 md:mb-6">
+                      <h2 className="text-base md:text-3xl font-bold !text-white">
+                        {interest}
+                        <span className="!text-white/70 font-normal text-xs md:text-lg ml-1.5 md:ml-3">
+                          {coursesForProgram.length} parcours
+                        </span>
+                      </h2>
 
                       {/* Carousel Controls */}
-                      <div className="flex items-center gap-2 md:gap-4">
-                        {/* Bouton Tester mes connaissances */}
+                      <div className="flex items-center gap-1.5 md:gap-4">
+                        {/* Bouton Tester mes connaissances - hidden on mobile */}
                         <button
                           onClick={() => {
                             const subject = interest.toLowerCase().includes('physics') ? 'physics' 
@@ -1028,46 +1034,46 @@ export function OnboardingPopup({
                           Tester mes connaissances
                         </button>
                         
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 md:gap-2">
                           <button
-                            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronLeft size={16} className="md:w-5 md:h-5" />
+                            <ChevronLeft size={14} className="md:w-5 md:h-5" />
                           </button>
                           <button
-                            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronRight size={16} className="md:w-5 md:h-5" />
+                            <ChevronRight size={14} className="md:w-5 md:h-5" />
                           </button>
                         </div>
                       </div>
                     </div>
 
                     {/* Course Cards Row */}
-                    <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                    <div className="flex gap-2.5 md:gap-4 overflow-x-auto pb-3 md:pb-4 -mx-3 px-3 scrollbar-hide">
                       {coursesForProgram.map((course) => (
                         <div
                           key={course.id}
-                          className="flex-shrink-0 w-36 md:w-52 group cursor-pointer"
+                          className="flex-shrink-0 w-28 md:w-52 group cursor-pointer"
                           onClick={() => setShowLeadCapture(true)}
                         >
                           {/* Course Card */}
-                          <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-lg md:rounded-xl overflow-hidden mb-2 md:mb-3 transition-transform group-hover:scale-[1.02]">
+                          <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-lg md:rounded-xl overflow-hidden mb-1.5 md:mb-3 transition-transform group-hover:scale-[1.02]">
                             {/* Course Title Overlay */}
-                            <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
-<h3 className="!text-white font-bold text-base md:text-xl leading-tight tracking-tight mb-1">
-                              {course.title}
-                            </h3>
-                              <div className="w-6 md:w-8 h-0.5 bg-white/40 mb-1.5 md:mb-2" />
-<p className="!text-white/80 text-[10px] md:text-xs font-medium">
-                              {course.subtitle}
-                            </p>
+                            <div className="absolute inset-0 flex flex-col justify-end p-2.5 md:p-4">
+                              <h3 className="!text-white font-bold text-sm md:text-xl leading-tight tracking-tight mb-0.5 md:mb-1">
+                                {course.title}
+                              </h3>
+                              <div className="w-5 md:w-8 h-0.5 bg-white/40 mb-1 md:mb-2" />
+                              <p className="!text-white/80 text-[9px] md:text-xs font-medium">
+                                {course.subtitle}
+                              </p>
                             </div>
 
                             {/* Play Button on Hover */}
                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                                <Play className="w-4 h-4 md:w-6 md:h-6 text-gray-900 ml-0.5" fill="currentColor" />
+                              <div className="w-8 h-8 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                                <Play className="w-3 h-3 md:w-6 md:h-6 text-gray-900 ml-0.5" fill="currentColor" />
                               </div>
                             </div>
                           </div>
