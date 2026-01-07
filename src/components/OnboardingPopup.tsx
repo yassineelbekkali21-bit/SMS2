@@ -400,14 +400,14 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 py-4 md:py-0 overflow-hidden">
+          <div className="min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
             
-            {/* Logo - Always visible - Smaller on mobile */}
+            {/* Logo - Always visible */}
           <motion.div
               layout
               className="flex flex-col items-center"
               animate={{ 
-                marginBottom: phase === 'reveal' ? '0.5rem' : '1rem',
+                marginBottom: phase === 'reveal' ? '1rem' : '2rem',
               }}
               transition={{ 
                 duration: 0.8, 
@@ -433,15 +433,15 @@ export function OnboardingPopup({
               <Image 
                 src="/brand/onboarding-logo.svg" 
                 alt="Science Made Simple" 
-                width={100} 
-                height={100}
-                className="object-contain md:w-[140px] md:h-[140px]"
+                width={140} 
+                height={140}
+                className="object-contain"
               />
               </motion.div>
             </motion.div>
 
             {/* Content Area */}
-            <div className="relative w-full max-w-2xl flex flex-col items-center">
+            <div className="relative w-full max-w-2xl min-h-[400px] flex flex-col items-center">
               
               {/* Loading & Scanning Content */}
               <AnimatePresence mode="wait">
@@ -461,7 +461,7 @@ export function OnboardingPopup({
                     }}
                   >
             {/* Loading Messages */}
-                    <div className="space-y-3 md:space-y-5 text-center mb-4 md:mb-8">
+                    <div className="space-y-5 text-center mb-8">
                       {loadingMessages.map((message, index) => {
                         const isLastMessage = index === loadingMessages.length - 1;
                         const showHeader = phase === 'transition' || phase === 'scanning';
@@ -478,7 +478,7 @@ export function OnboardingPopup({
                               marginBottom: showHeader && !isLastMessage ? 0 : undefined,
                   }}
                   transition={{ duration: 0.5 }}
-                            className="text-lg md:text-2xl lg:text-3xl font-bold overflow-hidden"
+                            className="text-2xl md:text-3xl font-bold overflow-hidden"
                             style={{ color: '#ffffff' }}
                 >
                   {message}
@@ -492,14 +492,14 @@ export function OnboardingPopup({
                       {phase === 'scanning' && (
                         <motion.div
                           key="scanning-content"
-                          initial={{ opacity: 0, y: 20 }}
+                          initial={{ opacity: 0, y: 30 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.5 }}
                           className="flex flex-col items-center w-full"
                         >
                           {/* Programs being scanned */}
-                          <div className="w-full space-y-3 md:space-y-6 mb-4 md:mb-8">
+                          <div className="w-full space-y-6 mb-8">
                             {scanningPrograms.map((program, index) => {
                               const isProgramScanning = index === currentScanningProgram && phase === 'scanning';
                               const isComplete = scannedPrograms.includes(index);
@@ -510,44 +510,44 @@ export function OnboardingPopup({
                               return (
                                 <motion.div
                                   key={program.id}
-                                  initial={{ opacity: 0, y: 15 }}
+                                  initial={{ opacity: 0, y: 20 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ duration: 0.4 }}
                                   className="w-full"
                                 >
-                                  <div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-4">
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-0.5 md:mb-1">
-                                        <span className="font-semibold text-base md:text-lg text-white truncate">{program.name}</span>
+                                  <div className="flex items-center gap-4 mb-4">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-lg text-white">{program.name}</span>
                                         {isComplete && (
                                           <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            className="text-[#00c2ff] flex-shrink-0"
+                                            className="text-[#00c2ff]"
                                           >
-                                            <CheckCircle size={16} className="md:w-[18px] md:h-[18px]" />
+                                            <CheckCircle size={18} />
                                           </motion.span>
                                         )}
                                         {isProgramScanning && (
-                                          <Loader2 size={16} className="text-white/70 animate-spin flex-shrink-0 md:w-[18px] md:h-[18px]" />
+                                          <Loader2 size={18} className="text-white/70 animate-spin" />
                                         )}
                                       </div>
-                                      <div className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                                      <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                                         {program.totalChapters} chapitres
                                       </div>
                                     </div>
                                     
-                                    <div className="text-right flex-shrink-0">
-                                      <span className="text-xl md:text-2xl font-bold text-white">
+                                    <div className="text-right">
+                                      <span className="text-2xl font-bold text-white">
                                         {isComplete ? program.extractedTracks : isProgramScanning ? Math.min(Math.floor(currentChapters.length / 2), program.extractedTracks) : 0}
                                       </span>
-                                      <span className="text-xs md:text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
+                                      <span className="text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
                                     </div>
                                   </div>
                                   
                                   {(isProgramScanning || isComplete) && (
                                     <motion.div 
-                                      className="h-1 rounded-full bg-gray-800/50 mb-2 md:mb-4 overflow-hidden"
+                                      className="h-1 rounded-full bg-gray-800/50 mb-4 overflow-hidden"
                                       initial={{ opacity: 0 }}
                                       animate={{ opacity: 1 }}
                                     >
@@ -569,11 +569,11 @@ export function OnboardingPopup({
                                         transition={{ duration: 0.3 }}
                                         className="mb-2"
                                       >
-                                        <div className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider mb-1.5 md:mb-2">
+                                        <div className="text-xs text-white/40 uppercase tracking-wider mb-2">
                                           Chapitres analysés
                                         </div>
-                                        <div className="flex flex-wrap gap-1.5 md:gap-2 max-h-[80px] md:max-h-none overflow-hidden">
-                                          {currentChapters.slice(0, 8).map((chapter, chapterIndex) => {
+                                        <div className="flex flex-wrap gap-2">
+                                          {currentChapters.map((chapter, chapterIndex) => {
                                             const isRelevant = program.relevantChapters.includes(chapter);
                                             
                                             return (
@@ -581,7 +581,7 @@ export function OnboardingPopup({
                                                 key={`${program.id}-${chapterIndex}`}
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                className={`px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs border ${
+                                                className={`px-3 py-1 rounded-full text-xs border ${
                                                   isRelevant 
                                                     ? 'bg-[#00c2ff]/20 text-[#00c2ff] border-[#00c2ff]/50 font-medium' 
                                                     : 'bg-gray-800/50 text-white/60 border-gray-700/50'
@@ -591,16 +591,13 @@ export function OnboardingPopup({
                                               </motion.span>
                                             );
                                           })}
-                                          {currentChapters.length > 8 && (
-                                            <span className="px-2 py-0.5 text-[10px] text-white/40">+{currentChapters.length - 8}</span>
-                                          )}
                                         </div>
                                       </motion.div>
                                     )}
                                   </AnimatePresence>
                                   
                                   {isComplete && index < scanningPrograms.length - 1 && (
-                                    <div className="border-b border-gray-700/30 mt-2 md:mt-4" />
+                                    <div className="border-b border-gray-700/30 mt-4" />
                                   )}
                                 </motion.div>
                               );
@@ -613,13 +610,13 @@ export function OnboardingPopup({
                             animate={{ opacity: 1 }}
                             className="w-full"
                           >
-                            <div className="relative h-1.5 md:h-2 bg-gray-800/50 rounded-full overflow-hidden">
+                            <div className="relative h-2 bg-gray-800/50 rounded-full overflow-hidden">
                               <motion.div
                                 className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#00c2ff]/50 to-[#00c2ff] rounded-full"
                                 style={{ width: `${scanProgress}%` }}
                               />
                             </div>
-                            <div className="flex justify-between mt-1.5 md:mt-2 text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                            <div className="flex justify-between mt-2 text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                               <span>{Math.floor((scanProgress / 100) * totalChaptersScanned)} / {totalChaptersScanned} chapitres</span>
                               <span>{Math.floor(scanProgress)}%</span>
                             </div>
