@@ -2084,6 +2084,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 📍 Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // État des filtres pour la section faculté
   const [facultyFilters, setFacultyFilters] = useState<FilterState>({
     subjects: ['all'],
