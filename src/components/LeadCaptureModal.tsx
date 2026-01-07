@@ -12,6 +12,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, CheckCircle, ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import Image from 'next/image';
+import { LogoIntro } from './landing/logo-intro/LogoIntro';
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -249,52 +250,40 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-12 py-16 text-center"
+              className="p-8 py-12 text-center"
             >
               {/* Big Welcome Title */}
               <motion.h1 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-5xl md:text-6xl font-black !text-white mb-10 uppercase tracking-wide"
+                className="text-5xl md:text-6xl font-black !text-white mb-6 uppercase tracking-wide"
                 style={{ fontFamily: "'Parafina', sans-serif" }}
               >
                 Welcome
               </motion.h1>
 
-              {/* Animated Logo */}
+              {/* Animated Logo - Same as lesson player intro */}
               <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', delay: 0.3, bounce: 0.5 }}
-                className="w-36 h-36 mx-auto mb-10 relative"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="w-48 h-48 mx-auto mb-6"
               >
-                <motion.div
-                  animate={{
-                    scale: [1, 1.05, 1],
-                    opacity: [0.8, 1, 0.8]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="w-full h-full"
-                >
-                  <Image 
-                    src="/brand/onboarding-logo.svg" 
-                    alt="Science Made Simple" 
-                    fill 
-                    className="object-contain"
-                  />
-                </motion.div>
+                <LogoIntro 
+                  variant="star-shoot"
+                  autoPlay={true}
+                  loop={true}
+                  loopDelay={2000}
+                  darkMode={true}
+                />
               </motion.div>
 
               {/* Quote */}
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
                 className="text-xl md:text-2xl italic"
                 style={{ color: 'rgba(255, 255, 255, 0.6)' }}
               >
