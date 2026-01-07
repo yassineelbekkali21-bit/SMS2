@@ -786,7 +786,7 @@ export function StrategicPlannerCompact({
                                       onNavigateToCourse(selectedTrackPlanning);
                                     }
                                   }}
-                                  className={`flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer hover:shadow-md ${
+                                  className={`flex items-center justify-between gap-4 p-4 rounded-xl transition-all cursor-pointer hover:shadow-md ${
                                     lesson.status === 'current' 
                                       ? 'bg-blue-50 border border-blue-200 hover:bg-blue-100' 
                                       : lesson.status === 'completed'
@@ -794,53 +794,54 @@ export function StrategicPlannerCompact({
                                       : 'bg-white border border-gray-200 hover:bg-gray-50'
                                   }`}
                                 >
-                                  {/* Status icon */}
-                                  <div 
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{
-                                      backgroundColor: lesson.status === 'completed' 
-                                        ? 'rgba(72,198,237,0.15)' 
-                                        : lesson.status === 'current'
-                                        ? '#48c6ed'
-                                        : '#f3f4f6'
-                                    }}
-                                  >
-                                    {lesson.status === 'completed' ? (
-                                      <Check size={18} style={{ color: '#48c6ed' }} />
-                                    ) : lesson.status === 'current' ? (
-                                      <Play size={18} className="text-white" />
-                                    ) : (
-                                      <Clock size={18} className="text-gray-400" />
-                                    )}
-                                  </div>
-
-                                  {/* Lesson info */}
-                                  <div className="flex-1 min-w-0">
-                                    <p 
-                                      className={`text-base font-semibold ${
-                                        lesson.status === 'completed' 
-                                          ? 'text-gray-400' 
+                                  {/* Left side: Icon + Lesson info + Date */}
+                                  <div className="flex items-center gap-4">
+                                    {/* Status icon */}
+                                    <div 
+                                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                      style={{
+                                        backgroundColor: lesson.status === 'completed' 
+                                          ? 'rgba(72,198,237,0.15)' 
                                           : lesson.status === 'current'
-                                          ? 'text-gray-900'
-                                          : 'text-gray-800'
-                                      }`}
+                                          ? '#48c6ed'
+                                          : '#f3f4f6'
+                                      }}
                                     >
-                                      {lesson.title}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                      Leçon {lesson.lessonNumber} • {lesson.duration}
-                                    </p>
+                                      {lesson.status === 'completed' ? (
+                                        <Check size={18} style={{ color: '#48c6ed' }} />
+                                      ) : lesson.status === 'current' ? (
+                                        <Play size={18} className="text-white" />
+                                      ) : (
+                                        <Clock size={18} className="text-gray-400" />
+                                      )}
+                                    </div>
+
+                                    {/* Lesson info with date inline */}
+                                    <div className="min-w-0">
+                                      <p 
+                                        className={`text-base font-semibold ${
+                                          lesson.status === 'completed' 
+                                            ? 'text-gray-400' 
+                                            : lesson.status === 'current'
+                                            ? 'text-gray-900'
+                                            : 'text-gray-800'
+                                        }`}
+                                      >
+                                        {lesson.title}
+                                      </p>
+                                      <p className="text-sm text-gray-500">
+                                        Leçon {lesson.lessonNumber} • {lesson.duration}
+                                        {lesson.scheduledDate && (
+                                          <span className={`ml-2 ${lesson.status === 'current' ? 'text-blue-600 font-medium' : ''}`}>
+                                            • {formatDate(lesson.scheduledDate)}
+                                          </span>
+                                        )}
+                                      </p>
+                                    </div>
                                   </div>
 
-                                  {/* Date + CTA */}
-                                  <div className="flex items-center gap-4 flex-shrink-0">
-                                    <p 
-                                      className={`text-sm font-medium ${
-                                        lesson.status === 'current' ? 'text-blue-600' : 'text-gray-500'
-                                      }`}
-                                    >
-                                      {lesson.scheduledDate && formatDate(lesson.scheduledDate)}
-                                    </p>
+                                  {/* Right side: CTA only */}
+                                  <div className="flex items-center flex-shrink-0">
                                     {lesson.status === 'current' && (
                                       <button 
                                         onClick={(e) => {
