@@ -400,52 +400,58 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className={`min-h-screen flex flex-col items-center px-4 md:px-6 overflow-hidden ${
-            phase === 'loading' || phase === 'transition' 
-              ? 'justify-center' 
-              : 'pt-[8vh] md:pt-[10vh]'
-          }`}>
+          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 overflow-hidden">
             
-            {/* Logo - Always visible */}
-          <motion.div
-              layout
+            {/* Main content wrapper with animated position */}
+            <motion.div
               className="flex flex-col items-center"
               animate={{ 
-                marginBottom: phase === 'reveal' ? '1rem' : '2rem',
+                y: (phase === 'scanning' || phase === 'reveal') ? '-30vh' : 0,
               }}
               transition={{ 
                 duration: 0.8, 
                 ease: [0.4, 0, 0.2, 1] 
               }}
             >
-            <motion.div
-                animate={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
-                scale: [1, 1.08, 1],
-                opacity: [0.7, 1, 0.7]
-                } : {
-                  scale: 1,
-                  opacity: 1
-              }}
-                transition={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
-                duration: 2.5,
-                repeat: Infinity,
-                ease: "easeInOut"
-                } : {
-                  duration: 0.5
-              }}
-            >
-              <Image 
-                src="/brand/onboarding-logo.svg" 
-                alt="Science Made Simple" 
-                width={140} 
-                height={140}
-                className="object-contain"
-              />
+              {/* Logo - Always visible */}
+              <motion.div
+                className="flex flex-col items-center"
+                animate={{ 
+                  marginBottom: phase === 'reveal' ? '1rem' : '2rem',
+                }}
+                transition={{ 
+                  duration: 0.8, 
+                  ease: [0.4, 0, 0.2, 1] 
+                }}
+              >
+                <motion.div
+                  animate={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
+                    scale: [1, 1.08, 1],
+                    opacity: [0.7, 1, 0.7]
+                  } : {
+                    scale: 1,
+                    opacity: 1
+                  }}
+                  transition={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  } : {
+                    duration: 0.5
+                  }}
+                >
+                  <Image 
+                    src="/brand/onboarding-logo.svg" 
+                    alt="Science Made Simple" 
+                    width={140} 
+                    height={140}
+                    className="object-contain"
+                  />
+                </motion.div>
               </motion.div>
-            </motion.div>
 
-            {/* Content Area */}
-            <div className="relative w-full max-w-2xl min-h-[350px] md:min-h-[400px] flex flex-col items-center">
+              {/* Content Area */}
+              <div className="relative w-full max-w-2xl min-h-[350px] md:min-h-[400px] flex flex-col items-center">
               
               {/* Loading & Scanning Content */}
               <AnimatePresence mode="wait">
@@ -759,7 +765,8 @@ export function OnboardingPopup({
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+              </div>
+            </motion.div>
           </div>
         )}
 
