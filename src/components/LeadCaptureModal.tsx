@@ -249,37 +249,56 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-12 text-center"
+              className="p-12 py-16 text-center"
             >
+              {/* Big Welcome Title */}
+              <motion.h1 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.6 }}
+                className="text-5xl md:text-6xl font-black !text-white mb-10 uppercase tracking-wide"
+                style={{ fontFamily: "'Parafina', sans-serif" }}
+              >
+                Welcome
+              </motion.h1>
+
+              {/* Animated Logo */}
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', delay: 0.2, bounce: 0.5 }}
-                className="w-48 h-48 mx-auto mb-8 relative"
+                transition={{ type: 'spring', delay: 0.3, bounce: 0.5 }}
+                className="w-36 h-36 mx-auto mb-10 relative"
               >
-                <Image 
-                  src="/brand/sms-logo.svg" 
-                  alt="Science Made Simple" 
-                  fill 
-                  className="object-contain"
-                />
+                <motion.div
+                  animate={{
+                    scale: [1, 1.05, 1],
+                    opacity: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-full h-full"
+                >
+                  <Image 
+                    src="/brand/onboarding-logo.svg" 
+                    alt="Science Made Simple" 
+                    fill 
+                    className="object-contain"
+                  />
+                </motion.div>
               </motion.div>
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-3xl font-bold !text-white mb-4"
-              >
-                Bienvenue ! 🎉
-              </motion.h2>
+
+              {/* Quote */}
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="!text-white/60 text-lg"
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="text-xl md:text-2xl italic"
+                style={{ color: 'rgba(255, 255, 255, 0.6)' }}
               >
-                Ton accès gratuit de 10h est activé.<br />
-                Prépare-toi à tout comprendre.
+                "Learning shouldn't be that boring."
               </motion.p>
             </motion.div>
           )}
