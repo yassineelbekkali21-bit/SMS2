@@ -400,7 +400,7 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 overflow-hidden pt-8 md:pt-8">
+          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 overflow-hidden">
             
             {/* Logo - Always visible */}
           <motion.div
@@ -895,36 +895,27 @@ export function OnboardingPopup({
               </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-16 overflow-x-hidden">
+            <div className="w-full px-4 md:px-6 py-4 md:py-16">
+              <div className="max-w-7xl mx-auto">
               {/* Main Content Grid */}
               <div className="grid lg:grid-cols-12 gap-4 md:gap-12 mb-6 md:mb-16">
                 
                 {/* Left Column - Info */}
-                <div className="lg:col-span-7 min-w-0">
+                <div className="lg:col-span-7">
                   {/* Course Count + Title - Stack on mobile */}
-                  <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-6 mb-4 md:mb-10">
-                    {/* Badge + Title row on mobile */}
-                    <div className="flex items-center gap-3 md:gap-5">
-                      <div className="w-14 h-14 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
-                        <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
-                          {recommendedCourses.length}
-                        </span>
-                      </div>
-                      <div className="md:hidden min-w-0 flex-1">
-                        <h1 className="text-lg font-black !text-white leading-tight uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
-                          Parcours conçus pour toi
-                        </h1>
-                        <p className="text-xs !text-white/70">
-                          basés sur {interests.length} Mastery Programs
-                        </p>
-                      </div>
+                  <div className="flex items-center gap-3 md:gap-6 mb-4 md:mb-10">
+                    {/* Badge */}
+                    <div className="w-14 h-14 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
+                      <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
+                        {recommendedCourses.length}
+                      </span>
                     </div>
-                    {/* Desktop title */}
-                    <div className="hidden md:block">
-                      <h1 className="text-4xl lg:text-5xl font-black !text-white leading-tight mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
+                    {/* Title */}
+                    <div className="flex-1">
+                      <h1 className="text-base md:text-4xl lg:text-5xl font-black !text-white leading-tight mb-0.5 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
                         Parcours conçus pour toi
                       </h1>
-                      <p className="text-lg !text-white">
+                      <p className="text-xs md:text-lg !text-white/70">
                         basés sur {interests.length} Mastery Programs
                       </p>
                     </div>
@@ -947,10 +938,10 @@ export function OnboardingPopup({
                             }
                           }}
                         >
-                          <div className="flex items-center justify-between mb-0.5 md:mb-1">
+                          <div className="mb-0.5 md:mb-1">
                             <span className="text-sm md:text-lg font-semibold !text-white">{program.name}</span>
                           </div>
-                          <p className="text-[11px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                          <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                             {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • {programCourses.length} parcours créés pour toi
                           </p>
                         </div>
@@ -960,7 +951,7 @@ export function OnboardingPopup({
                 </div>
 
                 {/* Right Column - CTA Card */}
-                <div className="lg:col-span-5 mt-3 lg:mt-0 min-w-0">
+                <div className="lg:col-span-5 mt-3 lg:mt-0">
                   <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
                     {/* Success Message */}
                     <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
@@ -975,14 +966,14 @@ export function OnboardingPopup({
                     {/* CTA Buttons */}
                     <button
                       onClick={() => setShowLeadCapture(true)}
-                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 px-4 md:px-8 rounded-full text-sm md:text-lg transition-all mb-3 flex items-center justify-center gap-2"
+                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-lg transition-all mb-3 flex items-center justify-center gap-2"
                     >
                       Débloquer 10h gratuites
                       <ArrowRight size={18} className="flex-shrink-0" />
                     </button>
                     <button
                       onClick={() => setPhase('membership-plans')}
-                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 px-4 md:px-6 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
+                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
                     >
                       Débloquer mes programmes
                       <span className="w-5 h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
@@ -1049,8 +1040,8 @@ export function OnboardingPopup({
                       </div>
                     </div>
 
-                    {/* Course Cards Row */}
-                    <div className="flex gap-2.5 md:gap-4 overflow-x-auto pb-3 md:pb-4 -mx-3 px-3 scrollbar-hide">
+                    {/* Course Cards Row - Swipeable with touch */}
+                    <div className="flex gap-2.5 md:gap-4 overflow-x-auto pb-3 md:pb-4 scrollbar-hide touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
                       {coursesForProgram.map((course) => (
                         <div
                           key={course.id}
@@ -1084,6 +1075,7 @@ export function OnboardingPopup({
                 );
               })}
 
+              </div>
             </div>
               </>
             )}
