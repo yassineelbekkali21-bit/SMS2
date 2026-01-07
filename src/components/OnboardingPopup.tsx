@@ -400,7 +400,7 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 overflow-hidden">
+          <div className="min-h-screen flex flex-col items-center pt-[12vh] md:pt-0 md:justify-center px-4 md:px-6 overflow-hidden">
             
             {/* Logo - Always visible */}
           <motion.div
