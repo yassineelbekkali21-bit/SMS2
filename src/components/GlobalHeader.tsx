@@ -108,15 +108,20 @@ export function GlobalHeader({
 }: GlobalHeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileAvatarMenuOpen, setIsMobileAvatarMenuOpen] = useState(false);
   const [socialStatus, setSocialStatus] = useState<SocialStatus>('available');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileAvatarMenuRef = useRef<HTMLDivElement>(null);
 
   // Fermer le menu utilisateur si clic en dehors
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false);
+      }
+      if (mobileAvatarMenuRef.current && !mobileAvatarMenuRef.current.contains(event.target as Node)) {
+        setIsMobileAvatarMenuOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -150,14 +155,99 @@ export function GlobalHeader({
         <div className="max-w-[1800px] mx-auto flex items-center justify-between md:justify-center relative min-h-[60px] md:min-h-[85px]">
           
           {/* ========== MOBILE HEADER (Visible < md) ========== */}
-          <div className="md:hidden flex items-center justify-between w-full bg-[#0d1317]/95 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 shadow-lg">
-             {/* Left: Hamburger */}
-             <button 
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 -ml-2 text-white/80 hover:text-white transition-colors"
-             >
-               <Menu size={24} />
-             </button>
+          <div className="md:hidden flex items-center justify-between w-full bg-[#0d1317]/95 backdrop-blur-xl border border-white/10 rounded-full px-3 py-2 shadow-lg">
+             {/* Left: Avatar - ouvre dropdown profil */}
+             <div className="relative" ref={mobileAvatarMenuRef}>
+               <button 
+                  onClick={() => setIsMobileAvatarMenuOpen(!isMobileAvatarMenuOpen)}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden border-2 border-white/30"
+                  style={{ 
+                    background: userAvatar ? 'transparent' : `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%)`,
+                  }}
+                >
+                  {userAvatar ? (
+                    <Image
+                      src={userAvatar}
+                      alt={userName}
+                      width={36}
+                      height={36}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white">{userInitials}</span>
+                  )}
+                </button>
+
+                {/* Mobile Avatar Dropdown */}
+                <AnimatePresence>
+                  {isMobileAvatarMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-2 w-56 py-2 rounded-xl shadow-xl z-[100]"
+                      style={{
+                        background: 'rgba(13, 19, 23, 0.98)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
+                      {/* User Info */}
+                      <div className="px-4 py-3 border-b border-white/10">
+                        <p className="font-semibold text-white text-sm">{userName}</p>
+                        <p className="text-xs text-white/50">Étudiant</p>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-1">
+                        <button
+                          onClick={() => { setIsMobileAvatarMenuOpen(false); onOpenProfile?.(); }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <User size={16} />
+                          <span className="text-sm">Mon profil</span>
+                        </button>
+
+                        <button
+                          onClick={() => { setIsMobileAvatarMenuOpen(false); onOpenSettings?.(); }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <Settings size={16} />
+                          <span className="text-sm">Paramètres</span>
+                        </button>
+
+                        <button
+                          onClick={() => { setIsMobileAvatarMenuOpen(false); onOpenGuestPass?.(); }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <Gift size={16} />
+                          <span className="text-sm">Inviter un ami</span>
+                        </button>
+
+                        <button
+                          onClick={() => { setIsMobileAvatarMenuOpen(false); onOpenHelpCenter?.(); }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <HelpCircle size={16} />
+                          <span className="text-sm">Centre d'aide</span>
+                        </button>
+                      </div>
+
+                      {/* Logout */}
+                      <div className="pt-1 border-t border-white/10">
+                        <button
+                          onClick={() => { setIsMobileAvatarMenuOpen(false); onLogout?.(); }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 text-red-400/80 hover:text-red-400 hover:bg-white/10 transition-colors"
+                        >
+                          <LogOut size={16} />
+                          <span className="text-sm">Déconnexion</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+             </div>
 
              {/* Center: Logo */}
              <div className="relative w-24 h-8">
@@ -169,26 +259,13 @@ export function GlobalHeader({
                />
              </div>
 
-             {/* Right: Avatar (Mini) */}
-             <div 
-                onClick={onOpenProfile}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden border border-white/20"
-                style={{ 
-                  background: userAvatar ? 'transparent' : `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%)`,
-                }}
-              >
-                {userAvatar ? (
-                  <Image
-                    src={userAvatar}
-                    alt={userName}
-                    width={32}
-                    height={32}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-white">{userInitials}</span>
-                )}
-              </div>
+             {/* Right: Hamburger - ouvre navigation */}
+             <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2 -mr-1 text-white/80 hover:text-white transition-colors"
+             >
+               <Menu size={24} />
+             </button>
           </div>
 
 
@@ -416,13 +493,13 @@ export function GlobalHeader({
         </div>
       </header>
 
-      {/* ========== MOBILE OVERLAY MENU (Landing Page Style) ========== */}
+      {/* ========== MOBILE NAVIGATION MENU (Navigation uniquement) ========== */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '-100%' }}
+            initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '-100%' }}
+            exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-[100] bg-[#0d1317] flex flex-col md:hidden"
           >
@@ -444,46 +521,10 @@ export function GlobalHeader({
                </button>
             </div>
 
-            {/* Contenu Scrollable */}
-            <div className="flex-1 overflow-y-auto py-6 px-6">
+            {/* Navigation Links - Sections de l'application */}
+            <div className="flex-1 overflow-y-auto py-8 px-6">
+              <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-4 px-2">Navigation</p>
               
-              {/* Profile Card Rapide */}
-              <div 
-                onClick={() => { setIsMobileMenuOpen(false); onOpenProfile?.(); }}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 mb-8"
-              >
-                <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold overflow-hidden"
-                  style={{ 
-                    background: userAvatar ? 'transparent' : `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%)`,
-                  }}
-                >
-                  {userAvatar ? (
-                    <Image
-                      src={userAvatar}
-                      alt={userName}
-                      width={48}
-                      height={48}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white">{userInitials}</span>
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{userName}</h3>
-                  {isSubscribed ? (
-                    <div className="flex items-center gap-2 text-sm text-white/60">
-                      <Zap size={14} className="text-amber-400" />
-                      <span>Niveau {userLevel} · {userXP} XP</span>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-white/50">Étudiant</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Navigation Links */}
               <nav className="flex flex-col gap-2">
                 {navigationItems.map((item) => {
                    const isActive = activeSection === item.id;
@@ -495,7 +536,7 @@ export function GlobalHeader({
                          setIsMobileMenuOpen(false);
                        }}
                        className={`
-                         w-full text-left p-4 rounded-xl text-xl font-medium flex items-center justify-between group
+                         w-full text-left p-4 rounded-xl text-lg font-medium flex items-center justify-between group
                          transition-all duration-200
                          ${isActive 
                            ? 'bg-white/10 text-white' 
@@ -516,129 +557,19 @@ export function GlobalHeader({
                 })}
               </nav>
 
-              {/* Badge vérification (Mobile) */}
-              <div className="mt-6 mb-4">
-                {isIdentityVerified ? (
-                  <div className="flex items-center gap-2 px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 text-sm">
-                    <CheckCircle size={16} />
-                    <span>Compte vérifié</span>
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => { setIsMobileMenuOpen(false); onVerifyIdentity?.(); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-amber-400 text-sm"
+              {/* CTA Débloquer (si non inscrit) */}
+              {!isSubscribed && (
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); onFinishSignup?.(); }}
+                    className="w-full p-4 rounded-xl flex items-center justify-center gap-2 font-bold text-white shadow-lg"
+                    style={{ background: themeColor }}
                   >
-                    <Shield size={16} />
-                    <span>Vérifier mon identité</span>
+                    <span>Débloquer</span>
+                    <ChevronRight size={20} />
                   </button>
-                )}
-              </div>
-
-              {/* Statut social (Mobile) */}
-              <div className="mb-6 p-4 bg-white/5 rounded-xl">
-                <p className="text-xs font-medium text-white/50 uppercase tracking-wider mb-3">Statut social</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {SOCIAL_STATUSES.map((status) => (
-                    <button
-                      key={status.id}
-                      onClick={() => setSocialStatus(status.id)}
-                      className={`p-2.5 rounded-lg text-left transition-all ${
-                        socialStatus === status.id
-                          ? 'bg-white/10 ring-1 ring-white/20'
-                          : 'bg-white/5 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">{status.icon}</span>
-                        <span className="text-sm font-medium text-white/80">{status.label}</span>
-                      </div>
-                    </button>
-                  ))}
                 </div>
-              </div>
-
-              {/* Actions Secondaires */}
-              <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onOpenGuestPass?.(); }}
-                    className="w-full p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 flex items-center gap-3 text-purple-200"
-                 >
-                   <Gift size={20} />
-                   <span className="font-medium">Inviter un ami</span>
-                 </button>
-
-                 {!isSubscribed && (
-                    <button
-                      onClick={() => { setIsMobileMenuOpen(false); onFinishSignup?.(); }}
-                      className="w-full p-4 rounded-xl flex items-center justify-center gap-2 font-bold text-white shadow-lg shadow-blue-500/20 mt-2"
-                      style={{ background: themeColor }}
-                    >
-                      <span>Terminer l'inscription</span>
-                      <ChevronRight size={20} />
-                    </button>
-                 )}
-              </div>
-
-              {/* Paramètres rapides (Mobile) */}
-              <div className="mt-6 pt-4 border-t border-white/10 space-y-1">
-                 {/* Mode sombre */}
-                 <div className="w-full p-3 flex items-center justify-between">
-                   <div className="flex items-center gap-3 text-white/70 text-sm">
-                     <Moon size={18} />
-                     <span>Mode sombre</span>
-                   </div>
-                   <button 
-                     onClick={() => setIsDarkMode(!isDarkMode)}
-                     className={`w-11 h-6 rounded-full relative transition-colors ${
-                       isDarkMode ? 'bg-[#48c6ed]' : 'bg-white/20'
-                     }`}
-                   >
-                     <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${
-                       isDarkMode ? 'right-0.5' : 'left-0.5'
-                     }`} />
-                   </button>
-                 </div>
-
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onStartTour?.(); }}
-                    className="w-full p-3 flex items-center gap-3 text-white/70 hover:text-white transition-colors"
-                 >
-                   <HelpCircle size={18} />
-                   <span>Visite guidée</span>
-                 </button>
-
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onOpenParentReports?.(); }}
-                    className="w-full p-3 flex items-center gap-3 text-white/70 hover:text-white transition-colors"
-                 >
-                   <FileText size={18} />
-                   <span>Rapports Parents</span>
-                 </button>
-
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onOpenHelpCenter?.(); }}
-                    className="w-full p-3 flex items-center gap-3 text-white/70 hover:text-white transition-colors"
-                 >
-                   <HelpCircle size={18} />
-                   <span>Centre d'aide</span>
-                 </button>
-
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onOpenSettings?.(); }}
-                    className="w-full p-3 flex items-center gap-3 text-white/50 hover:text-white transition-colors"
-                 >
-                   <Settings size={18} />
-                   <span>Paramètres</span>
-                 </button>
-
-                 <button
-                    onClick={() => { setIsMobileMenuOpen(false); onLogout?.(); }}
-                    className="w-full p-3 flex items-center gap-3 text-red-400/70 hover:text-red-400 transition-colors"
-                 >
-                   <LogOut size={18} />
-                   <span>Déconnexion</span>
-                 </button>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
