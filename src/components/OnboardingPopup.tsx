@@ -895,12 +895,12 @@ export function OnboardingPopup({
               </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-16">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-16 overflow-x-hidden">
               {/* Main Content Grid */}
               <div className="grid lg:grid-cols-12 gap-4 md:gap-12 mb-6 md:mb-16">
                 
                 {/* Left Column - Info */}
-                <div className="lg:col-span-7">
+                <div className="lg:col-span-7 min-w-0">
                   {/* Course Count + Title - Stack on mobile */}
                   <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-6 mb-4 md:mb-10">
                     {/* Badge + Title row on mobile */}
@@ -910,7 +910,7 @@ export function OnboardingPopup({
                           {recommendedCourses.length}
                         </span>
                       </div>
-                      <div className="md:hidden">
+                      <div className="md:hidden min-w-0 flex-1">
                         <h1 className="text-lg font-black !text-white leading-tight uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
                           Parcours conçus pour toi
                         </h1>
@@ -960,14 +960,14 @@ export function OnboardingPopup({
                 </div>
 
                 {/* Right Column - CTA Card */}
-                <div className="lg:col-span-5 mt-3 lg:mt-0">
-                  <div className="bg-[#141414] rounded-xl p-3 md:p-6 border border-gray-800">
+                <div className="lg:col-span-5 mt-3 lg:mt-0 min-w-0">
+                  <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
                     {/* Success Message */}
-                    <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6">
-                      <div className="w-5 h-5 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 md:w-5 md:h-5 text-white" strokeWidth={3} />
+                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                      <div className="w-6 h-6 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
                       </div>
-                      <span className="text-white text-xs md:text-base">
+                      <span className="text-white text-sm md:text-base">
                         Paiement unique. Accès à vie.
                       </span>
                     </div>
@@ -975,26 +975,26 @@ export function OnboardingPopup({
                     {/* CTA Buttons */}
                     <button
                       onClick={() => setShowLeadCapture(true)}
-                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-2.5 md:py-4 px-4 md:px-8 rounded-full text-sm md:text-lg transition-all mb-2 md:mb-3 flex items-center justify-center gap-2"
+                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 px-4 md:px-8 rounded-full text-sm md:text-lg transition-all mb-3 flex items-center justify-center gap-2"
                     >
-                      <span className="truncate">Débloquer 10h gratuites</span>
-                      <ArrowRight size={16} className="flex-shrink-0 md:w-5 md:h-5" />
+                      Débloquer 10h gratuites
+                      <ArrowRight size={18} className="flex-shrink-0" />
                     </button>
                     <button
                       onClick={() => setPhase('membership-plans')}
-                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2 md:py-3 px-3 md:px-6 rounded-full text-xs md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-1.5 md:gap-2"
+                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 px-4 md:px-6 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
                     >
-                      <span className="truncate">Débloquer mes programmes</span>
-                      <span className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
-                        <ArrowRight size={8} className="md:w-3 md:h-3" />
+                      Débloquer mes programmes
+                      <span className="w-5 h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
+                        <ArrowRight size={10} />
                       </span>
                     </button>
                   </div>
                   
                   {/* Social proof - Students counter */}
-                  <div className="flex items-center justify-center gap-2 mt-2 md:mt-4">
-                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full" />
-                    <p className="text-[10px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div className="flex items-center justify-center gap-2 mt-3 md:mt-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" />
+                    <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                       <span className="font-bold text-white">127</span> étudiants ont rejoint cette semaine
                     </p>
                   </div>
