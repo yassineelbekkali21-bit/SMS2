@@ -250,7 +250,7 @@ export function GlobalHeader({
              </div>
 
              {/* Center: Logo */}
-             <div className="relative w-24 h-8">
+             <div className="relative w-32 h-10">
                <Image 
                  src="/brand/sms-logo.svg" 
                  alt="SMS" 
@@ -505,7 +505,7 @@ export function GlobalHeader({
           >
             {/* Header du Menu Mobile */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
-               <div className="relative w-28 h-8">
+               <div className="relative w-32 h-10">
                  <Image 
                    src="/brand/sms-logo.svg" 
                    alt="SMS" 

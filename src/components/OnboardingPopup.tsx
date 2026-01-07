@@ -400,7 +400,7 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className="min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+          <div className="min-h-screen flex flex-col items-center justify-center md:justify-center px-4 md:px-6 overflow-hidden pt-16 md:pt-0">
             
             {/* Logo - Always visible */}
           <motion.div
@@ -441,7 +441,7 @@ export function OnboardingPopup({
             </motion.div>
 
             {/* Content Area */}
-            <div className="relative w-full max-w-2xl min-h-[400px] flex flex-col items-center">
+            <div className="relative w-full max-w-2xl min-h-[350px] md:min-h-[400px] flex flex-col items-center">
               
               {/* Loading & Scanning Content */}
               <AnimatePresence mode="wait">
@@ -661,10 +661,10 @@ export function OnboardingPopup({
                         stiffness: 120,
                         damping: 15
                       }}
-                      className="mb-2"
+                      className="mb-1 md:mb-2"
                     >
                       <span 
-                        className="text-9xl md:text-[12rem] font-black text-white leading-none"
+                        className="text-7xl md:text-[12rem] font-black text-white leading-none"
                         style={{ fontFamily: "'Parafina', sans-serif" }}
                       >
                         {totalTracksExtracted}
@@ -676,7 +676,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                      className="text-2xl md:text-4xl font-bold text-center mb-3 uppercase tracking-wider"
+                      className="text-xl md:text-4xl font-bold text-center mb-2 md:mb-3 uppercase tracking-wider"
                       style={{ fontFamily: "'Parafina', sans-serif", color: '#ffffff' }}
                     >
                       Parcours créés pour toi
@@ -687,7 +687,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                      className="text-center mb-8"
+                      className="text-center mb-4 md:mb-8 text-sm md:text-base"
                       style={{ color: 'rgba(255, 255, 255, 0.8)' }}
                     >
                       basés sur les Mastery Programs suivants
@@ -698,7 +698,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.0 }}
-                      className="flex flex-col items-center gap-3 mb-8"
+                      className="flex flex-col items-center gap-2 md:gap-3 mb-4 md:mb-8"
                     >
                       {scanningPrograms.map((program, index) => (
                         <motion.div
@@ -706,13 +706,13 @@ export function OnboardingPopup({
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.4, delay: 1.1 + index * 0.1, ease: "easeOut" }}
-                          className="flex items-center gap-3 text-lg"
+                          className="flex flex-wrap items-center justify-center gap-1 md:gap-3 text-sm md:text-lg"
                         >
                           <span className="font-semibold text-white">{program.name}</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} chapitres</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{program.extractedTracks} parcours</span>
+                          <span className="hidden md:inline" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
+                          <span className="text-xs md:text-base" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} chapitres</span>
+                          <span className="hidden md:inline" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
+                          <span className="text-xs md:text-base" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{program.extractedTracks} parcours</span>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -722,7 +722,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.5 }}
-                      className="text-2xl md:text-3xl font-bold text-center mb-8"
+                      className="text-xl md:text-3xl font-bold text-center mb-4 md:mb-8"
                       style={{ color: '#ffffff' }}
                     >
                       Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
@@ -736,10 +736,10 @@ export function OnboardingPopup({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setPhase('results')}
-                      className="px-10 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25"
+                      className="px-8 md:px-10 py-3 md:py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-2 md:gap-3 shadow-lg shadow-[#00c2ff]/25 text-sm md:text-base"
                     >
                       Continuer
-                      <ArrowRight size={20} />
+                      <ArrowRight size={18} className="md:w-5 md:h-5" />
                     </motion.button>
 
                     {/* Trust badge */}
@@ -747,7 +747,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.9 }}
-                      className="mt-6 text-sm"
+                      className="mt-4 md:mt-6 text-xs md:text-sm"
                       style={{ color: 'rgba(255, 255, 255, 0.5)' }}
                     >
                       Paiement unique · Accès à vie
@@ -768,31 +768,32 @@ export function OnboardingPopup({
             className="min-h-full flex flex-col"
           >
             {/* Header - Always visible */}
-            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-3 md:px-6 py-3 md:py-4 z-20">
               <div className="max-w-7xl mx-auto flex items-center justify-between relative">
                 {/* Left - Logo */}
-                <div className="w-[85px]">
+                <div className="w-[50px] md:w-[85px]">
                 <Image 
                   src="/brand/onboarding-logo.svg" 
                   alt="Science Made Simple" 
                   width={85} 
                   height={85}
+                  className="w-[50px] h-[50px] md:w-[85px] md:h-[85px]"
                 />
                 </div>
                 
                 {/* Center - Progress Steps */}
-                <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+                <div className="flex items-center gap-1.5 md:gap-3 absolute left-1/2 -translate-x-1/2">
                   {['Tes cours', 'Offre', 'Finaliser'].map((step, idx) => {
                     const isCompleted = idx < 0; // Phase results = step 0
                     const isCurrent = idx === 0;
                     return (
                       <React.Fragment key={step}>
                         <div className="flex flex-col items-center">
-                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
+                          <div className={`w-4 h-4 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
                             isCompleted 
                               ? 'bg-[#00c2ff]' 
                               : isCurrent 
-                                ? 'bg-[#00c2ff] ring-[5px] ring-[#00c2ff]/30' 
+                                ? 'bg-[#00c2ff] ring-2 md:ring-[5px] ring-[#00c2ff]/30' 
                                 : 'bg-gray-600'
                           }`} />
                           <span className={`text-[11px] md:text-sm mt-2 font-semibold hidden md:block !text-white ${
@@ -802,7 +803,7 @@ export function OnboardingPopup({
                           </span>
                         </div>
                         {idx < 2 && (
-                          <div className={`w-14 md:w-24 h-1.5 rounded-full ${
+                          <div className={`w-8 md:w-24 h-1 md:h-1.5 rounded-full ${
                             isCompleted ? 'bg-[#00c2ff]' : 'bg-gray-700'
                           }`} />
                         )}
@@ -812,11 +813,11 @@ export function OnboardingPopup({
                 </div>
                 
                 {/* Right - Button placeholder */}
-                <div className="w-[85px] flex justify-end">
+                <div className="w-[50px] md:w-[85px] flex justify-end">
                   {showPersonalizedContent && (
                 <button
                       onClick={() => setShowPersonalizedContent(false)}
-                      className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                      className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white text-sm font-medium transition-colors"
                 >
                       <Play size={14} className="rotate-180" />
                       Revoir la vidéo
@@ -832,7 +833,7 @@ export function OnboardingPopup({
             {!showPersonalizedContent && (
               <div className="flex-1 flex flex-col bg-[#0d1317]">
                 {/* Video Container - Full Screen Local Video */}
-                <div className="flex-1 relative min-h-[50vh]">
+                <div className="flex-1 relative min-h-[40vh] md:min-h-[50vh]">
                   <video
                     className="absolute inset-0 w-full h-full object-cover"
                     src="/mentors/Zak-onboarding.mp4"
@@ -843,27 +844,27 @@ export function OnboardingPopup({
                   />
                   
                   {/* Overlay gradient en bas */}
-                  <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0d1317] to-transparent pointer-events-none" />
+                  <div className="absolute inset-x-0 bottom-0 h-24 md:h-40 bg-gradient-to-t from-[#0d1317] to-transparent pointer-events-none" />
                   
                   {/* Volume Control - Bottom Left */}
                   <button
                     onClick={() => setVideoMuted(!videoMuted)}
-                    className="absolute bottom-6 left-6 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                    className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all"
                   >
-                    {videoMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
+                    {videoMuted ? <VolumeX size={18} className="md:w-5 md:h-5" /> : <Volume2 size={18} className="md:w-5 md:h-5" />}
                   </button>
                 </div>
                 
                 {/* Bouton pour voir le contenu personnalisé */}
-                <div className="p-6 flex flex-col items-center gap-4">
-                  <span className="text-gray-400 text-lg font-medium italic">
+                <div className="p-4 md:p-6 flex flex-col items-center gap-3 md:gap-4">
+                  <span className="text-gray-400 text-sm md:text-lg font-medium italic">
                     Voir mon contenu personnalisé
                   </span>
                   <button
                     onClick={() => setShowPersonalizedContent(true)}
-                    className="w-14 h-14 rounded-full border-2 border-gray-600 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-300 transition-all"
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gray-600 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-300 transition-all"
                   >
-                    <ChevronDown size={24} />
+                    <ChevronDown size={20} className="md:w-6 md:h-6" />
                   </button>
                 </div>
               </div>
@@ -1000,20 +1001,20 @@ export function OnboardingPopup({
                   : 'chemistry';
                 
                 return (
-                  <div key={interest} id={`carousel-${programId}`} className="mb-16 scroll-mt-48">
+                  <div key={interest} id={`carousel-${programId}`} className="mb-10 md:mb-16 scroll-mt-32 md:scroll-mt-48">
                     {/* Row Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <h2 className="text-2xl md:text-3xl font-bold !text-white">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-6 gap-3">
+                      <div className="flex items-center gap-2 md:gap-4">
+                        <h2 className="text-lg md:text-3xl font-bold !text-white">
                           {interest}
-                          <span className="!text-white font-normal text-lg ml-3">
+                          <span className="!text-white font-normal text-sm md:text-lg ml-2 md:ml-3">
                             {coursesForProgram.length} parcours
                           </span>
                         </h2>
                       </div>
 
                       {/* Carousel Controls */}
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 md:gap-4">
                         {/* Bouton Tester mes connaissances */}
                         <button
                           onClick={() => {
@@ -1022,51 +1023,51 @@ export function OnboardingPopup({
                               : 'chemistry';
                             window.open(`/assessment/${subject}`, '_blank');
                           }}
-                          className="px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-full transition-colors"
+                          className="hidden md:block px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-full transition-colors"
                         >
                           Tester mes connaissances
                         </button>
                         
                         <div className="flex gap-2">
                           <button
-                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={16} className="md:w-5 md:h-5" />
                           </button>
                           <button
-                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronRight size={20} />
+                            <ChevronRight size={16} className="md:w-5 md:h-5" />
                           </button>
                         </div>
                       </div>
                     </div>
 
                     {/* Course Cards Row */}
-                    <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                    <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
                       {coursesForProgram.map((course) => (
                         <div
                           key={course.id}
-                          className="flex-shrink-0 w-52 group cursor-pointer"
+                          className="flex-shrink-0 w-36 md:w-52 group cursor-pointer"
                           onClick={() => setShowLeadCapture(true)}
                         >
                           {/* Course Card */}
-                          <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
+                          <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-lg md:rounded-xl overflow-hidden mb-2 md:mb-3 transition-transform group-hover:scale-[1.02]">
                             {/* Course Title Overlay */}
-                            <div className="absolute inset-0 flex flex-col justify-end p-4">
-<h3 className="!text-white font-bold text-xl leading-tight tracking-tight mb-1">
+                            <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
+<h3 className="!text-white font-bold text-base md:text-xl leading-tight tracking-tight mb-1">
                               {course.title}
                             </h3>
-                              <div className="w-8 h-0.5 bg-white/40 mb-2" />
-<p className="!text-white/80 text-xs font-medium">
+                              <div className="w-6 md:w-8 h-0.5 bg-white/40 mb-1.5 md:mb-2" />
+<p className="!text-white/80 text-[10px] md:text-xs font-medium">
                               {course.subtitle}
                             </p>
                             </div>
 
                             {/* Play Button on Hover */}
                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                                <Play className="w-6 h-6 text-gray-900 ml-0.5" fill="currentColor" />
+                              <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                                <Play className="w-4 h-4 md:w-6 md:h-6 text-gray-900 ml-0.5" fill="currentColor" />
                               </div>
                             </div>
                           </div>
