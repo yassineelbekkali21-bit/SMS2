@@ -48,7 +48,9 @@ import {
   ThumbsUp,
   Lightbulb,
   ArrowRight,
-  List
+  List,
+  Video,
+  Flame
 } from 'lucide-react';
 import { Course, Lesson, User, PurchaseOption } from '@/types';
 import Image from 'next/image';
@@ -83,6 +85,7 @@ import { AdvancedStudyRoom } from '@/types';
 import { WebRTCStudyRoom } from './WebRTCStudyRoom';
 import { DocumentUploadWidget } from './DocumentUploadWidget';
 import { BoostersWidget } from './BoostersWidget';
+import { GlobalHeader } from './GlobalHeader';
 
 interface IntegratedCourseViewerProps {
   course: Course | null;
@@ -97,6 +100,7 @@ interface IntegratedCourseViewerProps {
   lessons?: Lesson[];
   onLessonsUpdate?: (lessons: Lesson[]) => void;
   userXPProfile?: UserXPProfile | null;
+  initialLessonId?: string; // ID de la leçon à afficher au démarrage
 }
 
 // Fond d'écran unique - Blanc épuré MasterClass style
@@ -144,7 +148,17 @@ const CourseNode: React.FC<{
   course: Course;
   purchasedItems: Set<string>;
 }> = ({ lesson, position, isSelected, onClick, index, course, purchasedItems }) => {
+  // Mode essai: seule la première leçon est accessible, les autres sont en preview
+  const isTrialMode = course?.isTrial === true;
+  const isTrialPreview = isTrialMode && index > 0;
+
   const getNodeState = () => {
+    // Mode essai: les leçons après la première sont TOUJOURS en preview
+    // Même si elles sont marquées comme complétées dans les données
+    if (isTrialPreview) {
+      return 'trialPreview';
+    }
+    
     if (lesson.isCompleted) return 'completed';
     if (lesson.isInProgress) return 'inProgress';
     
@@ -189,6 +203,8 @@ const CourseNode: React.FC<{
         return 'bg-white border-2 border-gray-900 shadow-lg text-gray-900';
       case 'inProgress':
         return 'bg-[#48c6ed] border-2 border-[#48c6ed] shadow-lg text-white';
+      case 'trialPreview':
+        return 'bg-gray-800 border-2 border-gray-600 shadow-md text-gray-300 hover:border-gray-500';
       case 'available':
         return 'bg-white border-2 border-gray-300 shadow-md text-gray-700 hover:border-[#48c6ed]';
     }
@@ -200,6 +216,8 @@ const CourseNode: React.FC<{
         return <CheckCircle size={20} className="text-gray-900" />;
       case 'inProgress': 
         return <Play size={20} className="text-white animate-pulse" />;
+      case 'trialPreview':
+        return <Eye size={20} className="text-gray-300" />;
       case 'available': 
         return (
           <div className="relative">
@@ -259,12 +277,12 @@ const CourseNode: React.FC<{
         
         
         {/* Numéro */}
-        <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-gray-700">
+        <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-sm font-bold text-gray-700">
           {lesson.order}
         </div>
         
         {/* Label titre complet */}
-        <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 text-xs text-gray-700 text-center w-28 leading-tight font-medium">
+        <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 text-sm text-gray-700 text-center w-28 leading-tight font-medium">
           {lesson.title}
         </div>
         
@@ -279,6 +297,13 @@ const CourseNode: React.FC<{
           >
             <Sparkles className="text-[#48c6ed]" size={12} />
           </motion.div>
+        )}
+        
+        {/* Badge Preview pour mode essai - noir premium */}
+        {state === 'trialPreview' && (
+          <div className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-gray-900 text-white text-[8px] font-bold rounded uppercase tracking-wider shadow-lg">
+            Preview
+          </div>
         )}
       </motion.button>
     </motion.div>
@@ -717,6 +742,88 @@ const LessonDetailBlock: React.FC<{
   );
 };
 
+// ============================================================================
+// MINI-BENTO BUTTONS - Sélecteurs de contenu contextuel
+// ============================================================================
+type ContextPanelTypeBtn = 'essentials' | 'quiz' | 'qa' | 'resources' | 'notes' | null;
+
+interface MiniBentoButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+  badge?: string;
+}
+
+const MiniBentoButton: React.FC<MiniBentoButtonProps> = ({ icon, label, isActive, onClick, badge }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className={`relative flex flex-col items-center justify-center p-3 rounded-xl transition-all ${
+      isActive 
+        ? 'bg-gray-900 text-white shadow-lg' 
+        : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+    }`}
+  >
+    <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-1.5 ${
+      isActive ? 'bg-white/20' : 'bg-gray-100'
+    }`}>
+      {icon}
+    </div>
+    <span className="text-[12px] font-medium">{label}</span>
+    {badge && (
+      <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full ${
+        isActive ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'
+      }`}>
+        {badge}
+      </span>
+    )}
+  </motion.button>
+);
+
+interface MiniBentoGridProps {
+  activePanel: ContextPanelTypeBtn;
+  onTogglePanel: (panel: ContextPanelTypeBtn) => void;
+}
+
+const MiniBentoGrid: React.FC<MiniBentoGridProps> = ({ activePanel, onTogglePanel }) => (
+  <div className="grid grid-cols-5 gap-2 p-3 bg-gray-50 rounded-2xl border border-gray-200">
+    <MiniBentoButton
+      icon={<BookOpen size={16} className={activePanel === 'essentials' ? 'text-white' : 'text-gray-600'} />}
+      label="Essentiels"
+      isActive={activePanel === 'essentials'}
+      onClick={() => onTogglePanel('essentials')}
+    />
+    <MiniBentoButton
+      icon={<Brain size={16} className={activePanel === 'quiz' ? 'text-white' : 'text-gray-600'} />}
+      label="Quiz"
+      isActive={activePanel === 'quiz'}
+      onClick={() => onTogglePanel('quiz')}
+      badge="3"
+    />
+    <MiniBentoButton
+      icon={<MessageSquare size={16} className={activePanel === 'qa' ? 'text-white' : 'text-gray-600'} />}
+      label="Q&A"
+      isActive={activePanel === 'qa'}
+      onClick={() => onTogglePanel('qa')}
+      badge="8"
+    />
+    <MiniBentoButton
+      icon={<FileText size={16} className={activePanel === 'resources' ? 'text-white' : 'text-gray-600'} />}
+      label="Ressources"
+      isActive={activePanel === 'resources'}
+      onClick={() => onTogglePanel('resources')}
+    />
+    <MiniBentoButton
+      icon={<Lightbulb size={16} className={activePanel === 'notes' ? 'text-white' : 'text-gray-600'} />}
+      label="Notes"
+      isActive={activePanel === 'notes'}
+      onClick={() => onTogglePanel('notes')}
+    />
+  </div>
+);
+
 export function IntegratedCourseViewer({ 
   course, 
   isOpen, 
@@ -729,9 +836,10 @@ export function IntegratedCourseViewer({
   user: propUser,
   lessons: propLessons,
   onLessonsUpdate,
-  userXPProfile: propUserXPProfile
+  userXPProfile: propUserXPProfile,
+  initialLessonId
 }: IntegratedCourseViewerProps) {
-  const [currentView, setCurrentView] = useState<'map' | 'lesson'>('map');
+  const [currentView, setCurrentView] = useState<'map' | 'lesson'>(initialLessonId ? 'lesson' : 'map');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [pendingLessonsUpdate, setPendingLessonsUpdate] = useState<Lesson[] | null>(null);
   const [selectedLessonForDetail, setSelectedLessonForDetail] = useState<Lesson | null>(null);
@@ -799,16 +907,28 @@ export function IntegratedCourseViewer({
   const [showMobileLessonNav, setShowMobileLessonNav] = useState(false);
   const [guestPassEmails, setGuestPassEmails] = useState('');
   const [expandedBentoCard, setExpandedBentoCard] = useState<string | null>(null);
+  
+  // 🎯 NOUVEAU: Système de zones contextuelles pilotées par l'utilisateur
+  // Zone 2 sous la vidéo - vide par défaut, affiche le contenu selon le bouton sélectionné
+  type ContextPanelType = 'essentials' | 'quiz' | 'qa' | 'resources' | 'notes' | null;
+  const [activeContextPanel, setActiveContextPanel] = useState<ContextPanelType>(null);
+  
+  // Toggle du panneau contextuel (clic sur même bouton = ferme)
+  const toggleContextPanel = (panel: ContextPanelType) => {
+    setActiveContextPanel(prev => prev === panel ? null : panel);
+  };
 
   // Navigation items - identiques au dashboard principal
   const navigationItems = [
-    { id: 'courses', label: 'Mes cours', icon: BookOpen, isActive: true },
-    { id: 'planning', label: 'Planification', icon: Calendar },
-    { id: 'study-rooms', label: 'Study Rooms', icon: Globe },
-    { id: 'community', label: 'Communauté', icon: Users },
-    { id: 'messaging', label: 'Messages', icon: MessageCircle, hasNotification: true },
-    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, isExternal: true },
+    { id: 'courses', label: 'Mon parcours', icon: BookOpen, isActive: true, hasAccess: true },
+    { id: 'planning', label: 'Planification', icon: Calendar, isActive: false, hasAccess: true },
+    { id: 'study-rooms', label: 'Study Rooms', icon: Video, isActive: false, hasAccess: true },
+    { id: 'community', label: 'Social Club', icon: Users, isActive: false, hasAccess: true },
+    { id: 'training', label: 'Training Club', icon: Target, isActive: false, hasAccess: true },
   ];
+  
+  // État pour le mode fullscreen du lecteur vidéo
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   // Effet pour gérer les mises à jour différées vers le parent
   useEffect(() => {
@@ -825,7 +945,17 @@ export function IntegratedCourseViewer({
     if (propLessons && propLessons.length > 0) {
       setLessons(propLessons);
       setCoursePath(generateCoursePath(propLessons));
-      if (propLessons.length > 0) {
+      
+      // Si un initialLessonId est fourni, ouvrir directement cette leçon
+      if (initialLessonId) {
+        const initialLesson = propLessons.find(l => l.id === initialLessonId);
+        if (initialLesson) {
+          setSelectedLesson(initialLesson);
+          setCurrentView('lesson');
+        } else if (propLessons.length > 0) {
+          setSelectedLessonForDetail(propLessons[0]);
+        }
+      } else if (propLessons.length > 0) {
         setSelectedLessonForDetail(propLessons[0]);
       }
     } else if (course) {
@@ -999,7 +1129,7 @@ export function IntegratedCourseViewer({
         setSelectedLessonForDetail(mockLessons[0]);
       }
     }
-  }, [course, propLessons]);
+  }, [course, propLessons, initialLessonId]);
 
   if (!course) return null;
 
@@ -1162,168 +1292,31 @@ export function IntegratedCourseViewer({
           {currentView === 'map' ? (
             /* Vue Map Intégrée */
             <>
-              {/* Header IDENTIQUE au SimpleDashboard */}
-              <header className="bg-white border-b border-gray-200 flex-shrink-0 z-40">
-                <div className="px-6 py-0">
-                  <div className="flex items-center justify-between relative">
-                    {/* Left - Logo */}
-                    <div className="flex items-center gap-4 flex-shrink-0">
-                      <button 
-                        onClick={() => setSidebarOpen(true)}
-                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
-                      >
-                        <Menu size={20} />
-                      </button>
-                      <div 
-                        className="flex items-center cursor-pointer"
-                        onClick={onClose}
-                        title="Retour au dashboard"
-                      >
-                        <div className="relative h-[84px] w-[500px]">
-                          <Image 
-                            src="/brand/logo-app.svg" 
-                            alt="Science Made Simple"
-                            fill
-                            className="object-contain object-left"
-                          />
-                        </div>
-                      </div>
-                    </div>
+              {/* GlobalHeader - Navigation unifiée */}
+              <GlobalHeader
+                activeSection="courses"
+                onNavigate={(sectionId) => {
+                  onClose();
+                  onNavigateToSection?.(sectionId);
+                }}
+                userName={user?.name || 'Utilisateur'}
+                userAvatar={user?.avatar}
+                userLevel={userXPProfile?.level || 1}
+                userXP={userXPProfile?.currentXP || 0}
+                isSubscribed={purchasedItems && purchasedItems.size > 0}
+                onOpenGuestPass={() => setShowGuestPassModal(true)}
+                onFinishSignup={onClose}
+                onOpenProfile={() => {
+                  onClose();
+                  onNavigateToSection?.('profile');
+                }}
+                onOpenSettings={() => {}}
+                onLogout={onClose}
+                themeColor="#48c6ed"
+              />
 
-                    {/* Widgets centrés au milieu de la page */}
-                    <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
-                      {/* Widget XP */}
-                      {userXPProfile && (
-                        <XPHeaderWidget
-                          profile={userXPProfile}
-                            onClick={() => setShowSocialFeed(true)}
-                        />
-                      )}
-
-                      {/* Fil Social */}
-                      <div data-tour="social-feed">
-                        <SocialFeedIcon 
-                          onClick={() => setShowSocialFeed(true)}
-                          className="text-gray-600 hover:text-gray-900"
-                        />
-                      </div>
-
-                      {/* Widget Social Unifié (Buddy) */}
-                      <UnifiedSocialWidget
-                        userId={user?.id || 'current_user'}
-                        onNavigateToCommunity={() => {
-                          onClose();
-                          onNavigateToSection?.('community');
-                        }}
-                        onNavigateToSection={(section) => {
-                          onClose();
-                          onNavigateToSection?.(section);
-                        }}
-                      />
-                    </div>
-
-                    {/* Right - Timer + Guest Pass + Finish Sign Up + Avatar */}
-                    <div className="flex items-center gap-4">
-                      {/* Timer - Style urgence */}
-                      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
-                        <Clock size={18} className="text-gray-700" />
-                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
-                      </div>
-
-                      {/* Bouton Guest Pass / Parrainage */}
-                      <button
-                        onClick={() => setShowGuestPassModal(true)}
-                        className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full transition-colors"
-                        title="Inviter des amis et gagner des heures gratuites"
-                      >
-                        <Gift size={18} />
-                        <span className="text-sm font-medium">Inviter</span>
-                      </button>
-
-                      {/* Finish Sign Up CTA */}
-                      <button
-                        onClick={() => {
-                          // Retourner au dashboard et ouvrir l'onboarding
-                          onClose();
-                        }}
-                        className="hidden md:block px-5 py-2.5 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-semibold rounded-full transition-colors text-sm"
-                      >
-                        Finish Sign Up
-                      </button>
-
-                      {/* Profil utilisateur avec initiale */}
-                      <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold">
-                        {user?.name?.charAt(0) || 'U'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </header>
-
-              {/* Contenu avec sidebar */}
-              <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar identique au SimpleDashboard - Hidden on mobile */}
-                <aside className={`hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col`}>
-                  <div className="p-6 flex-1 overflow-y-auto">
-                    <div className="space-y-2">
-                      {navigationItems.map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            if (item.isExternal && item.id === 'whatsapp') {
-                              window.open('https://wa.me/33123456789', '_blank');
-                            } else if (item.isActive) {
-                              // Déjà sur cette section
-                            } else {
-                            onClose(); // Fermer le viewer
-                            onNavigateToSection?.(item.id); // Naviguer vers la section
-                            }
-                          }}
-                          className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
-                            item.id === 'whatsapp'
-                              ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
-                              : item.isActive
-                              ? 'bg-black text-white'
-                              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                          }`}
-                        >
-                          <item.icon size={20} />
-                          <span className="font-medium">{item.label}</span>
-                          {item.hasNotification && (
-                            <span className="ml-auto w-2 h-2 bg-[#48c6ed] rounded-full"></span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Widgets en bas de la sidebar */}
-                  <div className="px-4 py-4 border-t border-gray-100 space-y-3">
-                    <DocumentUploadWidget floating={false} />
-                    <BoostersWidget floating={false} />
-                  </div>
-
-                  {/* Logo en bas de la sidebar */}
-                  <div className="p-6 border-t border-gray-100">
-                    <div className="relative h-[100px] w-full">
-                      <Image 
-                        src="/brand/sms-logo2.svg" 
-                        alt="Science Made Simple"
-                        fill
-                        className="object-contain object-left"
-                      />
-                    </div>
-                  </div>
-                </aside>
-
-                {/* Overlay mobile */}
-                {sidebarOpen && (
-                  <div 
-                    className="lg:hidden fixed inset-0 bg-black/50 z-20"
-                    onClick={() => setSidebarOpen(false)}
-                  />
-                )}
-
+              {/* Contenu principal - Map (sans sidebar) */}
+              <div className="flex flex-1 overflow-hidden pt-[70px] md:pt-[100px]">
                 {/* Contenu principal - Map */}
                 <main className="flex-1 overflow-y-auto">
                   {/* KPIs de progression */}
@@ -1332,73 +1325,8 @@ export function IntegratedCourseViewer({
                       <div className="flex items-center gap-2 md:gap-3">
                         <div className="flex-1 min-w-0">
                           <h2 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{course.title}</h2>
-                          <p className="text-xs md:text-base text-gray-600">Votre parcours d'apprentissage</p>
+                          <p className="text-sm md:text-base text-gray-600">Votre parcours d'apprentissage</p>
                         </div>
-                        {/* Bouton favori - à côté du titre */}
-                        <motion.button
-                          onClick={handleToggleFavorite}
-                          className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors group flex-shrink-0"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          title={isFavorite(course.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
-                        >
-                          <Heart 
-                            size={20} 
-                            className={`md:w-6 md:h-6 transition-colors ${
-                              isFavorite(course.id) 
-                                ? 'text-red-500 fill-red-500' 
-                                : 'text-gray-400 hover:text-red-400'
-                            }`}
-                          />
-                        </motion.button>
-                      </div>
-                      
-                      {/* Study Room Link */}
-                      <div className="mr-0 sm:mr-4">
-                        <button
-                          onClick={() => {
-                            console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
-                            
-                            if (courseStudyRoomInfo) {
-                              let roomToJoin = courseStudyRoomInfo.room;
-                              if (courseStudyRoomInfo.room.status === 'scheduled') {
-                                roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
-                              }
-                              
-                              const success = AdvancedStudyRoomService.joinStudyRoom(
-                                roomToJoin.id, 
-                                user?.id || 'user-default', 
-                                user?.name || 'Étudiant'
-                              );
-                              
-                              if (success) {
-                                setSelectedStudyRoom(roomToJoin);
-                              } else {
-                                alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
-                              }
-                            } else {
-                              onClose();
-                              if (onNavigateToSection) {
-                                onNavigateToSection('study-rooms');
-                              }
-                            }
-                          }}
-                          className="flex items-center gap-1.5 md:gap-2 transition-colors text-gray-900 hover:text-gray-700"
-                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Lancer une session d\'étude'}
-                        >
-                          <Users size={16} strokeWidth={2} className="md:w-[18px] md:h-[18px]" />
-                          <span className="text-xs md:text-sm font-medium">
-                            {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
-                          </span>
-                          
-                          {courseStudyRoomInfo?.isActive ? (
-                            <span className="px-1 md:px-1.5 py-0.5 bg-red-500 text-white text-[8px] md:text-[10px] font-bold uppercase rounded">
-                              Live
-                            </span>
-                          ) : (
-                            <span className="text-[#48c6ed]">+</span>
-                          )}
-                        </button>
                       </div>
                     </div>
                     
@@ -1419,15 +1347,15 @@ export function IntegratedCourseViewer({
                       <div className="mb-2">
                         <div className="flex items-center justify-between text-sm mb-1">
                           <span className="text-gray-600">Progression globale</span>
-                          <span className="font-semibold text-[#48c6ed]">{Math.round((lessons.filter(l => l.isCompleted).length / lessons.length) * 100)}% terminé</span>
+                          <span className="font-semibold text-gray-900">{Math.round((lessons.filter(l => l.isCompleted).length / lessons.length) * 100)}% terminé</span>
                         </div>
                         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-[#48c6ed] rounded-full transition-all"
+                            className="h-full bg-gray-900 rounded-full transition-all"
                             style={{ width: `${(lessons.filter(l => l.isCompleted).length / lessons.length) * 100}%` }}
                           />
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">{lessons.filter(l => l.isCompleted).length} sur {lessons.length} leçons terminées</p>
+                        <p className="text-sm text-gray-500 mt-1">{lessons.filter(l => l.isCompleted).length} sur {lessons.length} leçons terminées</p>
                       </div>
                     </div>
                     
@@ -1435,36 +1363,46 @@ export function IntegratedCourseViewer({
                     <div className="space-y-2">
                       {lessons.map((lesson, index) => {
                         const isCurrentLesson = lesson.isInProgress || (!lesson.isCompleted && index === lessons.findIndex(l => !l.isCompleted));
-                        const isLocked = !lesson.isCompleted && !isCurrentLesson && index > 0;
+                        // Mode essai: seule la première leçon est accessible, les autres sont en preview
+                        const isTrialMode = course?.isTrial === true;
+                        const isFirstLessonInTrial = isTrialMode && index === 0;
+                        const isTrialPreview = isTrialMode && index > 0;
+                        const isLocked = (!lesson.isCompleted && !isCurrentLesson && index > 0) || isTrialPreview;
                         
                         return (
                           <button
                             key={lesson.id}
                             onClick={() => {
-                              if (!isLocked) {
+                              if (!isLocked || isFirstLessonInTrial) {
                                 handleNodeClick(lesson);
                               }
                             }}
                             className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
                               selectedLessonForDetail?.id === lesson.id
                                 ? 'border-[#48c6ed] bg-[#48c6ed]/5'
-                                : isCurrentLesson
+                                : isCurrentLesson && !isTrialPreview
                                 ? 'border-[#48c6ed]/50 bg-white'
                                 : lesson.isCompleted
-                                ? 'border-green-200 bg-green-50/50'
+                                ? 'border-gray-300 bg-gray-50'
+                                : isTrialPreview
+                                ? 'border-orange-200 bg-orange-50/30'
                                 : 'border-gray-200 bg-white'
-                            } ${isLocked ? 'opacity-60' : ''}`}
+                            } ${isLocked && !isTrialPreview ? 'opacity-60' : ''}`}
                           >
                             <div className="flex items-center gap-3">
                               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                                 lesson.isCompleted
-                                  ? 'bg-green-500 text-white'
-                                  : isCurrentLesson
+                                  ? 'bg-gray-900 text-white'
+                                  : isCurrentLesson && !isTrialPreview
                                   ? 'bg-[#48c6ed] text-white'
+                                  : isTrialPreview
+                                  ? 'bg-gradient-to-br from-orange-400 to-orange-500 text-white'
                                   : 'bg-gray-200 text-gray-500'
                               }`}>
                                 {lesson.isCompleted ? (
                                   <Check size={18} />
+                                ) : isTrialPreview ? (
+                                  <Eye size={16} />
                                 ) : isLocked ? (
                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
@@ -1476,8 +1414,11 @@ export function IntegratedCourseViewer({
                               
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  {!isLocked && !lesson.isCompleted && (
+                                  {!isLocked && !lesson.isCompleted && !isTrialPreview && (
                                     <Play size={14} className="text-[#48c6ed] flex-shrink-0" />
+                                  )}
+                                  {isTrialPreview && (
+                                    <Eye size={14} className="text-orange-500 flex-shrink-0" />
                                   )}
                                   <h4 className="font-semibold text-gray-900 truncate">{lesson.title}</h4>
                                 </div>
@@ -1486,11 +1427,15 @@ export function IntegratedCourseViewer({
                               
                               <div className="flex-shrink-0">
                                 {lesson.isCompleted ? (
-                                  <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Terminé</span>
+                                  <span className="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">Terminé</span>
+                                ) : isTrialPreview ? (
+                                  <span className="text-sm font-medium text-orange-600 bg-gradient-to-r from-orange-100 to-orange-200 px-2 py-1 rounded-full">
+                                    Preview
+                                  </span>
                                 ) : isCurrentLesson ? (
-                                  <span className="text-xs font-medium text-[#48c6ed] bg-[#48c6ed]/10 px-2 py-1 rounded-full">En cours</span>
+                                  <span className="text-sm font-medium text-[#48c6ed] bg-[#48c6ed]/10 px-2 py-1 rounded-full">En cours</span>
                                 ) : isLocked ? (
-                                  <span className="text-xs font-medium text-gray-400">Verrouillée</span>
+                                  <span className="text-sm font-medium text-gray-400">Verrouillée</span>
                                 ) : null}
                               </div>
                             </div>
@@ -1498,6 +1443,24 @@ export function IntegratedCourseViewer({
                         );
                       })}
                     </div>
+                    
+                    {/* Message mode essai */}
+                    {course?.isTrial && (
+                      <div className="mt-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Eye size={18} className="text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Mode Essai</h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              La première leçon est entièrement accessible. Les autres leçons sont disponibles en preview.
+                              Utilise tes 10h gratuites pour débloquer plus de contenu !
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Bloc map avec fond personnalisable et scroll - Desktop only */}
@@ -1571,369 +1534,121 @@ export function IntegratedCourseViewer({
               </div>
             </>
           ) : selectedLesson ? (
-            /* Vue Leçon avec header SimpleDashboard */
+            /* Vue Leçon avec GlobalHeader */
             <>
-              {/* Header identique au SimpleDashboard */}
-              <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-                <div className="px-3 md:px-6 py-0">
-                  <div className="flex items-center justify-between relative">
-                    {/* Left - Logo */}
-                    <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-                      <button 
-                        onClick={() => setSidebarOpen(true)}
-                        className="cursor-target w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
-                      >
-                        <Menu size={20} />
-                      </button>
-                      
-                      <div 
-                        className="flex items-center cursor-pointer"
-                        onClick={onClose}
-                        title="Retour au dashboard"
-                      >
-                        <div className="relative h-[50px] w-[120px] md:h-[84px] md:w-[500px]">
-                          <Image 
-                            src="/brand/logo-app.svg" 
-                            alt="Science Made Simple"
-                            fill
-                            className="object-contain object-left"
-                          />
-                        </div>
-                        </div>
-                      </div>
-                    
-                    {/* Widgets centrés au milieu de la page */}
-                    <div className="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
-                      
-                      {/* Widget XP */}
-                      {userXPProfile && (
-                        <XPHeaderWidget
-                          profile={userXPProfile}
-                          onClick={() => {
-                            setShowSocialFeed(true);
-                          }}
-                        />
-                      )}
+              {/* GlobalHeader - Navigation unifiée */}
+              <GlobalHeader
+                activeSection="courses"
+                onNavigate={(sectionId) => {
+                  onClose();
+                  onNavigateToSection?.(sectionId);
+                }}
+                userName={user?.name || 'Utilisateur'}
+                userAvatar={user?.avatar}
+                userLevel={userXPProfile?.level || 1}
+                userXP={userXPProfile?.currentXP || 0}
+                isSubscribed={purchasedItems && purchasedItems.size > 0}
+                onOpenGuestPass={() => setShowGuestPassModal(true)}
+                onFinishSignup={onClose}
+                onOpenProfile={() => {
+                  onClose();
+                  onNavigateToSection?.('profile');
+                }}
+                onOpenSettings={() => {}}
+                onLogout={onClose}
+                themeColor="#48c6ed"
+              />
 
-                      {/* Fil Social */}
-                      <div data-tour="social-feed">
-                        <SocialFeedIcon 
-                          onClick={() => {
-                            setShowSocialFeed(true);
-                          }}
-                          className="text-gray-600 hover:text-gray-900"
-                        />
-                    </div>
-                    
-                      {/* Widget Social Unifié (Buddy) */}
-                      <UnifiedSocialWidget
-                        userId={user?.id || 'current_user'}
-                        onNavigateToCommunity={() => {
-                          onClose();
-                          onNavigateToSection?.('community');
-                        }}
-                        onNavigateToSection={(section) => {
-                          onClose();
-                          onNavigateToSection?.(section);
-                        }}
-                      />
-                    </div>
-
-                    {/* Mobile widgets */}
-                    <div className="flex md:hidden items-center gap-2">
-                      {userXPProfile && (
-                        <button
-                          onClick={() => setShowSocialFeed(true)}
-                          className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full"
-                        >
-                          <Zap size={14} className="text-yellow-500" />
-                          <span className="text-xs font-bold text-gray-900">{userXPProfile.totalXP}</span>
-                        </button>
-                      )}
-                      <SocialFeedIcon 
-                        onClick={() => setShowSocialFeed(true)}
-                        className="text-gray-600 hover:text-gray-900"
-                      />
-                    </div>
-
-                    {/* Right - Timer + Guest Pass + Finish Sign Up + Avatar */}
-                    <div className="flex items-center gap-2 md:gap-4">
-                      {/* Timer - Style urgence */}
-                      <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
-                        <Clock size={18} className="text-gray-700" />
-                        <span className="text-base font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
-                      </div>
-
-                      {/* Bouton Guest Pass / Parrainage */}
-                        <button
-                        onClick={() => setShowGuestPassModal(true)}
-                        className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full transition-colors"
-                        title="Inviter des amis et gagner des heures gratuites"
-                        >
-                        <Gift size={18} />
-                        <span className="text-sm font-medium">Inviter</span>
-                        </button>
-                        
-                      {/* Finish Sign Up CTA */}
-                      <button
-                        onClick={() => {
-                          onClose();
-                          onNavigateToSection?.('planning');
-                        }}
-                        className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
-                      >
-                        Finish Sign Up
-                      </button>
-
-                      {/* Profil utilisateur avec initiale */}
-                      <div className="w-9 h-9 md:w-10 md:h-10 bg-black rounded-full flex items-center justify-center text-white font-bold text-sm md:text-base">
-                        {user?.name?.charAt(0) || 'U'}
-                        </div>
-                      </div>
-                        </div>
-                </div>
-              </header>
-
-              {/* Contenu avec sidebar - Padding pour header fixe */}
-              <div className="flex flex-1 overflow-hidden pt-[60px] md:pt-[84px]">
-                {/* Sidebar identique au SimpleDashboard - Hidden on mobile */}
-                <nav className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed left-0 top-[85px] h-[calc(100vh-85px)] z-30">
-                  <div className="p-6 flex-1 overflow-y-auto">
-                    <div className="space-y-2">
-                      {navigationItems.map((item) => {
-                        const IconComponent = item.icon;
-                        const isActive = item.isActive;
-                        
-                        return (
-                        <button
-                            key={item.id}
-                            onClick={() => {
-                              if (item.isExternal && item.id === 'whatsapp') {
-                                window.open('https://wa.me/33123456789', '_blank');
-                              } else {
-                                onClose(); // Fermer le viewer
-                                onNavigateToSection?.(item.id); // Naviguer vers la section
-                              }
-                            }}
-                            className={`cursor-target w-full flex items-center gap-3 p-3 rounded-lg transition-all relative group ${
-                              item.id === 'whatsapp'
-                                ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
-                                : isActive
-                                ? 'bg-black text-white' 
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                          >
-                            <div className="relative">
-                              <IconComponent size={20} />
-                              {/* Badge de notification */}
-                              {item.hasNotification && (
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                              )}
-                            </div>
-                            <span className="font-medium">{item.label}</span>
-                        </button>
-                        );
-                      })}
-                          </div>
-                  </div>
-
-                  {/* Widgets + Logo en bas de la sidebar */}
-                  <div className="mt-auto border-t border-gray-100">
-                    {/* Mini-zone Upload Documents + Boosters */}
-                    <div className="px-4 py-4 space-y-2">
-                      <DocumentUploadWidget 
-                        floating={false}
-                        ownedPrograms={Array.from(purchasedItems).filter(item => 
-                          typeof item === 'string' && item.startsWith('pack-')
-                        ).map(item => item.replace('pack-', ''))}
-                        onCoursesDetected={(courses) => {
-                          console.log('📚 Nouveaux cours détectés:', courses);
-                          courses.forEach(course => {
-                            if (course.isOwned) {
-                              console.log('✅ Cours ajouté aux favoris:', course.title);
-                            } else {
-                              console.log('🔒 Cours ajouté (locked):', course.title);
-                            }
-                          });
-                        }}
-                      />
-                      <BoostersWidget floating={false} />
-                        </div>
-                    
-                    {/* Logo */}
-                    <div className="p-6 pt-2">
-                      <div className="relative h-[100px] w-full">
-                        <Image 
-                          src="/brand/sms-logo2.svg" 
-                          alt="Science Made Simple"
-                          fill
-                          className="object-contain object-left"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </nav>
-
-                {/* Sidebar mobile */}
-                <AnimatePresence>
-                  {sidebarOpen && (
-                    <motion.div
-                      initial={{ x: '-100%' }}
-                      animate={{ x: 0 }}
-                      exit={{ x: '-100%' }}
-                      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                      className="md:hidden fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-40 overflow-y-auto"
-                    >
-                  <div className="p-6">
-                        <div className="flex items-center justify-between mb-6">
-                          <h2 className="text-lg font-bold text-gray-900">Menu</h2>
-                          <button
-                            onClick={() => setSidebarOpen(false)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100"
-                          >
-                            <X size={20} className="text-gray-500" />
-                          </button>
-                        </div>
-                    <div className="space-y-2">
-                          {navigationItems.map((item) => {
-                            const IconComponent = item.icon;
-                            const isActive = item.isActive;
-                            
-                            return (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            if (item.isExternal && item.id === 'whatsapp') {
-                              window.open('https://wa.me/33123456789', '_blank');
-                                    setSidebarOpen(false);
-                            } else {
-                                    onClose();
-                                    onNavigateToSection?.(item.id);
-                                    setSidebarOpen(false);
-                            }
-                          }}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all relative ${
-                            item.id === 'whatsapp'
-                                    ? 'bg-[#25D366] text-white hover:bg-[#20BA5A]'
-                                    : isActive
-                                    ? 'bg-black text-white' 
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                }`}
-                              >
-                                <div className="relative">
-                                  <IconComponent size={20} />
-                          {item.hasNotification && (
-                                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                          )}
-                                </div>
-                                <span className="font-medium">{item.label}</span>
-                        </button>
-                            );
-                          })}
-                    </div>
-                  </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Overlay mobile */}
-                {sidebarOpen && (
-                  <div 
-                    className="md:hidden fixed inset-0 bg-black/50 z-30"
-                    onClick={() => setSidebarOpen(false)}
-                  />
-                )}
-
+              {/* Contenu principal leçon - Layout Web 3.0 (sans sidebar) */}
+              <div className="flex flex-1 overflow-hidden pt-[80px] md:pt-[130px]">
                 {/* Contenu principal leçon - Layout Web 3.0 */}
-                <main className="flex-1 md:ml-64 overflow-hidden">
-                  {/* Header avec breadcrumb */}
-                  <div className="bg-white border-b border-gray-100 px-4 md:px-8 py-3 md:py-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex items-center gap-2 md:gap-4">
+                <main className="flex-1 overflow-y-auto">
+                  {/* Header avec breadcrumb et titre leçon - Fixe au scroll */}
+                  <div className="bg-white border-b border-gray-100 px-4 md:px-8 py-4 md:py-6 sticky top-0 z-20">
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Left: Retour + Titre */}
+                      <div className="flex items-center gap-4 min-w-0">
                         <button
-                          onClick={handleBackToMap}
-                          className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                          onClick={onClose}
+                          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors flex-shrink-0"
                         >
-                          <ArrowLeft size={14} className="md:w-4 md:h-4" />
+                          <ArrowLeft size={16} />
                           <span className="hidden sm:block">Retour au parcours</span>
                         </button>
-                        <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
-                        <div className="flex-1 min-w-0">
-                          <h1 className="text-base md:text-xl font-bold text-gray-900 truncate">{selectedLesson.title}</h1>
-                          <p className="text-xs md:text-sm text-gray-600">Leçon {selectedLesson.order} • {course?.title}</p>
+                        <div className="hidden sm:block h-6 w-px bg-gray-200 flex-shrink-0"></div>
+                        <div className="min-w-0">
+                          <h1 className="font-title font-bold text-gray-900 truncate" style={{ fontSize: '48px' }}>{selectedLesson.title}</h1>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2 md:gap-3 justify-end">
-                        {/* Bouton favori dans la vue leçon */}
-                        <motion.button
-                          onClick={handleToggleFavorite}
-                          className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors group"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          title={isFavorite(course.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
-                        >
-                          <Heart 
-                            size={18} 
-                            className={`md:w-5 md:h-5 transition-colors ${
-                              isFavorite(course.id) 
-                                ? 'text-red-500 fill-red-500' 
-                                : 'text-gray-400 hover:text-red-400'
-                            }`}
-                          />
-                        </motion.button>
-                        
-                        {/* Study Room Link */}
+
+                      {/* Right: Navigation rapide - Icônes avec badges */}
+                      <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+                        {/* Study Rooms - Badge LIVE */}
                         <button
                           onClick={() => {
-                            console.log('🎯 Bouton Study Room cliqué pour cours:', course?.id);
-                            
-                            if (courseStudyRoomInfo) {
-                              let roomToJoin = courseStudyRoomInfo.room;
-                              if (courseStudyRoomInfo.room.status === 'scheduled') {
-                                roomToJoin = { ...courseStudyRoomInfo.room, status: 'live', actualStartTime: new Date() };
-                              }
-                              
-                              const success = AdvancedStudyRoomService.joinStudyRoom(
-                                roomToJoin.id, 
-                                user?.id || 'user-default', 
-                                user?.name || 'Étudiant'
-                              );
-                              
-                              if (success) {
-                                setSelectedStudyRoom(roomToJoin);
-                              } else {
-                                alert('Impossible de rejoindre la Study Room. Elle est peut-être pleine.');
-                              }
-                            } else {
-                              onClose();
-                              if (onNavigateToSection) {
-                                onNavigateToSection('study-rooms');
-                              }
-                            }
+                            onClose();
+                            onNavigateToSection?.('study-rooms');
                           }}
-                          className="flex items-center gap-1 md:gap-2 transition-colors text-gray-900 hover:text-gray-700"
-                          title={courseStudyRoomInfo?.isActive ? `${courseStudyRoomInfo.participantCount} participant(s) dans la Study Room` : 'Lancer une session d\'étude'}
+                          className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Study Rooms"
                         >
-                          <Users size={14} strokeWidth={2} className="md:w-4 md:h-4" />
-                          <span className="text-xs md:text-sm font-medium hidden sm:inline">
-                            {courseStudyRoomInfo?.isActive ? 'Rejoindre' : 'Study Room'}
+                          <Video size={20} />
+                          {/* Badge LIVE pulsant */}
+                          <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center">
+                            <span className="absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75 animate-ping"></span>
+                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
                           </span>
-                          
-                          {courseStudyRoomInfo?.isActive ? (
-                            <span className="px-1 md:px-1.5 py-0.5 bg-red-500 text-white text-[8px] md:text-[10px] font-bold uppercase rounded">
-                              Live
-                            </span>
-                          ) : (
-                            <span className="text-[#48c6ed] text-sm">+</span>
-                          )}
+                        </button>
+
+                        {/* Planning - Badge nombre de sessions aujourd'hui */}
+                        <button
+                          onClick={() => {
+                            onClose();
+                            onNavigateToSection?.('planning');
+                          }}
+                          className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Planning"
+                        >
+                          <Calendar size={20} />
+                          {/* Badge nombre */}
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#48c6ed] text-white text-[10px] font-bold rounded-full px-1">
+                            3
+                          </span>
+                        </button>
+
+                        {/* Training */}
+                        <button
+                          onClick={() => {
+                            onClose();
+                            onNavigateToSection?.('training');
+                          }}
+                          className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Training Club"
+                        >
+                          <Target size={20} />
+                        </button>
+
+                        {/* Social Club - Badge messages non lus */}
+                        <button
+                          onClick={() => {
+                            onClose();
+                            onNavigateToSection?.('community');
+                          }}
+                          className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Social Club"
+                        >
+                          <Users size={20} />
+                          {/* Badge messages */}
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#48c6ed] text-white text-[10px] font-bold rounded-full px-1">
+                            12
+                          </span>
                         </button>
                       </div>
                     </div>
                   </div>
 
                   {/* Layout principal - Cinéma + Sidebar */}
-                  <div className="flex bg-gray-50 overflow-hidden relative" style={{ height: 'calc(100vh - 120px)' }}>
+                  <div className="flex bg-white relative" style={{ height: 'calc(100vh - 130px)' }}>
                     {/* Bouton mobile pour afficher les leçons */}
                     <button
                       onClick={() => setShowMobileLessonNav(true)}
@@ -1948,15 +1663,15 @@ export function IntegratedCourseViewer({
                       {showMobileLessonNav && (
                         <>
                           {/* Overlay */}
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="lg:hidden fixed inset-0 bg-black/50 z-40"
                             onClick={() => setShowMobileLessonNav(false)}
                           />
                           {/* Panel */}
-                          <motion.div
+                              <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
@@ -1971,7 +1686,7 @@ export function IntegratedCourseViewer({
                               >
                                 <X size={20} className="text-gray-500" />
                               </button>
-                            </div>
+                                  </div>
                             <div className="p-4 space-y-4">
                               <LessonNavigator
                                 course={course}
@@ -1994,943 +1709,272 @@ export function IntegratedCourseViewer({
                                 weeklyQuestions={37}
                                 isVeryActive={true}
                               />
-                            </div>
-                          </motion.div>
+                                </div>
+                              </motion.div>
                         </>
                       )}
                     </AnimatePresence>
 
-                    {/* Zone vidéo principale - Cinéma */}
-                    <div className="flex-1 p-3 md:p-8 overflow-y-auto">
-                      <div className="flex flex-col">
-                        {/* Lecteur vidéo immersif */}
-                        <div className="aspect-video bg-black rounded-xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl mb-4 md:mb-6">
+                    {/* ============================================================ */}
+                    {/* ZONE CENTRALE - Vidéo + Tabs contextuels */}
+                    {/* ============================================================ */}
+                    <div className="flex-1 p-4 md:p-6 bg-white overflow-y-auto">
+                      <div className="flex flex-col w-full">
+                        
+                        {/* ZONE 1: Lecteur vidéo avec widgets flottants */}
+                        <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-xl" style={{ aspectRatio: '16/8', maxHeight: 'calc(100vh - 320px)' }}>
                           <VideoWithQuiz 
-                            videoUrl={selectedLesson.videoUrl}
-                            questions={[]} // Utilise les questions par défaut du composant
+                            videoUrl={selectedLesson.videoUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ"}
+                            questions={[]}
                             onQuizComplete={(score) => {
                               console.log(`Quiz terminé avec un score de ${score}`);
-                              // Marquer la leçon comme terminée si score suffisant
-                              if (score >= 0.7) { // 70% minimum
+                              if (score >= 0.7) {
                                 console.log('Leçon terminée avec succès !');
                               }
                             }}
                           />
-                        </div>
-
-
-                        {/* Détails de la leçon sous la vidéo */}
-                        <div className="space-y-4 md:space-y-8 pb-16">
-                          {/* Bento Grid - Ressources de la leçon */}
-                          <div className="space-y-3 md:space-y-4">
-                            {/* Bento Grid Layout avec ordre dynamique */}
-                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-3 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
-                              
-                              {/* Card 1: Description - Medium (spans 3 columns, 1 row) */}
-                            <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'description' ? null : 'description')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'description' 
-                                    ? 'lg:col-span-6 lg:row-span-2' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'description' ? -1 : 0,
-                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(51, 65, 85, 0.15)'
+                          
+                          {/* Widgets flottants - Bord droit */}
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
+                            {[
+                              { id: 'essentials', icon: BookOpen, label: 'Essentiels' },
+                              { id: 'quiz', icon: Brain, label: 'Quiz' },
+                              { id: 'qa', icon: HelpCircle, label: 'Q&A' },
+                              { id: 'resources', icon: FileText, label: 'Ressources' },
+                              { id: 'notes', icon: MessageSquare, label: 'Notes' }
+                            ].map((widget) => (
+                              <button
+                                key={widget.id}
+                                onClick={() => {
+                                  const newPanel = activeContextPanel === widget.id ? null : widget.id;
+                                  setActiveContextPanel(newPanel);
+                                  // Scroll vers le contenu si on ouvre un panneau
+                                  if (newPanel) {
+                                    setTimeout(() => {
+                                      const element = document.getElementById('context-panel-content');
+                                      if (element) {
+                                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                      }
+                                    }, 100);
+                                  }
                                 }}
+                                className="group relative flex items-center justify-end"
                               >
-                                <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-16 -mb-16" />
+                                {/* Label - UNIQUEMENT visible au hover, couleur thème */}
+                                <span className={`pointer-events-none absolute right-full mr-3 px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-opacity duration-200 ${
+                                  activeContextPanel === widget.id 
+                                    ? 'bg-[#48c6ed] text-white opacity-100' 
+                                    : 'bg-[#48c6ed] text-white opacity-0 group-hover:opacity-100 shadow-lg'
+                                }`}>
+                                  {widget.label}
+                                </span>
                                 
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'description' && (
-                                  <div className="relative h-full flex flex-col">
-                                    <div className="flex items-center gap-3 mb-3">
-                                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-500 rounded-xl flex items-center justify-center shadow-lg">
-                                        <BookOpen size={18} className="text-white" />
-                                      </div>
-                                      <div>
-                                        <h3 className="font-bold text-gray-900">Description</h3>
-                                        <p className="text-[10px] text-gray-600">Vue d'ensemble</p>
-                                      </div>
-                                    </div>
-                                    <p className="text-xs text-gray-600 opacity-60 line-clamp-3">
-                                      {selectedLesson?.description || "Découvrez les concepts clés et l'approche pédagogique de cette leçon..."}
-                                    </p>
-                                    <div className="absolute bottom-2 right-2 text-xs text-[#48c6ed] font-semibold flex items-center gap-1">
-                                      Lire plus
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                                      </motion.div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'description' && (
-                                  <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full overflow-y-auto"
-                            >
-                              <div className="flex items-center gap-3 mb-4">
-                                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-sky-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-                                        <BookOpen size={20} className="text-white" />
+                                {/* Icône */}
+                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                                  activeContextPanel === widget.id 
+                                    ? 'bg-[#48c6ed] text-white' 
+                                    : 'bg-white/10 border border-white/20 text-white/70 group-hover:bg-[#48c6ed] group-hover:text-white group-hover:border-[#48c6ed]'
+                                }`}>
+                                  <widget.icon size={18} />
                                 </div>
-                                      <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 bg-clip-text text-transparent">Description de la leçon</h3>
-                              </div>
-                                    <p className="text-gray-700 leading-relaxed border-l-4 border-[#48c6ed] pl-4">
-                                      {selectedLesson?.description || "Cette leçon couvre les fondamentaux essentiels du sujet. Vous apprendrez à maîtriser les concepts de base et à les appliquer dans des situations pratiques."}
-                                    </p>
-                                  </motion.div>
-                                )}
-                            </motion.div>
-
-                              {/* Card 2: Objectifs d'apprentissage - Medium (spans 3 columns, 1 row) */}
-                              <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'objectives' ? null : 'objectives')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'objectives' 
-                                    ? 'lg:col-span-6 lg:row-span-2' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'objectives' ? -1 : 1,
-                                  background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.05) 0%, rgba(100, 116, 139, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(71, 85, 105, 0.15)'
-                                }}
-                              >
-                                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-16 -mt-16" />
-                                
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'objectives' && (
-                                  <div className="relative h-full flex flex-col">
-                                    <div className="flex items-center gap-3 mb-3">
-                                      <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg">
-                                        <Target size={18} className="text-white" />
-                              </div>
-                                      <div>
-                                        <h3 className="font-bold text-gray-900">Objectifs</h3>
-                                        <p className="text-[10px] text-gray-600">{selectedLesson?.objectives?.length || 0} points clés</p>
-                                      </div>
-                                    </div>
-                                    <div className="flex-1 flex items-center opacity-60">
-                                      <div className="space-y-1.5">
-                                        <div className="flex items-center gap-2">
-                                          <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-800">1</div>
-                                          <span className="text-xs text-gray-600">Maîtriser les concepts...</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-800">2</div>
-                                          <span className="text-xs text-gray-600">Appliquer dans la pratique...</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="absolute bottom-2 right-2 text-xs text-gray-900 font-semibold flex items-center gap-1">
-                                      Voir tous
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                            </motion.div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'objectives' && (
-                            <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full overflow-y-auto"
-                              >
-                                <div className="flex items-center gap-3 mb-4">
-                                      <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg shadow-gray-200">
-                                        <Target size={20} className="text-white" />
-                                  </div>
-                                      <h3 className="text-xl font-bold text-gray-900">Objectifs d'apprentissage</h3>
-                                </div>
-                                    <div className="space-y-4">
-                                      {(selectedLesson?.objectives || [
-                                        "Comprendre les concepts fondamentaux",
-                                        "Savoir appliquer les méthodes dans des cas pratiques",
-                                        "Résoudre des exercices de complexité croissante"
-                                      ]).map((objective, index) => (
-                                        <div key={index} className="flex items-start gap-3 border-l-4 border-[#48c6ed] pl-3">
-                                          <div className="w-7 h-7 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5 shadow-md">
-                                        {index + 1}
-                                      </div>
-                                          <span className="text-base text-gray-700 leading-relaxed">{objective}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </motion.div>
-                            )}
-                              </motion.div>
-
-                              {/* Card 3: Essentiels à retenir - Large (spans 4 columns, 2 rows) */}
-                            <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'essentials' ? null : 'essentials')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-4 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'essentials' 
-                                    ? 'lg:col-span-6 lg:row-span-3' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'essentials' ? -1 : 2,
-                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(51, 65, 85, 0.15)'
-                                }}
-                              >
-                                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-20 -mt-20" />
-                                
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'essentials' && (
-                                  <div className="relative h-full flex flex-col">
-                              <div className="flex items-center gap-3 mb-4">
-                                      <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
-                                        <BookOpen size={20} className="text-white" />
-                                </div>
-                                      <div>
-                                        <h3 className="text-lg font-bold text-gray-900">Essentiels à retenir</h3>
-                                        <p className="text-xs text-gray-600">Mindmap des concepts clés</p>
-                              </div>
-                                  </div>
-                                    
-                                    {/* Mini preview */}
-                                    <div className="flex-1 flex items-center justify-center opacity-60">
-                                      <div className="text-center">
-                                        <div className="flex items-center gap-2 mb-2 justify-center">
-                                          <div className="w-8 h-8 bg-gray-300 rounded-full" />
-                                          <span className="text-xs font-medium text-gray-700">Concept principal</span>
-                              </div>
-                                        <div className="grid grid-cols-2 gap-2 mt-3">
-                                          <div className="text-xs text-gray-600 bg-white/60 rounded-lg p-2">Formules</div>
-                                          <div className="text-xs text-gray-600 bg-white/60 rounded-lg p-2">Applications</div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="absolute bottom-4 right-4 text-xs text-gray-600 font-semibold flex items-center gap-1">
-                                      Voir plus
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                            </motion.div>
+                              </button>
+                            ))}
                           </div>
                                   </div>
-                                )}
-
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'essentials' && (
+                                    
+                        {/* ZONE 2: Contenu contextuel - EN DESSOUS de la vidéo */}
+                        <div id="context-panel-content" className="mt-6">
+                          
+                          {/* Contenu du tab actif */}
+                        <AnimatePresence mode="wait">
+                          {activeContextPanel && (
                                   <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full flex flex-col"
-                                  >
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.2 }}
-                              className="h-full flex flex-col"
+                              key={activeContextPanel}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm"
                             >
-                              {/* Header */}
-                              <div className="flex items-center justify-between mb-8">
-                                <div className="flex items-center gap-4">
-                                  <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
-                                    <BookOpen size={18} className="text-white" />
-                                </div>
+                              {/* Panneau Essentiels */}
+                              {activeContextPanel === 'essentials' && (
                                   <div>
-                                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Essentiels à retenir</h3>
-                                    <p className="text-sm text-gray-500">Concepts clés de cette leçon</p>
-                              </div>
-                                </div>
-                                <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
-                                  <span className="text-sm font-medium text-gray-700">5 points clés</span>
-                                </div>
-                              </div>
+                                  <p className="text-sm text-gray-500 mb-6">Les concepts clés de cette leçon</p>
                             
-                              {/* Mindmap visuelle - Web 3.0 Apple Vision Style */}
-                              <div className="flex-1 flex flex-col gap-2.5 overflow-hidden">
-                                {/* Concept central - Glassmorphic Hero */}
-                                <motion.div
-                                  initial={{ scale: 0.98, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                                  className="relative bg-gradient-to-br from-gray-900/95 via-gray-900/90 to-gray-800/95 backdrop-blur-2xl rounded-3xl p-5 overflow-hidden group border border-white/10"
-                                  style={{
-                                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)'
-                                  }}
-                                >
-                                  {/* Ambient glow */}
-                                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-gray-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                  
-                                  <div className="relative flex items-start gap-4">
-                                    <motion.div 
-                                      whileHover={{ scale: 1.05, rotate: 5 }}
-                                      className="w-12 h-12 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl flex items-center justify-center shrink-0 border border-white/10"
-                                    >
-                                      <Zap size={24} className="text-white" strokeWidth={2} />
-                                    </motion.div>
-                                    <div className="flex-1 space-y-1.5">
-                                      <h4 className="text-[17px] font-semibold tracking-tight !text-white" style={{ letterSpacing: '-0.02em' }}>
-                                        Loi de Gauss - Concept fondamental
-                                      </h4>
-                                      <p className="text-[14px] leading-snug font-light !text-white/85">
-                                        Le flux électrique à travers une surface fermée est proportionnel à la charge totale contenue à l'intérieur. Cette loi est fondamentale pour résoudre les problèmes de symétrie en électrostatique.
+                                  {/* Concept central */}
+                                  <div className="bg-gray-900 rounded-2xl p-5 mb-4">
+                                    <div className="flex items-start gap-4">
+                                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <Zap size={20} className="text-white" />
+                                </div>
+                                      <div>
+                                        <h4 className="text-lg font-semibold text-white mb-2">Loi de Gauss - Concept fondamental</h4>
+                                        <p className="text-white/80 leading-relaxed">
+                                          Le flux électrique à travers une surface fermée est proportionnel à la charge totale contenue à l'intérieur.
                                       </p>
                                     </div>
                               </div>
-                            </motion.div>
-
-                                {/* Grid 2x2 - Glassmorphic cards */}
-                                <div className="grid grid-cols-2 gap-2.5 flex-1 min-h-0">
-                                  {/* Formules */}
-                            <motion.div
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.1, duration: 0.4 }}
-                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
-                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
-                                  >
-                                    <div className="flex items-center gap-2.5 mb-3">
-                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                                        <Calculator size={16} className="text-white" strokeWidth={2.5} />
                                 </div>
-                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Formules</span>
-                              </div>
-                                    <div className="space-y-1.5 flex-1">
-                                      <p className="text-[13px] font-mono text-gray-900 bg-gray-900/5 px-2.5 py-1.5 rounded-lg">Φ = Q/ε₀</p>
-                                      <p className="text-[13px] font-mono text-gray-900 bg-gray-900/5 px-2.5 py-1.5 rounded-lg">∮ E⃗·dA⃗ = Q/ε₀</p>
-                                  </div>
-                                  </motion.div>
-
-                                  {/* Applications */}
-                                  <motion.div
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.15, duration: 0.4 }}
-                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
-                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
-                                  >
-                                    <div className="flex items-center gap-2.5 mb-3">
-                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                                        <Lightbulb size={16} className="text-white" strokeWidth={2.5} />
-                                </div>
-                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Applications</span>
-                                  </div>
-                                    <ul className="space-y-2 flex-1">
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Sphère chargée
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Cylindre infini
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Plan infini chargé
-                                      </li>
-                                    </ul>
-                                  </motion.div>
 
                                   {/* Points clés */}
-                                  <motion.div
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.2, duration: 0.4 }}
-                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
-                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
-                                  >
-                                    <div className="flex items-center gap-2.5 mb-3">
-                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                                        <Target size={16} className="text-white" strokeWidth={2.5} />
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                      <h5 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                        <Calculator size={16} className="text-gray-600" />
+                                        Formules clés
+                                      </h5>
+                                      <p className="text-sm text-gray-600">Φ = ∮ E · dA = Q/ε₀</p>
                                 </div>
-                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">Points clés</span>
+                                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                      <h5 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                        <Target size={16} className="text-gray-600" />
+                                        Applications
+                                      </h5>
+                                      <p className="text-sm text-gray-600">Symétries sphériques, cylindriques, planes</p>
                                   </div>
-                                    <ul className="space-y-2 flex-1">
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Symétrie essentielle
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Surface de Gauss
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Orientation du champ
-                                      </li>
-                                    </ul>
-                                  </motion.div>
-
-                                  {/* Examen */}
-                                  <motion.div
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.25, duration: 0.4 }}
-                                    className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-gray-200/80 hover:border-gray-300 hover:bg-white/90 transition-all duration-300 group flex flex-col"
-                                    style={{ boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.04)' }}
-                                  >
-                                    <div className="flex items-center gap-2.5 mb-3">
-                                      <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                                        <CheckCircle size={16} className="text-white" strokeWidth={2.5} />
                                 </div>
-                                      <span className="font-semibold text-gray-900 tracking-tight text-[14px]">À l'examen</span>
                               </div>
-                                    <ul className="space-y-2 flex-1">
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Choix de la surface
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Calcul du flux
-                                      </li>
-                                      <li className="text-[14px] text-gray-700 flex items-center gap-2 font-light">
-                                        <div className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0" />
-                                        Vérification symétrie
-                                      </li>
-                                    </ul>
-                            </motion.div>
-                          </div>
-                              </div>
-                          </motion.div>
-                                  </motion.div>
-                                )}
-                            </motion.div>
-
-                              {/* Card 2: Exercices Collaboratifs - Medium (spans 2 columns, 2 rows) */}
-                            <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'exercises' ? null : 'exercises')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-2 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'exercises' 
-                                    ? 'lg:col-span-6 lg:row-span-3' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'exercises' ? -1 : 3,
-                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(51, 65, 85, 0.15)'
-                                }}
-                              >
-                                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-16 -mt-16" />
-                                
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'exercises' && (
-                                  <div className="relative h-full flex flex-col">
-                                    <div className="flex items-center gap-2 mb-3">
-                                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                        <Users size={18} className="text-white" />
-                                </div>
-                                      <div>
-                                        <h3 className="font-bold text-gray-900">Exercices pratiques</h3>
-                                        <p className="text-[10px] text-gray-600">Collaboration +10XP</p>
-                              </div>
-                                  </div>
-                                    
-                                    <div className="flex-1 flex flex-col justify-center space-y-2 opacity-60">
-                                      <div className="flex items-center gap-2 bg-white/60 rounded-lg p-2">
-                                        <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center flex-shrink-0">
-                                          <CheckCircle size={12} className="text-gray-700" />
-                                </div>
-                                        <span className="text-[10px] font-medium text-gray-700">16 résolus</span>
-                                  </div>
-                                      <div className="flex items-center gap-2 bg-white/60 rounded-lg p-2">
-                                        <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center flex-shrink-0">
-                                          <HelpCircle size={12} className="text-gray-700" />
-                                </div>
-                                        <span className="text-[10px] font-medium text-gray-700">8 en attente 🔥</span>
-                                  </div>
-                                </div>
-                                    
-                                    <div className="absolute bottom-4 right-4 text-xs text-[#48c6ed] font-semibold flex items-center gap-1">
-                                      Contribuer
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                            </motion.div>
-                          </div>
-                                  </div>
                                 )}
 
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'exercises' && (
-                                  <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full flex flex-col"
-                                  >
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.2 }}
-                              className="h-full flex flex-col"
-                          >
-                              {/* Header */}
-                              <div className="flex items-center justify-between mb-8">
-                              <div className="flex items-center gap-4">
-                                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <Users size={18} className="text-white" />
-                              </div>
+                              {/* Panneau Quiz */}
+                              {activeContextPanel === 'quiz' && (
                                   <div>
-                                    <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Exercices pratiques</h3>
-                                    <p className="text-sm text-gray-500">Collaboration étudiante récompensée</p>
-                              </div>
-                                  </div>
-                                <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
-                                  <Sparkles size={14} className="text-gray-700" />
-                                  <span className="text-sm font-medium text-gray-700">+10 XP/solution</span>
+                                  <div className="flex items-center justify-between mb-6">
+                                        <p className="text-sm text-gray-500">Teste tes connaissances</p>
+                                    <div className="flex items-center gap-2 bg-[#48c6ed]/10 px-3 py-1.5 rounded-lg">
+                                      <Trophy size={16} className="text-[#48c6ed]" />
+                                      <span className="text-sm font-medium text-[#48c6ed]">+50 XP</span>
                                 </div>
                             </div>
                             
-                              {/* Statistiques de contribution */}
-                              <div className="grid grid-cols-3 gap-3 mb-6">
-                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                  <p className="text-2xl font-semibold text-gray-900 mb-1">24</p>
-                                  <p className="text-xs text-gray-600 font-medium">Exercices totaux</p>
+                                  <div className="grid grid-cols-3 gap-4 mb-6">
+                                    <div className="text-center p-4 bg-gray-50 rounded-xl">
+                                      <p className="text-2xl font-bold text-gray-900">5</p>
+                                      <p className="text-sm text-gray-600">Questions</p>
                                 </div>
-                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                  <p className="text-2xl font-semibold text-gray-900 mb-1">8</p>
-                                  <p className="text-xs text-gray-600 font-medium">À résoudre</p>
+                                    <div className="text-center p-4 bg-gray-50 rounded-xl">
+                                      <p className="text-2xl font-bold text-gray-900">10</p>
+                                      <p className="text-sm text-gray-600">Minutes</p>
                                   </div>
-                                <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                  <p className="text-2xl font-semibold text-gray-900 mb-1">47</p>
-                                  <p className="text-xs text-gray-600 font-medium">Contributions</p>
+                                    <div className="text-center p-4 bg-gray-50 rounded-xl">
+                                      <p className="text-2xl font-bold text-gray-900">70%</p>
+                                      <p className="text-sm text-gray-600">Pour réussir</p>
                                 </div>
                               </div>
 
-                              {/* Exercices disponibles - Grid 2 colonnes */}
-                              <div className="flex-1 grid grid-cols-2 gap-3">
-                                {/* Exercice résolu */}
-                                <div className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                      <CheckCircle size={16} className="text-gray-700" />
-                                </div>
-                                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">Résolu</span>
-                                  </div>
-                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Forces et accélération</h4>
-                                  <p className="text-xs text-gray-600 mb-3">Résolu par <span className="font-medium text-gray-900">Sophie M.</span></p>
-                                  <div className="flex items-center justify-between text-xs text-gray-500">
-                                    <span>12 contributions</span>
-                                    <button className="text-gray-900 hover:text-gray-700 font-medium">Voir →</button>
-                                  </div>
-                              </div>
-
-                                {/* Exercice non-résolu (CTA) */}
-                          <motion.div
-                                  whileHover={{ scale: 1.01 }}
-                                  className="bg-white rounded-lg p-4 border-2 border-gray-900 hover:shadow-sm transition-all cursor-pointer"
-                                >
-                                  <div className="relative">
-                                    <div className="flex items-center gap-2 mb-3">
-                                      <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                                        <HelpCircle size={16} className="text-white" />
-                                </div>
-                                      <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded font-medium">
-                                        Nouveau
-                                      </span>
-                              </div>
-                                    <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Applications du théorème</h4>
-                                    <p className="text-xs text-gray-600 mb-3">
-                                      Sois le premier à contribuer
-                                  </p>
-                                    <button className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-2 px-3 font-medium text-xs transition-all flex items-center justify-center gap-2">
-                                      <Zap size={14} />
-                                      Proposer (+10 XP)
+                                  <button
+                                    onClick={() => setShowQuiz(true)}
+                                    className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl py-3 px-6 font-semibold transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <Play size={18} />
+                                    Commencer le quiz
                                     </button>
                             </div>
-                          </motion.div>
+                                )}
 
-                                {/* Exercice en cours de validation */}
-                                <div className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                      <Clock size={16} className="text-gray-700" />
+                              {/* Panneau Q&A */}
+                              {activeContextPanel === 'qa' && (
+                                          <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                        <p className="text-sm text-gray-500">Par slide vidéo</p>
+                                    <span className="text-sm font-medium text-gray-500">8 questions</span>
+                            </div>
+                            
+                                    <div className="space-y-4">
+                                    {/* Question exemple */}
+                                    <div className="border-b border-gray-100 pb-4">
+                                          <div className="flex items-start gap-3">
+                                        <span className="text-xs font-mono text-gray-500 mt-0.5">03:24</span>
+                                        <div className="flex-1">
+                                          <h4 className="font-medium text-gray-900 text-sm mb-1">Comment appliquer cette formule dans un cas pratique ?</h4>
+                                          <p className="text-xs text-gray-500 mb-2">Zak L. • Répondu par Sophie M.</p>
+                                          <button className="text-xs text-gray-600 hover:text-gray-900">Voir la réponse →</button>
                                 </div>
-                                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium">En validation</span>
+                                              </div>
+                                            </div>
+                                    <div className="border-b border-gray-100 pb-4">
+                                          <div className="flex items-start gap-3">
+                                        <span className="text-xs font-mono text-gray-500 mt-0.5">07:15</span>
+                                        <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                            <h4 className="font-medium text-gray-900 text-sm">Quelle est la différence entre ces deux approches ?</h4>
+                                            <span className="w-1.5 h-1.5 bg-gray-900 rounded-full"></span>
                                   </div>
-                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Cinématique avancée</h4>
-                                  <p className="text-xs text-gray-600 mb-3">Proposé par <span className="font-medium text-gray-900">Zak L.</span></p>
-                                  <div className="flex items-center justify-between text-xs text-gray-500">
-                                    <span>5 upvotes</span>
-                                    <button className="text-gray-900 hover:text-gray-700 font-medium">Voter →</button>
-                                  </div>
-                                </div>
+                                          <p className="text-xs text-gray-500 mb-2">Alex R. • Sans réponse</p>
+                                          <button className="text-xs text-gray-900 font-medium hover:text-gray-700">Répondre →</button>
+                                            </div>
+                                            </div>
+                                          </div>
+                                        </div>
 
-                                {/* Call to action - 4ème carte */}
-                              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-all">
-                                <div className="relative">
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-                                      <Trophy size={16} className="text-gray-700" />
+                                  <button className="w-full mt-4 border border-dashed border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-900 rounded-xl py-3 px-4 text-sm font-medium transition-all">
+                                    Poser une question
+                                            </button>
+                                                </div>
+                                )}
+
+                              {/* Panneau Ressources */}
+                              {activeContextPanel === 'resources' && (
+                                  <div>
+                                  <p className="text-sm text-gray-500 mb-4">Documents et supports de cours</p>
+                            
+                                  <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                          <FileText size={18} className="text-gray-600" />
                                 </div>
-                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium">Helper</span>
+                                        <div>
+                                          <p className="font-medium text-gray-900 text-sm">Slides du cours</p>
+                                          <p className="text-xs text-gray-500">PDF • 2.4 MB</p>
                                   </div>
-                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm tracking-tight">Deviens contributeur</h4>
-                                  <p className="text-xs text-gray-600 mb-3">
-                                    Gagne des XP et des badges
-                                  </p>
-                                  <button className="w-full bg-white hover:bg-gray-50 text-gray-900 rounded-lg py-2 px-3 font-medium text-xs transition-all flex items-center justify-center gap-2 border border-gray-200">
-                                    Voir tous
-                                    <ChevronRight size={14} />
+                                </div>
+                                      <Download size={18} className="text-gray-400" />
+                              </div>
+                                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-[#48c6ed]/10 rounded-lg flex items-center justify-center">
+                                          <FileText size={18} className="text-[#48c6ed]" />
+                                </div>
+                                        <div>
+                                          <p className="font-medium text-gray-900 text-sm">Exercices corrigés</p>
+                                          <p className="text-xs text-gray-500">PDF • 1.8 MB</p>
+                                  </div>
+                                  </div>
+                                      <Download size={18} className="text-gray-400" />
+                              </div>
+                            </div>
+                                  </div>
+                                )}
+
+                              {/* Panneau Notes */}
+                              {activeContextPanel === 'notes' && (
+                                          <div>
+                                  <p className="text-sm text-gray-500 mb-4">Notes personnelles sur cette leçon</p>
+
+                                  <textarea
+                                    placeholder="Ajoute tes notes ici..."
+                                    className="w-full h-40 p-4 bg-gray-50 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-gray-700 placeholder:text-gray-400"
+                                  />
+                                  
+                                  <div className="flex items-center justify-between mt-4">
+                                    <p className="text-xs text-gray-500">Sauvegarde automatique</p>
+                                    <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                      Sauvegarder
                                   </button>
                                 </div>
                               </div>
-                              </div>
-                            </motion.div>
-                                  </motion.div>
-                                )}
-                          </motion.div>
-
-                              {/* Card 5: Q&A Intégré - Medium (spans 3 columns, 2 rows) */}
-                              <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'qa' ? null : 'qa')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-3 lg:row-span-2 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'qa' 
-                                    ? 'lg:col-span-6 lg:row-span-3' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'qa' ? -1 : 4,
-                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(51, 65, 85, 0.15)'
-                                }}
-                              >
-                                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -ml-20 -mb-20" />
-                                
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'qa' && (
-                                  <div className="relative h-full flex flex-col">
-                                    <div className="flex items-center gap-3 mb-3">
-                                      <div className="w-10 h-10 bg-[#48c6ed] rounded-xl flex items-center justify-center shadow-lg">
-                                        <MessageSquare size={18} className="text-white" />
-                                      </div>
-                                      <div>
-                                        <h3 className="font-bold text-gray-900">Q&A Intégré</h3>
-                                        <p className="text-[10px] text-gray-600">Par slide vidéo</p>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="flex-1 space-y-2 opacity-60">
-                                      <div className="bg-white/60 rounded-lg p-2">
-                                  <div className="flex items-center gap-2 mb-1">
-                                          <span className="text-xs font-bold text-gray-900">03:24</span>
-                                          <span className="text-xs text-gray-700 font-medium">Quelle est la formule?</span>
-                                  </div>
-                                        <p className="text-[10px] text-gray-600 pl-2">→ Sophie a répondu</p>
-                                      </div>
-                                      <div className="bg-white/60 rounded-lg p-2">
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <span className="text-xs font-bold text-gray-900">07:15</span>
-                                          <span className="text-xs text-gray-700 font-medium">Comment calculer?</span>
-                                        </div>
-                                        <p className="text-[10px] text-gray-600 pl-2">→ 3 réponses</p>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="absolute bottom-2 right-2 text-xs text-gray-600 font-semibold flex items-center gap-1">
-                                      Voir tout
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                                      </motion.div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'qa' && (
-                                  <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full flex flex-col"
-                                  >
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                                      transition={{ delay: 0.2 }}
-                                      className="h-full flex flex-col"
-                          >
-                                      {/* Header */}
-                                      <div className="flex items-center justify-between mb-8">
-                              <div className="flex items-center gap-4">
-                                          <div className="w-10 h-10 bg-[#48c6ed] rounded-xl flex items-center justify-center shadow-lg">
-                                            <MessageSquare size={18} className="text-white" />
-                                </div>
-                                          <div>
-                                            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Q&A Intégré</h3>
-                                            <p className="text-sm text-gray-500">Questions contextuelles par slide vidéo</p>
-                              </div>
-                                        </div>
-                                        <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
-                                          <span className="text-sm font-medium text-gray-700">8 questions</span>
-                                        </div>
-                            </div>
-                            
-                                      {/* Liste des questions - Ultra-minimaliste */}
-                                      <div className="flex-1 space-y-2">
-                                        {/* Question 1 - Résolue */}
-                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
-                                          <div className="flex items-start gap-3">
-                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
-                                              03:24
-                                            </button>
-                                            <div className="flex-1 min-w-0">
-                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Comment appliquer cette formule dans un cas pratique ?</h4>
-                                              <p className="text-xs text-gray-500 mb-2">Zak L.</p>
-                                              <div className="bg-gray-50/80 rounded p-2 mb-2">
-                                                <div className="flex items-center gap-1.5 mb-1">
-                                                  <Check size={10} className="text-gray-600" />
-                                                  <span className="text-xs text-gray-600">Sophie M.</span>
-                                </div>
-                                                <p className="text-xs text-gray-600 leading-relaxed">
-                                                  Il faut identifier les variables connues, puis appliquer la formule...
-                                                </p>
-                                              </div>
-                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
-                                                Voir plus →
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        {/* Question 2 - Sans réponse */}
-                                        <motion.div
-                                          whileHover={{ scale: 1.002 }}
-                                          className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg cursor-pointer"
-                                        >
-                                          <div className="flex items-start gap-3">
-                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
-                                              07:15
-                                            </button>
-                                            <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                                <h4 className="font-medium text-gray-900 text-sm tracking-tight">Quelle est la différence entre ces deux approches ?</h4>
-                                                <span className="w-1.5 h-1.5 bg-gray-900 rounded-full shrink-0"></span>
-                                  </div>
-                                              <p className="text-xs text-gray-500 mb-2">Alex R.</p>
-                                              <button className="text-xs text-gray-900 hover:text-gray-700 font-medium transition-colors">
-                                                Répondre →
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </motion.div>
-
-                                        {/* Question 3 - Plusieurs réponses */}
-                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
-                                          <div className="flex items-start gap-3">
-                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
-                                              12:40
-                                            </button>
-                                            <div className="flex-1 min-w-0">
-                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Pourquoi utiliser cette méthode plutôt qu'une autre ?</h4>
-                                              <p className="text-xs text-gray-500 mb-2">Emma T. • 3 réponses</p>
-                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
-                                                Voir les réponses →
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        {/* Question 4 */}
-                                        <div className="border-b border-gray-100 pb-4 hover:bg-gray-50/50 transition-colors -mx-2 px-2 rounded-lg">
-                                          <div className="flex items-start gap-3">
-                                            <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors font-mono shrink-0 mt-0.5">
-                                              15:32
-                                            </button>
-                                            <div className="flex-1 min-w-0">
-                                              <h4 className="font-medium text-gray-900 text-sm mb-1 tracking-tight">Comment calculer le flux dans ce cas ?</h4>
-                                              <p className="text-xs text-gray-500 mb-2">Marie D.</p>
-                                              <div className="bg-gray-50/80 rounded p-2 mb-2">
-                                                <div className="flex items-center gap-1.5 mb-1">
-                                                  <Check size={10} className="text-gray-600" />
-                                                  <span className="text-xs text-gray-600">Zak L.</span>
-                                                </div>
-                                                <p className="text-xs text-gray-600 leading-relaxed">
-                                                  Tu dois utiliser la symétrie cylindrique et intégrer sur la surface...
-                                                </p>
-                                              </div>
-                                              <button className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
-                                                Voir plus →
-                                              </button>
-                                            </div>
-                                </div>
-                              </div>
-
-                                        {/* CTA pour poser une question */}
-                                        <div className="pt-2 -mx-2 px-2">
-                                          <button className="w-full text-left py-3 px-3 rounded-lg border border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50/50 transition-all group">
-                                            <div className="flex items-center gap-2">
-                                              <span className="text-xs text-gray-500 group-hover:text-gray-900 font-medium transition-colors">Poser une question</span>
-                                              <ChevronRight size={12} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
-                                </div>
-                                          </button>
-                                  </div>
-                                      </div>
-                          </motion.div>
-                                  </motion.div>
                                 )}
                               </motion.div>
-
-                              {/* Card 6: Quiz de la leçon - Small (spans 3 columns, 1 row) */}
-                              <motion.div
-                                layout
-                                onClick={() => setExpandedBentoCard(expandedBentoCard === 'quiz' ? null : 'quiz')}
-                                whileHover={{ scale: 1.02 }}
-                                className={`lg:col-span-3 lg:row-span-1 rounded-2xl p-6 cursor-pointer relative overflow-hidden transition-all ${
-                                  expandedBentoCard === 'quiz' 
-                                    ? 'lg:col-span-6 lg:row-span-2' 
-                                    : ''
-                                }`}
-                                style={{
-                                  order: expandedBentoCard === 'quiz' ? -1 : 5,
-                                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.05) 0%, rgba(51, 65, 85, 0.05) 100%)',
-                                  backdropFilter: 'blur(10px)',
-                                  border: '2px solid rgba(51, 65, 85, 0.15)'
-                                }}
-                              >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-300/10 to-gray-400/10 rounded-full -mr-16 -mt-16" />
-                                
-                                {/* Preview Mode */}
-                                {expandedBentoCard !== 'quiz' && (
-                                  <div className="relative h-full flex flex-col">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
-                                          <Award size={18} className="text-white" />
-                                </div>
-                                        <div>
-                                          <h3 className="font-bold text-gray-900">Quiz</h3>
-                                          <p className="text-[10px] text-gray-600">12 questions</p>
-                                  </div>
-                                </div>
-                                      <motion.div
-                                        animate={{ rotate: [0, 10, -10, 0] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="text-2xl"
-                                      >
-                                        🎯
-                                      </motion.div>
-                              </div>
-
-                                    <div className="flex-1 flex items-center justify-center opacity-60">
-                              <div className="text-center">
-                                        <p className="text-sm font-bold text-gray-700 mb-1">85%</p>
-                                        <p className="text-xs text-gray-600">Ton score</p>
-                                </div>
-                                  </div>
-                                    
-                                    <div className="absolute bottom-2 right-2 text-xs text-gray-600 font-semibold flex items-center gap-1">
-                                      Commencer
-                                      <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                                        →
-                                      </motion.div>
+                          )}
+                        </AnimatePresence>
                             </div>
-                                  </div>
-                                )}
-
-                                {/* Expanded Mode */}
-                                {expandedBentoCard === 'quiz' && (
-                                  <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="relative h-full flex flex-col"
-                                  >
-                                    <motion.div
-                                      initial={{ opacity: 0, y: 20 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      transition={{ delay: 0.2 }}
-                                      className="h-full flex flex-col"
-                                    >
-                                      {/* Header */}
-                                      <div className="flex items-center justify-between mb-8">
-                                        <div className="flex items-center gap-4">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg">
-                                            <Award size={18} className="text-white" />
-                                          </div>
-                                          <div>
-                                            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Quiz de la leçon</h3>
-                                            <p className="text-sm text-gray-500">Valide tes connaissances</p>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      {/* Stats du quiz */}
-                                      <div className="grid grid-cols-3 gap-3 mb-6">
-                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                          <p className="text-2xl font-semibold text-gray-900 mb-1">12</p>
-                                          <p className="text-xs text-gray-600 font-medium">Questions</p>
-                                        </div>
-                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                          <p className="text-2xl font-semibold text-gray-900 mb-1">85%</p>
-                                          <p className="text-xs text-gray-600 font-medium">Ton score</p>
-                                        </div>
-                                        <div className="bg-white rounded-lg p-4 border border-gray-200 text-center">
-                                          <p className="text-2xl font-semibold text-gray-900 mb-1">78%</p>
-                                          <p className="text-xs text-gray-600 font-medium">Moyenne</p>
-                                        </div>
-                                      </div>
-
-                                      {/* Description */}
-                                      <div className="flex-1 bg-gray-50 rounded-xl p-5 border border-gray-200 mb-6">
-                                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-base tracking-tight">
-                                          <Info size={16} className="text-gray-700" />
-                                          Détails du quiz
-                                        </h4>
-                                        <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                                          Évalue ta compréhension des concepts clés de la leçon. Réponds à toutes les questions pour débloquer des points XP et valider ta progression.
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-3">
-                                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                                            <Clock size={14} className="text-gray-700" />
-                                            <span>≈ 15 minutes</span>
-                                </div>
-                                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                                            <Sparkles size={14} className="text-gray-700" />
-                                            <span>+50 XP</span>
-                              </div>
-                            </div>
-                                      </div>
-
-                                      {/* CTA */}
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setShowQuiz(true);
-                                          setExpandedBentoCard(null);
-                                        }}
-                                        className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl py-3 px-6 font-semibold text-base transition-all flex items-center justify-center gap-3"
-                                      >
-                                        <Play size={18} />
-                                        Commencer le quiz
-                                      </button>
-                          </motion.div>
-                                  </motion.div>
-                                )}
-                              </motion.div>
-
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
 
-                    {/* Sidebar Web 3.0 - Navigation et détails - Hidden on mobile */}
-                    <div className="hidden lg:flex w-[320px] xl:w-[420px] bg-gray-50 border-l border-gray-200 flex-col overflow-hidden">
-                      <div className="p-6 space-y-6 overflow-y-auto">
+                    {/* ZONE 3 + 4 COMBINÉES: Sidebar avec navigation - Scroll indépendant */}
+                    <div className="hidden lg:flex w-[320px] xl:w-[380px] bg-white border-l border-gray-200 flex-col h-full overflow-hidden">
+                      <div className="p-4 space-y-4 overflow-y-auto flex-1">
                         {/* Navigation des leçons */}
                         <LessonNavigator
                           course={course}
@@ -2946,7 +1990,8 @@ export function IntegratedCourseViewer({
                           purchasedItems={purchasedItems}
                         />
 
-                        {/* CTA WhatsApp avec indicateurs - DEUXIÈME POSITION */}
+                        
+                        {/* CTA WhatsApp */}
                         <WhatsAppCTA
                           courseId={course?.id || ''}
                           courseName={course?.title || ''}
@@ -3041,7 +2086,7 @@ export function IntegratedCourseViewer({
               <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-24 py-16 border-b border-gray-100/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-24 h-24 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg">
                       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-white">
                         <path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
@@ -3164,7 +2209,7 @@ export function IntegratedCourseViewer({
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg flex items-center justify-center"
+                      className="relative w-20 h-20 rounded-2xl bg-gray-900 shadow-lg flex items-center justify-center"
                     >
                       <Eye size={32} className="text-white drop-shadow-lg" />
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#48c6ed] rounded-full flex items-center justify-center shadow-lg">
@@ -3286,7 +2331,7 @@ export function IntegratedCourseViewer({
                         }}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                        className="w-full bg-gray-900 hover:bg-gray-800 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
                       >
                         ▶️ Commencer le cours
                       </motion.button>
@@ -3426,38 +2471,39 @@ export function IntegratedCourseViewer({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+              className="bg-white rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Badge Pass */}
               <div className="flex justify-center mb-6">
-                <div className="bg-gray-900 rounded-2xl px-6 py-4 text-center">
-                  <div className="flex justify-center mb-2">
-                    <Gift size={32} className="text-[#48c6ed]" />
+                <div className="bg-gray-900 rounded-2xl px-8 py-5 text-center">
+                  <div className="flex justify-center mb-3">
+                    <Image src="/brand/onboarding-logo.svg" alt="SMS" width={48} height={48} />
                   </div>
-                  <span className="text-white text-sm font-bold tracking-wider uppercase">Pass Invité 14 jours</span>
+                  <span className="text-white font-bold tracking-wider uppercase" style={{ fontSize: '14px' }}>Pass Invité 14 jours</span>
                 </div>
               </div>
 
               {/* Titre */}
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+              <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
                 Apprendre, c'est mieux à plusieurs
               </h2>
 
               {/* Description */}
-              <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              <p className="text-gray-600 text-center mb-6 leading-relaxed" style={{ fontSize: '15px' }}>
                 Partage ton pass exclusif avec tes amis. S'ils s'inscrivent dans les 14 jours, 
                 tu gagnes <span className="font-bold text-gray-900">+2h de contenu gratuit</span> ajoutées à ton compteur !
               </p>
 
               {/* Input emails */}
-              <div className="mb-4">
+              <div className="mb-5">
                 <input
                   type="text"
                   value={guestPassEmails}
                   onChange={(e) => setGuestPassEmails(e.target.value)}
                   placeholder="Emails séparés par des virgules"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  style={{ fontSize: '15px' }}
                 />
               </div>
 
@@ -3465,13 +2511,13 @@ export function IntegratedCourseViewer({
               <button
                 onClick={() => {
                   if (guestPassEmails.trim()) {
-                    // Simuler l'envoi
                     alert(`✉️ Invitations envoyées à : ${guestPassEmails}\n\nTu recevras +2h pour chaque ami qui s'inscrit dans les 14 jours !`);
                     setGuestPassEmails('');
                     setShowGuestPassModal(false);
                   }
                 }}
                 className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+                style={{ fontSize: '16px' }}
               >
                 Envoyer les invitations
               </button>
@@ -3480,12 +2526,13 @@ export function IntegratedCourseViewer({
               <button
                 onClick={() => setShowGuestPassModal(false)}
                 className="w-full text-center text-gray-900 font-semibold hover:text-gray-600 transition-colors"
+                style={{ fontSize: '15px' }}
               >
                 Passer pour l'instant
               </button>
 
               {/* Terms */}
-              <p className="text-center text-gray-400 text-sm mt-4 underline cursor-pointer hover:text-gray-600">
+              <p className="text-center text-gray-400 mt-4 underline cursor-pointer hover:text-gray-600" style={{ fontSize: '14px' }}>
                 Conditions du Pass Invité
               </p>
             </motion.div>
@@ -3498,3 +2545,6 @@ export function IntegratedCourseViewer({
     </>
   );
 }
+
+
+

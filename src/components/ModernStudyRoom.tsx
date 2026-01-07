@@ -23,7 +23,8 @@ import {
   Check,
   Heart,
   Sparkles,
-  User
+  User,
+  Users
 } from 'lucide-react';
 import { AdvancedStudyRoom } from '@/types';
 

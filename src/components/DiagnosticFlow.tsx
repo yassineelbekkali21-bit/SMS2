@@ -112,12 +112,12 @@ const STRUGGLE_OPTIONS = [
 
 // Programmes avec leurs topics et notions
 const DIAGNOSTIC_PROGRAMS = [
-  { id: 'physics', label: 'Physique', icon: '⚡' },
-  { id: 'math', label: 'Mathématiques', icon: '📐' },
-  { id: 'chemistry', label: 'Chimie', icon: '🧪' },
-  { id: 'biology', label: 'Biologie', icon: '🧬' },
-  { id: 'economics', label: 'Économie', icon: '📊' },
-  { id: 'informatics', label: 'Informatique', icon: '💻' },
+  { id: 'physics', label: 'Physique' },
+  { id: 'math', label: 'Mathématiques' },
+  { id: 'chemistry', label: 'Chimie' },
+  { id: 'biology', label: 'Biologie' },
+  { id: 'economics', label: 'Économie' },
+  { id: 'informatics', label: 'Informatique' },
 ];
 
 const DIAGNOSTIC_TOPICS: Record<string, string[]> = {
@@ -459,7 +459,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     onClick={() => setFormData({ ...formData, educationLevel: level.id as 'school' | 'higher-education' })}
                     className={`w-full p-6 rounded-2xl border-2 transition-all text-left ${
                       formData.educationLevel === level.id
-                        ? 'border-blue-600 bg-blue-600/10'
+                        ? 'border-[#00c2ff] bg-[#00c2ff]/10'
                         : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
                     }`}
                   >
@@ -512,7 +512,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                         value={formData.school || ''}
                         onChange={(e) => setFormData({ ...formData, school: e.target.value })}
                         placeholder="Tape le nom de ton école (optionnel)..."
-                        className="w-full px-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-blue-600 transition-colors"
+                        className="w-full px-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-[#00c2ff] transition-colors"
                       />
                     ) : (
                       // Recherche pour enseignement supérieur
@@ -528,7 +528,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                             }}
                             onFocus={() => setShowSchoolResults(true)}
                             placeholder="Recherche ton université (optionnel)..."
-                            className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-blue-600 transition-colors"
+                            className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-[#00c2ff] transition-colors"
                           />
                         </div>
 
@@ -547,7 +547,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                                     key={school}
                                     onClick={() => selectSchool(school)}
                                     className={`w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors !text-white ${
-                                      formData.school === school ? 'bg-blue-600/20 opacity-100' : 'opacity-90'
+                                      formData.school === school ? 'bg-[#00c2ff]/20 opacity-100' : 'opacity-90'
                                     }`}
                                   >
                                     <div className="flex items-center gap-3">
@@ -568,7 +568,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     )}
 
                     {formData.school && (
-                      <div className="mt-4 p-3 bg-blue-600/10 border border-blue-600/30 rounded-xl">
+                      <div className="mt-4 p-3 bg-[#00c2ff]/10 border border-[#00c2ff]/30 rounded-xl">
                         <div className="flex items-center gap-2 !text-white opacity-90">
                           <CheckCircle size={18} />
                           <span className="font-medium">{formData.school}</span>
@@ -610,14 +610,14 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     onClick={() => setFormData({ ...formData, goal: goal.id })}
                     className={`w-full p-6 rounded-2xl border-2 transition-all text-left ${
                       formData.goal === goal.id
-                        ? 'border-blue-600 bg-blue-600/10'
+                        ? 'border-[#00c2ff] bg-[#00c2ff]/10'
                         : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
                     }`}
                   >
                     <div className="flex items-center gap-5">
                       <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
                         formData.goal === goal.id
-                          ? 'bg-blue-600'
+                          ? 'bg-[#00c2ff]'
                           : 'bg-gray-700'
                       }`}>
                         <Icon size={28} className="text-white" />
@@ -673,7 +673,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                   onClick={() => toggleStruggle(struggle.id)}
                   className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
                     formData.struggles?.includes(struggle.id)
-                      ? 'border-blue-600 bg-blue-600/10'
+                      ? 'border-[#00c2ff] bg-[#00c2ff]/10'
                       : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
                   }`}
                 >
@@ -682,7 +682,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     {struggle.label}
                   </span>
                   {formData.struggles?.includes(struggle.id) && (
-                    <CheckCircle size={20} className="text-blue-600 ml-auto" />
+                    <CheckCircle size={20} className="text-[#00c2ff] ml-auto" />
                   )}
                 </button>
               ))}
@@ -728,9 +728,9 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="space-y-6 max-w-4xl mx-auto"
+            className="space-y-3 max-w-4xl mx-auto"
           >
-            <div className="text-center mb-6">
+            <div className="text-center mb-2">
               <h2 className="text-2xl md:text-3xl font-bold !text-white mb-2">
                 Quels sujets te préoccupent le plus ?
               </h2>
@@ -745,8 +745,8 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 onClick={() => !isAnalyzing && fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${
                   isAnalyzing 
-                    ? 'border-blue-500 bg-blue-500/10' 
-                    : 'border-gray-600 hover:border-blue-400 hover:bg-blue-500/5'
+                    ? 'border-[#00c2ff] bg-[#00c2ff]/10' 
+                    : 'border-gray-600 hover:border-[#00c2ff] hover:bg-[#00c2ff]/5'
                 }`}
               >
                 <input
@@ -760,12 +760,12 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 
                 <div className="flex items-center justify-center gap-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    isAnalyzing ? 'bg-blue-500/30' : 'bg-blue-500/20'
+                    isAnalyzing ? 'bg-[#00c2ff]/30' : 'bg-[#00c2ff]/20'
                   }`}>
                     {isAnalyzing ? (
-                      <Loader2 className="text-blue-400 animate-spin" size={18} />
+                      <Loader2 className="text-[#00c2ff] animate-spin" size={18} />
                     ) : (
-                      <Upload className="text-blue-400" size={18} />
+                      <Upload className="text-[#00c2ff]" size={18} />
                     )}
                   </div>
                   <div className="text-left">
@@ -789,7 +789,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                       key={index}
                       className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg"
                     >
-                      <FileText size={14} className="text-blue-400" />
+                      <FileText size={14} className="text-[#00c2ff]" />
                       <span className="text-xs !text-white/80 truncate max-w-[120px]">
                         {file.name}
                       </span>
@@ -808,6 +808,13 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
               )}
             </div>
 
+            {/* Séparateur "ou" */}
+            <div className="flex items-center gap-6 max-w-xl mx-auto my-4">
+              <div className="flex-1 h-px bg-gray-700"></div>
+              <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">ou</span>
+              <div className="flex-1 h-px bg-gray-700"></div>
+            </div>
+
             {/* Barre de recherche */}
             <div className="relative max-w-xl mx-auto">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -816,7 +823,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 placeholder="Rechercher une notion, un cours..."
                 value={notionSearch}
                 onChange={(e) => setNotionSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-2xl text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-colors text-base"
+                className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-gray-700 rounded-2xl text-white placeholder-gray-500 focus:border-[#00c2ff] focus:outline-none transition-colors text-base"
               />
             </div>
 
@@ -831,11 +838,10 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                   }}
                   className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all border ${
                     selectedProgram === program.id
-                      ? 'bg-blue-600 text-white border-blue-600'
+                      ? 'bg-[#00c2ff] text-white border-[#00c2ff]'
                       : 'bg-[#1a1a1a] !text-white/90 border-gray-700 hover:border-gray-600'
                   }`}
                 >
-                  <span>{program.icon}</span>
                   {program.label}
                 </button>
               ))}
@@ -878,7 +884,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                       onClick={() => toggleBlockingPoint(notion.id)}
                       className={`p-4 rounded-xl border-2 transition-all text-left flex items-center justify-between ${
                         isSelected
-                          ? 'border-blue-600 bg-blue-600/10'
+                          ? 'border-[#00c2ff] bg-[#00c2ff]/10'
                           : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
                       }`}
                     >
@@ -891,7 +897,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                         </span>
                       </div>
                       {isSelected && (
-                        <CheckCircle size={18} className="text-blue-600 flex-shrink-0 ml-2" />
+                        <CheckCircle size={18} className="text-[#00c2ff] flex-shrink-0 ml-2" />
                       )}
                     </button>
                   );
@@ -907,7 +913,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
             {/* Compteur de sélection */}
             {formData.blockingPoints && formData.blockingPoints.length > 0 && (
               <div className="text-center">
-                <span className="!text-white text-sm font-medium opacity-90 bg-blue-600/20 px-4 py-2 rounded-full">
+                <span className="!text-white text-sm font-medium opacity-90 bg-[#00c2ff]/20 px-4 py-2 rounded-full">
                   {formData.blockingPoints.length} notion{formData.blockingPoints.length > 1 ? 's' : ''} sélectionnée{formData.blockingPoints.length > 1 ? 's' : ''}
                 </span>
               </div>
@@ -939,7 +945,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-[#0d1317] overflow-y-auto"
+        className="fixed inset-0 z-[100] bg-[#0d1317] overflow-y-auto flex flex-col"
       >
         {/* Header */}
         <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
@@ -970,9 +976,9 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                       <motion.div 
                         className={`w-4 h-4 md:w-5 md:h-5 rounded-full transition-all duration-300 ${
                           isCompleted 
-                            ? 'bg-blue-600' 
+                            ? 'bg-[#00c2ff]' 
                             : isCurrent 
-                              ? 'bg-blue-600 ring-[4px] ring-blue-600/30' 
+                              ? 'bg-[#00c2ff] ring-[4px] ring-[#00c2ff]/30' 
                               : 'bg-gray-600'
                         }`}
                         animate={isCurrent ? { scale: [1, 1.15, 1] } : {}}
@@ -987,7 +993,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     {/* Line connector */}
                     {idx < 3 && (
                       <div className={`w-8 md:w-16 h-1 rounded-full transition-all duration-500 ${
-                        isCompleted ? 'bg-blue-600' : 'bg-gray-700'
+                        isCompleted ? 'bg-[#00c2ff]' : 'bg-gray-700'
                       }`} />
                     )}
                   </React.Fragment>
@@ -1006,22 +1012,24 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
         </header>
 
         {/* Main Content */}
-        <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center px-6 py-12">
-          <AnimatePresence mode="wait">
-            {renderStep()}
-          </AnimatePresence>
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-4">
+          <div className="w-full max-w-4xl">
+            <AnimatePresence mode="wait">
+              {renderStep()}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="sticky bottom-0 left-0 right-0 p-6 md:p-8 bg-[#0d1317]/95 backdrop-blur-sm border-t border-gray-800">
+        <div className="sticky bottom-0 left-0 right-0 p-4 md:p-6 bg-[#0d1317]/95 backdrop-blur-sm border-t border-gray-800">
           <div className="max-w-xl mx-auto space-y-5">
             {/* Progress Message */}
             <div className="flex items-center gap-4 bg-gray-800/80 backdrop-blur-sm rounded-2xl px-5 py-4">
-              <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center">
-                <CheckCircle size={22} className="text-blue-600" />
+              <div className="w-10 h-10 rounded-full bg-[#00c2ff]/20 flex items-center justify-center">
+                <CheckCircle size={22} className="text-[#00c2ff]" />
               </div>
               <span className="text-white text-base md:text-lg font-medium">
-                Tu es sur le point d'obtenir <span className="text-blue-400">10h gratuites</span> !
+                Tu es sur le point d'obtenir <span className="text-[#00c2ff]">10h gratuites</span> !
               </span>
             </div>
 
@@ -1038,7 +1046,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
               
               <button
                 onClick={handleNext}
-                className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-white font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-blue-600/25"
+                className="flex-1 h-14 bg-gradient-to-r from-[#00c2ff] to-[#00a8e0] hover:from-[#00d4ff] hover:to-[#00c2ff] text-white font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-[#00c2ff]/25"
               >
                 {currentStep === TOTAL_STEPS - 1 ? (
                   <>

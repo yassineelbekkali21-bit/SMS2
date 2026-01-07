@@ -31,11 +31,11 @@ import {
 
 export const mockUser: User = {
   id: 'user-default',
-  name: 'Yassine Elbekali',
+  name: 'Yassine El Bekkali',
   email: 'yacine@student.solvay.be',
   faculty: 'Solvay Brussels School',
   year: 'Première année Ingénieur de gestion',
-  avatar: undefined,
+  avatar: '/avatars/yassine.jpg', // Photo utilisateur
   isKYCCompleted: true,
   preferences: {
     notifications: true,

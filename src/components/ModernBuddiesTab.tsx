@@ -6,13 +6,11 @@ import {
   Search, 
   UserPlus, 
   Users, 
-  Zap, 
   TrendingUp,
   Calendar,
   Award,
   X,
   Check,
-  BookOpen,
   Trophy,
   Clock,
   Sparkles
@@ -223,86 +221,111 @@ export default function ModernBuddiesTab({ userId, userName }: ModernBuddiesTabP
   return (
     <>
     <div className="space-y-6">
-      {/* Header avec stats */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Tes Buddies</h2>
-          <p className="text-sm text-gray-600 mt-1">{mockBuddies.length} connexions • {mockBuddies.filter(b => b.status === 'online').length} en ligne</p>
-        </div>
-        <button 
-          onClick={() => setShowBuddyInviteModal(true)}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm"
-        >
-          <UserPlus className="w-4 h-4" />
-          Inviter un buddy
-        </button>
-      </div>
 
-      {/* Demandes de buddies en attente - Design moderne */}
-      {mockPendingRequests.length > 0 && (
-        <div className="bg-white rounded-2xl p-8 border border-gray-200"
+      {/* Demandes en attente + Activité récente - Côte à côte */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Demandes de buddies en attente */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-200"
              style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-                <Users className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 tracking-tight">Demandes en attente</h3>
+                <span className="bg-blue-600 text-white text-sm px-2 py-0.5 rounded-full font-bold">{mockPendingRequests.length}</span>
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Demandes en attente</h3>
-                  <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">{mockPendingRequests.length}</span>
-                </div>
-                <p className="text-sm text-gray-500 font-medium">Nouveaux buddies potentiels</p>
-              </div>
+              <p className="text-sm text-gray-500">Nouveaux buddies potentiels</p>
             </div>
           </div>
 
-          <div className="space-y-3">
-            {mockPendingRequests.map((request, idx) => (
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {mockPendingRequests.length > 0 ? mockPendingRequests.map((request, idx) => (
               <motion.div
                 key={request.id}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                whileHover={{ x: 4 }}
-                className="bg-white rounded-xl p-5 border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all"
+                className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all"
               >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <UserAvatar name={request.name} size="lg" />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <UserAvatar name={request.name} size="md" />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 mb-0.5 tracking-tight">{request.name}</h4>
-                      <p className="text-sm text-gray-500 font-medium mb-2">{request.faculty}</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-md">{request.sharedCourses} cours communs</span>
-                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-md">{request.mutualBuddies} mutuels</span>
-                        <span className="text-xs text-gray-400">{request.timeAgo}</span>
-                      </div>
+                      <h4 className="font-semibold text-gray-900 text-sm truncate">{request.name}</h4>
+                      <p className="text-sm text-gray-500">{request.sharedCourses} cours communs</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg text-sm font-semibold hover:shadow-md transition-all flex items-center gap-2"
+                      className="px-3 py-1.5 bg-gray-900 text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-all"
                     >
-                      <Check className="w-4 h-4" />
                       Accepter
                     </motion.button>
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="p-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all"
+                      className="p-1.5 bg-white text-gray-500 rounded-lg hover:bg-gray-200 transition-all border border-gray-200"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5" />
                     </motion.button>
                   </div>
+                </div>
+              </motion.div>
+            )) : (
+              <div className="text-center py-8 text-gray-400">
+                <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Aucune demande en attente</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Activité récente */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-200"
+             style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 tracking-tight">Activité récente</h3>
+                <p className="text-sm text-gray-500">Ce que font tes buddies</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-1 max-h-[300px] overflow-y-auto">
+            {mockBuddyActivity.map((activity, idx) => (
+              <motion.div
+                key={activity.id}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.03 }}
+                className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-all cursor-pointer"
+              >
+                <div className="relative flex-shrink-0">
+                  <UserAvatar name={activity.buddyName} size="sm" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">
+                    <span className="text-sm">{activity.icon}</span>
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-900 leading-snug">
+                    <span className="font-medium">{activity.buddyName}</span>{' '}
+                    <span className="text-gray-600 text-sm">{activity.message}</span>
+                  </p>
+                  <p className="text-sm text-gray-400 mt-0.5">{activity.timeAgo}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Suggestions de buddies - Design moderne */}
       {filteredBuddies.length > 0 && (
@@ -341,16 +364,16 @@ export default function ModernBuddiesTab({ userId, userName }: ModernBuddiesTabP
                   </div>
                   
                   <h4 className="font-semibold text-gray-900 mb-1 tracking-tight">{suggestion.name}</h4>
-                  <p className="text-xs text-gray-500 font-medium mb-4">{suggestion.faculty}</p>
+                  <p className="text-sm text-gray-500 font-medium mb-4">{suggestion.faculty}</p>
                   
                   <div className="w-full bg-gray-100 rounded-lg px-3 py-2 mb-4 border border-gray-200">
-                    <p className="text-xs font-semibold text-gray-700">{suggestion.reason}</p>
+                    <p className="text-sm font-semibold text-gray-700">{suggestion.reason}</p>
                   </div>
                   
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+                    className="w-full px-4 py-2.5 bg-gray-900 text-white rounded-full text-sm font-semibold hover:bg-gray-800 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" />
                     Ajouter
@@ -362,58 +385,6 @@ export default function ModernBuddiesTab({ userId, userName }: ModernBuddiesTabP
         </div>
       )}
 
-      {/* Activité récente des buddies - Design moderne */}
-      <div className="bg-white rounded-2xl p-8 border border-gray-200"
-           style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-              <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Activité récente</h3>
-              <p className="text-sm text-gray-500 font-medium">Ce que font tes buddies</p>
-            </div>
-          </div>
-          <button className="text-sm text-purple-600 hover:text-purple-700 font-semibold flex items-center gap-1 px-3 py-1.5 hover:bg-purple-50 rounded-lg transition-all">
-            Voir tout
-            <span>→</span>
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          {mockBuddyActivity.map((activity, idx) => (
-            <motion.div
-              key={activity.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              whileHover={{ x: 4, scale: 1.01 }}
-              className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-100 transition-all cursor-pointer"
-            >
-              <div className="relative flex-shrink-0">
-                <UserAvatar name={activity.buddyName} size="md" />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">
-                  <span className="text-xs">{activity.icon}</span>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900 leading-relaxed">
-                  <span className="font-semibold">{activity.buddyName}</span>{' '}
-                  <span className="text-gray-600">{activity.message}</span>
-                </p>
-                {activity.course && (
-                  <div className="inline-flex items-center gap-1.5 mt-1.5 bg-gray-100 px-2 py-1 rounded-md">
-                    <BookOpen className="w-3 h-3 text-gray-600" />
-                    <span className="text-xs font-medium text-gray-700">{activity.course}</span>
-                  </div>
-                )}
-                <p className="text-xs text-gray-400 mt-2">{activity.timeAgo}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
 
       {/* Barre de recherche et filtres - Design moderne */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -468,123 +439,67 @@ export default function ModernBuddiesTab({ userId, userName }: ModernBuddiesTabP
         </div>
       </div>
 
-      {/* Grille de buddies - style Web 3.0 moderne */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Mes buddies - Grille style Web 3.0 moderne */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-200"
+           style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+            <Users className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Mes buddies</h3>
+            <p className="text-sm text-gray-500">Tes connexions actives</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredBuddies.map((buddy, idx) => (
           <motion.div
             key={buddy.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.03 }}
-            whileHover={{ y: -8, scale: 1.02 }}
-            className="group relative bg-gradient-to-br from-white via-gray-50 to-white rounded-2xl p-8 cursor-pointer overflow-hidden"
-            style={{
-              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03), 0 12px 24px rgba(0, 0, 0, 0.04)',
-              border: '1px solid rgba(0, 0, 0, 0.05)'
-            }}
+            whileHover={{ y: -2, borderColor: '#48c6ed' }}
+            className="group relative bg-white rounded-2xl p-5 cursor-pointer overflow-hidden border border-gray-100 hover:shadow-md transition-all"
           >
-            {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            {/* Border effect on hover */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" 
-                 style={{ boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.05)' }} />
-
-            <div className="relative z-10">
-              {/* Avatar et status - Layout moderne */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="relative">
+            {/* Header: Avatar + Name */}
+            <div className="flex items-start gap-4 mb-4">
+              {/* Avatar */}
                   <UserAvatar 
                     name={buddy.name} 
-                    size="xl" 
+                size="lg" 
                     status={buddy.status as 'online' | 'offline' | 'away'} 
                   />
-                  {/* Halo effect autour de l'avatar au hover */}
-                  <div className="absolute inset-0 rounded-full bg-gray-200/50 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                
-                {buddy.status === 'online' && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="flex items-center gap-1.5 bg-gray-100 backdrop-blur-sm text-gray-700 px-3 py-1.5 rounded-full border border-gray-200"
-                  >
-                    <span className="w-1.5 h-1.5 bg-gray-900 rounded-full animate-pulse"></span>
-                    <span className="text-[11px] font-semibold tracking-wide">EN LIGNE</span>
-                  </motion.div>
-                )}
-                {buddy.status === 'away' && (
-                  <div className="bg-orange-500/10 backdrop-blur-sm text-orange-700 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border border-orange-500/20">
-                    ABSENT
-                  </div>
-                )}
+              
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-semibold text-gray-900 truncate mb-0.5">{buddy.name}</h3>
+                <p className="text-sm text-gray-500">{buddy.faculty}</p>
               </div>
-
-              {/* Info du buddy - Typographie améliorée */}
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-1.5 tracking-tight">{buddy.name}</h3>
-                <p className="text-sm text-gray-500 font-medium">{buddy.faculty}</p>
-              </div>
-
-              {/* Stats - Design minimaliste et élégant */}
-              <div className="flex items-center justify-between mb-6 px-1">
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Zap className="w-3.5 h-3.5 text-blue-600" />
-                    <span className="text-base font-bold text-gray-900">{buddy.xpTotal.toLocaleString()}</span>
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">XP</span>
                 </div>
                 
-                <div className="w-px h-8 bg-gradient-to-b from-transparent via-gray-200 to-transparent" />
-                
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Award className="w-3.5 h-3.5 text-purple-600" />
-                    <span className="text-base font-bold text-gray-900">{buddy.level}</span>
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Niveau</span>
-                </div>
-                
-                <div className="w-px h-8 bg-gradient-to-b from-transparent via-gray-200 to-transparent" />
-                
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-base">🔥</span>
-                    <span className="text-base font-bold text-gray-900">{buddy.streak}</span>
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Jours</span>
-                </div>
-              </div>
+            {/* Stats Row */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Shared courses */}
+              <span className="text-xs font-medium text-gray-500 px-2.5 py-1.5 bg-gray-50 rounded-lg">
+                {buddy.sharedCourses} cours en commun
+              </span>
+              
+              {/* Streak */}
+              {buddy.streak > 0 && (
+                <span className="text-xs font-medium text-gray-500 px-2.5 py-1.5 bg-gray-50 rounded-lg">
+                  Série de {buddy.streak} jours
+                </span>
+              )}
 
-              {/* Cours en commun - Badge moderne */}
-              <div className="flex items-center gap-2 mb-6 px-1">
-                <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
-                  <BookOpen className="w-3.5 h-3.5 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">{buddy.sharedCourses} cours en commun</span>
-                </div>
-              </div>
-
-              {/* Progress bar - Design épuré */}
-              <div>
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Cette semaine</span>
-                  <span className="text-sm font-bold text-gray-900">
-                    {buddy.progressThisWeek}%
+              {/* Level */}
+              <span className="text-xs font-medium text-gray-500 px-2.5 py-1.5 bg-gray-50 rounded-lg">
+                Niveau {buddy.level}
                   </span>
-                </div>
-                <div className="relative w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${buddy.progressThisWeek}%` }}
-                    transition={{ duration: 1.2, delay: idx * 0.05 + 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-y-0 left-0 bg-gray-900 rounded-full"
-                  />
-                </div>
-              </div>
             </div>
           </motion.div>
         ))}
+        </div>
       </div>
 
       {/* Empty state */}

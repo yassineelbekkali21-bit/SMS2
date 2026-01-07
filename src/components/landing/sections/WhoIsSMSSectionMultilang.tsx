@@ -2,15 +2,23 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, X } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowRight, Check, X, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDiagnostic } from '@/contexts/DiagnosticContext';
 
 const WHATSAPP_NUMBER = '32477025622';
 
 export function WhoIsSMSSectionMultilang() {
   const { language, t } = useLanguage();
+  const { openDiagnostic } = useDiagnostic();
   const [isFor, setIsFor] = useState(true);
+  const [expandedCards, setExpandedCards] = useState<number[]>([]);
+
+  const toggleExpand = (index: number) => {
+    setExpandedCards(prev => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
+  };
 
   const WHATSAPP_DEFAULT_MESSAGE = language === 'fr' 
     ? 'Salut 👋 Je veux en savoir plus sur Science Made Simple !'
@@ -23,116 +31,130 @@ export function WhoIsSMSSectionMultilang() {
 
   // === SMS EST FAIT POUR TOI SI... ===
   const type1 = language === 'fr' ? {
-    title: 'Tu veux gagner du temps dans tes études',
+    title: 'Tu veux gagner du temps',
     bullets: [
-      'Méthode unique pour toutes matières scientifiques',
-      'Structure claire pour avancer sans te disperser',
-      'Rythme flexible, compatible avec ton quotidien',
-      'Résultats sans sacrifier ta vie personnelle'
+      'Tu veux aller droit à l\'essentiel',
+      'Tu préfères des explications simples, sans jargon',
+      'Tu veux comprendre rapidement à quoi sert la théorie',
+      'Tu veux avancer à ton rythme, sans te disperser',
+      'Tu apprends une méthode claire, que tu retrouves et réutilises dans tous les cours'
     ]
   } : {
-    title: 'You want to save time in your studies',
+    title: 'You want to save time',
     bullets: [
-      'Unique method for all science subjects',
-      'Clear structure to move forward without getting scattered',
-      'Flexible pace, compatible with your daily life',
-      'Results without sacrificing your personal life'
+      'You want to get straight to the point',
+      'You prefer simple explanations, without jargon',
+      'You want to quickly understand what theory is for',
+      'You want to progress at your own pace, without getting scattered',
+      'You learn a clear method that you can find and reuse in all courses'
     ]
   };
 
   const type2 = language === 'fr' ? {
-    title: 'Tu veux t\'en sortir malgré des difficultés actuelles',
+    title: 'Tu es en difficulté et tu veux être accompagné',
     bullets: [
-      'Diagnostic qui t\'oriente',
-      'Plan d\'action clair et priorisé',
-      'Reprise solide des bases',
-      'Remise à niveau durable',
-      'Routine efficace pour éviter un nouveau décrochage'
+      'Tu as l\'impression d\'avoir des lacunes',
+      'Tu veux repartir des bases, sans être jugé',
+      'Tu as besoin qu\'on t\'aide à comprendre ce qui bloque',
+      'Tu veux pouvoir poser tes questions quand tu en as besoin',
+      'Tu ne veux plus avancer seul'
     ]
   } : {
-    title: 'You want to succeed despite current difficulties',
+    title: 'You\'re struggling and want support',
     bullets: [
-      'Diagnostic that guides you',
-      'Clear and prioritized action plan',
-      'Solid review of the basics',
-      'Lasting catch-up',
-      'Effective routine to avoid falling behind again'
+      'You feel like you have gaps',
+      'You want to start from basics without being judged',
+      'You need help understanding what\'s blocking you',
+      'You want to ask questions when you need to',
+      'You don\'t want to move forward alone anymore'
     ]
   };
 
   const type3 = language === 'fr' ? {
-    title: 'Tu veux être ultra-performant et premier de ta promotion',
+    title: 'Tu veux être ultra-performant',
     bullets: [
-      'Méthode de maîtrise avancée',
-      'Niveaux de difficulté adaptés à ton ambition',
-      'Performance mesurable et durable'
+      'Tu as de bonnes bases, mais tu sais que travailler seul te limite',
+      'Tu veux vraiment comprendre, pas apprendre par cœur',
+      'Tu veux t\'entraîner sur des situations proches des examens',
+      'Tu veux savoir où tu en es et comment progresser',
+      'Tu cherches un cadre exigeant, mais humain'
     ]
   } : {
-    title: 'You want to be top performer and first in your class',
+    title: 'You want to be ultra-performant',
     bullets: [
-      'Advanced mastery method',
-      'Difficulty levels adapted to your ambition',
-      'Measurable and lasting performance'
+      'You have good foundations, but you know working alone limits you',
+      'You want to truly understand, not just memorize',
+      'You want to practice on exam-like situations',
+      'You want to know where you stand and how to improve',
+      'You\'re looking for a demanding but human framework'
     ]
   };
 
   // === SMS N'EST PAS POUR TOI SI... ===
   const notType1 = language === 'fr' ? {
-    title: 'Tu cherches une solution miracle',
+    title: 'Tu cherches une solution facile ou rapide',
     bullets: [
-      { text: 'Pas de promesses irréalistes', isNegative: true },
-      { text: 'Une méthode éprouvée et structurée', isNegative: false },
-      { text: 'Une progression claire, étape par étape', isNegative: false },
-      { text: 'Des résultats solides et durables', isNegative: false }
+      { text: 'Tu espères des résultats sans vraiment travailler', isNegative: true },
+      { text: 'Tu cherches des raccourcis ou une "méthode miracle"', isNegative: true },
+      { text: 'Tu veux réussir sans revoir les cours après les séances', isNegative: true },
+      { text: 'Tu penses qu\'une seule explication suffit', isNegative: true },
+      { text: 'Tu n\'es pas prêt à t\'investir sur la durée', isNegative: true }
     ]
   } : {
-    title: 'You\'re Looking for a Miracle Solution',
+    title: 'You\'re looking for an easy or quick solution',
     bullets: [
-      { text: 'No unrealistic promises', isNegative: true },
-      { text: 'A proven and structured method', isNegative: false },
-      { text: 'Clear progress, step by step', isNegative: false },
-      { text: 'Solid and lasting results', isNegative: false }
+      { text: 'You expect results without really working', isNegative: true },
+      { text: 'You\'re looking for shortcuts or a "miracle method"', isNegative: true },
+      { text: 'You want to succeed without reviewing courses after sessions', isNegative: true },
+      { text: 'You think one explanation is enough', isNegative: true },
+      { text: 'You\'re not ready to invest in the long term', isNegative: true }
     ]
   };
 
   const notType2 = language === 'fr' ? {
-    title: 'Tu ne veux pas faire d\'efforts',
+    title: 'Tu veux être aidé, mais sans t\'impliquer',
     bullets: [
-      { text: 'Le succès exige un engagement réel', isNegative: false },
-      { text: 'Ton implication personnelle est indispensable', isNegative: false },
-      { text: 'Régularité et discipline font la différence', isNegative: false },
-      { text: 'Aucun raccourci sans travail', isNegative: true }
+      { text: 'Tu veux qu\'on fasse le travail à ta place', isNegative: true },
+      { text: 'Tu ne comptes pas revoir les séances de ton côté', isNegative: true },
+      { text: 'Tu ne refais pas les exercices après les cours', isNegative: true },
+      { text: 'Tu poses rarement des questions, même quand tu bloques', isNegative: true },
+      { text: 'Tu attends des résultats sans changer tes habitudes', isNegative: true }
     ]
   } : {
-    title: 'You Don\'t Want to Put in Effort',
+    title: 'You want help, but without getting involved',
     bullets: [
-      { text: 'Success requires real commitment', isNegative: false },
-      { text: 'Your personal involvement is essential', isNegative: false },
-      { text: 'Consistency and discipline make the difference', isNegative: false },
-      { text: 'No shortcuts without work', isNegative: true }
+      { text: 'You want someone to do the work for you', isNegative: true },
+      { text: 'You don\'t plan to review sessions on your own', isNegative: true },
+      { text: 'You don\'t redo exercises after class', isNegative: true },
+      { text: 'You rarely ask questions, even when stuck', isNegative: true },
+      { text: 'You expect results without changing your habits', isNegative: true }
     ]
   };
 
   const notType3 = language === 'fr' ? {
-    title: 'Tu veux du contenu générique',
+    title: 'Tu manques de temps ou de régularité',
     bullets: [
-      { text: 'Un accompagnement adapté à ton niveau', isNegative: false },
-      { text: 'Un parcours sur mesure selon tes objectifs', isNegative: false },
-      { text: 'Des actions concrètes, pas de blabla', isNegative: false }
+      { text: 'Tu n\'es pas prêt à réserver du temps chaque semaine', isNegative: true },
+      { text: 'Tu sais que tu ne suivras pas un rythme régulier', isNegative: true },
+      { text: 'Tu n\'es pas prêt à suivre un planning de travail', isNegative: true },
+      { text: 'Tu repousses souvent les révisions importantes', isNegative: true },
+      { text: 'Tu sais que tu ne tiendras pas dans la durée', isNegative: true }
     ]
   } : {
-    title: 'You Want Generic Content',
+    title: 'You lack time or consistency',
     bullets: [
-      { text: 'Support adapted to your level', isNegative: false },
-      { text: 'A custom path based on your goals', isNegative: false },
-      { text: 'Concrete actions, no blabla', isNegative: false }
+      { text: 'You\'re not ready to set aside time each week', isNegative: true },
+      { text: 'You know you won\'t follow a regular rhythm', isNegative: true },
+      { text: 'You\'re not ready to follow a work schedule', isNegative: true },
+      { text: 'You often postpone important revisions', isNegative: true },
+      { text: 'You know you won\'t stick with it long-term', isNegative: true }
     ]
   };
 
   const currentTypes = isFor ? [type1, type2, type3] : [notType1, notType2, notType3];
 
   return (
-    <section className="py-8 md:py-12 px-6 md:px-8 lg:px-10 bg-[#0d1317] noise-overlay-strong">
+    <section id="for-you" className="py-8 md:py-12 px-6 md:px-8 lg:px-10 bg-[#0d1317] noise-overlay-strong scroll-mt-40">
       <div className="max-w-[1200px] mx-auto">
         {/* Main Heading */}
         <motion.div
@@ -143,7 +165,7 @@ export function WhoIsSMSSectionMultilang() {
         >
           <h2 
             className="font-title mb-4 tracking-wide"
-            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)', color: '#FFFFFF' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 64px)', color: '#F7F7F7' }}
           >
             <AnimatePresence mode="wait">
               <motion.span
@@ -210,23 +232,42 @@ export function WhoIsSMSSectionMultilang() {
 
                 {/* Bullet Points */}
                 <ul className="space-y-3">
-                  {type.bullets.map((bullet: string | { text: string; isNegative: boolean }, bulletIndex: number) => {
-                    const isObject = typeof bullet === 'object';
-                    const text = isObject ? bullet.text : bullet;
-                    const isNegative = isObject ? bullet.isNegative : false;
-                    
-                    return (
-                      <li key={bulletIndex} className="flex items-start gap-3">
-                        {isNegative ? (
-                          <X size={20} className="text-red-400 mt-0.5 flex-shrink-0" />
-                        ) : (
-                          <Check size={20} className="text-gray-400 mt-0.5 flex-shrink-0" />
-                        )}
-                        <span className="!text-white text-base md:text-lg leading-relaxed">{text}</span>
-                      </li>
-                    );
-                  })}
+                  {type.bullets
+                    .slice(0, expandedCards.includes(index) ? undefined : 3)
+                    .map((bullet: string | { text: string; isNegative: boolean }, bulletIndex: number) => {
+                      const isObject = typeof bullet === 'object';
+                      const text = isObject ? bullet.text : bullet;
+                      const isNegative = isObject ? bullet.isNegative : false;
+                      
+                      return (
+                        <li key={bulletIndex} className="flex items-start gap-3">
+                          {isNegative ? (
+                            <X size={20} className="text-red-400 mt-0.5 flex-shrink-0" />
+                          ) : (
+                            <Check size={20} className="text-gray-400 mt-0.5 flex-shrink-0" />
+                          )}
+                          <span className="!text-white leading-relaxed" style={{ fontSize: '14px' }}>{text}</span>
+                        </li>
+                      );
+                    })}
                 </ul>
+                
+                {/* Voir plus / Voir moins button */}
+                {type.bullets.length > 3 && (
+                  <button
+                    onClick={() => toggleExpand(index)}
+                    className="mt-4 flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                  >
+                    <span>{expandedCards.includes(index) 
+                      ? (language === 'fr' ? 'Voir moins' : 'See less') 
+                      : (language === 'fr' ? 'Voir plus' : 'See more')
+                    }</span>
+                    <ChevronDown 
+                      size={16} 
+                      className={`transition-transform ${expandedCards.includes(index) ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+                )}
               </motion.div>
             ))}
           </motion.div>
@@ -239,13 +280,14 @@ export function WhoIsSMSSectionMultilang() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <Link
-            href="/diagnostic"
-            className="group px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-xl hover:bg-blue-500 transition-all duration-300 inline-flex items-center gap-3 shadow-lg shadow-blue-600/25 hover:shadow-blue-500/40 hover:scale-105"
+          <button
+            onClick={openDiagnostic}
+            className="group px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-500 transition-all duration-300 inline-flex items-center gap-3 shadow-lg shadow-blue-600/25 hover:shadow-blue-500/40 hover:scale-105 cursor-pointer"
+            style={{ fontSize: '18px' }}
           >
             {language === 'fr' ? 'Découvrir mon parcours idéal' : 'Discover my ideal learning path'}
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          </button>
           <p className="mt-4 text-white text-sm font-medium">
             {language === 'fr' ? 'Gratuit • Sans engagement • 2 minutes' : 'Free • No commitment • 2 minutes'}
           </p>

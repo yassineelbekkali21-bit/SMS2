@@ -8,9 +8,12 @@ import {
   XCircle, 
   ArrowRight, 
   X,
-  MessageCircle
+  MessageCircle,
+  ArrowLeft,
+  Target
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { TestimonialsSectionMultilang } from '@/components/landing/sections/TestimonialsSectionMultilang';
 
 interface QuizRunnerProps {
@@ -18,6 +21,12 @@ interface QuizRunnerProps {
 }
 
 type WizardStep = 'quiz' | 'transition' | 'guided' | 'gate' | 'results';
+
+const STEPS = [
+  { label: 'Sujets', step: 0 },
+  { label: 'Quiz', step: 1 },
+  { label: 'Résultats', step: 2 },
+];
 
 export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
   // State Machine
@@ -131,70 +140,199 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
 
   const totalQuestions = questions.length + (guidedQuestion ? 1 : 0);
 
+  // Current step for progress indicator
+  const getCurrentProgressStep = () => {
+    if (step === 'quiz' || step === 'transition' || step === 'guided') return 1;
+    if (step === 'gate') return 1;
+    if (step === 'results') return 2;
+    return 1;
+  };
+
+  const progressStep = getCurrentProgressStep();
+
   if (questions.length === 0 || !guidedQuestion) {
-    return <div className="min-h-screen bg-white flex items-center justify-center">
-      <p className="text-gray-500">Loading diagnostic...</p>
-    </div>;
+    return (
+      <div className="min-h-screen bg-[#0d1317] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-gray-600 border-t-blue-500 rounded-full"></div>
+      </div>
+    );
   }
 
-  // 1. RAPID QUIZ PHASE - Style from image
+  // Header Component
+  const Header = () => (
+    <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/">
+          <Image 
+            src="/brand/onboarding-logo.svg" 
+            alt="Science Made Simple" 
+            width={85} 
+            height={85}
+          />
+        </Link>
+
+        {/* Progress Steps - Fil d'Ariane */}
+        <div className="flex items-center gap-2">
+          {STEPS.map((item, idx) => {
+            const isCompleted = progressStep > item.step;
+            const isCurrent = progressStep === item.step;
+            
+            return (
+              <React.Fragment key={item.label}>
+                {/* Dot */}
+                <div className="flex flex-col items-center">
+                  <motion.div 
+                    className={`w-4 h-4 md:w-5 md:h-5 rounded-full transition-all duration-300 ${
+                      isCompleted 
+                        ? 'bg-blue-600' 
+                        : isCurrent 
+                          ? 'bg-blue-600 ring-[4px] ring-blue-600/30' 
+                          : 'bg-gray-600'
+                    }`}
+                    animate={isCurrent ? { scale: [1, 1.15, 1] } : {}}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  />
+                  <span className={`text-[10px] md:text-xs mt-1.5 font-semibold hidden md:block ${
+                    isCompleted || isCurrent ? 'text-white' : 'text-white/50'
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
+                {/* Line connector */}
+                {idx < STEPS.length - 1 && (
+                  <div className={`w-8 md:w-16 h-1 rounded-full transition-all duration-500 ${
+                    isCompleted ? 'bg-blue-600' : 'bg-gray-700'
+                  }`} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Close */}
+        <Link
+          href="/"
+          className="text-white/70 hover:text-white transition-opacity"
+        >
+          <X size={24} />
+        </Link>
+      </div>
+    </header>
+  );
+
+  // 1. RAPID QUIZ PHASE
   if (step === 'quiz') {
     const currentQ = questions[currentQIndex];
     const hasAnswered = answers[currentQ.id] !== undefined;
 
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-        {/* Main Card Container */}
-        <div className="w-full max-w-2xl border border-gray-200 rounded-3xl p-8 md:p-10 bg-white shadow-sm">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <span className="text-sm font-medium text-gray-700">
-              Question {currentQIndex + 1} / {questions.length}
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              Basic Physics Quiz
-            </span>
-          </div>
-
-          {/* Question */}
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8">
-            {currentQ.text}
-          </h2>
-
-          {/* Answer Options Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {currentQ.options.map((option, idx) => {
-              const isSelected = answers[currentQ.id] === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleQuizAnswer(idx)}
-                  className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 hover:border-gray-300 transition-colors text-left"
-                >
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    isSelected ? 'border-gray-900' : 'border-gray-300'
-                  }`}>
-                    {isSelected && <div className="w-2.5 h-2.5 bg-gray-900 rounded-full" />}
-                  </div>
-                  <span className="text-base font-medium text-gray-900">{option}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Next Button */}
-          <div className="flex justify-end">
-            <button
-              onClick={handleNextQuestion}
-              disabled={!hasAnswered}
-              className={`px-6 py-3 rounded-full font-medium text-base transition-colors ${
-                hasAnswered 
-                  ? 'bg-gray-200 text-gray-900 hover:bg-gray-300' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              }`}
+      <div className="min-h-screen bg-[#0d1317] text-white flex flex-col">
+        <Header />
+        
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
+          <div className="w-full max-w-2xl">
+            {/* Card Container */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl"
             >
-              Suivant
-            </button>
+              {/* Decorative gradient line */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#48c6ed]/50 to-transparent" />
+              
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    {[...Array(questions.length)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          i < currentQIndex ? 'bg-[#48c6ed]' : 
+                          i === currentQIndex ? 'bg-[#48c6ed] ring-4 ring-[#48c6ed]/20' : 
+                          'bg-white/20'
+                        }`} 
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium !text-white/50">
+                    {currentQIndex + 1} sur {questions.length}
+                  </span>
+                </div>
+                <span className="px-4 py-1.5 bg-[#48c6ed]/10 text-[#48c6ed] border border-[#48c6ed]/20 rounded-full text-xs font-bold">
+                  Quiz Rapide
+                </span>
+              </div>
+
+              {/* Question */}
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-8 leading-tight">
+                {currentQ.text}
+              </h2>
+
+              {/* Answer Options Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+                {currentQ.options.map((option, idx) => {
+                  const isSelected = answers[currentQ.id] === idx;
+                  return (
+                    <motion.button
+                      key={idx}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleQuizAnswer(idx)}
+                      className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
+                        isSelected 
+                          ? 'bg-[#48c6ed]/10 border-[#48c6ed] shadow-lg shadow-[#48c6ed]/10' 
+                          : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        isSelected ? 'border-[#48c6ed] bg-[#48c6ed]' : 'border-white/30'
+                      }`}>
+                        {isSelected && (
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-2 h-2 bg-white rounded-full" 
+                          />
+                        )}
+                      </div>
+                      <span className={`text-base font-medium ${isSelected ? '!text-white' : '!text-white/70'}`}>
+                        {option}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Navigation */}
+              <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                <button
+                  onClick={handleBackQuestion}
+                  disabled={currentQIndex === 0}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${
+                    currentQIndex > 0
+                      ? '!text-white/60 hover:!text-white hover:bg-white/5'
+                      : '!text-white/20 cursor-not-allowed'
+                  }`}
+                >
+                  <ArrowLeft size={18} />
+                  <span className="font-medium">Précédent</span>
+                </button>
+                <button
+                  onClick={handleNextQuestion}
+                  disabled={!hasAnswered}
+                  className={`px-8 py-3 rounded-xl font-bold text-base transition-all flex items-center gap-2 ${
+                    hasAnswered 
+                      ? 'bg-gradient-to-r from-[#48c6ed] to-blue-600 !text-white hover:from-[#3ab5dc] hover:to-blue-700 shadow-lg shadow-blue-500/25' 
+                      : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
+                  }`}
+                >
+                  <span>Suivant</span>
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -204,120 +342,169 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
   // 2. TRANSITION PHASE
   if (step === 'transition') {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }}
-        className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto"
-      >
-        <h2 className="text-3xl font-bold mb-4 text-black">
-          First steps completed.
-        </h2>
-        <p className="text-lg text-gray-600 mb-2">
-          You've answered the basics.
-        </p>
-        <p className="text-xl font-bold text-black mb-10">
-          Now, let's see how this topic looks in real exam conditions.
-        </p>
+      <div className="min-h-screen bg-[#0d1317] text-white flex flex-col">
+        <Header />
+        
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center max-w-xl"
+          >
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', bounce: 0.5 }}
+              className="text-6xl mb-6"
+            >
+              🎯
+            </motion.div>
+            
+            <h2 className="text-3xl font-bold mb-4 !text-white">
+              Premières questions terminées !
+            </h2>
+            <p className="text-lg mb-2" style={{ color: 'rgba(255,255,255,0.85)' }}>
+              Tu as répondu aux questions de base.
+            </p>
+            <p className="text-xl font-semibold mb-10" style={{ color: 'rgba(255,255,255,0.85)' }}>
+              Maintenant, voyons comment tu te débrouilles dans des conditions d'examen.
+            </p>
 
-        <div className="w-full space-y-4">
-          <button
-            onClick={() => setStep('guided')}
-            className="w-full bg-blue-600 text-white font-bold py-5 px-10 rounded-full shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 text-lg"
-          >
-            <span>Try an exam-style question</span>
-            <span className="bg-blue-500 text-xs py-1 px-2 rounded">Recommended</span>
-          </button>
-          
-          <button
-            onClick={() => setStep('gate')}
-            className="w-full bg-white text-gray-500 font-medium py-4 px-10 rounded-full border border-gray-200 hover:bg-gray-50 transition-all"
-          >
-            Skip to my results
-          </button>
+            <div className="w-full space-y-4">
+              <button
+                onClick={() => setStep('guided')}
+                className="w-full bg-[#48c6ed] !text-white font-bold py-4 px-10 rounded-2xl shadow-lg shadow-[#48c6ed]/25 hover:bg-[#3ab5dc] transition-all flex items-center justify-center gap-3 text-lg"
+              >
+                <span>Essayer une question d'examen</span>
+                <span className="bg-white/20 text-xs py-1 px-2 rounded-full">Recommandé</span>
+              </button>
+              
+              <button
+                onClick={() => setStep('gate')}
+                className="w-full !text-white/50 font-medium py-4 px-10 rounded-2xl border border-white/10 hover:bg-white/5 transition-all"
+              >
+                Passer directement aux résultats
+              </button>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
-  // 3. GUIDED QUESTION PHASE - Same style as quiz
+  // 3. GUIDED QUESTION PHASE
   if (step === 'guided') {
     const isSelected = answers[guidedQuestion.id] !== undefined;
 
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-2xl border border-gray-200 rounded-3xl p-8 md:p-10 bg-white shadow-sm">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <button 
-              onClick={() => setStep('transition')} 
-              className="text-gray-400 hover:text-gray-900"
+      <div className="min-h-screen bg-[#0d1317] text-white flex flex-col">
+        <Header />
+        
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
+          <div className="w-full max-w-2xl">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl"
             >
-              ← Back
-            </button>
-            <span className="text-sm font-medium text-gray-700">
-              Exam Style Question
-            </span>
-          </div>
-
-          {/* Question */}
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8">
-            {guidedQuestion.text}
-          </h2>
-
-          {/* Answer Options Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {guidedQuestion.options.map((opt, idx) => {
-              const selected = answers[guidedQuestion.id] === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleGuidedAnswer(idx)}
-                  className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 hover:border-gray-300 transition-colors text-left"
-                >
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    selected ? 'border-gray-900' : 'border-gray-300'
-                  }`}>
-                    {selected && <div className="w-2.5 h-2.5 bg-gray-900 rounded-full" />}
-                  </div>
-                  <span className="text-base font-medium text-gray-900">{opt}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Reveal Resolution */}
-          <AnimatePresence mode="wait">
-            {!showResolution ? (
-              <div className="flex flex-col items-center gap-4">
+              {/* Decorative gradient line */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
                 <button 
-                  onClick={() => setShowResolution(true)}
-                  className="px-6 py-3 rounded-full bg-gray-200 text-gray-900 font-medium hover:bg-gray-300 transition-colors"
+                  onClick={() => setStep('transition')} 
+                  className="!text-white/50 hover:!text-white flex items-center gap-2 transition-colors"
                 >
-                  Reveal Resolution
+                  <ArrowLeft size={16} />
+                  Retour
                 </button>
+                <span className="px-4 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full text-xs font-bold">
+                  Style Examen
+                </span>
               </div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                  <h3 className="font-bold text-black mb-3">SMS Method</h3>
-                  <p className="text-gray-700 leading-relaxed">
-                    {guidedQuestion.explanation}
-                  </p>
-                </div>
 
-                <button
-                  onClick={() => setStep('gate')}
-                  className="w-full px-6 py-3 rounded-full bg-gray-200 text-gray-900 font-medium hover:bg-gray-300 transition-colors"
-                >
-                  Continue
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              {/* Question */}
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-8 leading-tight">
+                {guidedQuestion.text}
+              </h2>
+
+              {/* Answer Options Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+                {guidedQuestion.options.map((opt, idx) => {
+                  const selected = answers[guidedQuestion.id] === idx;
+                  return (
+                    <motion.button
+                      key={idx}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleGuidedAnswer(idx)}
+                      className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
+                        selected 
+                          ? 'bg-[#48c6ed]/10 border-[#48c6ed] shadow-lg shadow-[#48c6ed]/10' 
+                          : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        selected ? 'border-[#48c6ed] bg-[#48c6ed]' : 'border-white/30'
+                      }`}>
+                        {selected && (
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-2 h-2 bg-white rounded-full" 
+                          />
+                        )}
+                      </div>
+                      <span className={`text-base font-medium ${selected ? '!text-white' : '!text-white/70'}`}>
+                        {opt}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Reveal Resolution */}
+              <div className="pt-4 border-t border-white/5">
+                <AnimatePresence mode="wait">
+                  {!showResolution ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <button 
+                        onClick={() => setShowResolution(true)}
+                        className="px-8 py-3 rounded-xl bg-white/5 !text-white font-medium hover:bg-white/10 border border-white/10 transition-all"
+                      >
+                        Révéler la correction
+                      </button>
+                    </div>
+                  ) : (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-6"
+                    >
+                      <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                        <h3 className="font-bold !text-white mb-3 flex items-center gap-2">
+                          <span className="text-xl">💡</span>
+                          Méthode SMS
+                        </h3>
+                        <p style={{ color: 'rgba(255,255,255,0.7)' }} className="leading-relaxed">
+                          {guidedQuestion.explanation}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => setStep('gate')}
+                        className="w-full px-6 py-4 rounded-xl bg-[#48c6ed] !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#48c6ed]/25 flex items-center justify-center gap-2"
+                      >
+                        <span>Continuer</span>
+                        <ArrowRight size={16} />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     );
@@ -326,91 +513,115 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
   // 4. GATE PHASE - Contact Form + OTP Popup
   if (step === 'gate') {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
-        {/* Main Content */}
-        <div className="w-full max-w-lg">
-          {/* Title */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-black mb-2">
-              Quiz terminé!
-            </h1>
-            <p className="text-lg text-gray-700">
-              Vos réponses ont été enregistrées.
-            </p>
-          </div>
+      <div className="min-h-screen bg-[#0d1317] text-white flex flex-col">
+        <Header />
+        
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
+          <div className="w-full max-w-lg">
+            {/* Title */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-8"
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', bounce: 0.5 }}
+                className="text-6xl mb-4"
+              >
+                🎉
+              </motion.div>
+              <h1 className="text-3xl md:text-4xl font-bold !text-white mb-2">
+                Quiz terminé !
+              </h1>
+              <p className="text-lg" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                Tes réponses ont été enregistrées.
+              </p>
+            </motion.div>
 
-          {/* Contact Form Card */}
-          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-black mb-6">
-              Veuillez fournir vos informations de contact pour voir vos résultats
-            </h2>
+            {/* Contact Form Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 shadow-2xl"
+            >
+              {/* Decorative line */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-[#48c6ed]" />
+              
+              <h2 className="text-xl font-bold !text-white mb-6">
+                Entre tes coordonnées pour voir tes résultats
+              </h2>
 
-            <form onSubmit={handleContactSubmit} className="space-y-6">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input 
-                  type="email" 
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-300 text-black"
-                  placeholder="votre@email.com"
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  Téléphone
-                </label>
-                <div className="flex gap-2">
-                  <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl">
-                    <span className="text-2xl">🇧🇪</span>
-                    <select 
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                      className="bg-transparent border-none outline-none text-black font-medium"
-                    >
-                      <option value="+32">+32</option>
-                      <option value="+33">+33</option>
-                      <option value="+1">+1</option>
-                    </select>
-                  </div>
+              <form onSubmit={handleContactSubmit} className="space-y-5">
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium !text-white/80 mb-2">
+                    Email <span className="text-red-400">*</span>
+                  </label>
                   <input 
-                    type="tel" 
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-300 text-black"
-                    placeholder="123 45 67 89"
+                    type="email" 
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#48c6ed]/30 focus:border-[#48c6ed] !text-white placeholder-white/40 transition-all"
+                    placeholder="ton@email.com"
                   />
                 </div>
-              </div>
 
-              {/* Marketing Consent */}
-              <div className="flex items-start gap-3">
-                <input 
-                  type="checkbox" 
-                  id="marketing"
-                  checked={marketingConsent}
-                  onChange={(e) => setMarketingConsent(e.target.checked)}
-                  className="mt-1 w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-gray-300"
-                />
-                <label htmlFor="marketing" className="text-sm text-gray-700">
-                  J'accepte de recevoir des communications marketing
-                </label>
-              </div>
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium !text-white/80 mb-2">
+                    Téléphone
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-2 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl">
+                      <span className="text-2xl">🇧🇪</span>
+                      <select 
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="bg-transparent border-none outline-none !text-white font-medium"
+                      >
+                        <option value="+32">+32</option>
+                        <option value="+33">+33</option>
+                        <option value="+1">+1</option>
+                      </select>
+                    </div>
+                    <input 
+                      type="tel" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="flex-1 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#48c6ed]/30 focus:border-[#48c6ed] !text-white placeholder-white/40 transition-all"
+                      placeholder="123 45 67 89"
+                    />
+                  </div>
+                </div>
 
-              {/* Submit Button */}
-              <button 
-                type="submit"
-                className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full text-black font-medium hover:bg-gray-50 transition-colors"
-              >
-                Voir mes résultats
-              </button>
-            </form>
+                {/* Marketing Consent */}
+                <div className="flex items-start gap-3">
+                  <input 
+                    type="checkbox" 
+                    id="marketing"
+                    checked={marketingConsent}
+                    onChange={(e) => setMarketingConsent(e.target.checked)}
+                    className="mt-1 w-4 h-4 border-white/20 rounded bg-white/10 text-[#48c6ed] focus:ring-[#48c6ed]"
+                  />
+                  <label htmlFor="marketing" className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                    J'accepte de recevoir des communications marketing
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button 
+                  type="submit"
+                  className="w-full px-6 py-4 bg-[#48c6ed] rounded-xl !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#48c6ed]/25 flex items-center justify-center gap-2"
+                >
+                  <span>Voir mes résultats</span>
+                  <ArrowRight size={16} />
+                </button>
+              </form>
+            </motion.div>
           </div>
         </div>
 
@@ -424,7 +635,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowOtpPopup(false)}
-                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
               />
 
               {/* Popup */}
@@ -435,23 +646,31 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                 className="fixed inset-0 z-50 flex items-center justify-center p-6"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+                <div className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl overflow-hidden">
+                  {/* Decorative top line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#48c6ed] via-[#48c6ed] to-transparent" />
+                  
                   {/* Close Button */}
                   <button
                     onClick={() => setShowOtpPopup(false)}
-                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
                   >
-                    <X size={18} className="text-gray-600" />
+                    <X size={18} className="!text-white/60" />
                   </button>
 
+                  {/* Icon */}
+                  <div className="text-center mb-4">
+                    <span className="text-5xl">📧</span>
+                  </div>
+
                   {/* Title */}
-                  <h3 className="text-2xl font-bold text-black mb-3">
-                    Vérifiez votre adresse email
+                  <h3 className="text-2xl font-bold !text-white mb-3 text-center">
+                    Vérifie ton email
                   </h3>
 
                   {/* Instruction */}
-                  <p className="text-gray-600 mb-6">
-                    Un code de vérification a été envoyé à votre adresse email. Entrez-le ci-dessous.
+                  <p className="text-center mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Un code de vérification a été envoyé à ton adresse email. Entre-le ci-dessous.
                   </p>
 
                   {/* OTP Inputs */}
@@ -467,7 +686,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                           value={digit}
                           onChange={(e) => handleOtpChange(index, e.target.value)}
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                          className="w-12 h-12 rounded-full border-2 border-gray-200 text-center text-xl font-bold text-black focus:border-gray-400 focus:outline-none"
+                          className="w-12 h-14 rounded-xl border-2 border-white/10 bg-white/5 text-center text-xl font-bold !text-white focus:border-[#48c6ed] focus:bg-white/10 focus:outline-none transition-all"
                         />
                       ))}
                     </div>
@@ -477,13 +696,12 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       <button
                         type="button"
                         onClick={() => {
-                          // Resend logic
                           setOtp(['', '', '', '', '', '']);
                           otpInputRefs[0]?.current?.focus();
                         }}
-                        className="text-sm text-gray-600 hover:text-black transition-colors"
+                        className="text-sm transition-colors" style={{ color: 'rgba(255,255,255,0.5)' }}
                       >
-                        Vous n'avez pas reçu le code ? <span className="font-semibold underline">Renvoyer</span>
+                        Tu n'as pas reçu le code ? <span className="font-semibold underline text-[#48c6ed] hover:text-[#3ab5dc]">Renvoyer</span>
                       </button>
                     </div>
 
@@ -491,10 +709,10 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                     <button
                       type="submit"
                       disabled={otp.some(d => !d) || isSubmitting}
-                      className={`w-full px-6 py-3 rounded-full font-medium transition-colors ${
+                      className={`w-full px-6 py-4 rounded-xl font-bold transition-all ${
                         otp.every(d => d) && !isSubmitting
-                          ? 'bg-gray-200 text-black hover:bg-gray-300'
-                          : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          ? 'bg-[#48c6ed] !text-white hover:bg-[#3ab5dc] shadow-lg shadow-[#48c6ed]/25'
+                          : 'bg-white/10 !text-white/40 cursor-not-allowed'
                       }`}
                     >
                       {isSubmitting ? 'Vérification...' : 'Vérifier'}
@@ -515,102 +733,123 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
     if (guidedQuestion) allQuestions.push(guidedQuestion);
 
     return (
-      <div className="min-h-screen bg-white text-black">
-        <div className="max-w-4xl mx-auto px-6 py-12 pb-32">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-widest mb-4">
-              <CheckCircle size={14} /> Diagnostic Complete
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-black mb-4">
-              This is a starting point — not a verdict.
-            </h1>
-            <p className="text-xl text-gray-600 font-medium">
-              You scored <span className="text-black font-bold">{score}/{totalQuestions}</span> correct answers.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-12 gap-8">
-            {/* LEFT: Question Breakdown */}
-            <div className="md:col-span-7 space-y-6">
-              <h3 className="text-lg font-bold text-black flex items-center gap-2">
-                Your Questions Breakdown
-              </h3>
-              
-              <div className="space-y-4">
-                {allQuestions.map((q, idx) => {
-                  const userAnswer = answers[q.id];
-                  const isCorrect = userAnswer === q.correctAnswer;
-                  const isGuided = guidedQuestion && q.id === guidedQuestion.id;
-
-                  return (
-                    <div key={q.id} className="bg-white border border-gray-200 p-6 rounded-2xl">
-                      <div className="flex items-start justify-between gap-4 mb-3">
-                        <h4 className="font-bold text-black text-base leading-snug">
-                          {isGuided && <span className="text-purple-600 mr-2">[Exam Style]</span>}
-                          {q.text}
-                        </h4>
-                        {isCorrect ? (
-                          <CheckCircle size={20} className="text-green-600 flex-shrink-0" />
-                        ) : (
-                          <XCircle size={20} className="text-red-600 flex-shrink-0" />
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-xs font-bold uppercase text-gray-400">Your Answer:</span>
-                        <span className={`text-sm font-semibold ${isCorrect ? 'text-green-700' : 'text-red-600'}`}>
-                          {q.options[userAnswer] || "Skipped"}
-                        </span>
-                      </div>
-
-                      <button className="w-full py-2.5 px-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center gap-2 text-sm font-bold text-gray-600 transition-colors">
-                        <span>Watch explanation</span>
-                      </button>
-                    </div>
-                  );
-                })}
+      <div className="min-h-screen bg-[#0d1317] text-white flex flex-col">
+        <Header />
+        
+        <div className="flex-1 flex flex-col justify-center px-6 py-4">
+          <div className="max-w-5xl mx-auto w-full">
+            {/* Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-6"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#48c6ed]/10 text-[#48c6ed] text-xs font-bold uppercase tracking-widest mb-3 border border-[#48c6ed]/20">
+                <CheckCircle size={14} /> Diagnostic Terminé
               </div>
-            </div>
+              <h1 className="text-2xl md:text-3xl font-bold !text-white mb-2">
+                C'est un point de départ — pas un verdict.
+              </h1>
+              <p className="text-base" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                Tu as obtenu <span className="!text-white font-bold text-lg">{score}/{totalQuestions}</span> bonnes réponses.
+              </p>
+            </motion.div>
 
-            {/* RIGHT: CTA */}
-            <div className="md:col-span-5">
-              <div className="sticky top-8 space-y-6">
-                <div className="bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                  <h3 className="text-2xl font-bold text-black mb-3">
-                    Let's create your learning path
+            <div className="grid md:grid-cols-12 gap-4">
+              {/* LEFT: Question Breakdown */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="md:col-span-7"
+              >
+                <h3 className="text-sm font-bold !text-white/60 uppercase tracking-wider mb-3">
+                  Détail de tes réponses
+                </h3>
+                
+                <div className="space-y-2 max-h-[calc(100vh-380px)] overflow-y-auto pr-2 custom-scrollbar">
+                  {allQuestions.map((q) => {
+                    const userAnswer = answers[q.id];
+                    const isCorrect = userAnswer === q.correctAnswer;
+                    const isGuided = guidedQuestion && q.id === guidedQuestion.id;
+
+                    return (
+                      <div 
+                        key={q.id} 
+                        className={`relative bg-white/5 border rounded-xl p-4 transition-all hover:bg-white/10 ${
+                          isCorrect ? 'border-green-500/30' : 'border-red-500/30'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
+                          }`}>
+                            {isCorrect ? (
+                              <CheckCircle size={14} className="text-green-400" />
+                            ) : (
+                              <XCircle size={14} className="text-red-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium !text-white text-sm leading-snug mb-1 line-clamp-2">
+                              {isGuided && <span className="text-purple-400 text-xs mr-1">[Examen]</span>}
+                              {q.text}
+                            </h4>
+                            <p className={`text-xs font-medium ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                              {q.options[userAnswer] || "Non répondu"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+
+              {/* RIGHT: CTA */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="md:col-span-5"
+              >
+                <div className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl p-6 text-center overflow-hidden">
+                  {/* Decorative line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#48c6ed] via-[#48c6ed] to-transparent" />
+                  
+                  <h3 className="text-xl font-bold !text-white mb-2">
+                    Prêt à progresser ?
                   </h3>
-                  <p className="text-gray-600 mb-8 leading-relaxed text-sm">
-                    We now have a clear idea of your level. Message us on WhatsApp to build a personalized roadmap based on your results.
+                  <p className="text-sm mb-5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                    Découvre un programme personnalisé adapté à ton niveau et tes objectifs.
                   </p>
                   
+                  {/* Primary CTA - Diagnostic Flow */}
+                  <Link 
+                    href="/?diagnostic=true"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#48c6ed] !text-white font-bold py-3 px-5 rounded-xl text-base shadow-lg shadow-[#48c6ed]/25 hover:bg-[#3ab5dc] transition-all mb-3"
+                  >
+                    <Target size={20} />
+                    <span>Créer mon parcours</span>
+                  </Link>
+                  
+                  {/* Secondary CTA - WhatsApp */}
                   <a 
                     href="https://wa.me/32477025622"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] text-white font-bold py-4 px-6 rounded-full text-lg shadow-lg hover:bg-[#20bd5a] transition-all mb-4"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 !text-white/70 font-medium py-2.5 px-5 rounded-xl text-sm hover:bg-white/10 hover:!text-white transition-all"
                   >
-                    <MessageCircle size={24} fill="white" />
-                    <span>Talk to a Mentor on WhatsApp</span>
+                    <MessageCircle size={16} />
+                    <span>Parler à un mentor</span>
                   </a>
-                  
-                  <div className="flex flex-col gap-1 text-xs text-gray-400 font-medium">
-                    <span className="flex items-center justify-center gap-1"><CheckCircle size={10}/> Free diagnostic</span>
-                    <span className="flex items-center justify-center gap-1"><CheckCircle size={10}/> No commitment</span>
-                    <span className="flex items-center justify-center gap-1"><CheckCircle size={10}/> Real human response</span>
-                  </div>
                 </div>
 
-                <Link href="/" className="block text-center text-sm font-bold text-gray-400 hover:text-black transition-colors">
-                  ← Back to landing page
+                <Link href="/" className="mt-4 block text-center text-sm font-medium transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  ← Retour à l'accueil
                 </Link>
-              </div>
+              </motion.div>
             </div>
-          </div>
-
-          {/* Social Proof */}
-          <div className="mt-24 border-t border-gray-200 pt-16">
-            <TestimonialsSectionMultilang />
           </div>
         </div>
       </div>

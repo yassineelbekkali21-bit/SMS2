@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
-import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDiagnostic } from '@/contexts/DiagnosticContext';
 import Image from 'next/image';
 
 interface Testimonial {
@@ -123,6 +123,7 @@ export function TestimonialsSectionMultilang() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_DISPLAY);
   const [changingIndex, setChangingIndex] = useState<number | null>(null);
   const { language, t } = useLanguage();
+  const { openDiagnostic } = useDiagnostic();
 
   const visibleTestimonials = allTestimonials.slice(0, visibleCount);
   const hasMore = visibleCount < allTestimonials.length;
@@ -138,7 +139,7 @@ export function TestimonialsSectionMultilang() {
 
   const handleVoirPlus = () => {
     setVisibleCount(prev => Math.min(prev + LOAD_MORE_COUNT, allTestimonials.length));
-  };
+    };
 
   const handleVoirMoins = () => {
     setVisibleCount(INITIAL_DISPLAY);
@@ -153,7 +154,7 @@ export function TestimonialsSectionMultilang() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="font-title text-4xl mb-4 tracking-wide"
-            style={{ fontSize: 'clamp(1.75rem, 4vw, 52px)' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 64px)' }}
           >
             {t('testimonials.title')}<br />
             <span>{t('testimonials.title.highlight')}</span>
@@ -202,11 +203,11 @@ export function TestimonialsSectionMultilang() {
 
         {/* Grid 5x2 de témoignages avec expansion verticale */}
         <div className="relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4"
           >
             <AnimatePresence mode="popLayout">
@@ -222,18 +223,18 @@ export function TestimonialsSectionMultilang() {
                   transition={{ duration: 0.3, delay: index >= visibleCount - LOAD_MORE_COUNT ? (index % LOAD_MORE_COUNT) * 0.05 : 0 }}
                   onClick={() => handleTestimonialClick(index)}
                   className="rounded-xl p-3 md:p-4 shadow-md bg-white border border-gray-100 text-gray-900 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all"
-                >
-                  <p className="text-xs sm:text-sm md:text-base leading-snug mb-2 line-clamp-2 font-medium">
-                    {language === 'fr' ? testimonial.textFr : testimonial.textEn}
-                  </p>
+              >
+                  <p className="leading-snug mb-2 line-clamp-2 font-medium" style={{ fontSize: '14px' }}>
+                  {language === 'fr' ? testimonial.textFr : testimonial.textEn}
+                </p>
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                    <span className="font-semibold text-xs sm:text-sm text-gray-800 truncate max-w-[60%]">{testimonial.name}</span>
-                    <span className="text-xs sm:text-sm text-green-600 font-bold">
+                    <span className="font-semibold text-gray-800 truncate max-w-[60%]" style={{ fontSize: '14px' }}>{testimonial.name}</span>
+                    <span className="text-green-600 font-bold" style={{ fontSize: '14px' }}>
                       {language === 'fr' ? testimonial.resultFr : testimonial.resultEn}
-                    </span>
-                  </div>
+                  </span>
+                </div>
                 </motion.div>
-              ))}
+            ))}
             </AnimatePresence>
           </motion.div>
 
@@ -264,13 +265,14 @@ export function TestimonialsSectionMultilang() {
         </div>
 
         <div className="flex justify-center mt-12">
-          <Link
-            href="/diagnostic"
-            className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+          <button
+            onClick={openDiagnostic}
+            className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer"
+            style={{ fontSize: '18px' }}
           >
             {language === 'fr' ? 'Construire mon parcours' : 'Build my learning path'}
             <ArrowRight size={20} />
-          </Link>
+          </button>
         </div>
       </div>
     </section>

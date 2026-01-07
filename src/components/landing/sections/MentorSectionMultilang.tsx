@@ -60,13 +60,13 @@ export function MentorSectionMultilang() {
           >
             <h2 
               className="font-title mb-5 leading-tight tracking-wide"
-              style={{ fontSize: 'clamp(1.5rem, 4vw, 44px)', color: '#FFFFFF' }}
+              style={{ fontSize: 'clamp(2rem, 8vw, 64px)', color: '#F7F7F7' }}
             >
               {content.label}
             </h2>
-
+            
             {/* Short bio - 3 phrases */}
-            <div className="space-y-4 leading-relaxed mb-6" style={{ fontSize: '16px' }}>
+            <div className="space-y-4 leading-relaxed mb-6" style={{ fontSize: '18px' }}>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio1}</p>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio2}</p>
               <p style={{ color: 'rgba(255,255,255,0.85)' }}>{content.bio3}</p>
@@ -75,7 +75,8 @@ export function MentorSectionMultilang() {
             {/* More about Zak link */}
             <Link 
               href="/about-zak"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-lg font-medium group"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors font-medium group"
+              style={{ fontSize: '14px' }}
             >
               {content.moreLink}
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

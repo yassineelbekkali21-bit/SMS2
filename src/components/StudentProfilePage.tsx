@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   ArrowLeft, 
   User, 
@@ -15,13 +15,12 @@ import {
   X, 
   Shield, 
   Heart,
-  Award,
   BookOpen,
   Clock,
   Target,
   Camera,
   Check,
-  AlertCircle
+  ChevronRight
 } from 'lucide-react';
 import { IdentityStatusBadge } from './IdentityStatusBadge';
 import { ProfileNotification } from './ProfileNotification';
@@ -41,14 +40,12 @@ export function StudentProfilePage() {
 
   const [editedProfile, setEditedProfile] = useState<StudentProfile>(profile);
 
-  // Initialiser le profil au chargement
   useEffect(() => {
     const loadedProfile = StudentProfileService.initializeProfile();
     setProfile(loadedProfile);
     setEditedProfile(loadedProfile);
   }, []);
 
-  // Auto-hide notification après 5 secondes
   useEffect(() => {
     if (notification.type) {
       const timer = setTimeout(() => {
@@ -70,11 +67,7 @@ export function StudentProfilePage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    
-    // Simulation de la sauvegarde avec délai
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Sauvegarder avec le service
     const success = StudentProfileService.saveProfile(editedProfile);
     
     if (success) {
@@ -82,17 +75,14 @@ export function StudentProfilePage() {
       setIsEditing(false);
       setNotification({
         type: 'success',
-        message: 'Profil sauvegardé avec succès !'
+        message: 'Profil sauvegardé avec succès'
       });
-      console.log('✅ Profil sauvegardé avec succès');
     } else {
       setNotification({
         type: 'error',
-        message: 'Erreur lors de la sauvegarde du profil'
+        message: 'Erreur lors de la sauvegarde'
       });
-      console.error('❌ Erreur lors de la sauvegarde du profil');
     }
-    
     setIsSaving(false);
   };
 
@@ -102,7 +92,7 @@ export function StudentProfilePage() {
       setEditedProfile(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof StudentProfile] as any,
+          ...prev[parent as keyof StudentProfile] as object,
           [child]: value
         }
       }));
@@ -126,12 +116,33 @@ export function StudentProfilePage() {
   };
 
   const stats = getAcademicStats();
+  
+  // Calculate profile completion percentage
+  const calculateProfileCompletion = () => {
+    let completed = 0;
+    let total = 10;
+    
+    if (profile.firstName) completed++;
+    if (profile.lastName) completed++;
+    if (profile.email) completed++;
+    if (profile.phone) completed++;
+    if (profile.dateOfBirth) completed++;
+    if (profile.address?.city) completed++;
+    if (profile.academic?.university) completed++;
+    if (profile.academic?.faculty) completed++;
+    if (profile.academic?.program) completed++;
+    if (profile.academic?.year) completed++;
+    
+    return Math.round((completed / total) * 100);
+  };
+  
+  const profileCompletion = calculateProfileCompletion();
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="w-full px-6 lg:px-12 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button 
@@ -142,14 +153,16 @@ export function StudentProfilePage() {
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Mon Profil</h1>
-                <p className="text-gray-600">Gérer mes informations personnelles</p>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  Ton profil est la base de ton parcours personnalisé sur SMS.
+                </p>
               </div>
             </div>
             
             {!isEditing ? (
               <button
                 onClick={handleEdit}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors font-medium"
               >
                 <Edit3 size={16} />
                 Modifier
@@ -158,7 +171,7 @@ export function StudentProfilePage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl hover:bg-gray-200 transition-colors font-medium"
                 >
                   <X size={16} />
                   Annuler
@@ -166,7 +179,7 @@ export function StudentProfilePage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50 font-medium"
                 >
                   {isSaving ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -181,401 +194,408 @@ export function StudentProfilePage() {
         </div>
       </div>
 
-      {/* Contenu principal */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Content - Full Width */}
+      <div className="w-full px-6 lg:px-12 py-8">
+        {/* Top Row: Identity Card + Activity Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           
-          {/* Colonne gauche - Avatar et stats */}
-          <div className="space-y-6">
-            {/* Avatar et infos de base */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <div className="text-center">
-                <div className="relative inline-block mb-4">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                    {profile.firstName.charAt(0)}{profile.lastName.charAt(0)}
-                  </div>
-                  {isEditing && (
-                    <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                      <Camera size={14} />
-                    </button>
-                  )}
+          {/* Identity Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          >
+            <div className="flex items-start gap-5">
+              <div className="relative flex-shrink-0">
+                <div className="w-20 h-20 bg-gray-900 rounded-2xl flex items-center justify-center text-white text-xl font-bold">
+                  {profile.firstName.charAt(0)}{profile.lastName.charAt(0)}
                 </div>
-                
-                <h2 className="text-xl font-bold text-gray-900 mb-1">
+                {isEditing && (
+                  <button className="absolute -bottom-1 -right-1 w-7 h-7 bg-gray-900 text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors">
+                    <Camera size={12} />
+                  </button>
+                )}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl font-bold text-gray-900 truncate">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-gray-600 mb-2">{profile.academic.program}</p>
+                <p className="text-gray-600 mt-1">Étudiant en {profile.academic.program}</p>
                 <p className="text-sm text-gray-500">{profile.academic.faculty}</p>
                 
-                {/* Statut de vérification */}
-                <div className="mt-4">
+                {/* Profile Status Badge */}
+                <div className="flex items-center gap-2 mt-3">
+                  {profileCompletion === 100 ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                      <Check size={12} className="text-gray-600" />
+                      Profil vérifié
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                      Complété à {profileCompletion}%
+                    </span>
+                  )}
                   <IdentityStatusBadge />
                 </div>
               </div>
             </div>
+          </motion.div>
 
-            {/* Statistiques académiques */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Award className="text-purple-600" size={20} />
-                Statistiques
-              </h3>
+          {/* Activity Stats - Spans 2 columns on large screens */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          >
+            <h3 className="text-base font-semibold text-gray-900 mb-4">
+              Ton activité sur SMS
+            </h3>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock size={16} className="text-gray-500" />
+                  <span className="text-xs text-gray-500 font-medium">Heures d'étude</span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{stats.studyHours}h</p>
+              </div>
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <BookOpen size={16} className="text-blue-600" />
-                    <span className="text-sm text-gray-600">Cours complétés</span>
-                  </div>
-                  <span className="font-semibold text-gray-900">{stats.coursesCompleted}/{stats.totalCourses}</span>
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 mb-2">
+                  <BookOpen size={16} className="text-gray-500" />
+                  <span className="text-xs text-gray-500 font-medium">Cours complétés</span>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Target size={16} className="text-green-600" />
-                    <span className="text-sm text-gray-600">Moyenne</span>
-                  </div>
-                  <span className="font-semibold text-gray-900">{stats.averageGrade}/20</span>
+                <p className="text-2xl font-bold text-gray-900">{stats.coursesCompleted}/{stats.totalCourses}</p>
+              </div>
+              
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target size={16} className="text-gray-500" />
+                  <span className="text-xs text-gray-500 font-medium">Moyenne</span>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-orange-600" />
-                    <span className="text-sm text-gray-600">Heures d'étude</span>
-                  </div>
-                  <span className="font-semibold text-gray-900">{stats.studyHours}h</span>
+                <p className="text-2xl font-bold text-gray-900">{stats.averageGrade}/20</p>
+              </div>
+              
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 mb-2">
+                  <Heart size={16} className="text-gray-500" />
+                  <span className="text-xs text-gray-500 font-medium">Cours favoris</span>
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Heart size={16} className="text-purple-600" />
-                    <span className="text-sm text-gray-600">Cours favoris</span>
-                  </div>
-                  <span className="font-semibold text-gray-900">{favorites.length}</span>
-                </div>
+                <p className="text-2xl font-bold text-gray-900">{favorites.length}</p>
               </div>
             </div>
-          </div>
-
-          {/* Colonne droite - Formulaire */}
-          <div className="lg:col-span-2 space-y-6">
             
-            {/* Informations personnelles */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <User className="text-blue-600" size={20} />
-                Informations personnelles
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <p className="text-xs text-gray-400 mt-4">
+              Ces données servent à ajuster ton rythme et tes recommandations.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Middle Row: Personal Info + Academic Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          
+          {/* Personal Information */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-5">
+              <User size={18} className="text-gray-500" />
+              <h3 className="text-base font-semibold text-gray-900">Informations personnelles</h3>
+            </div>
+            
+            <div className="space-y-5">
+              {/* Identity Group */}
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Prénom
-                  </label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Prénom</label>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editedProfile.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
                     />
                   ) : (
-                    <p className="py-2 text-gray-900">{profile.firstName}</p>
+                    <p className="text-sm text-gray-900 font-medium">{profile.firstName}</p>
                   )}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nom de famille
-                  </label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Nom</label>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editedProfile.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
                     />
                   ) : (
-                    <p className="py-2 text-gray-900">{profile.lastName}</p>
-                  )}
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <Mail size={14} />
-                    Adresse email
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                      Non modifiable
-                    </span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={profile.email}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <Shield size={16} className="text-gray-400" />
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    L'adresse email est unique et ne peut pas être modifiée pour des raisons de sécurité.
-                  </p>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="tel"
-                      value={editedProfile.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.phone}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date de naissance
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="date"
-                      value={editedProfile.dateOfBirth}
-                      onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <p className="py-2 text-gray-900">
-                      {new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}
-                    </p>
+                    <p className="text-sm text-gray-900 font-medium">{profile.lastName}</p>
                   )}
                 </div>
               </div>
-            </div>
-
-            {/* Adresse */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <MapPin className="text-green-600" size={20} />
-                Adresse
-              </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rue et numéro
-                  </label>
-                  {isEditing ? (
+              {/* Contact Group */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 mb-1.5">
+                      <Mail size={12} />
+                      Email
+                      <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">fixe</span>
+                    </label>
+                    <p className="text-sm text-gray-600">{profile.email}</p>
+                  </div>
+                  
+                  <div>
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 mb-1.5">
+                      <Phone size={12} />
+                      Téléphone
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type="tel"
+                        value={editedProfile.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-900 font-medium">{profile.phone}</p>
+                    )}
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      Utilisé uniquement pour ton compte et les notifications importantes.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 mb-1.5">
+                      <Calendar size={12} />
+                      Date de naissance
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        value={editedProfile.dateOfBirth}
+                        onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-900 font-medium">
+                        {new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Address Group */}
+              <div className="pt-4 border-t border-gray-100">
+                <label className="flex items-center gap-1.5 text-xs font-medium text-gray-500 mb-2">
+                  <MapPin size={12} />
+                  Adresse
+                </label>
+                {isEditing ? (
+                  <div className="space-y-3">
                     <input
                       type="text"
                       value={editedProfile.address.street}
                       onChange={(e) => handleInputChange('address.street', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Rue et numéro"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
                     />
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.address.street}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ville
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedProfile.address.city}
-                      onChange={(e) => handleInputChange('address.city', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.address.city}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Code postal
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedProfile.address.postalCode}
-                      onChange={(e) => handleInputChange('address.postalCode', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.address.postalCode}</p>
-                  )}
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pays
-                  </label>
-                  {isEditing ? (
-                    <select
-                      value={editedProfile.address.country}
-                      onChange={(e) => handleInputChange('address.country', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="Belgique">Belgique</option>
-                      <option value="France">France</option>
-                      <option value="Luxembourg">Luxembourg</option>
-                      <option value="Pays-Bas">Pays-Bas</option>
-                      <option value="Allemagne">Allemagne</option>
-                    </select>
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.address.country}</p>
-                  )}
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        value={editedProfile.address.postalCode}
+                        onChange={(e) => handleInputChange('address.postalCode', e.target.value)}
+                        placeholder="Code postal"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                      />
+                      <input
+                        type="text"
+                        value={editedProfile.address.city}
+                        onChange={(e) => handleInputChange('address.city', e.target.value)}
+                        placeholder="Ville"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-900 font-medium">
+                    {profile.address.street}, {profile.address.postalCode} {profile.address.city}
+                  </p>
+                )}
               </div>
             </div>
+          </motion.div>
 
-            {/* Informations académiques */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <GraduationCap className="text-purple-600" size={20} />
-                Informations académiques
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Université
-                  </label>
+          {/* Academic Information */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <GraduationCap size={18} className="text-gray-500" />
+              <h3 className="text-base font-semibold text-gray-900">Informations académiques</h3>
+            </div>
+            <p className="text-xs text-gray-400 mb-5">
+              Ces informations nous aident à te proposer des parcours et examens adaptés à ton niveau.
+            </p>
+            
+            <div className="space-y-5">
+              {/* Main Academic Info */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Université</label>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editedProfile.academic.university}
                       onChange={(e) => handleInputChange('academic.university', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
                     />
                   ) : (
-                    <p className="py-2 text-gray-900">{profile.academic.university}</p>
+                    <p className="text-sm text-gray-900 font-medium">{profile.academic.university}</p>
                   )}
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Faculté
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedProfile.academic.faculty}
-                      onChange={(e) => handleInputChange('academic.faculty', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.academic.faculty}</p>
-                  )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1.5">Faculté</label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editedProfile.academic.faculty}
+                        onChange={(e) => handleInputChange('academic.faculty', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-900 font-medium">{profile.academic.faculty}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1.5">Année d'étude</label>
+                    {isEditing ? (
+                      <select
+                        value={editedProfile.academic.year}
+                        onChange={(e) => handleInputChange('academic.year', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm bg-white"
+                      >
+                        <option value={1}>1ère année</option>
+                        <option value={2}>2ème année</option>
+                        <option value={3}>3ème année</option>
+                        <option value={4}>4ème année</option>
+                        <option value={5}>5ème année</option>
+                      </select>
+                    ) : (
+                      <p className="text-sm text-gray-900 font-medium">{profile.academic.year}ère année</p>
+                    )}
+                  </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Année d'étude
-                  </label>
-                  {isEditing ? (
-                    <select
-                      value={editedProfile.academic.year}
-                      onChange={(e) => handleInputChange('academic.year', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value={1}>1ère année</option>
-                      <option value={2}>2ème année</option>
-                      <option value={3}>3ème année</option>
-                      <option value={4}>4ème année</option>
-                      <option value={5}>5ème année</option>
-                    </select>
-                  ) : (
-                    <p className="py-2 text-gray-900">{profile.academic.year}ère année</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Programme
-                  </label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1.5">Programme</label>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editedProfile.academic.program}
                       onChange={(e) => handleInputChange('academic.program', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
                     />
                   ) : (
-                    <p className="py-2 text-gray-900">{profile.academic.program}</p>
+                    <p className="text-sm text-gray-900 font-medium">{profile.academic.program}</p>
                   )}
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Numéro étudiant
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={profile.academic.studentId}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <Shield size={16} className="text-gray-400" />
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Le numéro étudiant ne peut pas être modifié.
-                  </p>
-                </div>
               </div>
-            </div>
-
-            {/* Informations de compte */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Shield className="text-indigo-600" size={20} />
-                Informations de compte
-              </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Secondary Info - Visually demoted */}
+              <div className="pt-4 border-t border-gray-100">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Membre depuis
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-gray-400 mb-1.5">
+                    <Shield size={12} />
+                    Numéro étudiant
+                    <span className="text-[10px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded">fixe</span>
                   </label>
-                  <p className="py-2 text-gray-900">
-                    {profile.createdAt.toLocaleDateString('fr-FR', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </p>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dernière connexion
-                  </label>
-                  <p className="py-2 text-gray-900">
-                    {profile.lastLogin.toLocaleDateString('fr-FR', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
+                  <p className="text-sm text-gray-500">{profile.academic.studentId}</p>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom Row: Account Info (Compact) + CTA */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Account Information - Compact */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Shield size={16} className="text-gray-400" />
+              <h3 className="text-sm font-medium text-gray-600">Compte</h3>
+            </div>
+            
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500">Membre depuis</span>
+              <span className="text-gray-700 font-medium">
+                {profile.createdAt.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+              </span>
+            </div>
+          </motion.div>
+
+          {/* CTA Card */}
+          {profileCompletion < 100 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="lg:col-span-2 bg-gray-900 rounded-2xl p-6 text-white"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Compléter mon profil</h3>
+                  <p className="text-sm text-gray-400">
+                    Plus ton profil est complet, plus ton parcours est précis.
+                  </p>
+                </div>
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-xl font-medium hover:bg-gray-100 transition-colors"
+                >
+                  Continuer
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs text-gray-400 mb-1.5">
+                  <span>Progression</span>
+                  <span>{profileCompletion}%</span>
+                </div>
+                <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${profileCompletion}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: '#48c6ed' }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
 

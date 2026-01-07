@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDiagnostic } from '@/contexts/DiagnosticContext';
 import { ArrowRight, Check } from 'lucide-react';
-import Link from 'next/link';
 
 const options = {
   fr: [
@@ -29,6 +29,7 @@ const options = {
 
 export function DiagnosticSectionMultilang() {
   const { language } = useLanguage();
+  const { openDiagnostic } = useDiagnostic();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const content = language === 'fr' ? {
@@ -63,11 +64,11 @@ export function DiagnosticSectionMultilang() {
         >
           <h2 
             className="font-title mb-4 leading-tight tracking-wide"
-            style={{ fontSize: 'clamp(1.5rem, 4vw, 44px)', color: 'var(--sms-black, #1A1A1A)' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 64px)', color: 'var(--sms-black, #1A1A1A)' }}
           >
             {content.title}
           </h2>
-          <p className="text-gray-500 text-xl md:text-2xl">
+          <p className="text-gray-500" style={{ fontSize: '22px' }}>
             {content.subtitle}
           </p>
         </motion.div>
@@ -102,7 +103,7 @@ export function DiagnosticSectionMultilang() {
                   <Check size={16} className="text-gray-900" strokeWidth={3} />
                 )}
               </div>
-              <span className="text-base md:text-lg font-medium">{option.label}</span>
+              <span className="font-medium" style={{ fontSize: '14px' }}>{option.label}</span>
             </motion.button>
           ))}
         </motion.div>
@@ -114,23 +115,26 @@ export function DiagnosticSectionMultilang() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="mt-10 text-center"
         >
-          <Link
-            href={`/diagnostic${selectedOptions.length > 0 ? `?goals=${selectedOptions.join(',')}` : ''}`}
-            className={`inline-flex items-center gap-3 px-10 py-5 rounded-full font-semibold text-xl transition-all shadow-lg ${
+          <button
+            onClick={() => {
+              if (selectedOptions.length > 0) {
+                openDiagnostic();
+              }
+            }}
+            className={`inline-flex items-center gap-3 px-10 py-5 rounded-full font-semibold transition-all shadow-lg ${
               selectedOptions.length > 0
                 ? 'text-white hover:scale-105 cursor-pointer'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
             }`}
-            style={selectedOptions.length > 0 ? { backgroundColor: '#00c2ff' } : {}}
-            onClick={(e) => {
-              if (selectedOptions.length === 0) {
-                e.preventDefault();
-              }
+            style={{ 
+              fontSize: '18px',
+              ...(selectedOptions.length > 0 ? { backgroundColor: '#00c2ff' } : {})
             }}
+            disabled={selectedOptions.length === 0}
           >
             {content.cta}
             <ArrowRight size={22} />
-          </Link>
+          </button>
           
           {selectedOptions.length === 0 && (
             <p className="text-gray-400 text-sm mt-3">

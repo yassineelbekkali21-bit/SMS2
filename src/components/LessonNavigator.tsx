@@ -31,9 +31,9 @@ export function LessonNavigator({
   const getLessonIcon = (status: string) => {
     switch (status) {
       case 'current':
-        return <Play size={16} className="text-blue-600" />;
+        return <Play size={16} className="text-[#48c6ed]" />;
       case 'completed':
-        return <CheckCircle size={16} className="text-green-600" />;
+        return <CheckCircle size={16} className="text-gray-900" />;
       case 'available':
         return <div className="w-4 h-4 border-2 border-gray-400 rounded-full" />;
       case 'locked':
@@ -76,7 +76,7 @@ export function LessonNavigator({
           </div>
           <div className="w-full bg-gray-100 rounded-full h-2.5">
             <motion.div 
-              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2.5 rounded-full"
+              className="bg-gray-900 h-2.5 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
@@ -104,9 +104,9 @@ export function LessonNavigator({
                 whileTap={isClickable ? { scale: 0.99 } : {}}
                 className={`w-full p-3 rounded-xl text-left transition-all ${
                   status === 'current'
-                    ? 'bg-blue-50 border-2 border-blue-200 shadow-sm'
+                    ? 'bg-[#48c6ed]/10 border-2 border-[#48c6ed]/30 shadow-sm'
                     : status === 'completed'
-                    ? 'bg-green-50 border border-green-100 hover:bg-green-100'
+                    ? 'bg-white border border-gray-200 hover:bg-gray-50'
                     : status === 'available'
                     ? 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
                     : 'bg-gray-25 border border-gray-50 opacity-60 cursor-not-allowed'
@@ -117,9 +117,9 @@ export function LessonNavigator({
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                       status === 'current'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-[#48c6ed] text-white'
                         : status === 'completed'
-                        ? 'bg-green-600 text-white'
+                        ? 'bg-gray-900 text-white'
                         : status === 'available'
                         ? 'bg-gray-200 text-gray-700'
                         : 'bg-gray-100 text-gray-400'
@@ -146,9 +146,9 @@ export function LessonNavigator({
                       <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                           status === 'current'
-                            ? 'bg-blue-100 text-blue-700'
+                            ? 'bg-[#48c6ed]/10 text-[#48c6ed]'
                             : status === 'completed'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-gray-900 text-white'
                             : status === 'available'
                             ? 'bg-gray-100 text-gray-600'
                             : 'bg-gray-50 text-gray-400'

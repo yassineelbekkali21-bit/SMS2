@@ -48,8 +48,8 @@ export function FooterMultilang() {
 
           {/* Programs Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4 text-base md:text-lg">{t('footer.programs')}</h3>
-            <ul className="space-y-1.5 md:space-y-2 text-gray-600 text-sm md:text-base font-medium">
+            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4" style={{ fontSize: '14px' }}>{t('footer.programs')}</h3>
+            <ul className="space-y-1.5 md:space-y-2 text-gray-600 font-medium" style={{ fontSize: '14px' }}>
               <li className="hover:text-gray-900 transition-colors cursor-default underline underline-offset-2">
                 {t('footer.program.physics')}
               </li>
@@ -70,8 +70,8 @@ export function FooterMultilang() {
 
           {/* Navigation Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4 text-base md:text-lg">{t('footer.nav')}</h3>
-            <ul className="space-y-1.5 md:space-y-2 text-gray-600 text-sm">
+            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4" style={{ fontSize: '14px' }}>{t('footer.nav')}</h3>
+            <ul className="space-y-1.5 md:space-y-2 text-gray-600" style={{ fontSize: '14px' }}>
               <li>
                 <button 
                   onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
@@ -117,8 +117,8 @@ export function FooterMultilang() {
 
           {/* Contact Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4 text-base md:text-lg">{t('footer.contact')}</h3>
-            <ul className="space-y-1.5 md:space-y-2 text-gray-600 text-sm mb-3 md:mb-4">
+            <h3 className="font-semibold text-gray-900 mb-2 md:mb-4" style={{ fontSize: '14px' }}>{t('footer.contact')}</h3>
+            <ul className="space-y-1.5 md:space-y-2 text-gray-600 mb-3 md:mb-4" style={{ fontSize: '14px' }}>
               <li>
                 <a 
                   href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -143,7 +143,7 @@ export function FooterMultilang() {
 
             {/* Social Links */}
             <div>
-              <p className="text-sm text-gray-600 mb-2">{t('footer.follow')}</p>
+              <p className="text-gray-600 mb-2" style={{ fontSize: '14px' }}>{t('footer.follow')}</p>
               <div className="flex items-center gap-2">
                 <a
                   href="https://instagram.com/sciencemadesimple"
@@ -175,7 +175,7 @@ export function FooterMultilang() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-200 pt-4 md:pt-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-xs md:text-sm text-gray-500">
+        <div className="border-t border-gray-200 pt-4 md:pt-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-gray-500" style={{ fontSize: '14px' }}>
           <p className="text-center md:text-left">
             {t('footer.copyright')}
           </p>

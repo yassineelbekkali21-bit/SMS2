@@ -95,7 +95,7 @@ export function BoostersWidget({ floating = true }: BoostersWidgetProps) {
             onClick={() => setShowModal(true)}
             className="group cursor-pointer"
           >
-            <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all">
+            <div className="flex items-center gap-3 px-4 py-5 rounded-xl hover:bg-gray-50 transition-all">
               <div className="w-10 h-10 rounded-lg bg-gray-900 flex items-center justify-center">
                 <Plus size={18} className="text-white" />
               </div>
@@ -302,4 +302,6 @@ export function BoostersWidget({ floating = true }: BoostersWidgetProps) {
 
   return null;
 }
+
+
 

@@ -35,6 +35,10 @@ import { getCourseThumbnail } from '@/lib/course-thumbnails';
 import { StudyRoomButton } from './StudyRoomButton';
 import { BuddyAvatars } from './BuddyAvatars';
 import { getBuddiesForCourse } from '@/lib/buddy-data';
+import { TrackStudyRoom } from './TrackStudyRoom';
+import { TrackChatView } from './TrackChatView';
+import { TrackBuddiesView } from './TrackBuddiesView';
+import { TrackPlanningView } from './TrackPlanningView';
 
 interface CourseCardProps {
   course: Course;
@@ -78,6 +82,12 @@ export function CourseCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showMiniQuiz, setShowMiniQuiz] = useState(false);
+  
+  // États pour les modals des 4 boutons
+  const [showStudyRoom, setShowStudyRoom] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [showBuddies, setShowBuddies] = useState(false);
+  const [showPlanning, setShowPlanning] = useState(false);
 
   // 🔍 Fonction pour calculer les leçons débloquées
   const calculateUnlockedLessons = (course: Course, purchasedItems: Set<string>) => {
@@ -583,7 +593,7 @@ export function CourseCard({
           <motion.button
             onClick={(e) => {
               e.stopPropagation();
-              onJoinStudyRoom?.(course.id);
+              setShowStudyRoom(true);
             }}
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
@@ -595,10 +605,10 @@ export function CourseCard({
           </motion.button>
 
           {/* Messages */}
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-              console.log('Open messages for course:', course.id);
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowChat(true);
             }}
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
@@ -607,13 +617,13 @@ export function CourseCard({
           >
             <MessageCircle size={18} />
             <span className="text-[10px] mt-1 font-medium">Chat</span>
-            </motion.button>
+          </motion.button>
 
           {/* Invitation */}
-              <motion.button
-                onClick={(e) => {
-                  e.stopPropagation();
-              console.log('Invite to course:', course.id);
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowBuddies(true);
             }}
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
@@ -622,13 +632,13 @@ export function CourseCard({
           >
             <UserPlus size={18} />
             <span className="text-[10px] mt-1 font-medium">Inviter</span>
-              </motion.button>
+          </motion.button>
 
           {/* Planner */}
           <motion.button
             onClick={(e) => {
               e.stopPropagation();
-              console.log('Open planner for course:', course.id);
+              setShowPlanning(true);
             }}
             whileHover={{ scale: 1.08, y: -2 }}
             whileTap={{ scale: 0.95 }}
@@ -680,6 +690,37 @@ export function CourseCard({
           }}
         />
       )}
+
+      {/* Modals pour les 4 fonctionnalités */}
+      <TrackStudyRoom
+        isOpen={showStudyRoom}
+        onClose={() => setShowStudyRoom(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+      />
+      
+      <TrackChatView
+        isOpen={showChat}
+        onClose={() => setShowChat(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+      />
+      
+      <TrackBuddiesView
+        isOpen={showBuddies}
+        onClose={() => setShowBuddies(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+      />
+      
+      <TrackPlanningView
+        isOpen={showPlanning}
+        onClose={() => setShowPlanning(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+        totalLessons={course.totalLessons || 12}
+        completedLessons={Math.round(((course.progress || 0) / 100) * (course.totalLessons || 12))}
+      />
     </motion.div>
   );
 }

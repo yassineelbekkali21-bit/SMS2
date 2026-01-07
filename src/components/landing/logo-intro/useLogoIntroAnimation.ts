@@ -53,6 +53,7 @@ export interface LogoIntroRefs {
   particles: React.RefObject<HTMLDivElement>;
   scanLine: React.RefObject<HTMLDivElement>;
   flash: React.RefObject<HTMLDivElement>;
+  star?: React.RefObject<HTMLDivElement>; // Étoile complète (2 paths)
 }
 
 export interface UseLogoIntroAnimationOptions {
@@ -746,13 +747,15 @@ export function useLogoIntroAnimation({
       const s1Path = logoSvg.current.querySelector('.sms-stroke-s1');
       const mPath = logoSvg.current.querySelector('.sms-stroke-m');
       const s2Path = logoSvg.current.querySelector('.sms-stroke-s2');
-      const s2Detail = logoSvg.current.querySelector('.sms-stroke-s2-detail');
-      const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
+      const s2DetailPaths = logoSvg.current.querySelectorAll('.sms-stroke-s2-detail path');
+      const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
+      const allStrokePaths = logoSvg.current.querySelectorAll('.sms-stroke path, .sms-stroke:not(g)');
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       // Initial state with DrawSVGPlugin
       gsap.set(logo.current, { opacity: 1, rotation: -2, scale: 0.98 });
       gsap.set(allStrokes, { drawSVG: 0, opacity: 1 });
+      gsap.set(s2DetailPaths, { drawSVG: 0, opacity: 1 }); // Paths inside the star group
       gsap.set(filledLogo, { opacity: 0 });
       gsap.set(glow.current, { opacity: 0 });
 
@@ -763,7 +766,7 @@ export function useLogoIntroAnimation({
       if (s1Path) tl.to(s1Path, { drawSVG: '100%', duration: 0.5, ease: 'power1.inOut' }, 0.15);
       if (mPath) tl.to(mPath, { drawSVG: '100%', duration: 0.65, ease: 'power1.inOut' }, 0.4);
       if (s2Path) tl.to(s2Path, { drawSVG: '100%', duration: 0.5, ease: 'power1.inOut' }, 0.7);
-      if (s2Detail) tl.to(s2Detail, { drawSVG: '100%', duration: 0.25, ease: 'power1.out' }, 1.0);
+      if (s2DetailPaths.length > 0) tl.to(s2DetailPaths, { drawSVG: '100%', duration: 0.25, ease: 'power1.out' }, 1.0);
 
       tl.call(() => onCue?.('done', 1.3), [], 1.3);
 
@@ -882,7 +885,8 @@ export function useLogoIntroAnimation({
       const s1Path = logoSvg.current.querySelector('.sms-stroke-s1');
       const mPath = logoSvg.current.querySelector('.sms-stroke-m');
       const s2Path = logoSvg.current.querySelector('.sms-stroke-s2');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      // L'étoile est un simple path
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
       const filledLogo = logo.current.querySelector('#logo-filled');
@@ -909,8 +913,9 @@ export function useLogoIntroAnimation({
           transformOrigin: 'center center',
           filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.9))',
         });
+        // L'étoile est déjà dessinée
         if (hasDrawSVG) {
-          gsap.set(starPath, { drawSVG: '100%' }); // L'étoile est déjà dessinée
+          gsap.set(starPath, { drawSVG: '100%' });
         } else if (starPath.getTotalLength) {
           const len = starPath.getTotalLength();
           gsap.set(starPath, { strokeDasharray: len, strokeDashoffset: 0 });
@@ -1090,7 +1095,7 @@ export function useLogoIntroAnimation({
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });
@@ -1185,7 +1190,7 @@ export function useLogoIntroAnimation({
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });
@@ -1280,7 +1285,7 @@ export function useLogoIntroAnimation({
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });
@@ -1358,9 +1363,10 @@ export function useLogoIntroAnimation({
   /**
    * Variant T — "Star Shoot" (Étoile filante)
    * Intention: L'étoile traverse l'écran comme une étoile filante, laisse une traînée
+   * Utilise refs.star (élément séparé) pour une animation fluide
    */
   const createStarShootTimeline = useCallback(() => {
-    const { logo, logoSvg, glow, flash } = refs;
+    const { logo, logoSvg, glow, flash, star } = refs;
     if (!logo.current || !glow.current) return null;
 
     const tl = gsap.timeline({
@@ -1370,10 +1376,12 @@ export function useLogoIntroAnimation({
 
     const hasDrawSVG = typeof window !== 'undefined' && (window as any).DrawSVGPlugin;
 
+    // Utilise l'étoile séparée (refs.star) pour une animation fluide
+    const starElement = star?.current;
+    
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });
@@ -1383,71 +1391,59 @@ export function useLogoIntroAnimation({
 
       if (hasDrawSVG) gsap.set(mainStrokes, { drawSVG: 0 });
 
-      // L'étoile commence en haut à gauche, hors écran
-      if (starPath) {
-        gsap.set(starPath, { 
-          opacity: 0, scale: 0.3, x: -180, y: -120, rotation: -45,
+      // L'étoile COMPLÈTE (2 paths dans le même SVG) positionnée par CSS
+      // Position finale = x: 0, y: 0 (position CSS inclut déjà la rotation -45deg)
+
+      // Initialiser l'étoile
+      if (starElement) {
+        gsap.set(starElement, { 
+          opacity: 0, 
+          scale: 4,
+          x: -350,
+          y: -250,
+          rotation: 45,
           transformOrigin: 'center center',
-          filter: 'drop-shadow(0 0 6px rgba(255, 215, 0, 0.5))',
         });
-        if (hasDrawSVG) gsap.set(starPath, { drawSVG: '100%' });
       }
 
       tl.call(() => onCue?.('shoot', 0.05), [], 0.05);
 
-      if (starPath) {
-        // Apparition rapide
-        tl.to(starPath, { opacity: 1, duration: 0.05 }, 0);
+      // Animer l'étoile complète
+      if (starElement) {
+        tl.to(starElement, { opacity: 1, duration: 0.1 }, 0);
+        tl.to(starElement, { x: 100, y: 80, rotation: 180, scale: 2, duration: 0.35, ease: 'power2.in' }, 0);
+        tl.to(starElement, { x: 0, y: 0, opacity: 1, scale: 1.5, rotation: 315, duration: 0.2, ease: 'power3.out' }, 0.35);
+        tl.to(starElement, { scale: 1, rotation: 360, duration: 0.35, ease: 'elastic.out(1.2, 0.4)' }, 0.55);
+      }
 
-        // Traversée diagonale ultra-rapide avec traînée lumineuse
-        tl.to(starPath, { 
-          x: 120, y: 80, rotation: 45, scale: 0.5,
-          filter: 'drop-shadow(-30px -20px 15px rgba(255, 215, 0, 0.8)) drop-shadow(-60px -40px 20px rgba(255, 200, 0, 0.4))',
-          duration: 0.3, ease: 'power2.in',
-        }, 0);
-
-        // Disparaît momentanément
-        tl.to(starPath, { opacity: 0.3, duration: 0.08 }, 0.3);
-
-        // Réapparaît au centre avec impact
-        tl.to(starPath, { 
-          x: 0, y: 0, opacity: 1, scale: 1.3, rotation: 180,
-          filter: 'drop-shadow(0 0 25px rgba(255, 215, 0, 1))',
-          duration: 0.15, ease: 'power4.out',
-        }, 0.4);
-
-        tl.call(() => onCue?.('impact', 0.55), [], 0.55);
-
-        if (flash?.current) {
-          tl.to(flash.current, { opacity: 0.6, backgroundColor: 'rgba(255, 215, 0, 0.4)', duration: 0.06 }, 0.5);
-          tl.to(flash.current, { opacity: 0, duration: 0.2 }, 0.56);
-        }
-
-        // Settle
-        tl.to(starPath, { 
-          scale: 1, rotation: 360,
-          filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.7))',
-          duration: 0.3, ease: 'elastic.out(1.2, 0.6)',
-        }, 0.55);
+      // Flash lumineux au point d'impact
+      tl.call(() => onCue?.('impact', 0.35), [], 0.35);
+      if (flash?.current) {
+        tl.to(flash.current, { opacity: 0.6, backgroundColor: 'rgba(255, 215, 0, 0.5)', duration: 0.06 }, 0.33);
+        tl.to(flash.current, { opacity: 0, duration: 0.2 }, 0.39);
       }
 
       // Glow explose puis settle
-      tl.to(glow.current, { opacity: 0.8, scale: 1.5, duration: 0.15 }, 0.5);
-      tl.to(glow.current, { opacity: 0.4, scale: 1.1, duration: 0.3 }, 0.65);
+      tl.to(glow.current, { opacity: 0.9, scale: 1.6, duration: 0.18 }, 0.55);
+      tl.to(glow.current, { opacity: 0.4, scale: 1.1, duration: 0.35 }, 0.73);
 
       // SMS apparaît
       tl.call(() => onCue?.('embrace', 1.0), [], 1.0);
-      tl.to(mainStrokes, { opacity: 1, duration: 0.1 }, 1.0);
+      tl.to(mainStrokes, { opacity: 1, duration: 0.15 }, 1.0);
 
       if (hasDrawSVG) {
-        tl.to(mainStrokes, { drawSVG: '100%', duration: 0.5, stagger: 0.06, ease: 'power2.out' }, 1.05);
+        tl.to(mainStrokes, { drawSVG: '100%', duration: 0.5, stagger: 0.05, ease: 'power2.out' }, 1.1);
       }
 
-      // Finalisation
-      if (starPath) tl.to(starPath, { filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.5))', duration: 0.3 }, 1.55);
-      tl.to(filledLogo, { opacity: 1, duration: 0.3 }, 1.65);
-      tl.to(allStrokes, { opacity: 0, duration: 0.2 }, 1.85);
-      tl.to(glow.current, { opacity: 0.15, scale: 1, duration: 0.3 }, 1.75);
+      // L'étoile disparaît avant que le logo rempli apparaisse
+      if (starElement) {
+        tl.to(starElement, { opacity: 0, duration: 0.2 }, 1.55);
+      }
+
+      // Finalisation - le logo rempli contient déjà l'étoile
+      tl.to(filledLogo, { opacity: 1, duration: 0.35 }, 1.65);
+      tl.to(allStrokes, { opacity: 0, duration: 0.25 }, 1.85);
+      tl.to(glow.current, { opacity: 0.15, scale: 1, duration: 0.35 }, 1.75);
 
     } else {
       gsap.set(logo.current, { opacity: 0, scale: 0.9 });
@@ -1475,7 +1471,7 @@ export function useLogoIntroAnimation({
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });
@@ -1580,7 +1576,7 @@ export function useLogoIntroAnimation({
     if (logoSvg?.current) {
       const mainStrokes = logoSvg.current.querySelectorAll('.sms-stroke:not(.sms-stroke-s2-detail)');
       const allStrokes = logoSvg.current.querySelectorAll('.sms-stroke');
-      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGPathElement;
+      const starPath = logoSvg.current.querySelector('.sms-stroke-s2-detail') as SVGSVGElement;
       const filledLogo = logo.current.querySelector('#logo-filled');
 
       gsap.set(logo.current, { opacity: 1 });

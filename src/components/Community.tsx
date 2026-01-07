@@ -18,6 +18,7 @@ import {
   Heart,
   Star,
   ChevronRight,
+  ChevronLeft,
   Crown,
   Timer,
   Settings,
@@ -84,6 +85,7 @@ interface CommunityProps {
   onOpenMessaging?: (contactId?: string) => void;
   userId?: string;
   initialTab?: CommunityTab;
+  hideHeader?: boolean;
 }
 
 // Composant FullCompetitionsTab - Version enrichie
@@ -188,7 +190,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
         
         {/* CATÉGORIE */}
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Catégorie</span>
+          <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Catégorie</span>
           <div className="flex gap-3 flex-wrap">
             {[
               { id: 'current', label: 'En cours', icon: Flame },
@@ -208,7 +210,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                 }`}
               >
                 <cat.icon size={24} strokeWidth={2} />
-                <span className="text-xs font-bold whitespace-nowrap tracking-wide">{cat.label}</span>
+                <span className="text-sm font-bold whitespace-nowrap tracking-wide">{cat.label}</span>
               </motion.button>
             ))}
           </div>
@@ -270,7 +272,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                         <motion.span 
                           animate={{ scale: [1, 1.05, 1] }}
                           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                          className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full"
+                          className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-full"
                         >
                           {comp.date}
                         </motion.span>
@@ -285,17 +287,17 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                       <div className="flex items-center gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-lg">
                           <Users className="w-3.5 h-3.5 text-gray-600" />
-                          <span className="text-xs text-gray-700 font-medium tabular-nums">
+                          <span className="text-sm text-gray-700 font-medium tabular-nums">
                             {comp.participants.toLocaleString()}/{comp.maxParticipants.toLocaleString()}
                           </span>
                         </div>
                         
                         <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-lg">
                           <Trophy className="w-3.5 h-3.5 text-gray-600" />
-                          <span className="text-xs text-gray-700 font-medium">{comp.category}</span>
+                          <span className="text-sm text-gray-700 font-medium">{comp.category}</span>
                         </div>
                         
-                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-lg ${
+                        <span className={`px-2.5 py-1 text-sm font-semibold rounded-lg ${
                           comp.difficulty === 'Expert' ? 'bg-gray-900 text-white' :
                           comp.difficulty === 'Avancé' ? 'bg-gray-700 text-white' :
                           'bg-gray-100 text-gray-700'
@@ -328,14 +330,14 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                           <div className="w-8 h-8 bg-gradient-to-br from-gray-900 to-gray-700 rounded-lg flex items-center justify-center">
                             <Trophy className="w-4 h-4 text-white" />
                           </div>
-                          <span className="text-xs font-semibold text-gray-900 uppercase" style={{ letterSpacing: '0.05em' }}>
+                          <span className="text-sm font-semibold text-gray-900 uppercase" style={{ letterSpacing: '0.05em' }}>
                             Récompenses
                           </span>
                         </div>
                         <div className="space-y-1.5 pl-10">
                           <p className="text-sm text-gray-900 font-semibold">{comp.reward}</p>
                           {comp.bonusReward && (
-                            <p className="text-xs text-gray-600">+ {comp.bonusReward}</p>
+                            <p className="text-sm text-gray-600">+ {comp.bonusReward}</p>
                           )}
                         </div>
                       </div>
@@ -343,7 +345,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                       {/* Barre de remplissage */}
                       <div className="flex flex-col items-end gap-1 min-w-[120px]">
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs text-gray-500">Places restantes</span>
+                          <span className="text-sm text-gray-500">Places restantes</span>
                         </div>
                         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                           <motion.div
@@ -353,7 +355,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                             className="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full"
                           />
                         </div>
-                        <span className="text-[10px] text-gray-500 font-medium tabular-nums">
+                        <span className="text-sm text-gray-500 font-medium tabular-nums">
                           {comp.maxParticipants - comp.participants} places
                         </span>
                       </div>
@@ -391,12 +393,12 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h4 className="font-bold text-gray-900">{comp.title}</h4>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
                           Bientôt
                         </span>
                       </div>
                       <p className="text-sm text-blue-700 font-semibold mb-3">{comp.date}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-1">
                           <Users className="w-3.5 h-3.5" />
                           <span>{comp.participants.toLocaleString()} inscrits</span>
@@ -433,12 +435,12 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h4 className="font-bold text-gray-900">{comp.title}</h4>
-                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
                           Terminé
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{comp.date}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-1">
                           <Users className="w-3.5 h-3.5" />
                           <span>{comp.participants.toLocaleString()} participants</span>
@@ -457,7 +459,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                       }`}>
                         #{comp.myRank}
                       </div>
-                      <p className="text-xs text-gray-500">Ma position</p>
+                      <p className="text-sm text-gray-500">Ma position</p>
                     </div>
                   </div>
                 </motion.div>
@@ -489,24 +491,24 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
             {/* KPIs */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
-                <p className="text-xs text-gray-600 mb-1">Victoires</p>
+                <p className="text-sm text-gray-600 mb-1">Victoires</p>
                 <p className="text-3xl font-black text-yellow-700">{myStats.totalWins}</p>
-                <p className="text-xs text-gray-600 mt-1">sur {myStats.totalCompetitions}</p>
+                <p className="text-sm text-gray-600 mt-1">sur {myStats.totalCompetitions}</p>
               </div>
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
-                <p className="text-xs text-gray-600 mb-1">Podiums</p>
+                <p className="text-sm text-gray-600 mb-1">Podiums</p>
                 <p className="text-3xl font-black text-orange-700">{myStats.totalPodiums}</p>
-                <p className="text-xs text-gray-600 mt-1">Top 3</p>
+                <p className="text-sm text-gray-600 mt-1">Top 3</p>
               </div>
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                <p className="text-xs text-gray-600 mb-1">Meilleur rang</p>
+                <p className="text-sm text-gray-600 mb-1">Meilleur rang</p>
                 <p className="text-3xl font-black text-blue-700">#{myStats.bestRank}</p>
-                <p className="text-xs text-gray-600 mt-1">Record</p>
+                <p className="text-sm text-gray-600 mt-1">Record</p>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                <p className="text-xs text-gray-600 mb-1">Points totaux</p>
+                <p className="text-sm text-gray-600 mb-1">Points totaux</p>
                 <p className="text-3xl font-black text-purple-700">{(myStats.totalPoints / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-gray-600 mt-1">XP gagnés</p>
+                <p className="text-sm text-gray-600 mt-1">XP gagnés</p>
               </div>
             </div>
 
@@ -532,7 +534,7 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
                   );
                 })}
               </div>
-              <div className="flex justify-between mt-2 text-xs text-gray-500">
+              <div className="flex justify-between mt-2 text-sm text-gray-500">
                 <span>Il y a 8 compétitions</span>
                 <span>Aujourd'hui</span>
               </div>
@@ -545,8 +547,17 @@ function FullCompetitionsTab({ userId, onNavigateToBadges }: { userId: string; o
   );
 }
 
-export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user-1', initialTab = 'overview' }: CommunityProps = {}) {
-  const [activeTab, setActiveTab] = useState<CommunityTab>(initialTab);
+export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user-1', initialTab = 'buddies', hideHeader = false }: CommunityProps = {}) {
+  // Default to 'buddies' since overview is hidden
+  const validInitialTab = ['buddies', 'circles', 'qa'].includes(initialTab) ? initialTab : 'buddies';
+  const [activeTab, setActiveTab] = useState<CommunityTab>(validInitialTab);
+  
+  // Sync activeTab with initialTab when it changes (for external control)
+  React.useEffect(() => {
+    if (['buddies', 'circles', 'qa'].includes(initialTab)) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCircle, setSelectedCircle] = useState<string | null>(null);
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<any>(null);
@@ -625,13 +636,11 @@ export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user
     }
   };
 
+  // Tabs simplifiés : Buddies, Circles, Chat (masque Overview, Competitions, Badges)
   const tabs = [
-    { id: 'overview', label: 'Vue d\'ensemble', icon: TrendingUp },
     { id: 'buddies', label: 'Buddies', icon: UserPlus },
     { id: 'circles', label: 'Cercles', icon: Users },
-    { id: 'qa', label: 'Q&A', icon: MessageCircle },
-    { id: 'competitions', label: 'Compétitions', icon: Trophy },
-    { id: 'badges', label: 'Badges', icon: Award }
+    { id: 'qa', label: 'Chat', icon: MessageCircle }
   ];
 
   const formatTimeAgo = (date: Date) => {
@@ -650,55 +659,51 @@ export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user
   };
 
   return (
-    <div className="h-full bg-gray-50 flex flex-col">
-      {/* Header Communauté - pleine largeur */}
-      <div className="bg-white border-b border-gray-200 px-6 py-6 flex-shrink-0">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Communauté
+    <div className={`h-full ${hideHeader ? 'bg-transparent' : 'bg-gray-50'} flex flex-col`}>
+      {/* Header Social Club - pleine largeur (caché si hideHeader) */}
+      {!hideHeader && (
+        <div className="bg-white border-b border-gray-200 px-6 py-6 flex-shrink-0">
+          <div className="mb-6">
+            <h1 
+              className="font-bold text-gray-900 uppercase tracking-wide" 
+              style={{ fontFamily: 'var(--font-parafina)', fontSize: '64px' }}
+            >
+              Social Club
             </h1>
-            <p className="text-gray-600">
-              Tu n'es pas seul. Ensemble, on vise plus haut. 🚀
-            </p>
           </div>
-        </div>
 
-        {/* Navigation Tabs */}
-        <div className="border-t border-gray-200 bg-white">
-          <div className="px-6 flex space-x-8">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as CommunityTab)}
-                  className={`flex items-center gap-2 py-3 px-1 border-b-2 transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Icon size={18} />
-                  <span className="font-medium">{tab.label}</span>
-                </button>
-              );
-            })}
+          {/* Navigation Tabs */}
+          <div className="border-t border-gray-200 bg-white pt-4">
+            <div className="flex space-x-6">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as CommunityTab)}
+                    className={`flex items-center gap-2 py-3 px-4 rounded-full transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Icon size={18} />
+                    <span className="font-medium">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Contenu principal - pleine largeur avec scroll */}
-      <div className="flex-1 overflow-y-auto px-6 py-8 min-h-0">
+      <div className={`flex-1 overflow-y-auto ${hideHeader ? '' : 'px-6 py-8'} min-h-0`}>
         <AnimatePresence mode="wait">
-          {activeTab === 'overview' && (
-            <OverviewTab 
-              currentUser={currentUser}
-              circles={joinedCircles}
-              activities={activities}
-              challenge={challenge}
-              studyRooms={studyRooms}
-              userId={userId}
+          {activeTab === 'buddies' && (
+            <ModernBuddiesTab 
+              userId={currentUser.id}
+              userName={currentUser.firstName || 'Étudiant'}
             />
           )}
           {activeTab === 'circles' && (
@@ -732,27 +737,9 @@ export function Community({ onOpenMessaging: onOpenMessagingProp, userId = 'user
           )}
             </>
           )}
-          {activeTab === 'buddies' && (
-            <ModernBuddiesTab 
-              userId={currentUser.id}
-              userName={currentUser.firstName || 'Étudiant'}
-            />
-          )}
           {activeTab === 'qa' && (
-            <QATab 
+            <ChatTab 
               questions={questions}
-              currentUser={currentUser}
-            />
-          )}
-          {activeTab === 'competitions' && (
-            <FullCompetitionsTab 
-              userId={userId} 
-              onNavigateToBadges={() => setActiveTab('badges')}
-            />
-          )}
-          {activeTab === 'badges' && (
-            <FullBadgesTab 
-              badges={badges}
               currentUser={currentUser}
             />
           )}
@@ -838,14 +825,14 @@ function OverviewTab({
                   <h3 className="text-lg font-semibold text-gray-900 tracking-tight" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                     Clash des Facultés
                   </h3>
-                  <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+                  <p className="text-sm text-gray-500 mt-0.5" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                     Se termine dans 2j 14h
                   </p>
               </div>
             </div>
               
             <div className="text-right">
-                <div className="text-xs text-gray-500 mb-1">Ton rang</div>
+                <div className="text-sm text-gray-500 mb-1">Ton rang</div>
                 <div className="text-3xl font-bold text-gray-900 tabular-nums">#23</div>
             </div>
           </div>
@@ -858,12 +845,12 @@ function OverviewTab({
                 { rank: 3, name: 'HEC', xp: 39800, color: 'from-amber-600 to-amber-800' },
               ].map((faculty) => (
                 <div key={faculty.rank} className="flex items-center gap-3 p-2.5 bg-white/50 rounded-xl border border-gray-200/50">
-                  <div className={`w-7 h-7 bg-gradient-to-br ${faculty.color} rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                  <div className={`w-7 h-7 bg-gradient-to-br ${faculty.color} rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
                     {faculty.rank}
             </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-semibold text-gray-900 truncate">{faculty.name}</h4>
-                    <p className="text-[10px] text-gray-500">{faculty.xp.toLocaleString()} XP</p>
+                    <h4 className="text-sm font-semibold text-gray-900 truncate">{faculty.name}</h4>
+                    <p className="text-sm text-gray-500">{faculty.xp.toLocaleString()} XP</p>
             </div>
                   <Trophy size={14} className={`${faculty.rank === 1 ? 'text-yellow-500' : 'text-gray-400'}`} />
                 </div>
@@ -872,7 +859,7 @@ function OverviewTab({
 
             {/* CTA - Bottom Right */}
             <div className="flex justify-end">
-              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                 Voir plus
                 <ChevronRight size={14} />
               </button>
@@ -895,7 +882,7 @@ function OverviewTab({
               <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                 Buddies actifs
               </h3>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+              <p className="text-sm uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
                 Activité récente
               </p>
           </div>
@@ -904,18 +891,18 @@ function OverviewTab({
               {topBuddies.map((buddy) => (
                 <div key={buddy.id} className="p-3 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
                       {buddy.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-xs font-semibold text-gray-900 truncate">{buddy.name}</h4>
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-100 rounded text-[10px] font-semibold text-gray-700">
+                        <h4 className="text-sm font-semibold text-gray-900 truncate">{buddy.name}</h4>
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-100 rounded text-sm font-semibold text-gray-700">
                           Niv. {buddy.level}
                         </span>
                     </div>
-                      <p className="text-[10px] text-gray-600 mb-1">{buddy.activity}</p>
-                      <p className="text-[10px] text-gray-400">{buddy.timeAgo}</p>
+                      <p className="text-sm text-gray-600 mb-1">{buddy.activity}</p>
+                      <p className="text-sm text-gray-400">{buddy.timeAgo}</p>
                   </div>
                       </div>
                 </div>
@@ -924,7 +911,7 @@ function OverviewTab({
 
             {/* CTA - Bottom Right */}
             <div className="flex justify-end mt-4">
-              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                 Voir plus
                 <ChevronRight size={14} />
               </button>
@@ -947,7 +934,7 @@ function OverviewTab({
               <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                 Badges récents
               </h3>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+              <p className="text-sm uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
                 Derniers débloqués
               </p>
           </div>
@@ -971,7 +958,7 @@ function OverviewTab({
                   
             {/* CTA - Bottom Right */}
             <div className="flex justify-end mt-4">
-              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                 Voir plus
                 <ChevronRight size={14} />
                     </button>
@@ -994,7 +981,7 @@ function OverviewTab({
               <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                 Ma progression
               </h3>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+              <p className="text-sm uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
                 Stats personnelles
               </p>
           </div>
@@ -1004,7 +991,7 @@ function OverviewTab({
               <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-200">
                 <div className="text-3xl mb-1">🔥</div>
                 <div className="text-2xl font-bold text-gray-900 tabular-nums">{currentUser.studyStreak}</div>
-                <p className="text-[10px] text-gray-600 font-medium">jours de série</p>
+                <p className="text-sm text-gray-600 font-medium">jours de série</p>
         </div>
 
               {/* XP & Level */}
@@ -1037,7 +1024,7 @@ function OverviewTab({
               <h3 className="text-sm font-semibold text-gray-900 tracking-tight mb-1" style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
                 Mes cercles
               </h3>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+              <p className="text-sm uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
                 {circles.length} communautés
               </p>
                 </div>
@@ -1049,8 +1036,8 @@ function OverviewTab({
                     {circle.icon}
               </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-medium text-gray-900 truncate">{circle.name}</h4>
-                    <p className="text-[10px] text-gray-500">{circle.memberCount} membres</p>
+                    <h4 className="text-sm font-medium text-gray-900 truncate">{circle.name}</h4>
+                    <p className="text-sm text-gray-500">{circle.memberCount} membres</p>
           </div>
                   <ChevronRight size={14} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1059,7 +1046,7 @@ function OverviewTab({
 
             {/* CTA - Bottom Right */}
             <div className="flex justify-end mt-4">
-              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                 Voir plus
                 <ChevronRight size={14} />
               </button>
@@ -1085,7 +1072,7 @@ function OverviewTab({
                 </h3>
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             </div>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
+              <p className="text-sm uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.1em' }}>
                 {activeRooms.length} actives maintenant
               </p>
             </div>
@@ -1100,9 +1087,9 @@ function OverviewTab({
                         <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
                       )}
             </div>
-                    <h4 className="text-xs font-medium text-gray-900 truncate flex-1">{room.name}</h4>
+                    <h4 className="text-sm font-medium text-gray-900 truncate flex-1">{room.name}</h4>
           </div>
-                  <div className="flex items-center justify-between text-[10px]">
+                  <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">{room.subject}</span>
                     <div className="flex items-center gap-1 text-gray-500">
                       <Users size={10} />
@@ -1115,7 +1102,7 @@ function OverviewTab({
 
             {/* CTA - Bottom Right */}
             <div className="flex justify-end mt-4">
-              <button className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                 Voir plus
                 <ChevronRight size={14} />
               </button>
@@ -1184,242 +1171,271 @@ function CirclesTab({
     // TODO: Implémenter la logique de quitter un cercle
   };
 
+  // Combine tous les cercles pour l'affichage
+  const allCircles = [...joinedCircles, ...filteredAvailable];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="space-y-8"
+      className="space-y-6"
     >
-      {/* Header moderne avec recherche et filtres */}
-      <div className="relative">
-        {/* Gradient background subtil */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50 rounded-3xl -z-10" />
-        
-        <div className="p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Cercles de la communauté
-              </h2>
-              <p className="text-gray-600 flex items-center gap-2">
-                <Globe className="w-4 h-4 text-gray-500" />
-                Rejoins des cercles pour échanger avec d'autres étudiants
-              </p>
-        </div>
-
-            <div className="flex gap-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:flex-none sm:w-64">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-            <input
-              type="text"
-              placeholder="Rechercher un cercle..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm hover:shadow-md transition-all placeholder-gray-400 !cursor-text"
-            />
-          </div>
-          
-              <div className="relative">
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value as 'all' | 'faculty' | 'course')}
-                  className="pl-5 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm hover:shadow-md font-medium text-gray-700 transition-all cursor-pointer appearance-none"
-                >
-                  <option value="all">Tous les cercles</option>
-                  <option value="faculty">Par faculté</option>
-                  <option value="course">Par cours</option>
-          </select>
-                <ChevronRight className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-90 text-gray-400 pointer-events-none" size={18} />
+      {/* Container 1: Tes cercles actifs - Navigation horizontale */}
+      {joinedCircles.length > 0 && (
+        <div className="bg-white rounded-2xl p-4 border border-gray-200"
+             style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <Users className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-gray-900">Tes cercles actifs</h3>
+              <span className="text-sm text-gray-500">({joinedCircles.length})</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mes cercles - Section premium */}
-      {joinedCircles.length > 0 && (
-        <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 bg-green-100 rounded-xl">
-              <CheckCircle className="text-green-700" size={20} />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">
-                Mes cercles
-          </h3>
-              <p className="text-sm text-gray-600">
-                {joinedCircles.length} cercle{joinedCircles.length > 1 ? 's' : ''} actif{joinedCircles.length > 1 ? 's' : ''}
-                <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Actif</span>
-              </p>
+            
+            {/* Navigation buttons */}
+            <div className="flex items-center gap-1">
+              <button className="text-sm text-gray-600 hover:text-gray-900 font-medium px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                Voir tout
+              </button>
+              <div className="h-5 w-px bg-gray-200 mx-1" />
+              <button 
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                onClick={() => {
+                  const container = document.getElementById('circles-scroll-container');
+                  if (container) container.scrollBy({ left: -200, behavior: 'smooth' });
+                }}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                onClick={() => {
+                  const container = document.getElementById('circles-scroll-container');
+                  if (container) container.scrollBy({ left: 200, behavior: 'smooth' });
+                }}
+              >
+                <ChevronRight size={18} />
+              </button>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {joinedCircles.map((circle) => (
-              <CircleCard
+          {/* Scroll horizontal - 7 cercles par ligne */}
+          <div 
+            id="circles-scroll-container"
+            className="grid grid-cols-7 gap-4 mt-3"
+          >
+            {joinedCircles.map((circle, index) => {
+              // Mock micro-signals pour chaque cercle
+              const activitySignals = [
+                { type: 'active', label: '🟢 Actif aujourd\'hui' },
+                { type: 'hot', label: '🔥 Très actif' },
+                { type: 'online', label: '👥 12 en ligne' },
+                { type: 'recent', label: '⏱ Il y a 3 min' },
+              ];
+              const signal = activitySignals[index % activitySignals.length];
+              
+              return (
+              <motion.button
                 key={circle.id}
-                circle={circle}
-                isJoined={true}
-                onAction={() => handleLeaveCircle(circle.id)}
-                onSelect={() => onSelectCircle(circle.id)} // Ouvre la vue détaillée (car déjà membre)
-              />
-            ))}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.03 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onSelectCircle(circle.id)}
+                  className="cursor-pointer group"
+              >
+                  <div className="w-full aspect-square rounded-full flex flex-col items-center justify-center text-center p-3 transition-all shadow-lg hover:shadow-xl bg-gradient-to-br from-gray-800 to-gray-900 relative">
+                    <h4 className="font-bold leading-tight line-clamp-2 px-1" style={{ color: '#ffffff', fontSize: '18px' }}>
+                    {circle.name}
+                  </h4>
+                    {/* Micro-signal d'activité */}
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-white px-2 py-0.5 rounded-full shadow-sm border border-gray-100">
+                      {signal.label}
+                    </span>
+                </div>
+              </motion.button>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Cercles disponibles - Section moderne avec DomeGallery */}
-      <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
-            <Globe className="text-white" size={20} />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Découvrir les cercles
-        </h3>
-            <p className="text-sm text-gray-600">
-              {filteredAvailable.length} cercle{filteredAvailable.length > 1 ? 's' : ''} en exploration 3D
-            </p>
+      {/* Container 2: Découvrir avec Dome Gallery */}
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
+           style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03)' }}>
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between gap-4">
+            {/* Header à gauche */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Découvrir des cercles actifs par matière, école ou objectif</h3>
+              </div>
+            </div>
+            
+            {/* Barre de recherche à droite */}
+            <div className="relative w-72">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              <input
+                type="text"
+                placeholder="Rechercher un cercle..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
-        {/* Barre de recherche pour le dôme */}
-        <div className="mb-6">
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-            <input
-              type="text"
-              placeholder="Rechercher une faculté, un pays, un cours..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-2xl text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all !cursor-text"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors !cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            )}
-          </div>
+        {/* Dome Gallery */}
+        <div className="h-[500px] relative">
+          <CircleDomeGallery 
+            circles={filteredAvailable.map(c => ({
+              id: c.id,
+              name: c.name,
+              description: c.description,
+              icon: c.icon,
+              memberCount: c.memberCount,
+              type: c.type as 'faculty' | 'course' | 'alumni',
+              color: '#1f2937'
+            }))}
+            onCircleClick={(circle) => onSelectCircle(circle.id)}
+            recommendedCircleId={filteredAvailable.length > 0 ? filteredAvailable[0].id : undefined}
+          />
         </div>
-        
-        {filteredAvailable.length > 0 ? (
-          <div className="my-8" style={{ height: '650px', width: '100%' }}>
-            <CircleDomeGallery
-              circles={filteredAvailable.map((circle) => ({
-                id: circle.id,
-                name: circle.name,
-                description: circle.description,
-                icon: circle.icon,
-                memberCount: circle.memberCount,
-                type: circle.type,
-                color: circle.color
-              }))}
-              onCircleClick={(circle) => {
-                onSelectCircle(circle.id);
-                // Le modal s'ouvrira via selectedCircle
-              }}
-              fit={0.7}
-              segments={20}
-              overlayBlurColor="#f9fafb"
-              dragSensitivity={18}
-              maxVerticalRotationDeg={8}
-              minRadius={750}
-            />
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl border border-gray-200">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", bounce: 0.5 }}
-            >
-              <Users className="mx-auto text-gray-300 mb-4" size={56} />
-            </motion.div>
-            <p className="text-gray-600 font-medium">Aucun cercle trouvé</p>
-            <p className="text-sm text-gray-500 mt-1">Essayez d'ajuster vos filtres</p>
-          </div>
-        )}
+      </div>
 
-        {/* Modal de confirmation pour rejoindre un cercle */}
+      {/* Message si aucun cercle */}
+      {joinedCircles.length === 0 && filteredAvailable.length === 0 && (
+        <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+          <Users className="mx-auto text-gray-300 mb-4" size={48} />
+          <p className="text-gray-600 font-medium">Aucun cercle trouvé</p>
+          <p className="text-sm text-gray-500 mt-1">Essayez un autre terme de recherche</p>
+        </div>
+      )}
+
+        {/* Modal de confirmation pour rejoindre un cercle - SMS Style */}
         {selectedCircle && availableCircles.find(c => c.id === selectedCircle) && (
           <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4"
             onClick={(e) => {
               e.stopPropagation();
               onCloseModal();
             }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {(() => {
                 const circle = availableCircles.find(c => c.id === selectedCircle)!;
+                // Mock data pour les infos émotionnelles
+                const mockBuddiesInCircle = Math.floor(Math.random() * 5) + 1;
+                const mockActiveToday = Math.floor(Math.random() * 30) + 10;
+                const mockSharedCourses = Math.floor(Math.random() * 4) + 1;
+                
                 return (
                   <>
-                    <div className="text-center mb-6">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mx-auto mb-4">
-                        <span className="text-5xl">
-                          {circle.type === 'faculty' ? '🎓' : circle.type === 'course' ? '📚' : '🎯'}
-                        </span>
+                    {/* Header avec fond dark */}
+                    <div className="bg-gray-900 px-6 py-8 text-center rounded-t-2xl">
+                      <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Parafina, serif', color: '#FFFFFF' }}>{circle.name}</h2>
+                      <p className="text-gray-400 text-sm">{circle.description}</p>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{circle.name}</h2>
-                      <p className="text-gray-600 text-sm">{circle.description}</p>
+
+                    {/* Stats grid - Emotional connection */}
+                    <div className="px-6 py-5">
+                      <div className="grid grid-cols-3 gap-3 mb-5">
+                        <div className="text-center p-3 bg-gray-50 rounded-xl">
+                          <div className="text-lg font-bold text-gray-900">{circle.memberCount}</div>
+                          <div className="text-xs text-gray-500">Membres</div>
+                        </div>
+                        <div className="text-center p-3 bg-gray-50 rounded-xl">
+                          <div className="text-lg font-bold text-gray-900">{mockActiveToday}</div>
+                          <div className="text-xs text-gray-500">Actifs aujourd'hui</div>
+                        </div>
+                        <div className="text-center p-3 bg-gray-50 rounded-xl">
+                          <div className="text-lg font-bold" style={{ color: '#48c6ed' }}>{mockSharedCourses}</div>
+                          <div className="text-xs text-gray-500">Cours communs</div>
+                        </div>
                     </div>
 
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">Membres</span>
-                        <span className="font-semibold text-gray-900 flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          {circle.memberCount}
-                        </span>
+                      {/* Buddies already in circle */}
+                      {mockBuddiesInCircle > 0 && (
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                          <div className="flex -space-x-2">
+                            {[...Array(Math.min(mockBuddiesInCircle, 3))].map((_, i) => (
+                              <div 
+                                key={i}
+                                className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-500"
+                              >
+                                {['SM', 'TD', 'EL'][i]}
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">Type</span>
-                        <span className="font-semibold text-gray-900">
-                          {circle.type === 'faculty' ? 'Faculté' : 
-                           circle.type === 'course' ? 'Cours' : 'Alumni'}
+                            ))}
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-sm text-gray-900 font-medium">
+                              {mockBuddiesInCircle} de tes buddies
                         </span>
+                            <span className="text-sm text-gray-500"> sont déjà ici</span>
                       </div>
                     </div>
+                      )}
 
-                    <div className="flex gap-3 relative z-10">
+                      {/* Type badge */}
+                      <div className="flex items-center justify-center gap-2 mb-5">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                          {circle.type === 'faculty' ? '🏛️ Faculté' : 
+                           circle.type === 'course' ? '📖 Cours' : '🎓 Alumni'}
+                        </span>
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex gap-3">
                       <button
                         onClick={(e) => {
-                          console.log('🔴 Annuler clicked');
                           e.preventDefault();
                           e.stopPropagation();
                           onCloseModal();
                         }}
                         type="button"
-                        style={{ pointerEvents: 'auto' }}
-                        className="cursor-pointer flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                          className="flex-1 px-4 py-3.5 bg-gray-100 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition-all text-sm"
                       >
                         Annuler
                       </button>
                       <button
                         onClick={(e) => {
-                          console.log('🟢 Rejoindre clicked');
                           e.preventDefault();
                           e.stopPropagation();
                           handleJoinCircle(circle.id);
                           onCloseModal();
                         }}
                         type="button"
-                        style={{ pointerEvents: 'auto' }}
-                        className="cursor-pointer flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30"
+                          className="flex-1 px-4 py-3.5 text-white rounded-full font-semibold transition-all text-sm hover:opacity-90"
+                          style={{ backgroundColor: '#48c6ed' }}
                       >
                         Rejoindre
                       </button>
+                      </div>
                     </div>
                   </>
                 );
@@ -1427,7 +1443,6 @@ function CirclesTab({
             </motion.div>
           </div>
         )}
-      </div>
 
       {/* Section Alumni - Affiché uniquement si le cercle Alumni est sélectionné */}
       {selectedCircle === 'alumni-network' && (
@@ -1514,7 +1529,7 @@ function CircleCard({
         <div className="absolute top-4 right-4 z-10">
           <div className="px-2.5 py-1 bg-green-500 rounded-full flex items-center gap-1.5 shadow-lg shadow-green-500/20">
             <CheckCircle className="text-white" size={12} />
-            <span className="text-[10px] font-bold text-white uppercase tracking-wide">Actif</span>
+            <span className="text-sm font-bold text-white uppercase tracking-wide">Actif</span>
           </div>
           </div>
       )}
@@ -1541,7 +1556,7 @@ function CircleCard({
       </div>
 
         {/* Description */}
-        <p className="text-gray-600 text-xs text-center mb-3 line-clamp-2 leading-relaxed">
+        <p className="text-gray-600 text-sm text-center mb-3 line-clamp-2 leading-relaxed">
           {circle.description}
         </p>
 
@@ -1553,8 +1568,8 @@ function CircleCard({
           <div className="p-1 bg-gray-100 rounded-lg">
             <Users size={12} className="text-gray-700" />
           </div>
-          <span className="text-xs font-bold text-gray-900">{circle.memberCount.toLocaleString()}</span>
-          <span className="text-[10px] text-gray-500 font-medium">membres</span>
+          <span className="text-sm font-bold text-gray-900">{circle.memberCount.toLocaleString()}</span>
+          <span className="text-sm text-gray-500 font-medium">membres</span>
         </div>
 
         {/* Bouton action - Uniquement "Rejoindre" pour les cercles non rejoints */}
@@ -1621,7 +1636,7 @@ function AlumniCard({ alumni }: { alumni: AlumniProfile }) {
         </div>
         
         {/* Badge domaine */}
-        <div className={`px-2 py-1 rounded-full text-xs font-medium ${getDomainColor(alumni.domain)}`}>
+        <div className={`px-2 py-1 rounded-full text-sm font-medium ${getDomainColor(alumni.domain)}`}>
           <span className="mr-1">{getDomainIcon(alumni.domain)}</span>
           {alumni.domain}
         </div>
@@ -1634,7 +1649,7 @@ function AlumniCard({ alumni }: { alumni: AlumniProfile }) {
           <span className="font-medium text-gray-900">{alumni.university}</span>
         </div>
         <p className="text-sm text-gray-600">{alumni.degree}</p>
-        <p className="text-xs text-gray-500">Diplômé en {alumni.graduationYear}</p>
+        <p className="text-sm text-gray-500">Diplômé en {alumni.graduationYear}</p>
       </div>
 
       {/* Cours SMS suivis */}
@@ -1642,12 +1657,12 @@ function AlumniCard({ alumni }: { alumni: AlumniProfile }) {
         <p className="text-sm font-medium text-gray-700 mb-2">📚 Cours SMS suivis :</p>
         <div className="flex flex-wrap gap-1">
           {alumni.smsCoursesCompleted.slice(0, 3).map((course, index) => (
-            <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            <span key={index} className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
               {course}
             </span>
           ))}
           {alumni.smsCoursesCompleted.length > 3 && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+            <span className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
               +{alumni.smsCoursesCompleted.length - 3}
             </span>
           )}
@@ -1680,7 +1695,7 @@ function AlumniCard({ alumni }: { alumni: AlumniProfile }) {
 
       {/* Footer avec année SMS */}
       <div className="mt-3 pt-3 border-t border-gray-100 text-center">
-        <p className="text-xs text-gray-500">
+        <p className="text-sm text-gray-500">
           Ancien étudiant SMS • Depuis {alumni.joinedSmsYear}
         </p>
       </div>
@@ -1879,19 +1894,19 @@ function StudyRoomCard({
             <div className="flex items-center gap-2 mb-1">
               <h4 className="font-bold text-gray-900">{room.name}</h4>
               {isCourseRoom && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
                   📚 Cours
                 </span>
               )}
             </div>
             <p className="text-sm text-gray-600 mb-2">{room.subject}</p>
             {isCourseRoom && (room as any).courseName && (
-              <p className="text-xs text-blue-600 mb-2">
+              <p className="text-sm text-blue-600 mb-2">
                 🎯 {(room as any).courseName}
               </p>
             )}
             
-            <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-4 text-sm text-gray-500">
               {circle && (
                 <span className="flex items-center gap-1">
                   {circle.icon} {circle.name}
@@ -1933,13 +1948,13 @@ function StudyRoomCard({
               </div>
             ))}
             {validUsers.length > 4 && (
-              <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-white text-xs">
+              <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-white text-sm">
                 +{validUsers.length - 4}
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-gray-500">
             {room.settings.cameraEnabled && <Camera size={12} />}
             {room.settings.micEnabled ? <Mic size={12} /> : <MicOff size={12} />}
             {room.settings.chatEnabled && <MessageCircle size={12} />}
@@ -1965,6 +1980,205 @@ function StudyRoomCard({
   );
 }
 
+// ========================================================================
+// CHAT TAB - Visual identique au learning track chat
+// ========================================================================
+function ChatTab({ 
+  questions, 
+  currentUser 
+}: {
+  questions: CommunityQuestion[];
+  currentUser: StudentProfile;
+}) {
+  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState([
+    { 
+      id: '1', 
+      author: 'Zak', 
+      authorInitials: 'ZK', 
+      content: 'Bienvenue dans le chat général ! N\'hésitez pas à poser vos questions et à aider les autres.', 
+      timestamp: 'Il y a 2h', 
+      isMentor: true 
+    },
+    { 
+      id: '2', 
+      author: 'Sophie M.', 
+      authorInitials: 'SM', 
+      content: 'Salut tout le monde ! Comment ça va ?', 
+      timestamp: 'Il y a 1h', 
+      isMentor: false 
+    },
+    { 
+      id: '3', 
+      author: 'Thomas B.', 
+      authorInitials: 'TB', 
+      content: 'Quelqu\'un peut m\'expliquer rapidement les différences entre les cercles et les buddies ?', 
+      timestamp: 'Il y a 45min', 
+      isMentor: false 
+    },
+    { 
+      id: '4', 
+      author: 'Zak', 
+      authorInitials: 'ZK', 
+      content: 'Les Buddies sont tes amis d\'étude - tu les choisis personnellement. Les Cercles sont des groupes thématiques (par faculté, cours, etc.) où tu retrouves des étudiants avec les mêmes intérêts.', 
+      timestamp: 'Il y a 30min', 
+      isMentor: true 
+    }
+  ]);
+  
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  
+  const sendMessage = () => {
+    if (!newMessage.trim()) return;
+    
+    const msg = {
+      id: `msg-${Date.now()}`,
+      author: 'Vous',
+      authorInitials: currentUser.firstName?.[0] || 'V',
+      content: newMessage.trim(),
+      timestamp: 'À l\'instant',
+      isMentor: false
+    };
+    
+    setMessages([...messages, msg]);
+    setNewMessage('');
+    setTimeout(scrollToBottom, 100);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="h-full flex flex-col"
+    >
+      {/* Chat Container - Style identique au learning track */}
+      <div className="bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col flex-1">
+        {/* Header */}
+        <div className="p-5 border-b border-gray-200 flex-shrink-0 bg-white">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                <MessageCircle size={24} className="text-gray-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900" style={{ fontSize: '22px' }}>Chat général</h3>
+              </div>
+            </div>
+            <span className="px-3 py-1.5 bg-blue-600 text-white font-medium rounded-full flex-shrink-0" style={{ fontSize: '13px' }}>
+              {messages.length} messages
+            </span>
+          </div>
+          {/* Présence */}
+          <p className="text-gray-500 mt-1" style={{ fontSize: '14px' }}>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-2 h-2 bg-green-500 rounded-full" />
+              <span className="text-gray-600 font-medium">12 en ligne</span>
+            </span>
+            <span className="mx-2 text-gray-300">·</span>
+            <span className="text-gray-600">Tous les étudiants</span>
+          </p>
+        </div>
+        
+        {/* Liste des messages */}
+        <div 
+          className="flex-1 p-5 space-y-5 overflow-y-auto"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundColor: '#fafafa'
+          }}
+        >
+          {/* System message */}
+          <div className="flex justify-center">
+            <span className="px-4 py-2 bg-gray-100 text-gray-500 text-sm font-medium rounded-full">
+              🔥 Discussion active aujourd'hui
+            </span>
+          </div>
+          
+          {messages.map((msg, index) => (
+            <React.Fragment key={msg.id}>
+              <div className={`flex gap-3 ${msg.author === 'Vous' ? 'flex-row-reverse' : ''}`}>
+                {/* Avatar */}
+                <div className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-semibold ${
+                  msg.isMentor ? 'bg-gray-900 text-white' : msg.author === 'Vous' ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-600'
+                }`} style={{ fontSize: '14px' }}>
+                  {msg.authorInitials}
+                </div>
+                
+                {/* Message bubble */}
+                <div className={`max-w-[75%] ${msg.author === 'Vous' ? 'items-end' : ''}`}>
+                  <div className={`flex items-center gap-2 mb-1.5 ${msg.author === 'Vous' ? 'justify-end' : ''}`}>
+                    <span className="font-semibold text-gray-800" style={{ fontSize: '14px' }}>{msg.author}</span>
+                    {msg.isMentor && (
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 font-medium rounded-md border border-gray-200" style={{ fontSize: '11px' }}>
+                        Fondateur
+                      </span>
+                    )}
+                    <span className="text-gray-400" style={{ fontSize: '12px' }}>{msg.timestamp}</span>
+                  </div>
+                  <div className={`px-4 py-3 rounded-2xl leading-relaxed ${
+                    msg.author === 'Vous' 
+                      ? 'bg-gray-900 text-white rounded-tr-md' 
+                      : 'bg-white border border-gray-200 text-gray-900 rounded-tl-md'
+                  }`} style={{ fontSize: '15px' }}>
+                    {msg.content}
+                  </div>
+                </div>
+              </div>
+              
+              {/* System message after some messages */}
+              {index === 1 && (
+                <div className="flex justify-center">
+                  <span className="px-4 py-2 bg-gray-100 text-gray-500 text-sm font-medium rounded-full">
+                    👋 5 nouveaux membres cette semaine
+                  </span>
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        
+        {/* Zone d'input */}
+        <div className="p-5 border-t border-gray-200 bg-white flex-shrink-0">
+          <div className="flex gap-2 items-end">
+            {/* Boutons d'attachement */}
+            <div className="flex gap-0.5">
+              <button className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Joindre un fichier">
+                <Camera size={20} />
+              </button>
+              <button className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Message vocal">
+                <Mic size={20} />
+              </button>
+            </div>
+            <input 
+              value={newMessage} 
+              onChange={(e) => setNewMessage(e.target.value)} 
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Écris ton message..." 
+              className="flex-1 px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white text-sm" 
+            />
+            <button 
+              onClick={sendMessage} 
+              disabled={!newMessage.trim()} 
+              className={`p-3 rounded-xl transition-colors ${newMessage.trim() ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-200 text-gray-400'}`}
+            >
+              <Send size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ========================================================================
+// ANCIEN Q&A TAB (conservé pour référence mais masqué)
+// ========================================================================
 function QATab({ 
   questions, 
   currentUser 
@@ -2188,7 +2402,7 @@ function QuestionCard({
           <div className="flex items-center gap-2 mb-2">
             <h4 className="font-bold text-gray-900">{question.title}</h4>
             {question.isResolved && (
-              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
+              <span className="bg-green-100 text-green-700 text-sm px-2 py-1 rounded-full">
                 Résolu
               </span>
             )}
@@ -2196,7 +2410,7 @@ function QuestionCard({
           
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">{question.content}</p>
           
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <Clock size={12} />
               {formatTimeAgo(question.createdAt)}
@@ -2261,7 +2475,7 @@ function QuestionCard({
               <p className="text-gray-700 text-sm mb-2">{answer.content}</p>
               
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
                   <span>{formatTimeAgo(answer.createdAt)}</span>
                   {answer.isAccepted && (
                     <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">
@@ -2275,7 +2489,7 @@ function QuestionCard({
                   )}
                 </div>
                 
-                <div className="flex items-center gap-1 text-xs text-gray-500">
+                <div className="flex items-center gap-1 text-sm text-gray-500">
                   <ThumbsUp size={12} />
                   <span>{answer.likes}</span>
                 </div>

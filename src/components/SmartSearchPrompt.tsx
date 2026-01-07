@@ -146,9 +146,9 @@ export function SmartSearchPrompt({
     } else {
       setSelectedProgram(programId);
       setSelectedChapter(null);
-      if (onProgramSelect) {
-        onProgramSelect(programId);
-      }
+    if (onProgramSelect) {
+      onProgramSelect(programId);
+    }
     }
   };
 
@@ -186,14 +186,14 @@ export function SmartSearchPrompt({
           
           recognition.onerror = () => {
             setIsRecording(false);
-          };
-          
+        };
+
           recognition.onend = () => {
             setIsRecording(false);
           };
           
           recognition.start();
-          setIsRecording(true);
+        setIsRecording(true);
         }
       } else {
         alert('La reconnaissance vocale n\'est pas supportée par votre navigateur.');
@@ -208,11 +208,11 @@ export function SmartSearchPrompt({
   return (
     <div className={`w-full ${className}`}>
       <div className="flex flex-col items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-4xl text-center"
-        >
+      >
           {/* Welcome */}
           <h2 
             className="font-title tracking-wide mb-2" 
@@ -224,16 +224,16 @@ export function SmartSearchPrompt({
             Bienvenue, {userName}
           </h2>
           
-          {/* Title */}
+            {/* Title */}
           <h1 
             className="font-title mb-3 tracking-wide"
-            style={{ 
+                style={{ 
               fontSize: 'clamp(2.5rem, 6vw, 4rem)',
               color: darkMode ? '#ffffff' : '#111827',
-              lineHeight: 1.1
-            }}
-          >
-            Qu&apos;est-ce qu&apos;on apprend aujourd&apos;hui ?
+                  lineHeight: 1.1
+                }}
+              >
+                Qu&apos;est-ce qu&apos;on apprend aujourd&apos;hui ?
           </h1>
           <p className={`text-base md:text-lg mb-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Décris ton objectif. On te génère un learning track sur mesure.
@@ -279,28 +279,28 @@ export function SmartSearchPrompt({
               />
 
               <div className="flex items-center gap-3">
-                <button 
+              <button
                   onClick={toggleVoiceRecording}
                   className={`w-11 h-11 flex items-center justify-center rounded-full transition-all ${
                     isRecording 
-                      ? 'bg-red-500 text-white animate-pulse' 
+                    ? 'bg-red-500 text-white animate-pulse' 
                       : 'hover:bg-gray-100 text-gray-400 hover:text-gray-600'
                   }`}
                   title={isRecording ? 'Arrêter l\'enregistrement' : 'Dictée vocale'}
-                >
+              >
                   {isRecording ? <MicOff size={22} /> : <Mic size={22} />}
-                </button>
-                <button
-                  onClick={handleSearch}
-                  disabled={!searchQuery.trim()}
+              </button>
+              <button
+                onClick={handleSearch}
+                disabled={!searchQuery.trim()}
                   className={`w-11 h-11 flex items-center justify-center rounded-full transition-all ${
                     searchQuery.trim()
                       ? 'bg-gray-900 text-white hover:bg-gray-800'
                       : 'bg-gray-100 text-gray-300 cursor-not-allowed'
                   }`}
-                >
+              >
                   <ArrowUp size={22} />
-                </button>
+              </button>
               </div>
             </div>
           </div>
@@ -373,7 +373,7 @@ export function SmartSearchPrompt({
                         </motion.button>
                       );
                     })}
-                  </div>
+                      </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -415,8 +415,8 @@ export function SmartSearchPrompt({
               )}
             </AnimatePresence>
           </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
     </div>
   );
 }

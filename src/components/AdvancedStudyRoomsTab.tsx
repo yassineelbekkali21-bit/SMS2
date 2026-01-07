@@ -42,6 +42,8 @@ import {
 import { AdvancedStudyRoomService } from '@/lib/advanced-studyroom-service';
 import { CreateStudyRoomModal, StudyRoomFormData } from './CreateStudyRoomModal';
 import { StudyRoomModal } from './StudyRoomModal';
+import { StudyRoomPreJoin } from './StudyRoomPreJoin';
+import { StudyRoomMeeting } from './StudyRoomMeeting';
 import { GamificationService } from '@/lib/gamification-service';
 
 interface AdvancedStudyRoomsTabProps {
@@ -52,6 +54,8 @@ interface AdvancedStudyRoomsTabProps {
   onNavigateToCourseReplay?: (courseId: string, replayId: string) => void;
   userCourses?: Course[];
   isAdmin?: boolean;
+  initialProgramFilter?: string;
+  hideHeader?: boolean;
 }
 
 export function AdvancedStudyRoomsTab({
@@ -61,17 +65,30 @@ export function AdvancedStudyRoomsTab({
   onNavigateToUpgrade,
   onNavigateToCourseReplay,
   userCourses = [],
-  isAdmin = false
+  isAdmin = false,
+  initialProgramFilter,
+  hideHeader = false
 }: AdvancedStudyRoomsTabProps) {
   const [studyRooms, setStudyRooms] = useState<AdvancedStudyRoom[]>([]);
   const [filteredRooms, setFilteredRooms] = useState<AdvancedStudyRoom[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // 🎯 Helper pour mapper le titre du track vers un subject
+  const getSubjectFromTitle = (title?: string): 'all' | 'physics' | 'chemistry' | 'mathematics' | 'biology' => {
+    if (!title) return 'all';
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('physique') || lowerTitle.includes('ondes') || lowerTitle.includes('forces') || lowerTitle.includes('mouvement')) return 'physics';
+    if (lowerTitle.includes('chimie') || lowerTitle.includes('chimique') || lowerTitle.includes('équilibre')) return 'chemistry';
+    if (lowerTitle.includes('math') || lowerTitle.includes('suites') || lowerTitle.includes('limites')) return 'mathematics';
+    if (lowerTitle.includes('bio')) return 'biology';
+    return 'all';
+  };
+
   // 🎯 Filtres horizontaux originaux des Study Rooms
   const [filterType, setFilterType] = useState<'all' | StudyRoomType | 'complement'>('all');
   const [filterVisibility, setFilterVisibility] = useState<'all' | StudyRoomVisibility>('all');
-  const [filterStatus, setFilterStatus] = useState<'all' | StudyRoomStatus>('all');
-  const [filterSubject, setFilterSubject] = useState<'all' | 'physics' | 'chemistry' | 'mathematics' | 'biology'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | StudyRoomStatus>('live');
+  const [filterSubject, setFilterSubject] = useState<'all' | 'physics' | 'chemistry' | 'mathematics' | 'biology'>(getSubjectFromTitle(initialProgramFilter));
   
   // Anciens filtres avancés
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -83,6 +100,8 @@ export function AdvancedStudyRoomsTab({
   const [isLoading, setIsLoading] = useState(true);
   const [showStudyRoomModal, setShowStudyRoomModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<AdvancedStudyRoom | null>(null);
+  const [showPreJoinModal, setShowPreJoinModal] = useState(false);
+  const [showMeetingView, setShowMeetingView] = useState(false);
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedCourseId, setAccessDeniedCourseId] = useState<string | null>(null);
   const [accessDeniedType, setAccessDeniedType] = useState<'registration' | 'replay'>('registration');
@@ -269,16 +288,15 @@ export function AdvancedStudyRoomsTab({
       return;
     }
     
-    // Vérification de l'accès
-    const access = AdvancedStudyRoomService.checkStudyRoomAccess(userId, room.courseId, purchasedItems);
+    // Ouvrir d'abord le modal de configuration des appareils
+    setSelectedRoom(room);
+    setShowPreJoinModal(true);
     
-    if (!access.canJoin) {
-      alert('Vous devez avoir un cours complet ou un pack pour accéder aux Study Rooms.');
-      if (onNavigateToUpgrade) {
-        onNavigateToUpgrade(room.courseId);
-      }
-      return;
-    }
+    console.log('⚙️ Configuration des appareils pour:', room.title);
+  };
+
+  const handlePreJoinComplete = () => {
+    if (!selectedRoom) return;
     
     // Award XP pour rejoindre une Study Room
     const xpResult = GamificationService.awardXP(userId, 'study-room-join', 20);
@@ -286,11 +304,16 @@ export function AdvancedStudyRoomsTab({
       console.log('🎉 Level Up! Nouveau niveau:', xpResult.newLevel);
     }
     
-    // Ouvrir la Study Room sélectionnée
-    setSelectedRoom(room);
-    setShowStudyRoomModal(true);
+    // Fermer le pre-join et ouvrir la meeting view
+    setShowPreJoinModal(false);
+    setShowMeetingView(true);
     
-    console.log('✅ Connexion à la Study Room:', room.title);
+    console.log('✅ Connexion à la Study Room:', selectedRoom.title);
+  };
+
+  const handleLeaveMeeting = () => {
+    setShowMeetingView(false);
+    setSelectedRoom(null);
   };
 
   const getTypeIcon = (type: StudyRoomType) => {
@@ -377,191 +400,149 @@ export function AdvancedStudyRoomsTab({
   }
 
   return (
-    <div className="p-6 pt-10 space-y-8">
-      {/* Header moderne avec gradient */}
-      <div className="relative">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-purple-50/30 rounded-3xl -z-10" />
-        
-        <div className="p-8">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-2">
-                Study Rooms
-              </h2>
-              <p className="text-gray-600">Espaces collaboratifs d'apprentissage</p>
+    <div className="h-full flex flex-col">
+      {/* Header fixe avec container blanc - Masqué si hideHeader */}
+      {!hideHeader && (
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-6 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <h1 className="text-gray-900 font-bold uppercase tracking-tight" style={{ fontFamily: 'var(--font-parafina)', fontSize: '64px' }}>
+              STUDY ROOMS
+            </h1>
+            
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all"
+            >
+              <Plus size={18} />
+              <span>Créer une Room</span>
+            </button>
+          </div>
         </div>
-        
-            <div className="flex items-center gap-3">
-              {/* Bouton de debug temporaire - TRÈS VISIBLE */}
-              <motion.button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('🔄 BOUTON RELOAD CLIQUÉ - Suppression du cache...');
-                  localStorage.removeItem('advanced_study_rooms_v1');
-                  localStorage.removeItem('advanced_study_rooms_v1_version');
-                  console.log('✅ Cache supprimé, rechargement...');
-                  setTimeout(() => window.location.reload(), 100);
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{
-                  boxShadow: [
-                    '0 0 0 0 rgba(245, 158, 11, 0)',
-                    '0 0 0 10px rgba(245, 158, 11, 0)',
-                    '0 0 0 0 rgba(245, 158, 11, 0)'
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl font-bold hover:from-amber-700 hover:to-orange-700 transition-all text-base shadow-xl"
-                title="CLIQUEZ ICI pour voir les suggestions !"
-              >
-                🔄 RELOAD DATA (CLIQUEZ-MOI!)
-              </motion.button>
-              
-              <motion.button
-          onClick={() => setShowCreateModal(true)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl font-semibold hover:from-gray-800 hover:to-gray-700 transition-all shadow-lg shadow-gray-900/20"
-        >
-                <Plus size={18} />
-          <span>Créer une Room</span>
-              </motion.button>
-            </div>
+      )}
+
+      {/* Contenu scrollable */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-8">
+
+      {/* Barre de recherche */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
+        />
       </div>
 
-          {/* Recherche et filtres modernes */}
-          <div className="mt-6 space-y-6">
-        {/* Barre de recherche */}
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Rechercher par titre, cours ou créateur..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent shadow-sm transition-all"
-          />
+      {/* Filtres en pills groupés */}
+      <div className="flex flex-wrap items-start gap-10">
+        {/* TYPE */}
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Type</span>
+          <div className="flex gap-2">
+            {[
+              { id: 'all', label: 'Tous' },
+              { id: 'silent', label: 'Silencieuse' },
+              { id: 'interactive', label: 'Interactive' },
+              { id: 'complement', label: 'Mentor' },
+            ].map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setFilterType(type.id as any)}
+                className={`px-5 py-2.5 rounded-full text-base font-medium transition-all ${
+                  filterType === type.id
+                    ? type.id === 'all' 
+                      ? 'bg-gray-900 text-white' 
+                      : 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-            {/* 🎯 Système de filtres horizontaux */}
-            <div className="flex items-start gap-8 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              
-              {/* TYPE */}
-              <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Type</span>
-                <div className="flex gap-2">
-                  {[
-                    { id: 'all', label: 'Tous', icon: Video },
-                    { id: 'silent', label: 'Silencieuse', icon: VolumeX },
-                    { id: 'interactive', label: 'Interactive', icon: Volume2 },
-                    { id: 'complement', label: 'Compléments', icon: Crown, highlight: true },
-                  ].map((type) => (
-                    <motion.button
-                      key={type.id}
-                      onClick={() => setFilterType(type.id as any)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
-                        filterType === type.id
-                          ? 'bg-gray-900 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      <type.icon size={20} />
-                      <span className="text-xs font-semibold whitespace-nowrap">{type.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
+        {/* VISIBILITÉ */}
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Visibilité</span>
+          <div className="flex gap-2">
+            {[
+              { id: 'all', label: 'Toutes' },
+              { id: 'public', label: 'Publique' },
+              { id: 'buddies', label: 'Buddies' },
+              { id: 'private', label: 'Privée' },
+            ].map((visibility) => (
+              <button
+                key={visibility.id}
+                onClick={() => setFilterVisibility(visibility.id as any)}
+                className={`px-5 py-2.5 rounded-full text-base font-medium transition-all ${
+                  filterVisibility === visibility.id
+                    ? visibility.id === 'all' 
+                      ? 'bg-gray-900 text-white' 
+                      : 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {visibility.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {/* VISIBILITÉ */}
-              <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Visibilité</span>
-                <div className="flex gap-2">
-                  {[
-                    { id: 'all', label: 'Toutes', icon: Eye },
-                    { id: 'public', label: 'Publique', icon: Globe },
-                    { id: 'buddies', label: 'Buddies', icon: Users },
-                    { id: 'private', label: 'Privée', icon: Lock },
-                  ].map((visibility) => (
-                    <motion.button
-                      key={visibility.id}
-                      onClick={() => setFilterVisibility(visibility.id as any)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
-                        filterVisibility === visibility.id
-                          ? 'bg-gray-900 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      <visibility.icon size={20} />
-                      <span className="text-xs font-semibold whitespace-nowrap">{visibility.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
+        {/* STATUT */}
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Statut</span>
+          <div className="flex gap-2">
+            {[
+              { id: 'all', label: 'Tous' },
+              { id: 'live', label: 'En cours' },
+              { id: 'scheduled', label: 'Programmée' },
+              { id: 'ended', label: 'Terminée' },
+            ].map((status) => (
+              <button
+                key={status.id}
+                onClick={() => setFilterStatus(status.id as any)}
+                className={`px-5 py-2.5 rounded-full text-base font-medium transition-all ${
+                  filterStatus === status.id
+                    ? status.id === 'all' 
+                      ? 'bg-gray-900 text-white' 
+                      : 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {status.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {/* STATUT */}
-              <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Statut</span>
-                <div className="flex gap-2">
-                  {[
-                    { id: 'all', label: 'Tous', icon: Clock },
-                    { id: 'live', label: 'En cours', icon: Play },
-                    { id: 'scheduled', label: 'Programmée', icon: Calendar },
-                    { id: 'ended', label: 'Terminée', icon: CheckCircle },
-                  ].map((status) => (
-                    <motion.button
-                      key={status.id}
-                      onClick={() => setFilterStatus(status.id as any)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
-                        filterStatus === status.id
-                          ? 'bg-gray-900 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      <status.icon size={20} />
-                      <span className="text-xs font-semibold whitespace-nowrap">{status.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 🎯 Filtre par MATIÈRE (nouvelle ligne) */}
-            <div className="mt-4">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2 block mb-3">Matières</span>
-              <div className="flex gap-2">
-                {[
-                  { id: 'all', label: 'Toutes', icon: Home },
-                  { id: 'physics', label: 'Physique', icon: Zap },
-                  { id: 'chemistry', label: 'Chimie', icon: FileText },
-                  { id: 'mathematics', label: 'Maths', icon: Calculator },
-                  { id: 'biology', label: 'Biologie', icon: Brain },
-                ].map((subject) => (
-                  <motion.button
-                    key={subject.id}
-                    onClick={() => setFilterSubject(subject.id as any)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl transition-all ${
-                      filterSubject === subject.id
-                        ? 'bg-gray-900 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <subject.icon size={20} />
-                    <span className="text-xs font-semibold whitespace-nowrap">{subject.label}</span>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
+        {/* PROGRAMME */}
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Programme</span>
+          <div className="flex gap-2">
+            {[
+              { id: 'all', label: 'Tous' },
+              { id: 'physics', label: 'Physique' },
+              { id: 'chemistry', label: 'Chimie' },
+              { id: 'mathematics', label: 'Maths' },
+              { id: 'biology', label: 'Biologie' },
+            ].map((subject) => (
+              <button
+                key={subject.id}
+                onClick={() => setFilterSubject(subject.id as any)}
+                className={`px-5 py-2.5 rounded-full text-base font-medium transition-all ${
+                  filterSubject === subject.id
+                    ? subject.id === 'all' 
+                      ? 'bg-gray-900 text-white' 
+                      : 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {subject.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -593,7 +574,7 @@ export function AdvancedStudyRoomsTab({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Filtre par cours */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">Cours</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Cours</label>
                 <select
                   value={filterCourse}
                   onChange={(e) => setFilterCourse(e.target.value)}
@@ -608,7 +589,7 @@ export function AdvancedStudyRoomsTab({
 
               {/* Tri */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">Trier par</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Trier par</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
@@ -623,7 +604,7 @@ export function AdvancedStudyRoomsTab({
 
               {/* Priorisation buddies */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">Priorité</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Priorité</label>
                 <label className="flex items-center gap-3 cursor-pointer p-3 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-all">
                   <input
                     type="checkbox"
@@ -640,7 +621,7 @@ export function AdvancedStudyRoomsTab({
                 <div className="text-sm font-semibold text-gray-900 mb-1">
                   {filteredRooms.length} room{filteredRooms.length > 1 ? 's' : ''}
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-sm text-gray-600">
                   {filteredRooms.filter(r => r.hasActiveBuddies).length} avec buddies
                 </div>
               </div>
@@ -742,14 +723,14 @@ export function AdvancedStudyRoomsTab({
                     <div className="absolute top-2 right-2 flex items-center gap-2">
                       {/* Badge LIVE (rouge) si la session est live */}
                       {room.status === 'live' && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-md shadow-lg animate-pulse">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white text-sm font-bold rounded-md shadow-lg animate-pulse">
                           <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                           LIVE
                         </div>
                       )}
                       {/* Badge "Compléments" (ambre) si c'est une session Compléments */}
                       {room.isComplement && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-amber-600 text-white text-xs font-bold rounded-md shadow-lg">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-amber-600 text-white text-sm font-bold rounded-md shadow-lg">
                           <Crown className="w-3 h-3" />
                           Compléments
                         </div>
@@ -767,7 +748,7 @@ export function AdvancedStudyRoomsTab({
                             {buddiesInRoom.slice(0, 3).map((buddy) => (
                               <div
                                 key={buddy.id}
-                                className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-sm"
+                                className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold shadow-sm"
                                 title={buddy.userName}
                               >
                                 {buddy.userName.charAt(0)}
@@ -819,7 +800,7 @@ export function AdvancedStudyRoomsTab({
       })()}
 
       {/* Liste des Study Rooms */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredRooms.length === 0 ? (
           <div className="col-span-full text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl border border-gray-200">
             <motion.div
@@ -851,192 +832,117 @@ export function AdvancedStudyRoomsTab({
             const userRole = getUserRoomRole(room);
             const buddiesInRoom = getBuddiesInRoom(room);
             const access = AdvancedStudyRoomService.checkStudyRoomAccess(userId, room.courseId, purchasedItems);
+            const participantCount = room.currentParticipants.filter(p => !p.leftAt).length;
+            
+            // Calcul du temps écoulé depuis le début
+            const getTimeInfo = () => {
+              if (room.status === 'live' && room.startsAt) {
+                const minutesAgo = Math.round((Date.now() - new Date(room.startsAt).getTime()) / 60000);
+                return `Démarrée il y a ${minutesAgo} min`;
+              }
+              if (room.status === 'scheduled' && room.startsAt) {
+                const minutesUntil = Math.round((new Date(room.startsAt).getTime() - Date.now()) / 60000);
+                return `Commence dans ${minutesUntil} min`;
+              }
+              return null;
+            };
             
             return (
               <motion.div
                 key={room.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -4, scale: 1.01 }}
+                whileHover={{ y: -2 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="group relative bg-white/90 backdrop-blur-sm rounded-xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 cursor-pointer overflow-hidden"
+                className="bg-white rounded-2xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all"
               >
-                {/* Gradient overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50/0 via-white/0 to-blue-50/0 group-hover:from-gray-50/30 group-hover:via-white/30 group-hover:to-blue-50/30 transition-all duration-500 -z-10 rounded-xl" />
-                
-                {/* Header - Simplifié */}
-                <div className="mb-3 pb-3 border-b border-gray-100">
-                  {/* Badges en haut - Tous affichés */}
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    {room.isComplement && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md text-xs font-semibold">
-                        <Crown size={12} />
-                        Compléments
-                      </span>
-                    )}
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold ${getTypeColor(room.type)}`}>
-                      {getTypeIcon(room.type)}
-                      {getTypeLabel(room.type)}
+                {/* Badges en haut */}
+                <div className="flex items-center gap-2 mb-3">
+                  {/* Badge LIVE rouge */}
+                  {room.status === 'live' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500 text-white rounded-full text-sm font-bold">
+                      <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                      LIVE
                     </span>
-                    <span className={`px-2 py-0.5 rounded-md text-xs font-semibold ${getStatusColor(room.status)}`}>
-                      {getStatusLabel(room.status)}
+                  )}
+                  {/* Badge Recommandée */}
+                  {room.isComplement && (
+                    <span className="inline-flex items-center gap-1 text-orange-500 text-sm font-semibold">
+                      ★ Recommandée
                     </span>
-                </div>
-
-                  {/* Titre = Nom du cours uniquement */}
-                  <h3 className="font-bold text-base text-gray-900 mb-1">{room.courseName}</h3>
-                  <p className="text-xs text-gray-500">Par {room.creatorName}</p>
-                </div>
-
-                {/* Participants - Épuré */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users size={16} className="text-gray-400" />
-                    <span className="font-medium text-gray-900">
-                      {room.currentParticipants.filter(p => !p.leftAt).length}
-                    </span>
-                    <span className="text-gray-500">participant{room.currentParticipants.filter(p => !p.leftAt).length > 1 ? 's' : ''}</span>
-                  </div>
-
-                  {/* Buddies dans la room */}
-                  {buddiesInRoom.length > 0 && (
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex -space-x-1.5">
-                        {buddiesInRoom.slice(0, 3).map((buddy) => (
-                          <div
-                            key={buddy.id}
-                            className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-md"
-                            title={buddy.userName}
-                          >
-                            {buddy.userName.charAt(0)}
-                          </div>
-                        ))}
-                      </div>
-                      <span className="text-xs font-medium text-orange-600">
-                        {buddiesInRoom.length}
-                      </span>
-                    </div>
                   )}
                 </div>
 
-                {/* Date et heure pour sessions programmées */}
-                {room.status === 'scheduled' && room.startsAt && (
-                  <div className="mb-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 opacity-60 rounded-xl" />
-                    <div className="relative bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200/50 p-3">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg flex flex-col items-center justify-center text-white shadow-lg shadow-gray-900/20">
-                          <span className="text-xs font-medium opacity-90 uppercase">
-                            {new Date(room.startsAt).toLocaleDateString('fr-FR', { month: 'short' })}
-                          </span>
-                          <span className="text-lg font-bold leading-none">
-                            {new Date(room.startsAt).getDate()}
-                          </span>
+                {/* Titre de la session */}
+                <h3 className="font-bold text-xl text-gray-900 mb-2">
+                  {room.isComplement ? 'Session Compléments' : room.title || room.courseName}
+                </h3>
+                
+                {/* Sous-titre avec infos */}
+                <p className="text-gray-500 text-sm mb-4">
+                  {getTimeInfo()}
+                  {room.isComplement && ' · Avec Zak (mentor)'}
+                  {!room.isComplement && ` · Avec ${room.creatorName}`}
+                </p>
+
+                {/* Footer : Avatars + Participants + Bouton */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {/* Avatars empilés */}
+                    <div className="flex -space-x-2">
+                      {room.currentParticipants.filter(p => !p.leftAt).slice(0, 3).map((participant, idx) => (
+                        <div
+                          key={participant.id}
+                          className="w-8 h-8 bg-gray-700 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold"
+                        >
+                          {String.fromCharCode(65 + idx)}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 capitalize mb-1">
-                            {new Date(room.startsAt).toLocaleDateString('fr-FR', { 
-                              weekday: 'long', 
-                              day: 'numeric', 
-                              month: 'long' 
-                            })}
-                          </p>
-                          <div className="flex items-center gap-3 text-xs text-gray-600">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5 text-gray-900" />
-                              <span className="font-medium">
-                                {new Date(room.startsAt).toLocaleTimeString('fr-FR', { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </span>
-                            </div>
-                            {room.estimatedDuration && (
-                              <div className="flex items-center gap-1">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                                <span>{room.estimatedDuration} min</span>
-                              </div>
-                            )}
-                          </div>
+                      ))}
+                      {participantCount > 3 && (
+                        <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">
+                          +{participantCount - 3}
                         </div>
-                      </div>
+                      )}
+                    </div>
+                    
+                    {/* Texte participants */}
+                    <div className="text-sm text-gray-600">
+                      <span className="font-semibold text-gray-900">{participantCount} dedans</span>
+                      {buddiesInRoom.length > 0 && (
+                        <span className="text-gray-500"> — dont {buddiesInRoom.length} de tes buddys</span>
+                      )}
                     </div>
                   </div>
-                )}
 
-                {/* Actions - Uniformes */}
-                <div className="flex items-center gap-2">
-                  {/* ⭐ CAS 1 : Session "Compléments" terminée avec replay disponible */}
+                  {/* Bouton Rejoindre */}
                   {room.isComplement && room.status === 'ended' && room.replayAddedToCourse ? (
                     <button
                       onClick={() => handleViewReplay(room)}
-                      className="w-[155px] px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-all text-sm flex items-center justify-center gap-2 whitespace-nowrap"
+                      className="px-5 py-2.5 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-all text-sm"
                     >
-                      <Play size={16} />
-                      <span>Voir le replay</span>
+                      Voir le replay
                     </button>
-                  ) : 
-                  /* ⭐ CAS 2 : Session "Compléments" programmée (scheduled) */
-                  room.isComplement && room.status === 'scheduled' ? (
-                    access.canJoin ? (
-                      <button
-                        onClick={() => handleJoinRoom(room)}
-                        className="w-[155px] px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all text-sm flex items-center justify-center gap-2 whitespace-nowrap"
-                      >
-                        <Calendar size={16} />
-                        <span>Rejoindre</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleRegisterForComplement(room)}
-                        className="w-[155px] px-4 py-2 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-all text-sm flex items-center justify-center gap-2 whitespace-nowrap"
-                      >
-                        <Calendar size={16} />
-                        <span>S'inscrire</span>
-                      </button>
-                    )
-                  ) : 
-                  /* ⭐ CAS 3 : Utilisateur déjà dans la room */
-                  userInRoom ? (
+                  ) : userInRoom ? (
                     <button
                       onClick={() => handleLeaveRoom(room.id)}
-                      className="w-[155px] px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all text-sm whitespace-nowrap"
+                      className="px-5 py-2.5 bg-red-600 text-white rounded-full font-semibold hover:bg-red-700 transition-all text-sm"
                     >
                       Quitter
                     </button>
-                  ) : 
-                  /* ⭐ CAS 4 : Accès autorisé - Rejoindre (noir) */
-                  access.canJoin ? (
+                  ) : (
                     <button
                       onClick={() => handleJoinRoom(room)}
-                      className="w-[155px] px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all text-sm whitespace-nowrap"
+                      className="px-5 py-2.5 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all text-sm"
                     >
                       Rejoindre
                     </button>
-                  ) : 
-                  /* ⭐ CAS 5 : Cours non débloqué - Débloquer (bleu) */
-                  (
-                    <button
-                      onClick={() => onNavigateToUpgrade?.(room.courseId)}
-                      className="w-[155px] px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all text-sm whitespace-nowrap"
-                    >
-                      Débloquer cours
-                    </button>
                   )}
-
-                  {/* Bouton de signalement - discret */}
-                  <button
-                    onClick={() => handleReportRoom(room.id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Signaler"
-                  >
-                    <Flag size={14} />
-                  </button>
                 </div>
               </motion.div>
             );
           })
         )}
+      </div>
       </div>
 
       {/* Modal de signalement (simplifié) */}
@@ -1154,8 +1060,8 @@ export function AdvancedStudyRoomsTab({
         isAdmin={isAdmin}
       />
 
-      {/* Modal Study Room */}
-      {selectedRoom && (
+      {/* Modal Study Room (ancien) */}
+      {selectedRoom && showStudyRoomModal && (
         <StudyRoomModal
           isOpen={showStudyRoomModal}
           onClose={() => {
@@ -1171,6 +1077,30 @@ export function AdvancedStudyRoomsTab({
             isActive: selectedRoom.status === 'live'
           }}
           currentUserId={userId}
+        />
+      )}
+
+      {/* Nouveau: Modal Pre-Join (configuration des appareils) */}
+      {selectedRoom && (
+        <StudyRoomPreJoin
+          isOpen={showPreJoinModal}
+          onClose={() => {
+            setShowPreJoinModal(false);
+            setSelectedRoom(null);
+          }}
+          onJoin={handlePreJoinComplete}
+          roomTitle={selectedRoom.title}
+          roomId={selectedRoom.id}
+        />
+      )}
+
+      {/* Nouveau: Vue Meeting */}
+      {selectedRoom && showMeetingView && (
+        <StudyRoomMeeting
+          roomId={selectedRoom.id}
+          roomTitle={selectedRoom.title}
+          currentUser={{ id: userId, name: userName }}
+          onLeave={handleLeaveMeeting}
         />
       )}
     </div>

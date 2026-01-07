@@ -27,10 +27,8 @@ export function StudyRoomButton({
 }: StudyRoomButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Déterminer si l'accès est disponible (cours complet débloqué)
-  // L'accès aux Study Rooms nécessite OBLIGATOIREMENT le déblocage du cours complet ou d'un pack
-  // Si studyRoomAccess n'est pas défini, l'accès est refusé par défaut
-  const hasAccess = studyRoomAccess ? studyRoomAccess.hasFullAccess : false;
+  // Accès aux Study Rooms disponible pour tous les utilisateurs
+  const hasAccess = true;
   
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

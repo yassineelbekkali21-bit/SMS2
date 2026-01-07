@@ -14,6 +14,8 @@ import {
   ChevronDown, 
   ChevronUp, 
   ChevronRight,
+  ChevronLeft,
+  Swords,
   Menu, 
   X,
   Search,
@@ -43,7 +45,13 @@ import {
   Calculator,
   CheckCircle,
   Gift,
-  Check
+  Check,
+  Trophy,
+  UserPlus,
+  Paperclip,
+  Mic,
+  Send,
+  Image as ImageIcon
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -86,12 +94,20 @@ import { PurchaseSystem } from './PurchaseSystem';
 import { SmartPackOffer } from './SmartPackOffer';
 import { SmartCourseComparison } from './SmartCourseComparison';
 import { Community } from './Community';
+import { CommunityFullScreen } from './CommunityFullScreen';
 import { DirectMessaging } from './DirectMessaging';
 import { AdvancedStudyRoomsTab } from './AdvancedStudyRoomsTab';
 import { getCourseRecommendations } from '@/lib/smart-recommendations';
 import { PremiumCheckout } from './PremiumCheckout';
 import { CourseStaircaseView } from './CourseStaircaseView';
 import { IntegratedCourseViewer } from './IntegratedCourseViewer';
+import { LearningTrackOverview } from './LearningTrackOverview';
+import { DuelFullScreen } from './DuelFullScreen';
+import { ExamBlancGenerator } from './ExamBlancGenerator';
+import { MasteryBoostersModal } from './MasteryBoostersModal';
+import { QuizRunner } from './assessment/QuizRunner';
+import { AssessmentSetup } from './assessment/AssessmentSetup';
+import { TOPICS } from '@/lib/assessment-data';
 import { Course, Lesson, StudentProgress, CourseSuggestion, DashboardData, PurchaseOption, CourseStudyRoom, BuddySystem } from '@/types';
 import { PersonalProfileSection } from './PersonalProfileSection';
 import { getPersonalProfile, generateUpsellOptions, getMockCourseStudyRooms, getMockStudyRoomNotifications, getCoursePacks, getLessonsByCourseId, generateMockLessons, mockDashboardData } from '@/lib/mock-data';
@@ -112,6 +128,7 @@ import { StudyRoomModal } from './StudyRoomModal';
 import { StrategicPlannerCompact } from './StrategicPlannerCompact';
 import { PlannerOnboardingModal } from './PlannerOnboardingModal';
 import { useStudyRoomState } from '@/lib/studyroom-service';
+import { GlobalHeader } from './GlobalHeader';
 import { usePlannerState } from '@/lib/planner-service';
 import { UnifiedSocialWidget } from './UnifiedSocialWidget';
 import SocialFeedIcon from './SocialFeedIcon';
@@ -129,6 +146,8 @@ import { OnboardingSpotlight } from './OnboardingSpotlight';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { BuddyOnboarding } from './BuddyOnboarding';
 import { ParentReportsSettings } from './ParentReportsSettings';
+import { BuddyInviteModal } from './BuddyInviteModal';
+import { ProgramsShop } from './ProgramsShop';
 
 interface SimpleDashboardProps {
   data: DashboardData;
@@ -210,8 +229,8 @@ const ModernFooter = () => (
         <div>
           <h3 className="font-semibold text-gray-900 mb-4">Navigation</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="/courses" className="text-gray-600 hover:text-gray-900">Mes cours</a></li>
-            <li><a href="/community" className="text-gray-600 hover:text-gray-900">Communauté</a></li>
+            <li><a href="/courses" className="text-gray-600 hover:text-gray-900">Mon parcours</a></li>
+            <li><a href="/community" className="text-gray-600 hover:text-gray-900">Social Club</a></li>
             <li><a href="/planning" className="text-gray-600 hover:text-gray-900">Planification</a></li>
           </ul>
         </div>
@@ -409,6 +428,1626 @@ function createMockCourseFromId(courseId: string): Course | null {
   return mockCourse;
 }
 
+// Quiz Rapide Inline - spécifique au Training Club
+function QuizRapideInline({ trackContext }: { trackContext?: { trackId: string; trackTitle: string } | null }) {
+  const [step, setStep] = useState<'select' | 'quiz' | 'result'>('select');
+  const [selectedProgramme, setSelectedProgramme] = useState<string | null>(null);
+  const [selectedBundles, setSelectedBundles] = useState<string[]>([]);
+  const [selectedCours, setSelectedCours] = useState<string[]>([]);
+  const [selectedLecons, setSelectedLecons] = useState<string[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<(number | null)[]>([null, null, null, null, null]);
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  // Données hiérarchiques basées sur assessment-data.ts
+  const PROGRAMMES = [
+    { id: 'physics', label: 'Physique' },
+    { id: 'math', label: 'Mathématiques' },
+    { id: 'chemistry', label: 'Chimie' },
+    { id: 'economy', label: 'Économie' },
+  ];
+  
+  // Mapping des titres de cours vers programmes et bundles
+  const TRACK_TO_PROGRAMME: Record<string, string> = {
+    'algèbre': 'math', 'algebre': 'math', 'linéaire': 'math', 'lineaire': 'math', 'matrices': 'math', 'calculus': 'math', 'analyse': 'math', 'intégral': 'math', 'integral': 'math', 'dérivé': 'math', 'derive': 'math',
+    'mécanique': 'physics', 'mecanique': 'physics', 'dynamique': 'physics', 'cinématique': 'physics', 'cinematique': 'physics', 'ondes': 'physics', 'optique': 'physics', 'électricité': 'physics', 'electricite': 'physics', 'magnétisme': 'physics', 'magnetisme': 'physics', 'thermo': 'physics', 'quantique': 'physics',
+    'chimie': 'chemistry', 'organique': 'chemistry', 'atomistique': 'chemistry', 'acide': 'chemistry',
+    'économie': 'economy', 'economie': 'economy', 'macro': 'economy', 'micro': 'economy', 'probabilité': 'economy', 'probabilite': 'economy',
+  };
+  
+  const TRACK_TO_BUNDLE: Record<string, string> = {
+    'algèbre': 'alg', 'algebre': 'alg', 'linéaire': 'alg', 'lineaire': 'alg', 'matrices': 'alg', 'espaces vectoriels': 'alg',
+    'analyse': 'calc', 'calculus': 'calc', 'intégral': 'calc', 'integral': 'calc', 'dérivé': 'calc', 'derive': 'calc', 'limite': 'calc',
+    'mécanique': 'mech', 'mecanique': 'mech', 'dynamique': 'mech', 'cinématique': 'mech', 'cinematique': 'mech', 'énergie': 'mech', 'energie': 'mech',
+    'électricité': 'elec', 'electricite': 'elec', 'magnétisme': 'elec', 'magnetisme': 'elec', 'circuit': 'elec',
+    'thermo': 'thermo', 'chaleur': 'thermo', 'gaz': 'thermo',
+    'ondes': 'waves', 'optique': 'waves', 'interférence': 'waves', 'interference': 'waves',
+    'quantique': 'quantum',
+    'organique': 'org', 'alcool': 'org', 'aldéhyde': 'org', 'aldehyde': 'org',
+    'atomistique': 'atom_chem', 'atome': 'atom_chem', 'liaison': 'atom_chem',
+    'acide': 'acid', 'base': 'acid', 'ph': 'acid', 'titrage': 'acid',
+    'micro': 'micro', 'microéconomie': 'micro', 'microeconomie': 'micro',
+    'macro': 'macro', 'macroéconomie': 'macro', 'macroeconomie': 'macro',
+    'probabilité': 'prob', 'probabilite': 'prob', 'statistique': 'prob',
+  };
+  
+  // Présélection basée sur le trackContext
+  useEffect(() => {
+    if (trackContext?.trackTitle) {
+      const title = trackContext.trackTitle.toLowerCase();
+      
+      // Trouver le programme correspondant
+      for (const [keyword, programmeId] of Object.entries(TRACK_TO_PROGRAMME)) {
+        if (title.includes(keyword)) {
+          setSelectedProgramme(programmeId);
+          
+          // Trouver le bundle correspondant
+          for (const [bundleKeyword, bundleId] of Object.entries(TRACK_TO_BUNDLE)) {
+            if (title.includes(bundleKeyword)) {
+              setSelectedBundles([bundleId]);
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+  }, [trackContext?.trackTitle]);
+
+  const BUNDLES: Record<string, { id: string; label: string }[]> = {
+    physics: [
+      { id: 'mech', label: 'Mécanique Classique' },
+      { id: 'elec', label: 'Électricité & Magnétisme' },
+      { id: 'thermo', label: 'Thermodynamique' },
+      { id: 'waves', label: 'Ondes & Optique' },
+      { id: 'quantum', label: 'Physique Quantique' },
+    ],
+    math: [
+      { id: 'calc', label: 'Analyse (Calculus)' },
+      { id: 'alg', label: 'Algèbre Linéaire' },
+    ],
+    chemistry: [
+      { id: 'org', label: 'Chimie Organique' },
+      { id: 'atom_chem', label: 'Atomistique' },
+      { id: 'acid', label: 'Acides & Bases' },
+    ],
+    economy: [
+      { id: 'micro', label: 'Microéconomie' },
+      { id: 'macro', label: 'Macroéconomie' },
+      { id: 'prob', label: 'Probabilités & Stats' },
+    ],
+  };
+
+  const COURS: Record<string, { id: string; label: string }[]> = {
+    'mech': [
+      { id: 'cinematique', label: 'Cinématique' },
+      { id: 'dynamique', label: 'Dynamique du point' },
+      { id: 'energie', label: 'Énergie mécanique' },
+    ],
+    'elec': [
+      { id: 'electrostatique', label: 'Électrostatique' },
+      { id: 'magnetisme', label: 'Magnétisme' },
+      { id: 'circuits', label: 'Circuits électriques' },
+    ],
+    'thermo': [
+      { id: 'premier-principe', label: 'Premier principe' },
+      { id: 'second-principe', label: 'Second principe' },
+      { id: 'gaz-parfaits', label: 'Gaz parfaits' },
+    ],
+    'waves': [
+      { id: 'ondes-mecaniques', label: 'Ondes mécaniques' },
+      { id: 'optique-geometrique', label: 'Optique géométrique' },
+      { id: 'interferences', label: 'Interférences' },
+    ],
+    'calc': [
+      { id: 'derivees', label: 'Dérivées' },
+      { id: 'integrales', label: 'Intégrales' },
+      { id: 'limites', label: 'Limites & Continuité' },
+    ],
+    'alg': [
+      { id: 'matrices', label: 'Matrices' },
+      { id: 'espaces-vectoriels', label: 'Espaces vectoriels' },
+      { id: 'determinants', label: 'Déterminants' },
+    ],
+    'org': [
+      { id: 'alcools', label: 'Alcools & Phénols' },
+      { id: 'aldehydes', label: 'Aldéhydes & Cétones' },
+      { id: 'acides-carboxyliques', label: 'Acides carboxyliques' },
+    ],
+    'atom_chem': [
+      { id: 'structure-atome', label: 'Structure de l\'atome' },
+      { id: 'liaisons', label: 'Liaisons chimiques' },
+    ],
+    'acid': [
+      { id: 'ph', label: 'pH et pKa' },
+      { id: 'titrage', label: 'Titrages' },
+    ],
+  };
+
+  const LECONS: Record<string, { id: string; label: string }[]> = {
+    'cinematique': [
+      { id: 'mvt-rectiligne', label: 'Mouvement rectiligne' },
+      { id: 'mvt-circulaire', label: 'Mouvement circulaire' },
+    ],
+    'dynamique': [
+      { id: 'lois-newton', label: 'Lois de Newton' },
+      { id: 'frottements', label: 'Frottements' },
+    ],
+    'derivees': [
+      { id: 'def-derivee', label: 'Définition de la dérivée' },
+      { id: 'regles-derivation', label: 'Règles de dérivation' },
+      { id: 'applications', label: 'Applications' },
+    ],
+    'integrales': [
+      { id: 'primitives', label: 'Primitives' },
+      { id: 'integration-parties', label: 'Intégration par parties' },
+    ],
+  };
+
+  const QUESTIONS = [
+    { question: 'Quelle est la dérivée de f(x) = x² ?', options: ['2x', 'x', '2', 'x²'], correct: 0 },
+    { question: 'Quelle est la primitive de f(x) = 2x ?', options: ['x²', '2x²', 'x² + C', '2'], correct: 2 },
+    { question: 'Limite de sin(x)/x quand x → 0 ?', options: ['0', '1', '∞', 'n\'existe pas'], correct: 1 },
+    { question: 'Dérivée de e^x ?', options: ['e^x', 'xe^(x-1)', 'ln(x)', '1/x'], correct: 0 },
+    { question: 'Intégrale de 1/x ?', options: ['x', 'ln|x| + C', '1/x²', '-1/x²'], correct: 1 },
+  ];
+
+  const handleAnswer = (answerIndex: number) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answerIndex;
+    setAnswers(newAnswers);
+    setShowFeedback(true);
+    
+    setTimeout(() => {
+      setShowFeedback(false);
+      if (currentQuestion < QUESTIONS.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setStep('result');
+      }
+    }, 1500);
+  };
+
+  const toggleBundle = (bundleId: string) => {
+    setSelectedBundles(prev => 
+      prev.includes(bundleId) 
+        ? prev.filter(id => id !== bundleId)
+        : [...prev, bundleId]
+    );
+    setSelectedCours([]);
+    setSelectedLecons([]);
+  };
+
+  const toggleCours = (coursId: string) => {
+    setSelectedCours(prev => 
+      prev.includes(coursId) 
+        ? prev.filter(id => id !== coursId)
+        : [...prev, coursId]
+    );
+    setSelectedLecons([]);
+  };
+
+  const toggleLecon = (leconId: string) => {
+    setSelectedLecons(prev => 
+      prev.includes(leconId) 
+        ? prev.filter(id => id !== leconId)
+        : [...prev, leconId]
+    );
+  };
+
+  const canStartQuiz = selectedProgramme !== null;
+  const score = answers.filter((a, i) => a === QUESTIONS[i].correct).length;
+
+  // Get available options based on selections (multi-select)
+  const availableBundles = selectedProgramme ? BUNDLES[selectedProgramme] || [] : [];
+  const availableCours = selectedBundles.length > 0 
+    ? selectedBundles.flatMap(b => COURS[b] || [])
+    : [];
+  const availableLecons = selectedCours.length > 0 
+    ? selectedCours.flatMap(c => LECONS[c] || [])
+    : [];
+
+  // Calcul du niveau actuel pour les indicateurs
+  const currentLevel = selectedLecons.length > 0 ? 4 : 
+                       selectedCours.length > 0 ? 3 : 
+                       selectedBundles.length > 0 ? 2 : 
+                       selectedProgramme ? 1 : 0;
+
+  return (
+    <div className="h-full bg-white p-8 overflow-y-auto">
+      {step === 'select' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {/* Header avec intro */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Vérifie tes acquis</h2>
+            <p className="text-gray-500">
+              Sélectionne la matière sur laquelle tu veux t'entraîner, puis affine ta sélection.
+            </p>
+          </div>
+
+          {/* Section titre */}
+          <div className="mb-4">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Contenu à inclure</span>
+          </div>
+
+          {/* Niveau 1: Programme */}
+          <div className="mb-4">
+            <div className="flex gap-2 flex-wrap">
+              {PROGRAMMES.map((prog) => (
+                <button
+                  key={prog.id}
+                  onClick={() => {
+                    setSelectedProgramme(prog.id);
+                    setSelectedBundles([]);
+                    setSelectedCours([]);
+                    setSelectedLecons([]);
+                  }}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    selectedProgramme === prog.id
+                      ? 'text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                >
+                  {prog.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Niveau 2: Bundle (optionnel, multi-sélection) */}
+          {selectedProgramme && availableBundles.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableBundles.map((bundle) => (
+                  <button
+                    key={bundle.id}
+                    onClick={() => toggleBundle(bundle.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedBundles.includes(bundle.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedBundles.includes(bundle.id) && <Check size={14} />}
+                    {bundle.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Niveau 3: Cours (optionnel, multi-sélection) */}
+          {selectedBundles.length > 0 && availableCours.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableCours.map((cours) => (
+                  <button
+                    key={cours.id}
+                    onClick={() => toggleCours(cours.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedCours.includes(cours.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedCours.includes(cours.id) && <Check size={14} />}
+                    {cours.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Niveau 4: Leçons (optionnel, multi-sélection) */}
+          {selectedCours.length > 0 && availableLecons.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableLecons.map((lecon) => (
+                  <button
+                    key={lecon.id}
+                    onClick={() => toggleLecon(lecon.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedLecons.includes(lecon.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedLecons.includes(lecon.id) && <Check size={14} />}
+                    {lecon.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* CTA Button */}
+          <div className="mt-8">
+          <button
+            onClick={() => canStartQuiz && setStep('quiz')}
+            disabled={!canStartQuiz}
+              className={`w-full py-4 rounded-full font-semibold text-base transition-all flex items-center justify-center gap-2 ${
+              canStartQuiz 
+                ? 'bg-gray-900 hover:bg-black text-white' 
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+              {canStartQuiz ? (
+                <>
+                  <Zap size={18} />
+                  Lancer le quiz flash
+                </>
+              ) : (
+                'Sélectionne une matière pour commencer'
+              )}
+          </button>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'quiz' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col">
+          {/* Progress */}
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Question {currentQuestion + 1} / {QUESTIONS.length}</span>
+              <span>{Math.round(((currentQuestion + 1) / QUESTIONS.length) * 100)}%</span>
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gray-900 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${((currentQuestion + 1) / QUESTIONS.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Question */}
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">
+              {QUESTIONS[currentQuestion].question}
+            </h3>
+
+            <div className="space-y-2">
+              {QUESTIONS[currentQuestion].options.map((option, index) => {
+                const isSelected = answers[currentQuestion] === index;
+                const isCorrect = index === QUESTIONS[currentQuestion].correct;
+                const showResult = showFeedback && isSelected;
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => !showFeedback && handleAnswer(index)}
+                    disabled={showFeedback}
+                    className={`w-full py-4 px-5 rounded-xl text-sm font-medium text-left transition-all ${
+                      showResult
+                        ? isCorrect
+                          ? 'bg-green-500 text-white'
+                          : 'bg-red-500 text-white'
+                        : showFeedback && isCorrect
+                          ? 'bg-green-500 text-white'
+                          : isSelected
+                            ? 'bg-gray-900 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'result' && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="h-full flex flex-col items-center justify-center text-center"
+        >
+          <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-5 ${
+            score >= 4 ? 'bg-green-500' : score >= 2 ? 'bg-yellow-500' : 'bg-red-500'
+          }`}>
+            <span className="text-3xl font-bold text-white">{score}</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">
+            {score >= 4 ? 'Excellent !' : score >= 2 ? 'Pas mal !' : 'Continue à t\'entraîner'}
+          </h3>
+          <p className="text-sm text-gray-500 mb-6">{score} / {QUESTIONS.length} bonnes réponses</p>
+          
+          <div className="w-full max-w-xs space-y-2">
+            <button
+              onClick={() => {
+                setStep('select');
+                setCurrentQuestion(0);
+                setAnswers([null, null, null, null, null]);
+                setSelectedProgramme(null);
+                setSelectedBundles([]);
+                setSelectedCours([]);
+                setSelectedLecons([]);
+              }}
+              className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+            >
+              Recommencer
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Quiz Profond Inline - spécifique au Training Club
+function QuizProfondInline({ trackContext }: { trackContext?: { trackId: string; trackTitle: string } | null }) {
+  const [step, setStep] = useState<'select' | 'quiz' | 'result'>('select');
+  const [selectedProgramme, setSelectedProgramme] = useState<string | null>(null);
+  const [selectedBundles, setSelectedBundles] = useState<string[]>([]);
+  const [selectedCours, setSelectedCours] = useState<string[]>([]);
+  const [selectedLecons, setSelectedLecons] = useState<string[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<(number | null)[]>(Array(10).fill(null));
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  // Mêmes données hiérarchiques que Quiz Rapide (basées sur assessment-data.ts)
+  const PROGRAMMES = [
+    { id: 'physics', label: 'Physique' },
+    { id: 'math', label: 'Mathématiques' },
+    { id: 'chemistry', label: 'Chimie' },
+    { id: 'economy', label: 'Économie' },
+  ];
+  
+  // Mapping des titres de cours vers programmes et bundles
+  const TRACK_TO_PROGRAMME: Record<string, string> = {
+    'algèbre': 'math', 'algebre': 'math', 'linéaire': 'math', 'lineaire': 'math', 'matrices': 'math', 'calculus': 'math', 'analyse': 'math', 'intégral': 'math', 'integral': 'math', 'dérivé': 'math', 'derive': 'math',
+    'mécanique': 'physics', 'mecanique': 'physics', 'dynamique': 'physics', 'cinématique': 'physics', 'cinematique': 'physics', 'ondes': 'physics', 'optique': 'physics', 'électricité': 'physics', 'electricite': 'physics', 'magnétisme': 'physics', 'magnetisme': 'physics', 'thermo': 'physics', 'quantique': 'physics',
+    'chimie': 'chemistry', 'organique': 'chemistry', 'atomistique': 'chemistry', 'acide': 'chemistry',
+    'économie': 'economy', 'economie': 'economy', 'macro': 'economy', 'micro': 'economy', 'probabilité': 'economy', 'probabilite': 'economy',
+  };
+  
+  const TRACK_TO_BUNDLE: Record<string, string> = {
+    'algèbre': 'alg', 'algebre': 'alg', 'linéaire': 'alg', 'lineaire': 'alg', 'matrices': 'alg',
+    'analyse': 'calc', 'calculus': 'calc', 'intégral': 'calc', 'integral': 'calc', 'dérivé': 'calc', 'derive': 'calc',
+    'mécanique': 'mech', 'mecanique': 'mech', 'dynamique': 'mech', 'cinématique': 'mech', 'cinematique': 'mech',
+    'électricité': 'elec', 'electricite': 'elec', 'magnétisme': 'elec', 'magnetisme': 'elec',
+    'thermo': 'thermo',
+    'ondes': 'waves', 'optique': 'waves',
+    'quantique': 'quantum',
+    'organique': 'org',
+    'atomistique': 'atom_chem',
+    'acide': 'acid',
+    'micro': 'micro',
+    'macro': 'macro',
+    'probabilité': 'prob', 'probabilite': 'prob',
+  };
+  
+  // Présélection basée sur le trackContext
+  useEffect(() => {
+    if (trackContext?.trackTitle) {
+      const title = trackContext.trackTitle.toLowerCase();
+      for (const [keyword, programmeId] of Object.entries(TRACK_TO_PROGRAMME)) {
+        if (title.includes(keyword)) {
+          setSelectedProgramme(programmeId);
+          for (const [bundleKeyword, bundleId] of Object.entries(TRACK_TO_BUNDLE)) {
+            if (title.includes(bundleKeyword)) {
+              setSelectedBundles([bundleId]);
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+  }, [trackContext?.trackTitle]);
+
+  const BUNDLES: Record<string, { id: string; label: string }[]> = {
+    physics: [
+      { id: 'mech', label: 'Mécanique Classique' },
+      { id: 'elec', label: 'Électricité & Magnétisme' },
+      { id: 'thermo', label: 'Thermodynamique' },
+      { id: 'waves', label: 'Ondes & Optique' },
+      { id: 'quantum', label: 'Physique Quantique' },
+    ],
+    math: [
+      { id: 'calc', label: 'Analyse (Calculus)' },
+      { id: 'alg', label: 'Algèbre Linéaire' },
+    ],
+    chemistry: [
+      { id: 'org', label: 'Chimie Organique' },
+      { id: 'atom_chem', label: 'Atomistique' },
+      { id: 'acid', label: 'Acides & Bases' },
+    ],
+    economy: [
+      { id: 'micro', label: 'Microéconomie' },
+      { id: 'macro', label: 'Macroéconomie' },
+      { id: 'prob', label: 'Probabilités & Stats' },
+    ],
+  };
+
+  const COURS: Record<string, { id: string; label: string }[]> = {
+    'mech': [
+      { id: 'cinematique', label: 'Cinématique' },
+      { id: 'dynamique', label: 'Dynamique du point' },
+      { id: 'energie', label: 'Énergie mécanique' },
+    ],
+    'elec': [
+      { id: 'electrostatique', label: 'Électrostatique' },
+      { id: 'magnetisme', label: 'Magnétisme' },
+      { id: 'circuits', label: 'Circuits électriques' },
+    ],
+    'thermo': [
+      { id: 'premier-principe', label: 'Premier principe' },
+      { id: 'second-principe', label: 'Second principe' },
+      { id: 'gaz-parfaits', label: 'Gaz parfaits' },
+    ],
+    'waves': [
+      { id: 'ondes-mecaniques', label: 'Ondes mécaniques' },
+      { id: 'optique-geometrique', label: 'Optique géométrique' },
+      { id: 'interferences', label: 'Interférences' },
+    ],
+    'calc': [
+      { id: 'derivees', label: 'Dérivées' },
+      { id: 'integrales', label: 'Intégrales' },
+      { id: 'limites', label: 'Limites & Continuité' },
+    ],
+    'alg': [
+      { id: 'matrices', label: 'Matrices' },
+      { id: 'espaces-vectoriels', label: 'Espaces vectoriels' },
+      { id: 'determinants', label: 'Déterminants' },
+    ],
+    'org': [
+      { id: 'alcools', label: 'Alcools & Phénols' },
+      { id: 'aldehydes', label: 'Aldéhydes & Cétones' },
+      { id: 'acides-carboxyliques', label: 'Acides carboxyliques' },
+    ],
+  };
+
+  const LECONS: Record<string, { id: string; label: string }[]> = {
+    'cinematique': [
+      { id: 'mvt-rectiligne', label: 'Mouvement rectiligne' },
+      { id: 'mvt-circulaire', label: 'Mouvement circulaire' },
+    ],
+    'dynamique': [
+      { id: 'lois-newton', label: 'Lois de Newton' },
+      { id: 'frottements', label: 'Frottements' },
+    ],
+    'derivees': [
+      { id: 'def-derivee', label: 'Définition de la dérivée' },
+      { id: 'regles-derivation', label: 'Règles de dérivation' },
+      { id: 'applications', label: 'Applications' },
+    ],
+    'integrales': [
+      { id: 'primitives', label: 'Primitives' },
+      { id: 'integration-parties', label: 'Intégration par parties' },
+    ],
+  };
+
+  const QUESTIONS = [
+    { question: 'Quelle est la dérivée de f(x) = x³ ?', options: ['3x²', 'x²', '3x', 'x³'], correct: 0 },
+    { question: 'Dérivée de sin(x) ?', options: ['cos(x)', '-cos(x)', 'sin(x)', '-sin(x)'], correct: 0 },
+    { question: 'Dérivée de ln(x) ?', options: ['1/x', 'x', 'e^x', 'ln(x)/x'], correct: 0 },
+    { question: 'Dérivée de e^(2x) ?', options: ['2e^(2x)', 'e^(2x)', 'e^x', '2e^x'], correct: 0 },
+    { question: 'Dérivée de cos(x) ?', options: ['-sin(x)', 'sin(x)', 'cos(x)', '-cos(x)'], correct: 0 },
+    { question: 'Primitive de 3x² ?', options: ['x³ + C', '3x³ + C', '6x + C', 'x² + C'], correct: 0 },
+    { question: 'Primitive de cos(x) ?', options: ['sin(x) + C', '-sin(x) + C', 'cos(x) + C', 'tan(x) + C'], correct: 0 },
+    { question: 'Primitive de e^x ?', options: ['e^x + C', 'xe^x + C', 'e^(x+1) + C', 'ln(x) + C'], correct: 0 },
+    { question: 'Primitive de 1/x² ?', options: ['-1/x + C', '1/x + C', 'ln(x²) + C', '-2/x³ + C'], correct: 0 },
+    { question: 'Dérivée de tan(x) ?', options: ['1/cos²(x)', 'cos²(x)', '1/sin²(x)', 'sin²(x)'], correct: 0 },
+  ];
+
+  const handleAnswer = (answerIndex: number) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answerIndex;
+    setAnswers(newAnswers);
+    setShowFeedback(true);
+    
+    setTimeout(() => {
+      setShowFeedback(false);
+      if (currentQuestion < QUESTIONS.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setStep('result');
+      }
+    }, 1200);
+  };
+
+  const toggleBundle = (bundleId: string) => {
+    setSelectedBundles(prev => 
+      prev.includes(bundleId) 
+        ? prev.filter(id => id !== bundleId)
+        : [...prev, bundleId]
+    );
+    setSelectedCours([]);
+    setSelectedLecons([]);
+  };
+
+  const toggleCours = (coursId: string) => {
+    setSelectedCours(prev => 
+      prev.includes(coursId) 
+        ? prev.filter(id => id !== coursId)
+        : [...prev, coursId]
+    );
+    setSelectedLecons([]);
+  };
+
+  const toggleLecon = (leconId: string) => {
+    setSelectedLecons(prev => 
+      prev.includes(leconId) 
+        ? prev.filter(id => id !== leconId)
+        : [...prev, leconId]
+    );
+  };
+
+  const canStartQuiz = selectedProgramme !== null;
+  const score = answers.filter((a, i) => a === QUESTIONS[i].correct).length;
+
+  const availableBundles = selectedProgramme ? BUNDLES[selectedProgramme] || [] : [];
+  const availableCours = selectedBundles.length > 0 
+    ? selectedBundles.flatMap(b => COURS[b] || [])
+    : [];
+  const availableLecons = selectedCours.length > 0 
+    ? selectedCours.flatMap(c => LECONS[c] || [])
+    : [];
+
+  // Calcul du niveau actuel pour les indicateurs
+  const currentLevel = selectedLecons.length > 0 ? 4 : 
+                       selectedCours.length > 0 ? 3 : 
+                       selectedBundles.length > 0 ? 2 : 
+                       selectedProgramme ? 1 : 0;
+
+  return (
+    <div className="h-full bg-white p-8 overflow-y-auto">
+      {step === 'select' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {/* Header avec intro */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Consolide ta maîtrise</h2>
+            <p className="text-gray-500">
+              Quiz approfondi de 10 questions pour ancrer durablement tes connaissances.
+            </p>
+          </div>
+
+          {/* Section titre */}
+          <div className="mb-4">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Contenu à inclure</span>
+          </div>
+
+          {/* Niveau 1: Programme */}
+          <div className="mb-4">
+            <div className="flex gap-2 flex-wrap">
+              {PROGRAMMES.map((prog) => (
+                <button
+                  key={prog.id}
+                  onClick={() => {
+                    setSelectedProgramme(prog.id);
+                    setSelectedBundles([]);
+                    setSelectedCours([]);
+                    setSelectedLecons([]);
+                  }}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    selectedProgramme === prog.id
+                      ? 'text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                >
+                  {prog.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Niveau 2: Bundle (optionnel, multi-sélection) */}
+          {selectedProgramme && availableBundles.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableBundles.map((bundle) => (
+                  <button
+                    key={bundle.id}
+                    onClick={() => toggleBundle(bundle.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedBundles.includes(bundle.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedBundles.includes(bundle.id) && <Check size={14} />}
+                    {bundle.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Niveau 3: Cours (optionnel, multi-sélection) */}
+          {selectedBundles.length > 0 && availableCours.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableCours.map((cours) => (
+                  <button
+                    key={cours.id}
+                    onClick={() => toggleCours(cours.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedCours.includes(cours.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedCours.includes(cours.id) && <Check size={14} />}
+                    {cours.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Niveau 4: Leçons (optionnel, multi-sélection) */}
+          {selectedCours.length > 0 && availableLecons.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <p className="text-xs text-gray-400 mb-2">(optionnel, multi-sélection)</p>
+              <div className="flex gap-2 flex-wrap">
+                {availableLecons.map((lecon) => (
+                  <button
+                    key={lecon.id}
+                    onClick={() => toggleLecon(lecon.id)}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      selectedLecons.includes(lecon.id)
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {selectedLecons.includes(lecon.id) && <Check size={14} />}
+                    {lecon.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* CTA Button */}
+          <div className="mt-8">
+          <button
+            onClick={() => canStartQuiz && setStep('quiz')}
+            disabled={!canStartQuiz}
+              className={`w-full py-4 rounded-full font-semibold text-base transition-all flex items-center justify-center gap-2 ${
+              canStartQuiz 
+                ? 'bg-gray-900 hover:bg-black text-white' 
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+              {canStartQuiz ? (
+                <>
+                  <BookOpen size={18} />
+                  Lancer la révision approfondie
+                </>
+              ) : (
+                'Sélectionne une matière pour commencer'
+              )}
+          </button>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'quiz' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col">
+          {/* Progress */}
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Question {currentQuestion + 1} / {QUESTIONS.length}</span>
+              <span>{Math.round(((currentQuestion + 1) / QUESTIONS.length) * 100)}%</span>
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gray-900 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${((currentQuestion + 1) / QUESTIONS.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Question */}
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">
+              {QUESTIONS[currentQuestion].question}
+            </h3>
+
+            <div className="space-y-2">
+              {QUESTIONS[currentQuestion].options.map((option, index) => {
+                const isSelected = answers[currentQuestion] === index;
+                const isCorrect = index === QUESTIONS[currentQuestion].correct;
+                const showResult = showFeedback && isSelected;
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => !showFeedback && handleAnswer(index)}
+                    disabled={showFeedback}
+                    className={`w-full py-4 px-5 rounded-xl text-sm font-medium text-left transition-all ${
+                      showResult
+                        ? isCorrect
+                          ? 'bg-green-500 text-white'
+                          : 'bg-red-500 text-white'
+                        : showFeedback && isCorrect
+                          ? 'bg-green-500 text-white'
+                          : isSelected
+                            ? 'bg-gray-900 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'result' && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="h-full flex flex-col items-center justify-center text-center"
+        >
+          <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-5 ${
+            score >= 8 ? 'bg-green-500' : score >= 5 ? 'bg-yellow-500' : 'bg-red-500'
+          }`}>
+            <span className="text-3xl font-bold text-white">{score}</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">
+            {score >= 8 ? 'Excellent !' : score >= 5 ? 'Pas mal !' : 'Continue à t\'entraîner'}
+          </h3>
+          <p className="text-sm text-gray-500 mb-6">{score} / {QUESTIONS.length} bonnes réponses</p>
+          
+          <div className="w-full max-w-xs space-y-2">
+            <button
+              onClick={() => {
+                setStep('select');
+                setCurrentQuestion(0);
+                setAnswers(Array(10).fill(null));
+                setSelectedProgramme(null);
+                setSelectedBundles([]);
+                setSelectedCours([]);
+                setSelectedLecons([]);
+              }}
+              className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+            >
+              Recommencer
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Inline version of Duel for embedding in Training Club
+function DuelInline({ trackTitle }: { trackTitle: string }) {
+  const [duelState, setDuelState] = useState<'lobby' | 'searching' | 'matched' | 'playing' | 'result'>('lobby');
+  const [selectedOpponent, setSelectedOpponent] = useState<string | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [myScore, setMyScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState(10);
+
+  const MOCK_OPPONENTS = [
+    { id: 'o1', name: 'Sarah M.', initials: 'SM', level: 12, wins: 3, losses: 1, online: true },
+    { id: 'o2', name: 'Alex K.', initials: 'AK', level: 10, wins: 2, losses: 2, online: true },
+    { id: 'o3', name: 'Thomas D.', initials: 'TD', level: 8, wins: 1, losses: 0, online: false },
+    { id: 'o4', name: 'Marie L.', initials: 'ML', level: 15, wins: 7, losses: 2, online: true },
+    { id: 'o5', name: 'Lucas B.', initials: 'LB', level: 9, wins: 4, losses: 3, online: false },
+  ];
+
+  const QUESTIONS = [
+    { question: 'Quelle est la dérivée de f(x) = x² ?', options: ['2x', 'x', '2', 'x²'], correct: 0 },
+    { question: 'Limite de sin(x)/x quand x → 0 ?', options: ['0', '1', '∞', 'n\'existe pas'], correct: 1 },
+    { question: 'Dérivée de e^x ?', options: ['e^x', 'xe^(x-1)', 'ln(x)', '1/x'], correct: 0 },
+    { question: 'Primitive de cos(x) ?', options: ['sin(x) + C', '-sin(x) + C', 'cos(x)', 'tan(x)'], correct: 0 },
+    { question: 'Dérivée de ln(x) ?', options: ['1/x', 'x', 'e^x', 'ln(x)/x'], correct: 0 },
+  ];
+
+  const handleStartDuel = () => {
+    setDuelState('searching');
+    setTimeout(() => {
+      setDuelState('matched');
+    }, 2000);
+  };
+
+  const startGame = () => {
+    setDuelState('playing');
+    setCurrentQuestion(0);
+    setMyScore(0);
+    setOpponentScore(0);
+    setTimeLeft(10);
+  };
+
+  useEffect(() => {
+    if (duelState === 'playing' && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (duelState === 'playing' && timeLeft === 0 && !showFeedback) {
+      // Time's up - opponent might score
+      const opponentCorrect = Math.random() > 0.4;
+      if (opponentCorrect) setOpponentScore(prev => prev + 1);
+      goToNextQuestion();
+    }
+  }, [duelState, timeLeft, showFeedback]);
+
+  const goToNextQuestion = () => {
+    if (currentQuestion < QUESTIONS.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      setTimeLeft(10);
+    } else {
+      setDuelState('result');
+    }
+  };
+
+  const handleAnswer = (answerIndex: number) => {
+    if (showFeedback) return;
+    setSelectedAnswer(answerIndex);
+    setShowFeedback(true);
+    
+    const isCorrect = answerIndex === QUESTIONS[currentQuestion].correct;
+    if (isCorrect) {
+      setMyScore(prev => prev + 1);
+    }
+    
+    // Simulate opponent answer
+    const opponentCorrect = Math.random() > 0.5;
+    if (opponentCorrect && !isCorrect) {
+      setOpponentScore(prev => prev + 1);
+    }
+    
+    setTimeout(goToNextQuestion, 1500);
+  };
+
+  const resetDuel = () => {
+    setDuelState('lobby');
+    setSelectedOpponent(null);
+    setCurrentQuestion(0);
+    setMyScore(0);
+    setOpponentScore(0);
+    setSelectedAnswer(null);
+    setShowFeedback(false);
+  };
+
+  return (
+    <div className="h-full bg-white p-8 overflow-y-auto">
+      {duelState === 'lobby' && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Défie un adversaire</h2>
+          </div>
+
+          <button
+            onClick={handleStartDuel}
+            className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all mb-6"
+          >
+            Défi aléatoire
+          </button>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-sm text-gray-400 uppercase tracking-wide">ou choisis un adversaire</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Barre de recherche */}
+          <div className="relative mb-4">
+            <input
+              type="text"
+              placeholder="Rechercher un adversaire..."
+              className="w-full px-4 py-3 pl-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+            />
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <div className="space-y-2">
+            {MOCK_OPPONENTS.map((opponent) => (
+              <button
+                key={opponent.id}
+                onClick={() => setSelectedOpponent(opponent.id)}
+                className={`w-full p-3.5 rounded-xl transition-all flex items-center gap-3 ${
+                  selectedOpponent === opponent.id
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                  selectedOpponent === opponent.id ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'
+                }`}>
+                  {opponent.initials}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold">{opponent.name}</span>
+                    {opponent.online && <span className="w-1.5 h-1.5 rounded-full bg-green-500" />}
+                  </div>
+                  <p className={`text-sm ${selectedOpponent === opponent.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                    Niveau {opponent.level} • {opponent.wins}V / {opponent.losses}D
+                  </p>
+                </div>
+                {selectedOpponent === opponent.id && <Check size={16} />}
+              </button>
+            ))}
+          </div>
+
+          {selectedOpponent && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-5">
+              <button
+                onClick={handleStartDuel}
+                className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+              >
+                Lancer le défi
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      {duelState === 'searching' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col items-center justify-center">
+          <div className="w-16 h-16 border-3 border-gray-200 border-t-gray-900 rounded-full animate-spin mb-5" />
+          <h3 className="text-lg font-bold text-gray-900 mb-1">Recherche d&apos;adversaire...</h3>
+          <p className="text-sm text-gray-500">On te trouve un challenger de ton niveau</p>
+        </motion.div>
+      )}
+
+      {duelState === 'matched' && (
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="h-full flex flex-col items-center justify-center">
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gray-900 text-white flex items-center justify-center text-lg font-bold mx-auto mb-1">Toi</div>
+              <p className="text-sm font-semibold">Toi</p>
+            </div>
+            <div className="text-2xl font-bold text-gray-400">VS</div>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gray-400 text-white flex items-center justify-center text-lg font-bold mx-auto mb-1">SM</div>
+              <p className="text-sm font-semibold">Sarah M.</p>
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">Adversaire trouvé !</h3>
+          <p className="text-sm text-gray-500 mb-6">5 questions · Le plus rapide gagne</p>
+          <button
+            onClick={startGame}
+            className="px-10 py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+          >
+            Commencer le duel
+          </button>
+        </motion.div>
+      )}
+
+      {duelState === 'playing' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col">
+          {/* Scores */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm font-bold">Toi</div>
+              <span className="text-xl font-bold text-gray-900">{myScore}</span>
+            </div>
+            <div className="text-center">
+              <div className={`text-2xl font-bold ${timeLeft <= 3 ? 'text-red-500' : 'text-gray-400'}`}>{timeLeft}</div>
+              <div className="text-sm text-gray-400">Q{currentQuestion + 1}/{QUESTIONS.length}</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold text-gray-900">{opponentScore}</span>
+              <div className="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm font-bold">SM</div>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="h-1.5 bg-gray-100 rounded-full mb-6 overflow-hidden">
+            <motion.div 
+              className={`h-full rounded-full ${timeLeft <= 3 ? 'bg-red-500' : 'bg-gray-900'}`}
+              animate={{ width: `${(timeLeft / 10) * 100}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+
+          {/* Question */}
+          <h3 className="text-xl font-bold text-gray-900 mb-6">{QUESTIONS[currentQuestion].question}</h3>
+
+          <div className="grid grid-cols-2 gap-2">
+            {QUESTIONS[currentQuestion].options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = index === QUESTIONS[currentQuestion].correct;
+              const showResult = showFeedback && isSelected;
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswer(index)}
+                  disabled={showFeedback}
+                  className={`py-4 px-4 rounded-xl text-sm font-medium transition-all ${
+                    showResult
+                      ? isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                      : showFeedback && isCorrect
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+
+      {duelState === 'result' && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="h-full flex flex-col items-center justify-center">
+          <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-5 ${
+            myScore > opponentScore ? 'bg-green-500' : myScore < opponentScore ? 'bg-red-500' : 'bg-gray-400'
+          }`}>
+            {myScore > opponentScore ? (
+              <Trophy size={36} className="text-white" />
+            ) : (
+              <span className="text-3xl font-bold text-white">{myScore}</span>
+            )}
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">
+            {myScore > opponentScore ? 'Victoire !' : myScore < opponentScore ? 'Défaite' : 'Égalité'}
+          </h3>
+          <p className="text-sm text-gray-500 mb-1">Toi {myScore} - {opponentScore} Sarah M.</p>
+          <p className="text-sm text-gray-400 mb-6">{QUESTIONS.length} questions</p>
+          
+          <button
+            onClick={resetDuel}
+            className="w-full max-w-xs py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+          >
+            Nouveau duel
+          </button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Inline version of ExamBlancGenerator for embedding in Training Club - SMS Style
+function ExamBlancGeneratorInline({ trackContext }: { trackContext?: { trackId: string; trackTitle: string } | null }) {
+  const [step, setStep] = useState<'config' | 'generating' | 'ready'>('config');
+  const [config, setConfig] = useState({
+    duration: '1h' as '30min' | '1h' | '2h' | '3h',
+    difficulty: 'moyen' as 'facile' | 'moyen' | 'difficile' | 'examen',
+    questionTypes: ['qcm', 'exercice'] as ('qcm' | 'ouvert' | 'exercice')[]
+  });
+
+  // Hierarchical selection state
+  const [selectedProgramme, setSelectedProgramme] = useState<string | null>(null);
+  const [selectedBundles, setSelectedBundles] = useState<string[]>([]);
+  const [selectedCours, setSelectedCours] = useState<string[]>([]);
+  const [selectedLecons, setSelectedLecons] = useState<string[]>([]);
+
+  // Données hiérarchiques
+  const PROGRAMMES = [
+    { id: 'physics', label: 'Physique' },
+    { id: 'math', label: 'Mathématiques' },
+    { id: 'chemistry', label: 'Chimie' },
+    { id: 'economy', label: 'Économie' },
+  ];
+  
+  // Mapping des titres de cours vers programmes et bundles
+  const TRACK_TO_PROGRAMME: Record<string, string> = {
+    'algèbre': 'math', 'algebre': 'math', 'linéaire': 'math', 'lineaire': 'math', 'matrices': 'math', 'calculus': 'math', 'analyse': 'math', 'intégral': 'math', 'integral': 'math', 'dérivé': 'math', 'derive': 'math',
+    'mécanique': 'physics', 'mecanique': 'physics', 'dynamique': 'physics', 'cinématique': 'physics', 'cinematique': 'physics', 'ondes': 'physics', 'optique': 'physics', 'électricité': 'physics', 'electricite': 'physics', 'magnétisme': 'physics', 'magnetisme': 'physics', 'thermo': 'physics', 'quantique': 'physics',
+    'chimie': 'chemistry', 'organique': 'chemistry', 'atomistique': 'chemistry', 'acide': 'chemistry',
+    'économie': 'economy', 'economie': 'economy', 'macro': 'economy', 'micro': 'economy', 'probabilité': 'economy', 'probabilite': 'economy',
+  };
+  
+  const TRACK_TO_BUNDLE: Record<string, string> = {
+    'algèbre': 'alg', 'algebre': 'alg', 'linéaire': 'alg', 'lineaire': 'alg', 'matrices': 'alg',
+    'analyse': 'calc', 'calculus': 'calc', 'intégral': 'calc', 'integral': 'calc', 'dérivé': 'calc', 'derive': 'calc',
+    'mécanique': 'mech', 'mecanique': 'mech', 'dynamique': 'mech', 'cinématique': 'mech', 'cinematique': 'mech',
+    'électricité': 'elec', 'electricite': 'elec', 'magnétisme': 'elec', 'magnetisme': 'elec',
+    'thermo': 'thermo',
+    'ondes': 'waves', 'optique': 'waves',
+    'quantique': 'quantum',
+    'organique': 'org',
+    'atomistique': 'atom_chem',
+    'acide': 'acid',
+    'micro': 'micro',
+    'macro': 'macro',
+    'probabilité': 'prob', 'probabilite': 'prob',
+  };
+  
+  // Présélection basée sur le trackContext
+  useEffect(() => {
+    if (trackContext?.trackTitle) {
+      const title = trackContext.trackTitle.toLowerCase();
+      for (const [keyword, programmeId] of Object.entries(TRACK_TO_PROGRAMME)) {
+        if (title.includes(keyword)) {
+          setSelectedProgramme(programmeId);
+          for (const [bundleKeyword, bundleId] of Object.entries(TRACK_TO_BUNDLE)) {
+            if (title.includes(bundleKeyword)) {
+              setSelectedBundles([bundleId]);
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+  }, [trackContext?.trackTitle]);
+
+  const BUNDLES: Record<string, { id: string; label: string }[]> = {
+    physics: [
+      { id: 'mech', label: 'Mécanique Classique' },
+      { id: 'elec', label: 'Électricité & Magnétisme' },
+      { id: 'thermo', label: 'Thermodynamique' },
+      { id: 'waves', label: 'Ondes & Optique' },
+    ],
+    math: [
+      { id: 'calc', label: 'Analyse (Calculus)' },
+      { id: 'alg', label: 'Algèbre Linéaire' },
+    ],
+    chemistry: [
+      { id: 'org', label: 'Chimie Organique' },
+      { id: 'atom_chem', label: 'Atomistique' },
+      { id: 'acid', label: 'Acides & Bases' },
+    ],
+    economy: [
+      { id: 'micro', label: 'Microéconomie' },
+      { id: 'macro', label: 'Macroéconomie' },
+    ],
+  };
+
+  const COURS: Record<string, { id: string; label: string }[]> = {
+    'mech': [
+      { id: 'cinematique', label: 'Cinématique' },
+      { id: 'dynamique', label: 'Dynamique du point' },
+      { id: 'energie', label: 'Énergie mécanique' },
+    ],
+    'elec': [
+      { id: 'electrostatique', label: 'Électrostatique' },
+      { id: 'magnetisme', label: 'Magnétisme' },
+    ],
+    'thermo': [
+      { id: 'premier-principe', label: 'Premier principe' },
+      { id: 'second-principe', label: 'Second principe' },
+    ],
+    'calc': [
+      { id: 'derivees', label: 'Dérivées' },
+      { id: 'integrales', label: 'Intégrales' },
+      { id: 'limites', label: 'Limites & Continuité' },
+    ],
+    'alg': [
+      { id: 'matrices', label: 'Matrices' },
+      { id: 'espaces-vectoriels', label: 'Espaces vectoriels' },
+    ],
+    'org': [
+      { id: 'alcools', label: 'Alcools & Phénols' },
+      { id: 'aldehydes', label: 'Aldéhydes & Cétones' },
+    ],
+  };
+
+  const LECONS: Record<string, { id: string; label: string }[]> = {
+    'derivees': [
+      { id: 'def-derivee', label: 'Définition de la dérivée' },
+      { id: 'regles-derivation', label: 'Règles de dérivation' },
+    ],
+    'integrales': [
+      { id: 'primitives', label: 'Primitives' },
+      { id: 'integration-parties', label: 'Intégration par parties' },
+    ],
+    'cinematique': [
+      { id: 'mvt-rectiligne', label: 'Mouvement rectiligne' },
+      { id: 'mvt-circulaire', label: 'Mouvement circulaire' },
+    ],
+  };
+
+  const handleGenerate = () => {
+    setStep('generating');
+    setTimeout(() => {
+      setStep('ready');
+    }, 2500);
+  };
+
+  const toggleBundle = (bundleId: string) => {
+    setSelectedBundles(prev => 
+      prev.includes(bundleId) ? prev.filter(id => id !== bundleId) : [...prev, bundleId]
+    );
+    setSelectedCours([]);
+    setSelectedLecons([]);
+  };
+
+  const toggleCours = (coursId: string) => {
+    setSelectedCours(prev => 
+      prev.includes(coursId) ? prev.filter(id => id !== coursId) : [...prev, coursId]
+    );
+    setSelectedLecons([]);
+  };
+
+  const toggleLecon = (leconId: string) => {
+    setSelectedLecons(prev => 
+      prev.includes(leconId) ? prev.filter(id => id !== leconId) : [...prev, leconId]
+    );
+  };
+
+  const toggleQuestionType = (type: 'qcm' | 'ouvert' | 'exercice') => {
+    setConfig(prev => ({
+      ...prev,
+      questionTypes: prev.questionTypes.includes(type)
+        ? prev.questionTypes.filter(t => t !== type)
+        : [...prev.questionTypes, type]
+    }));
+  };
+
+  const availableBundles = selectedProgramme ? BUNDLES[selectedProgramme] || [] : [];
+  const availableCours = selectedBundles.length > 0 
+    ? selectedBundles.flatMap(b => COURS[b] || [])
+    : [];
+  const availableLecons = selectedCours.length > 0 
+    ? selectedCours.flatMap(c => LECONS[c] || [])
+    : [];
+
+  const canGenerate = selectedProgramme !== null && config.questionTypes.length > 0;
+
+  return (
+    <div className="h-full bg-white p-8 overflow-y-auto">
+      {step === 'config' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Simule ton examen</h2>
+          </div>
+
+          {/* Duration */}
+          <div className="mb-5">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Durée</p>
+            <div className="flex gap-2 flex-wrap">
+              {(['30min', '1h', '2h', '3h'] as const).map((duration) => (
+                <button
+                  key={duration}
+                  onClick={() => setConfig(prev => ({ ...prev, duration }))}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    config.duration === duration
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {duration}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Difficulty */}
+          <div className="mb-5">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Difficulté</p>
+            <div className="flex gap-2 flex-wrap">
+              {([
+                { id: 'facile', label: 'Facile' },
+                { id: 'moyen', label: 'Moyen' },
+                { id: 'difficile', label: 'Difficile' }
+              ] as const).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setConfig(prev => ({ ...prev, difficulty: item.id }))}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    config.difficulty === item.id
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Question Types */}
+          <div className="mb-5">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Types de questions</p>
+            <div className="flex gap-2 flex-wrap">
+              {([
+                { id: 'qcm', label: 'QCM' },
+                { id: 'ouvert', label: 'Questions ouvertes' },
+                { id: 'exercice', label: 'Exercices' }
+              ] as const).map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => toggleQuestionType(type.id)}
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                    config.questionTypes.includes(type.id)
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {config.questionTypes.includes(type.id) && <Check size={14} />}
+                  {type.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Hierarchical Selection */}
+          <div className="mb-6">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Contenu à inclure</p>
+            
+            {/* Niveau 1: Programme */}
+            <div className="mb-4">
+              <div className="flex gap-2 flex-wrap">
+                {PROGRAMMES.map((prog) => (
+                  <button
+                    key={prog.id}
+                    onClick={() => {
+                      setSelectedProgramme(prog.id);
+                      setSelectedBundles([]);
+                      setSelectedCours([]);
+                      setSelectedLecons([]);
+                    }}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                      selectedProgramme === prog.id
+                        ? 'text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                  >
+                    {prog.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Niveau 2: Bundle */}
+            {selectedProgramme && availableBundles.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+                <div className="flex gap-2 flex-wrap">
+                  {availableBundles.map((bundle) => (
+                    <button
+                      key={bundle.id}
+                      onClick={() => toggleBundle(bundle.id)}
+                      className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                        selectedBundles.includes(bundle.id)
+                          ? 'text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    >
+                      {selectedBundles.includes(bundle.id) && <Check size={14} />}
+                      {bundle.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Niveau 3: Cours */}
+            {selectedBundles.length > 0 && availableCours.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+                <div className="flex gap-2 flex-wrap">
+                  {availableCours.map((cours) => (
+                    <button
+                      key={cours.id}
+                      onClick={() => toggleCours(cours.id)}
+                      className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                        selectedCours.includes(cours.id)
+                          ? 'text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    >
+                      {selectedCours.includes(cours.id) && <Check size={14} />}
+                      {cours.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Niveau 4: Leçons */}
+            {selectedCours.length > 0 && availableLecons.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+                <div className="flex gap-2 flex-wrap">
+                  {availableLecons.map((lecon) => (
+                    <button
+                      key={lecon.id}
+                      onClick={() => toggleLecon(lecon.id)}
+                      className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                        selectedLecons.includes(lecon.id)
+                          ? 'text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    >
+                      {selectedLecons.includes(lecon.id) && <Check size={14} />}
+                      {lecon.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+          </div>
+
+          {/* Generate Button */}
+          <button
+            onClick={handleGenerate}
+            disabled={!canGenerate}
+            className="w-full py-4 bg-gray-900 hover:bg-black disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full font-semibold text-base transition-all"
+          >
+            Générer l&apos;examen
+          </button>
+          
+          {!canGenerate && (
+            <p className="text-center text-gray-400 text-sm mt-2">
+              Sélectionne au moins un programme et un type de question
+            </p>
+          )}
+        </motion.div>
+      )}
+
+      {step === 'generating' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="h-full flex flex-col items-center justify-center"
+        >
+          <div className="w-14 h-14 border-3 border-gray-200 border-t-gray-900 rounded-full animate-spin mb-6" />
+          <h3 className="text-lg font-bold text-gray-900 mb-1">Génération en cours...</h3>
+          <p className="text-sm text-gray-500">Quelques secondes</p>
+        </motion.div>
+      )}
+
+      {step === 'ready' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="h-full flex flex-col items-center justify-center"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+            className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mb-5"
+          >
+            <Check size={32} className="text-white" />
+          </motion.div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">Ton examen est prêt</h3>
+          <p className="text-sm text-gray-500 mb-6">
+            {config.duration} · {config.difficulty} · {PROGRAMMES.find(p => p.id === selectedProgramme)?.label}
+          </p>
+          
+          <div className="w-full max-w-xs space-y-2">
+            <button
+              onClick={() => alert('Examen lancé !')}
+              className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-base transition-all"
+            >
+              Commencer
+            </button>
+            <button
+              onClick={() => setStep('config')}
+              className="w-full py-3 text-sm text-gray-500 hover:text-gray-900 font-medium transition-all"
+            >
+              Modifier les paramètres
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 export function SimpleDashboard(props: SimpleDashboardProps) {
   const { favorites, toggleFavorite, addFavorite, removeFavorite } = useFavorites();
   const {
@@ -463,14 +2102,30 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [useGamifiedViewer, setUseGamifiedViewer] = useState(true); // Nouveau viewer par défaut
   const [showStaircaseView, setShowStaircaseView] = useState(false);
   const [showIntegratedViewer, setShowIntegratedViewer] = useState(false);
+  const [showLearningTrackOverview, setShowLearningTrackOverview] = useState(false);
+  const [lessonsForOverview, setLessonsForOverview] = useState<Lesson[]>([]);
+  const [initialLessonIdForViewer, setInitialLessonIdForViewer] = useState<string | undefined>(undefined);
   
   // État du fil social
   const [showSocialFeed, setShowSocialFeed] = useState(false);
   const [socialFeedInitialTab, setSocialFeedInitialTab] = useState<'now' | 'buddies' | 'for-you' | 'competitions' | 'progression'>('now');
-  const [communityInitialTab, setCommunityInitialTab] = useState<'overview' | 'buddies' | 'circles' | 'qa' | 'competitions' | 'badges'>('overview');
+  const [communityInitialTab, setCommunityInitialTab] = useState<'overview' | 'buddies' | 'circles' | 'qa' | 'competitions' | 'badges'>('buddies');
 
   // État pour la messagerie
   const [messagingContactId, setMessagingContactId] = useState<string | undefined>(undefined);
+
+  // États pour l'entraînement (Quiz, Duel, Examen Blanc)
+  const [showDuelFullScreen, setShowDuelFullScreen] = useState(false);
+  const [showExamBlancGenerator, setShowExamBlancGenerator] = useState(false);
+  const [trainingMode, setTrainingMode] = useState<'main' | 'solo-quiz' | 'duel' | 'duel-mode'>('main');
+  const [isQuickQuizRunning, setIsQuickQuizRunning] = useState(false);
+  const [quickQuizTopicIds, setQuickQuizTopicIds] = useState<string[]>([]);
+  const [isDeepQuizRunning, setIsDeepQuizRunning] = useState(false);
+  const [deepQuizTopicIds, setDeepQuizTopicIds] = useState<string[]>([]);
+
+  // État pour le popup Mastery Boosters
+  const [showMasteryBoostersModal, setShowMasteryBoostersModal] = useState(false);
+  const [unlockedBoosters, setUnlockedBoosters] = useState<string[]>([]);
 
   // 🎯 État pour l'onboarding popup (première visite)
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -481,6 +2136,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [showGamifiedProfile, setShowGamifiedProfile] = useState(false);
   const [showCompetitions, setShowCompetitions] = useState(false);
   const [showXPBoost, setShowXPBoost] = useState(true);
+  const [showBuddyInviteModal, setShowBuddyInviteModal] = useState(false);
   const [xpFeedback, setXpFeedback] = useState<{
     show: boolean;
     xpGained: number;
@@ -667,6 +2323,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     }
   }, [selectedCourse, courseLessons]);
   const [showSettings, setShowSettings] = useState(false);
+  const [socialStatus, setSocialStatus] = useState<'available' | 'busy' | 'focus' | 'invisible'>('available');
   const [showBackgroundOptions, setShowBackgroundOptions] = useState(false);
   const [showWalletTopUp, setShowWalletTopUp] = useState(false);
   const [showPackCompletionModal, setShowPackCompletionModal] = useState(false);
@@ -984,6 +2641,45 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [showParentReportsSettings, setShowParentReportsSettings] = useState(false);
   const [showGuestPassModal, setShowGuestPassModal] = useState(false);
   const [guestPassEmails, setGuestPassEmails] = useState('');
+  
+  // État pour le bandeau d'urgence
+  const [showUrgencyBanner, setShowUrgencyBanner] = useState(true);
+  const [urgencyTimeLeft, setUrgencyTimeLeft] = useState({ hours: 71, minutes: 59, seconds: 59 });
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [exitIntentShown, setExitIntentShown] = useState(false);
+  
+  // Timer pour le countdown d'urgence
+  useEffect(() => {
+    if (!showUrgencyBanner) return;
+    
+    const timer = setInterval(() => {
+      setUrgencyTimeLeft(prev => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        }
+        return prev;
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [showUrgencyBanner]);
+  
+  // Exit intent detection
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY < 10 && !exitIntentShown && !showOnboarding) {
+        setShowExitIntent(true);
+        setExitIntentShown(true);
+      }
+    };
+    
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, [exitIntentShown, showOnboarding]);
   
   // Vérifier si l'utilisateur a terminé le buddy onboarding
   useEffect(() => {
@@ -1622,7 +3318,23 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   const handleOpenCourse = (course: Course) => {
     setSelectedCourse(course);
-    setShowIntegratedViewer(true); // Utiliser le nouveau viewer par défaut
+    // Générer les leçons pour l'aperçu du parcours
+    const lessons = course.lessons || generateMockLessons(course.id);
+    setLessonsForOverview(lessons);
+    setShowLearningTrackOverview(true); // Montrer d'abord l'aperçu du parcours
+  };
+  
+  const handleStartLessonFromOverview = (lesson: Lesson) => {
+    // Fermer l'aperçu et ouvrir le viewer de cours avec la leçon sélectionnée
+    setInitialLessonIdForViewer(lesson.id);
+    setShowLearningTrackOverview(false);
+    setShowIntegratedViewer(true);
+  };
+  
+  const handleCloseLearningTrackOverview = () => {
+    setShowLearningTrackOverview(false);
+    setSelectedCourse(null);
+    setLessonsForOverview([]);
   };
 
   // Fonction pour ouvrir la messagerie depuis Community
@@ -1643,7 +3355,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         // Rediriger vers le cours
         const course = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)].find(c => c.id === linkId);
         if (course) {
-          handleOpenIntegratedViewer(course);
+          handleOpenCourse(course);
         }
         break;
         
@@ -1694,8 +3406,31 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   // Fonction pour naviguer vers le Course Viewer depuis le planificateur
   const handleNavigateToCourse = (courseId: string) => {
-    // Trouver le cours dans les cours primaires
-    const course = primaryCourses.find(c => c.id === courseId);
+    // Mapping des track IDs mock vers les titres de cours
+    const trackTitleMap: Record<string, string> = {
+      'ondes-mecaniques': 'Ondes mécaniques',
+      'suites-limites': 'Suites et Limites',
+      'equilibres-chimiques': 'Équilibres Chimiques',
+      'forces-mouvement': 'Forces et Mouvement'
+    };
+    
+    // Trouver le cours - d'abord par ID exact, puis par titre mappé
+    let course = primaryCourses.find(c => c.id === courseId);
+    
+    if (!course && trackTitleMap[courseId]) {
+      // Chercher par titre si c'est un track ID mock
+      course = primaryCourses.find(c => 
+        c.title.toLowerCase().includes(trackTitleMap[courseId].toLowerCase()) ||
+        trackTitleMap[courseId].toLowerCase().includes(c.title.toLowerCase())
+      );
+    }
+    
+    // Fallback: utiliser le premier cours primaire disponible pour la démo
+    if (!course && primaryCourses.length > 0) {
+      course = primaryCourses[0];
+      console.log('📚 Fallback: Utilisation du premier cours disponible pour la démo');
+    }
+    
     if (course) {
       // Fermer le planificateur
       setActiveSection('courses');
@@ -1987,7 +3722,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
   const handleCloseIntegratedViewer = () => {
     setShowIntegratedViewer(false);
+    setInitialLessonIdForViewer(undefined);
+    // Retourner au LearningTrackOverview au lieu du dashboard
+    setShowLearningTrackOverview(true);
+  };
+  
+  // Fermeture complète (retour au dashboard)
+  const handleFullCloseViewer = () => {
+    setShowIntegratedViewer(false);
+    setShowLearningTrackOverview(false);
     setSelectedCourse(null);
+    setInitialLessonIdForViewer(undefined);
+    setLessonsForOverview([]);
   };
 
   const handleCloseCourseViewer = () => {
@@ -2307,6 +4053,70 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     return 'courses';
   });
   
+  // Mode de navigation : 'header' = nouveau header flottant Apple Music style, 'sidebar' = ancienne sidebar
+  const [navigationMode, setNavigationMode] = useState<'header' | 'sidebar'>('header');
+  
+  // Contexte du Learning Track (pour navigation contextuelle)
+  interface TrackContext {
+    trackId: string;
+    trackTitle: string;
+  }
+  const [trackContext, setTrackContext] = useState<TrackContext | null>(null);
+  
+  // Navigation vers une section avec contexte optionnel
+  const navigateToSectionWithContext = (section: string, context?: TrackContext) => {
+    console.log('🚀 navigateToSectionWithContext:', section, context);
+    // Fermer le Learning Track Viewer avant d'ouvrir la section contextuelle
+    setShowLearningTrackOverview(false);
+    setTrackContext(context || null);
+    setActiveSection(section);
+  };
+  
+  // Reset le contexte quand on clique sur la sidebar
+  const handleSidebarNavigation = (sectionId: string) => {
+    setTrackContext(null); // Reset le contexte
+    setActiveSection(sectionId);
+  };
+  
+  // Retour au Learning Track Viewer depuis le mode contextuel
+  const handleReturnToTrack = () => {
+    if (trackContext) {
+      console.log('🔙 handleReturnToTrack: trackContext=', trackContext);
+      
+      // Chercher dans tous les cours (primaryCourses + suggestedCourses)
+      const allCourses = [...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)];
+      console.log('🔙 Tous les cours IDs:', allCourses.map(c => c.id));
+      
+      // Trouver le cours correspondant au trackContext - par ID exact
+      let course = allCourses.find(c => c.id === trackContext.trackId);
+      
+      // Si pas trouvé, chercher par titre
+      if (!course) {
+        course = allCourses.find(c => 
+          c.title.toLowerCase().includes(trackContext.trackTitle.toLowerCase()) ||
+          trackContext.trackTitle.toLowerCase().includes(c.title.toLowerCase())
+        );
+        console.log('🔙 Course trouvé par titre:', course?.id);
+      }
+      
+      if (course) {
+        console.log('🔙 Retour vers Learning Track:', course.id, course.title);
+        // D'abord réinitialiser le contexte
+        setTrackContext(null);
+        // Puis configurer le Learning Track Viewer
+        setSelectedCourse(course);
+        const lessons = courseLessons[course.id] || generateMockLessons(course.id);
+        setLessonsForOverview(lessons);
+        setShowLearningTrackOverview(true);
+        setActiveSection('courses');
+      } else {
+        console.warn('🔙 Cours non trouvé, retour au dashboard');
+        setTrackContext(null);
+        setActiveSection('courses');
+      }
+    }
+  };
+  
   // État pour éviter les changements de section non désirés
   const [isNavigationLocked, setIsNavigationLocked] = useState(false);
   
@@ -2320,19 +4130,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   }, [activeSection, isNavigationLocked]);
   
   const navigationItems = [
-    { id: 'courses', label: 'Mes cours', icon: BookOpen, hasAccess: true },
+    { id: 'courses', label: 'Mon parcours', icon: BookOpen, hasAccess: true },
     { 
       id: 'planning', 
       label: 'Planification', 
       icon: Calendar, 
-      hasAccess: plannerState.plannerAccess.hasAccess,
-      isPremium: true,
-      hasNotification: plannerState.plannerAccess.hasAccess && !plannerConfigured
+      hasAccess: true,
+      isPremium: false,
+      hasNotification: false
     },
     { id: 'study-rooms', label: 'Study Rooms', icon: Video, hasAccess: true },
-    { id: 'community', label: 'Communauté', icon: Users, hasAccess: true },
-    { id: 'messaging', label: 'Messages', icon: MessageCircle, hasAccess: true, hasNotification: true },
-    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, hasAccess: true, isExternal: true },
+    { id: 'community', label: 'Social Club', icon: Users, hasAccess: true },
+    { id: 'training', label: 'Training Club', icon: Target, hasAccess: true },
   ];
 
   return (
@@ -2365,7 +4174,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           purchasedItems={purchasedItems}
           onPurchase={handleLessonPurchase}
           user={user || safeData.user}
-          lessons={courseLessons[selectedCourse.id]}
+          lessons={courseLessons[selectedCourse.id] || lessonsForOverview}
           onLessonsUpdate={(updatedLessons) => {
             setCourseLessons(prev => ({
               ...prev,
@@ -2373,6 +4182,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             }));
           }}
           userXPProfile={userXPProfile}
+          initialLessonId={initialLessonIdForViewer}
         />
       ) : (
         <div 
@@ -2404,7 +4214,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               }}
             />
           ) : (
-            <div className="fixed inset-0 bg-gray-50 z-0" />
+            <div className="fixed inset-0 bg-white z-0" />
           )}
           
           {/* Overlay pour améliorer la lisibilité */}
@@ -2421,9 +4231,36 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 : 'mr-0'
             }`}
           >
-        {/* Header épuré bord à bord - pleine largeur */}
-      <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-        <div className="px-4 md:px-6">
+        {/* ========== NOUVEAU HEADER GLOBAL (Apple Music style) ========== */}
+          {navigationMode === 'header' && (
+            <GlobalHeader
+              activeSection={activeSection}
+              onNavigate={(sectionId) => handleSidebarNavigation(sectionId)}
+              userName={user?.name || safeData.user?.name || 'Utilisateur'}
+              userAvatar={user?.avatar || safeData.user?.avatar}
+              userLevel={userXPProfile?.level || 1}
+              userXP={userXPProfile?.currentXP || 0}
+              isSubscribed={(purchasedItems && purchasedItems.size > 0) || false}
+              isIdentityVerified={false}
+              onOpenGuestPass={() => setShowGuestPassModal(true)}
+              onFinishSignup={() => {
+                setOnboardingInitialPhase('membership-plans');
+                setShowOnboarding(true);
+              }}
+              onOpenProfile={() => setActiveSection('profile')}
+              onOpenSettings={() => setShowSettings(true)}
+              onLogout={onLogout}
+              onStartTour={() => onboardingTour.startTour()}
+              onOpenParentReports={() => setShowParentReportsSettings(true)}
+              onOpenHelpCenter={() => window.open('https://wa.me/32477025622', '_blank')}
+              onVerifyIdentity={handleTriggerIdentityVerification}
+              themeColor="#48c6ed"
+            />
+          )}
+
+          {/* Header épuré bord à bord - pleine largeur (ancien mode sidebar) */}
+      <header className={`bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40 ${navigationMode === 'header' ? 'hidden' : ''}`}>
+        <div className="px-3 md:px-4">
           <div className="flex items-center justify-between relative h-[72px] md:h-[85px]">
             {/* Left - Logo */}
             <div className="flex items-center gap-4 flex-shrink-0">
@@ -2435,14 +4272,23 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               </button>
 
               
-              <div className="relative h-[55px] w-[120px] md:h-[85px] md:w-[340px]">
-                <Image 
-                  src="/brand/sms-logo2.svg" 
-                  alt="Science Made Simple"
-                  fill
+              <button 
+                onClick={() => {
+                  setActiveSection('courses');
+                  setSelectedCourse(null);
+                  setShowMasteryBoostersModal(false);
+                  setShowGuestPassModal(false);
+                }}
+                className="relative h-[60px] w-[160px] md:h-[75px] md:w-[200px] cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                  <Image 
+                  src="/brand/sms-logo-version-sur-fond-blanc-rgb.svg" 
+                    alt="SMS"
+                    fill
                   className="object-contain object-left"
-                />
-              </div>
+                  priority
+                  />
+              </button>
             </div>
             
             {/* Widgets centrés au milieu de la page */}
@@ -2478,40 +4324,47 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                />
             </div>
 
-            {/* Right - Timer + Inviter + Finish Sign Up + Avatar */}
+            {/* Right - Timer + Débloquer + Cadeau + Avatar */}
             <div className="flex items-center gap-4">
-              {/* Timer - Style urgence */}
-              <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-full border-2 border-gray-300 animate-pulse">
+              {/* Timer heures gratuites disponibles */}
+              <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-full border-2 border-gray-300">
                 <Clock size={22} className="text-gray-700" />
-                <span className="text-xl font-bold text-gray-900 tabular-nums tracking-tight">00:00:00</span>
+                <span className="text-xl font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
               </div>
 
-              {/* Bouton Inviter - Ouvre le popup Pass amis */}
+              {/* Débloquer mes programmes CTA */}
+              <button
+                onClick={() => {
+                  setOnboardingInitialPhase('membership-plans');
+                  setShowOnboarding(true);
+                }}
+                className="hidden md:block px-5 py-2.5 bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-medium rounded-full transition-colors"
+              >
+                Débloquer
+              </button>
+
+              {/* Bouton Cadeau - Ouvre le popup Pass amis */}
               <button
                 onClick={() => setShowGuestPassModal(true)}
                 className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-medium transition-colors"
               >
-                <Users size={16} />
-                <span>Inviter</span>
-              </button>
-
-              {/* Finish Sign Up CTA */}
-              <button
-                onClick={() => {
-                  setOnboardingInitialPhase('membership-intro');
-                  setShowOnboarding(true);
-                }}
-                className="hidden md:block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-sm"
-              >
-                Finish Sign Up
+                <Gift size={16} />
+                <span>Cadeau</span>
               </button>
               {/* Profil utilisateur avec paramètres */}
               <div className="relative" ref={settingsRef}>
                 <button 
                   onClick={() => setShowSettings(!showSettings)}
-                  className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold hover:bg-gray-800 transition-colors"
+                  className="relative w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-lg font-bold hover:bg-gray-800 transition-colors"
                 >
                   {safeData.user.name.charAt(0)}
+                  {/* Indicateur de statut social */}
+                  <span className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                    socialStatus === 'available' ? 'bg-green-500' :
+                    socialStatus === 'busy' ? 'bg-orange-500' :
+                    socialStatus === 'focus' ? 'bg-red-500' :
+                    'bg-gray-400'
+                  }`} />
                 </button>
 
                 {/* Dropdown profil + paramètres */}
@@ -2532,7 +4385,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                           </div>
                           <div>
                             <h3 className="text-sm font-semibold text-gray-900">{safeData.user.name}</h3>
-                            <p className="text-xs text-gray-500">{safeData.user.year}</p>
+                            <p className="text-sm text-gray-500">{safeData.user.year}</p>
                           </div>
                         </div>
                         <button 
@@ -2549,12 +4402,55 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         {/* Statut de vérification d'identité */}
                         <IdentityStatusBadge className="w-full" />
 
+                        {/* Statut social */}
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${
+                              socialStatus === 'available' ? 'bg-green-500' :
+                              socialStatus === 'busy' ? 'bg-orange-500' :
+                              socialStatus === 'focus' ? 'bg-red-500' :
+                              'bg-gray-400'
+                            }`} />
+                            Statut social
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { id: 'available' as const, label: 'Disponible', icon: '🟢', desc: 'Visible et joignable' },
+                              { id: 'busy' as const, label: 'Occupé', icon: '🟠', desc: 'Pas de duels' },
+                              { id: 'focus' as const, label: 'Focus', icon: '🔴', desc: 'Mode concentration' },
+                              { id: 'invisible' as const, label: 'Invisible', icon: '⚫', desc: 'Hors ligne' },
+                            ].map((status) => (
+                              <button
+                                key={status.id}
+                                onClick={() => setSocialStatus(status.id)}
+                                className={`p-2 rounded-xl text-left transition-all ${
+                                  socialStatus === status.id
+                                    ? 'bg-gray-900 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs">{status.icon}</span>
+                                  <span className="text-xs font-medium">{status.label}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-400 mt-2">
+                            {socialStatus === 'available' && 'Tu peux recevoir des demandes de duel, invitations et notifications.'}
+                            {socialStatus === 'busy' && 'Les demandes de duel sont bloquées. Study rooms et notifications actives.'}
+                            {socialStatus === 'focus' && 'Toutes les interactions sociales sont désactivées. Concentration maximale.'}
+                            {socialStatus === 'invisible' && 'Tu apparais hors ligne. Aucune interaction sociale possible.'}
+                          </p>
+                        </div>
+
+                        <hr className="border-gray-100" />
 
                         {/* Actions rapides profil */}
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium text-gray-900">Mon profil</div>
-                            <div className="text-xs text-gray-500">Modifier mes informations</div>
+                            <div className="text-sm text-gray-500">Modifier mes informations</div>
                           </div>
                           <button 
                             onClick={() => {
@@ -2581,7 +4477,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Mode sombre</div>
-                                <div className="text-xs text-gray-500">Interface en thème sombre</div>
+                                <div className="text-sm text-gray-500">Interface en thème sombre</div>
                               </div>
                               <div className="w-10 h-6 bg-gray-200 rounded-full relative cursor-pointer">
                                 <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
@@ -2592,7 +4488,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Notifications</div>
-                                <div className="text-xs text-gray-500">Alertes et rappels</div>
+                                <div className="text-sm text-gray-500">Alertes et rappels</div>
                               </div>
                               <div className="w-10 h-6 bg-blue-500 rounded-full relative cursor-pointer">
                                 <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
@@ -2603,7 +4499,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Sons</div>
-                                <div className="text-xs text-gray-500">Effets sonores</div>
+                                <div className="text-sm text-gray-500">Effets sonores</div>
                               </div>
                               <div className="w-10 h-6 bg-blue-500 rounded-full relative cursor-pointer">
                                 <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform"></div>
@@ -2615,7 +4511,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               <div className="flex items-center justify-between">
                                 <div>
                                   <div className="text-sm font-medium text-gray-900">Fond d'écran</div>
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-sm text-gray-500">
                                     {BACKGROUND_OPTIONS.find(bg => bg.id === selectedBackground)?.name || 'Par défaut'}
                                   </div>
                                 </div>
@@ -2655,7 +4551,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                         <div className="flex items-center justify-between">
                                           <div>
                                             <div className="text-sm font-medium text-gray-900">{bg.name}</div>
-                                            <div className="text-xs text-gray-500">{bg.description}</div>
+                                            <div className="text-sm text-gray-500">{bg.description}</div>
                                           </div>
                                           {selectedBackground === bg.id && (
                                             <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
@@ -2674,7 +4570,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Langue</div>
-                                <div className="text-xs text-gray-500">Français</div>
+                                <div className="text-sm text-gray-500">Français</div>
                               </div>
                               <button className="text-sm text-blue-600 font-medium hover:text-blue-700">
                                 Modifier
@@ -2688,7 +4584,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                   <HelpCircle size={14} />
                                   Visite guidée
                                 </div>
-                                <div className="text-xs text-gray-500">Découvrir la plateforme</div>
+                                <div className="text-sm text-gray-500">Découvrir la plateforme</div>
                               </div>
                               <button 
                                 onClick={() => {
@@ -2708,7 +4604,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                   <Shield size={14} />
                                   Sécurité du compte
                                 </div>
-                                <div className="text-xs text-gray-500">Vérifiez votre identité en 2 minutes</div>
+                                <div className="text-sm text-gray-500">Vérifiez votre identité en 2 minutes</div>
                               </div>
                               <button 
                                 onClick={handleTriggerIdentityVerification}
@@ -2725,7 +4621,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                   <FileText size={14} />
                                   Rapports Parents
                                 </div>
-                                <div className="text-xs text-gray-500">Résumés hebdomadaires optionnels</div>
+                                <div className="text-sm text-gray-500">Résumés hebdomadaires optionnels</div>
                               </div>
                               <button 
                                 onClick={() => {
@@ -2742,7 +4638,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">Centre d'aide</div>
-                                <div className="text-xs text-gray-500">FAQ et support</div>
+                                <div className="text-sm text-gray-500">FAQ et support</div>
                               </div>
                               <button className="text-sm text-blue-600 font-medium hover:text-blue-700">
                                 Ouvrir
@@ -2777,10 +4673,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         </div>
       </header>
 
-
       <div className="flex">
-        {/* Sidebar simplifiée pour desktop - fixée sous le header */}
-        <nav className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed left-0 top-[85px] h-[calc(100vh-85px)] z-30">
+        {/* Sidebar simplifiée pour desktop - fixée sous le header (masquée en mode header) */}
+        <nav className={`${navigationMode === 'header' ? 'hidden' : 'hidden md:flex'} w-64 bg-white border-r border-gray-200 flex-col fixed left-0 top-[72px] md:top-[85px] h-[calc(100vh-85px)] z-30`}>
           <div className="p-6">
             <div className="space-y-2">
               {navigationItems.map((item) => {
@@ -2796,7 +4691,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       if (item.id === 'whatsapp') {
                         window.open('https://wa.me/33123456789', '_blank');
                       } else if (item.hasAccess) {
-                        setActiveSection(item.id);
+                        handleSidebarNavigation(item.id); // Reset contexte + navigation
                       } else if (item.isPremium) {
                         // Afficher le message d'accès premium
                         alert(plannerState.plannerAccess.accessMessage);
@@ -2820,7 +4715,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                       )}
                     </div>
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium" style={{ fontSize: '14px' }}>{item.label}</span>
                     
                     {/* Icône premium pour planification */}
                     {item.isPremium && (
@@ -2844,7 +4739,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     
                     {/* Tooltip d'information */}
                     {item.isPremium && !item.hasAccess && (
-                      <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
+                      <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
                         Fonctionnalité premium
                         <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-r-4 border-r-gray-900 border-y-4 border-y-transparent"></div>
                       </div>
@@ -2860,24 +4755,100 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             {/* Mastery Boosters */}
             <button 
               className="w-full flex items-center gap-3 px-4 py-6 hover:bg-gray-50 transition-colors text-left"
-              onClick={() => setActiveSection('boosters')}
+              onClick={() => setShowMasteryBoostersModal(true)}
             >
-              <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-                <Plus size={18} className="text-gray-600" />
+              <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
+                <Plus size={18} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">Mastery Boosters</p>
-                <p className="text-xs text-gray-500 truncate">Booste ton apprent...</p>
+                <p className="font-medium text-gray-900" style={{ fontSize: '14px' }}>Mastery Boosters</p>
+                <p className="text-gray-500 truncate" style={{ fontSize: '14px' }}>Booste ton apprent...</p>
               </div>
               <ChevronRight size={16} className="text-gray-400" />
             </button>
           </div>
         </nav>
 
-        {/* Contenu principal bord à bord avec marge pour sidebar fixe */}
-        <main className="flex-1 md:ml-64 pt-0 pb-16 md:pb-0 min-w-0">
+        {/* Contenu principal bord à bord avec marge pour sidebar fixe (ou pleine largeur en mode header) */}
+        <main className={`flex-1 ${navigationMode === 'header' ? 'md:ml-0 md:pt-[40px]' : 'md:ml-64'} pt-0 pb-0 min-w-0`}>
+          {/* Bandeau d'urgence - Style premium - Uniquement dans "Mon parcours" vue catalogue (search bar) */}
+          <AnimatePresence>
+            {showUrgencyBanner && activeSection === 'courses' && !selectedCourse && !showIntegratedViewer && !showStaircaseView && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="bg-[#0a0a0a] overflow-hidden"
+              >
+                <div className="flex items-center justify-center gap-3 sm:gap-6 py-4 sm:py-5 px-4" style={{ fontSize: '16px' }}>
+                  {/* OFFRE DE LANCEMENT - Theme color accent */}
+                  <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
+                    OFFRE DE LANCEMENT
+                  </span>
+                  
+                  {/* Message principal */}
+                  <span className="hidden sm:inline text-white font-medium uppercase text-[16px]">
+                    SUR CHAQUE MASTERY PROGRAM
+                  </span>
+                  
+                  {/* Badge -60% */}
+                  <span className="px-3 py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold">
+                    -60%
+                  </span>
+                  
+                  {/* Separator + Ends in */}
+                  <span className="hidden md:inline text-white font-medium uppercase">
+                    EXPIRE DANS
+                  </span>
+                  
+                  {/* Timer - Style épuré */}
+                  <div className="flex items-center gap-1 text-white font-bold tabular-nums">
+                    <span>{String(Math.floor(urgencyTimeLeft.hours / 24)).padStart(2, '0')}</span>
+                    <span className="text-white text-xs font-normal">j</span>
+                    <span>{String(urgencyTimeLeft.hours % 24).padStart(2, '0')}</span>
+                    <span className="text-white text-xs font-normal">h</span>
+                    <span>{String(urgencyTimeLeft.minutes).padStart(2, '0')}</span>
+                    <span className="text-white text-xs font-normal">m</span>
+                    <span>{String(urgencyTimeLeft.seconds).padStart(2, '0')}</span>
+                    <span className="text-white text-xs font-normal">s</span>
+                  </div>
+                  
+                  {/* Close button */}
+                  <button
+                    onClick={() => setShowUrgencyBanner(false)}
+                    className="ml-2 text-gray-600 hover:text-white transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {(activeSection === 'planning' || forceShowPlanner) ? (
+            <div className="h-[calc(100vh-85px)] flex flex-col overflow-hidden">
+              {/* Header contextuel si trackContext */}
+              {trackContext && (
+                <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={handleReturnToTrack}
+                      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span className="text-sm font-medium">Retour</span>
+                    </button>
+                    <div className="h-6 w-px bg-gray-300" />
+                    <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
+                      Planification
+                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                    </h1>
+                  </div>
+                </div>
+              )}
+              <div className={trackContext ? "flex-1 overflow-hidden" : "h-full"}>
             <StrategicPlannerCompact
+                  key={trackContext ? `planning-${trackContext.trackId}` : 'planning-general'}
               plannerAccess={plannerState.plannerAccess}
               onGeneratePlan={handleGeneratePlan}
               onWhatsAppContact={handlePlannerWhatsApp}
@@ -2894,11 +4865,38 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 examDate: course.examDate,
                 progress: course.progress
               }))}
-              focusedCourse={focusedCourseForPlanning}
+                  focusedCourse={trackContext ? (
+                    primaryCourses.find(c => c.id === trackContext.trackId) ||
+                    primaryCourses.find(c => c.title.toLowerCase().includes(trackContext.trackTitle.toLowerCase()) || trackContext.trackTitle.toLowerCase().includes(c.title.toLowerCase())) ||
+                    { id: trackContext.trackId, title: trackContext.trackTitle } as Course
+                  ) : focusedCourseForPlanning}
               onNavigateToCourse={handleNavigateToCourse}
+                  hideHeader={!!trackContext}
             />
+              </div>
+            </div>
           ) : activeSection === 'study-rooms' ? (
-            <div className="h-[calc(100vh-85px)] overflow-y-auto">
+            <div className="h-[calc(100vh-85px)] flex flex-col overflow-hidden">
+              {/* Header contextuel si trackContext */}
+              {trackContext && (
+                <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={handleReturnToTrack}
+                      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span className="text-sm font-medium">Retour</span>
+                    </button>
+                    <div className="h-6 w-px bg-gray-300" />
+                    <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
+                      Study Rooms
+                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                    </h1>
+                  </div>
+                </div>
+              )}
+              <div className={trackContext ? "flex-1 overflow-y-auto" : "h-full overflow-y-auto"}>
               <AdvancedStudyRoomsTab 
                 userId={user?.id || safeData.user?.id || 'user-1'}
                 userName={user?.name || safeData.user?.name || 'Étudiant'}
@@ -2919,19 +4917,391 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 }}
                 userCourses={primaryCourses}
                 isAdmin={false}
+                  initialProgramFilter={trackContext?.trackTitle}
+                  hideHeader={!!trackContext}
               />
+              </div>
             </div>
           ) : activeSection === 'community' ? (
-            <div className="h-[calc(100vh-85px)] overflow-hidden">
-              <Community 
-                onOpenMessaging={handleOpenMessagingFromCommunity} 
-                userId={user?.id || safeData.user?.id || 'user-1'} 
-                initialTab={communityInitialTab}
-              />
+            trackContext ? (
+              /* Vue Social Club Contextuelle - CommunityFullScreen en mode embedded */
+              <div className="h-[calc(100vh-85px)] overflow-hidden">
+                <CommunityFullScreen
+                  isOpen={true}
+                  onClose={() => {}}
+                  trackId={trackContext.trackId}
+                  trackTitle={trackContext.trackTitle}
+                  embedded={true}
+                  skipIntro={false}
+                  onBack={handleReturnToTrack}
+                />
+              </div>
+            ) : (
+              /* Vue Social Club Générale - Buddies, Circles, Chat */
+            <div className="h-[calc(100vh-85px)] overflow-hidden flex flex-col">
+              {/* Header fixe avec container blanc */}
+                <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
+                  <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(32px, 8vw, 64px)' }}>Social Club</h1>
+              </div>
+              
+                {/* Mobile: Tabs horizontaux scrollables + contenu en dessous */}
+                {/* Desktop: Layout 2 colonnes */}
+                <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden px-4 md:px-6 lg:px-8 py-4 md:py-6">
+                  
+                  {/* Mobile: Tabs horizontaux scrollables */}
+                  <div className="md:hidden flex-shrink-0">
+                    <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
+                      {[
+                        { id: 'buddies', label: 'Buddies' },
+                        { id: 'circles', label: 'Cercles' },
+                        { id: 'qa', label: 'Chat' },
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setCommunityInitialTab(tab.id as 'buddies' | 'circles' | 'qa')}
+                          className={`flex-shrink-0 px-5 py-3 rounded-xl border transition-all min-h-[48px] ${
+                            communityInitialTab === tab.id 
+                              ? 'bg-gray-900 border-gray-900' 
+                              : 'bg-white border-gray-200'
+                          }`}
+                        >
+                          <span 
+                            className="font-bold uppercase tracking-tight whitespace-nowrap"
+                            style={{ 
+                              fontFamily: 'var(--font-parafina)', 
+                              fontSize: '18px',
+                              color: communityInitialTab === tab.id ? '#48c6ed' : '#111827' 
+                            }}
+                          >
+                            {tab.label}
+                          </span>
+                        </button>
+                      ))}
+                      {/* Bouton Inviter mobile */}
+                      <button 
+                        onClick={() => setShowBuddyInviteModal(true)}
+                        className="flex-shrink-0 px-5 py-3 bg-gray-900 text-white rounded-xl font-semibold flex items-center gap-2 min-h-[48px]"
+                      >
+                        <UserPlus size={16} />
+                        <span className="whitespace-nowrap">Inviter</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Desktop: Colonne gauche FIXE - 3 boutons texte Parafina */}
+                  <div className="hidden md:block w-72 flex-shrink-0 space-y-2 overflow-y-auto">
+                  {/* Buddies */}
+                  <button
+                    onClick={() => setCommunityInitialTab('buddies')}
+                    className={`w-full p-4 rounded-xl border transition-all text-left ${
+                      communityInitialTab === 'buddies' 
+                        ? 'bg-gray-900 border-gray-900' 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <span 
+                      className="font-bold uppercase tracking-tight"
+                      style={{ 
+                        fontFamily: 'var(--font-parafina)', 
+                        fontSize: '28px',
+                        color: communityInitialTab === 'buddies' ? '#48c6ed' : '#111827' 
+                      }}
+                    >
+                      Buddies
+                    </span>
+                  </button>
+
+                    {/* Cercles */}
+                    <button
+                      onClick={() => setCommunityInitialTab('circles')}
+                      className={`w-full p-4 rounded-xl border transition-all text-left ${
+                        communityInitialTab === 'circles' 
+                          ? 'bg-gray-900 border-gray-900' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span 
+                        className="font-bold uppercase tracking-tight"
+                        style={{ 
+                          fontFamily: 'var(--font-parafina)', 
+                          fontSize: '28px',
+                          color: communityInitialTab === 'circles' ? '#48c6ed' : '#111827' 
+                        }}
+                      >
+                        Cercles
+                      </span>
+                    </button>
+
+                  {/* Chat */}
+                  <button
+                    onClick={() => setCommunityInitialTab('qa')}
+                    className={`w-full p-4 rounded-xl border transition-all text-left ${
+                      communityInitialTab === 'qa' 
+                        ? 'bg-gray-900 border-gray-900' 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <span 
+                      className="font-bold uppercase tracking-tight"
+                      style={{ 
+                        fontFamily: 'var(--font-parafina)', 
+                        fontSize: '28px',
+                        color: communityInitialTab === 'qa' ? '#48c6ed' : '#111827' 
+                      }}
+                    >
+                      Chat
+                    </span>
+                  </button>
+
+                  {/* Stats - Style Instagram */}
+                  <div className="pt-5 border-t border-gray-100 mt-3">
+                    <p className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">Ton réseau</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-gray-900">12</p>
+                        <p className="text-sm text-gray-500">Buddies</p>
+                      </div>
+                      <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-gray-900">3</p>
+                        <p className="text-sm text-gray-500">Circles</p>
+                      </div>
+                      <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-green-600">5</p>
+                        <p className="text-sm text-gray-500">En ligne</p>
+                      </div>
+                    </div>
+                  </div>
+
+                    {/* Bouton Inviter un buddy */}
+                    <div className="pt-4">
+                      <button 
+                        onClick={() => setShowBuddyInviteModal(true)}
+                        className="w-full px-4 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+                      >
+                        <UserPlus size={16} />
+                        Inviter un buddy
+                      </button>
+                    </div>
+                </div>
+
+                  {/* Contenu - Full width sur mobile, flex-1 sur desktop */}
+                <div className="flex-1 overflow-hidden">
+                  <Community 
+                    onOpenMessaging={handleOpenMessagingFromCommunity} 
+                    userId={user?.id || safeData.user?.id || 'user-1'} 
+                    initialTab={communityInitialTab}
+                    hideHeader={true}
+                  />
+                </div>
+              </div>
             </div>
+            )
           ) : activeSection === 'messaging' ? (
             <div className="h-[calc(100vh-85px)]">
               <DirectMessaging defaultContactId={messagingContactId} />
+            </div>
+          ) : activeSection === 'training' ? (
+            <div className="h-[calc(100vh-85px)] overflow-hidden flex flex-col">
+              {/* Header fixe avec container blanc */}
+              <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
+                {trackContext ? (
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={handleReturnToTrack}
+                      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span className="text-sm font-medium">Retour</span>
+                    </button>
+                    <div className="h-6 w-px bg-gray-300" />
+                    <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
+                      Training Club
+                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                    </h1>
+                  </div>
+                ) : (
+                  <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(32px, 8vw, 64px)' }}>Training Club</h1>
+                )}
+              </div>
+              
+              {/* Mobile: Tabs horizontaux scrollables + contenu en dessous */}
+              {/* Desktop: Layout 2 colonnes */}
+              <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden px-4 md:px-6 lg:px-8 py-4 md:py-6">
+                
+                {/* Mobile: Tabs horizontaux scrollables */}
+                <div className="md:hidden flex-shrink-0">
+                  <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
+                    {[
+                      { id: 'main', label: 'Flash' },
+                      { id: 'solo-quiz', label: 'Révision' },
+                      { id: 'duel', label: 'Examen' },
+                      { id: 'duel-mode', label: 'Duel' },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setTrainingMode(tab.id as 'main' | 'solo-quiz' | 'duel' | 'duel-mode')}
+                        className={`flex-shrink-0 px-5 py-3 rounded-xl border transition-all min-h-[48px] ${
+                          trainingMode === tab.id 
+                            ? 'bg-gray-900 border-gray-900' 
+                            : 'bg-white border-gray-200'
+                        }`}
+                      >
+                        <span 
+                          className="font-bold uppercase tracking-tight whitespace-nowrap"
+                          style={{ 
+                            fontFamily: 'var(--font-parafina)', 
+                            fontSize: '18px',
+                            color: trainingMode === tab.id ? '#48c6ed' : '#111827' 
+                          }}
+                        >
+                          {tab.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Desktop: Colonne gauche FIXE - 4 boutons texte Parafina */}
+                <div className="hidden md:block w-72 flex-shrink-0 space-y-2 overflow-y-auto">
+                    {/* Flash */}
+                    <button
+                      onClick={() => setTrainingMode('main')}
+                      className={`w-full p-4 rounded-xl border transition-all text-left ${
+                        trainingMode === 'main' 
+                          ? 'bg-gray-900 border-gray-900' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span 
+                        className="font-bold uppercase tracking-tight"
+                        style={{ 
+                          fontFamily: 'var(--font-parafina)', 
+                          fontSize: '28px',
+                          color: trainingMode === 'main' ? '#48c6ed' : '#111827' 
+                        }}
+                      >
+                        Flash
+                      </span>
+                    </button>
+
+                    {/* Révision */}
+                    <button
+                      onClick={() => setTrainingMode('solo-quiz')}
+                      className={`w-full p-4 rounded-xl border transition-all text-left ${
+                        trainingMode === 'solo-quiz' 
+                          ? 'bg-gray-900 border-gray-900' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span 
+                        className="font-bold uppercase tracking-tight"
+                        style={{ 
+                          fontFamily: 'var(--font-parafina)', 
+                          fontSize: '28px',
+                          color: trainingMode === 'solo-quiz' ? '#48c6ed' : '#111827' 
+                        }}
+                      >
+                        Révision
+                      </span>
+                    </button>
+
+                    {/* Examen */}
+                    <button
+                      onClick={() => setTrainingMode('duel')}
+                      className={`w-full p-4 rounded-xl border transition-all text-left ${
+                        trainingMode === 'duel' 
+                          ? 'bg-gray-900 border-gray-900' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span 
+                        className="font-bold uppercase tracking-tight"
+                        style={{ 
+                          fontFamily: 'var(--font-parafina)', 
+                          fontSize: '28px',
+                          color: trainingMode === 'duel' ? '#48c6ed' : '#111827' 
+                        }}
+                      >
+                        Examen
+                      </span>
+                    </button>
+
+                    {/* Duel */}
+                    <button
+                      onClick={() => setTrainingMode('duel-mode')}
+                      className={`w-full p-4 rounded-xl border transition-all text-left ${
+                        trainingMode === 'duel-mode' 
+                          ? 'bg-gray-900 border-gray-900' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span 
+                        className="font-bold uppercase tracking-tight"
+                        style={{ 
+                          fontFamily: 'var(--font-parafina)', 
+                          fontSize: '28px',
+                          color: trainingMode === 'duel-mode' ? '#48c6ed' : '#111827' 
+                        }}
+                      >
+                        Duel
+                      </span>
+                    </button>
+
+                    {/* Stats */}
+                    <div className="pt-5 border-t border-gray-100 mt-5">
+                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">Tes stats</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                          <p className="text-lg font-bold text-gray-900">24</p>
+                          <p className="text-sm text-gray-500">Quiz</p>
+                        </div>
+                        <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                          <p className="text-lg font-bold text-gray-900">78%</p>
+                          <p className="text-sm text-gray-500">Réussite</p>
+                        </div>
+                        <div className="text-center p-2.5 bg-gray-50 rounded-xl">
+                          <p className="text-lg font-bold text-gray-900">5</p>
+                          <p className="text-sm text-gray-500">Victoires</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contenu - Full width sur mobile, flex-1 sur desktop */}
+                  <div className="flex-1 bg-white rounded-2xl border border-gray-200 p-4 md:p-6 overflow-y-auto">
+                    {/* Quiz rapide */}
+                    {trainingMode === 'main' && (
+                      <div className="h-full overflow-hidden -m-6">
+                        <QuizRapideInline trackContext={trackContext} />
+                      </div>
+                    )}
+
+                    {/* Quiz profond */}
+                    {trainingMode === 'solo-quiz' && (
+                      <div className="h-full overflow-hidden -m-6">
+                        <QuizProfondInline trackContext={trackContext} />
+                      </div>
+                    )}
+
+                    {/* Examen blanc */}
+                    {trainingMode === 'duel' && (
+                      <div className="h-full flex flex-col overflow-hidden">
+                        <div className="h-full overflow-y-auto -m-6">
+                          <ExamBlancGeneratorInline trackContext={trackContext} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Duel */}
+                    {trainingMode === 'duel-mode' && (
+                      <div className="h-full flex flex-col overflow-hidden">
+                        <div className="h-full overflow-y-auto -m-6">
+                          <DuelInline trackTitle="Ondes mécaniques" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
             </div>
           ) : activeSection === 'unlock' ? (
             <div className="p-8">
@@ -2969,42 +5339,93 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 }}
               />
             </div>
+          ) : selectedCourse && showLearningTrackOverview ? (
+            /* Vue Learning Track Overview - Avec header et sidebar */
+            <div className="h-[calc(100vh-85px)] overflow-y-auto">
+              <LearningTrackOverview
+                course={selectedCourse}
+                lessons={lessonsForOverview}
+                onClose={handleCloseLearningTrackOverview}
+                onStartLesson={handleStartLessonFromOverview}
+                purchasedItems={purchasedItems}
+                embedded={true}
+                onNavigateToSection={(section) => {
+                  setShowLearningTrackOverview(false);
+                  setActiveSection(section);
+                }}
+                onNavigateToSectionWithContext={(section, context) => {
+                  setShowLearningTrackOverview(false);
+                  navigateToSectionWithContext(section, context);
+                }}
+              />
+            </div>
+          ) : activeSection === 'programs' ? (
+            /* Section Programs - Shop Mastery Programs */
+            <div className="h-[calc(100vh-85px)] overflow-hidden flex flex-col">
+              {/* Header fixe avec container blanc */}
+              <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
+                <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: '64px', lineHeight: '1.1' }}>
+                  Débloque un accès à vie.<br />
+                  Génère autant de parcours que nécessaire.
+                </h1>
+              </div>
+
+              {/* Contenu scrollable */}
+              <div className="flex-1 overflow-y-auto">
+                <ProgramsShop 
+                  hideHeader={true}
+                  ownedProgramIds={Array.from(purchasedItems || []).filter(id => 
+                    ['physics', 'mathematics', 'chemistry', 'biology', 'economics', 'accounting', 'statistics'].includes(id)
+                  )}
+                  onPurchase={(programIds) => {
+                    // Navigate to payment with selected programs
+                    const params = new URLSearchParams();
+                    params.set('programs', programIds.join(','));
+                    window.location.href = `/payment?${params.toString()}`;
+                  }}
+                  onOpenProgram={(programId) => {
+                    // Navigate back to courses filtered by this program
+                    setActiveSection('courses');
+                  }}
+                />
+              </div>
+            </div>
           ) : activeSection === 'courses' ? (
-            <div className="px-4 md:px-6 lg:px-8 py-6 overflow-visible">
+            <div className="px-4 md:px-6 lg:px-8 pt-2 pb-6 overflow-visible">
               {/* Message d'accueil + Métriques - MASQUÉ */}
             {false && (
               <>
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-1">
-                    Bienvenue, {safeData.user.name.split(' ')[0]}
-                  </h2>
-                  <p className="text-gray-500 text-lg">
-                    Continue ta progression et atteins tes objectifs.
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-                  <SimpleMetric
-                    icon={BookOpen}
-                    value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
-                    label="Cours actifs"
-                    accent={true}
-                  />
-                  <SimpleMetric
-                    icon={Flame}
-                    value={`${7} jours`}
-                    label="Day Streak"
-                  />
-                  <SimpleMetric
-                    icon={UserCheck}
-                    value={`${3}/${8}`}
-                    label="Buddies connectés"
-                  />
-                  <SimpleMetric
-                    icon={Zap}
-                    value="200 XP"
-                    label="Objectif du jour"
-                  />
-                </div>
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                  Bienvenue, {safeData.user.name.split(' ')[0]}
+                </h2>
+                <p className="text-gray-500 text-lg">
+                  Continue ta progression et atteins tes objectifs.
+                </p>
+              </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+              <SimpleMetric
+                icon={BookOpen}
+                value={`${primaryCourses.length}/${safeData.suggestedCourses.length + primaryCourses.length}`}
+                label="Cours actifs"
+                accent={true}
+              />
+              <SimpleMetric
+                icon={Flame}
+                value={`${7} jours`}
+                label="Day Streak"
+              />
+              <SimpleMetric
+                icon={UserCheck}
+                value={`${3}/${8}`}
+                label="Buddies connectés"
+              />
+              <SimpleMetric
+                icon={Zap}
+                value="200 XP"
+                label="Objectif du jour"
+              />
+            </div>
               </>
             )}
 
@@ -3027,8 +5448,9 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             {/* NOUVEAU CATALOGUE NETFLIX */}
             {/* ================================================================ */}
             <NetflixCatalogSection
-              onCourseClick={handleOpenIntegratedViewer}
+              onCourseClick={handleOpenCourse}
               onToggleFavorite={handleToggleFavorite}
+              onNavigateToSectionWithContext={navigateToSectionWithContext}
             />
 
             {/* ================================================================ */}
@@ -3084,7 +5506,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       <div className="flex items-start gap-8 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         {/* Groupe MATIÈRES */}
                         <div className="flex flex-col gap-3">
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Matières</span>
+                          <span className="text-sm font-bold text-gray-500 uppercase tracking-wider px-2">Matières</span>
                           <div className="flex gap-2">
                             <motion.button 
                               onClick={() => {
@@ -3103,7 +5525,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Home size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Tout</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Tout</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3123,7 +5545,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Zap size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Physique</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Physique</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3143,7 +5565,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <FileText size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Chimie</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Chimie</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3163,7 +5585,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Calculator size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Maths</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Maths</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3183,7 +5605,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Brain size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Biologie</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Biologie</span>
                             </motion.button>
                           </div>
                         </div>
@@ -3191,7 +5613,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         
                         {/* Groupe TENDANCES */}
                         <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Tendances</span>
+                          <span className="text-sm font-bold text-gray-500 uppercase tracking-wider px-2">Tendances</span>
                           <div className="flex gap-2">
                             <motion.button 
                               onClick={() => {
@@ -3210,7 +5632,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Flame size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Populaires</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Populaires</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3230,7 +5652,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Sparkles size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Nouveaux</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Nouveaux</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3250,7 +5672,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <Target size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Recommandés</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Recommandés</span>
                             </motion.button>
                           </div>
                         </div>
@@ -3258,7 +5680,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         
                         {/* Groupe ACTIVITÉ SOCIALE */}
                         <div className="flex flex-col gap-3 border-l border-gray-200 pl-8">
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">Activité sociale</span>
+                          <span className="text-sm font-bold text-gray-500 uppercase tracking-wider px-2">Activité sociale</span>
                           <div className="flex gap-2">
                             <motion.button 
                               onClick={() => {
@@ -3277,7 +5699,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <UserCheck size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Mes buddies</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Mes buddies</span>
                             </motion.button>
                             
                             <motion.button 
@@ -3297,7 +5719,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                               }`}
                             >
                               <TrendingUp size={20} />
-                              <span className="text-xs font-semibold whitespace-nowrap">Plus suivis</span>
+                              <span className="text-sm font-semibold whitespace-nowrap">Plus suivis</span>
                             </motion.button>
                           </div>
                         </div>
@@ -3523,13 +5945,13 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
                                           <Sparkles size={14} className="text-black" />
                                         </div>
-                                        <span className="text-amber-400 text-xs font-semibold tracking-widest uppercase">Essai Gratuit</span>
+                                        <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">Essai Gratuit</span>
                                       </div>
                                     </div>
                                     
                                     {/* Titre élégant */}
                                     <h4 className="text-white font-bold text-lg mb-1 leading-snug">{course.title}</h4>
-                                    <p className="text-gray-500 text-xs mb-4">Mastery Program</p>
+                                    <p className="text-gray-500 text-sm mb-4">Mastery Program</p>
                                     
                                     {/* Avantages avec icônes */}
                                     <div className="space-y-2 mb-5">
@@ -3593,7 +6015,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                     <h3 className="!text-white font-bold text-lg leading-tight tracking-tight mb-1 drop-shadow-lg">
                                       {course.title}
                                     </h3>
-                                    <p className="!text-white/70 text-xs">
+                                    <p className="!text-white/70 text-sm">
                                       {course.description?.slice(0, 35)}...
                                     </p>
                                   </div>
@@ -3610,7 +6032,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                           <div
                             key={course.id}
                             className="group cursor-pointer"
-                            onClick={() => handleOpenIntegratedViewer(course)}
+                            onClick={() => handleOpenCourse(course)}
                           >
                             <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-3 transition-transform group-hover:scale-[1.02]">
                               {/* Image de fond si disponible */}
@@ -3629,7 +6051,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                                   {course.title}
                                 </h3>
                                 <div className="w-8 h-0.5 bg-white/40 mb-2" />
-                                <p className="!text-white/80 text-xs font-medium">
+                                <p className="!text-white/80 text-sm font-medium">
                                   {course.description?.slice(0, 40)}...
                                 </p>
                               </div>
@@ -3718,20 +6140,27 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             >
               <div className="p-6 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="relative h-8 w-40">
+                  <button 
+                    onClick={() => {
+                      setActiveSection('courses');
+                      setSelectedCourse(null);
+                      setSidebarOpen(false);
+                    }}
+                    className="relative h-[50px] w-[130px] cursor-pointer hover:opacity-90 transition-opacity"
+                  >
                     <Image 
-                      src="/brand/sms-text-logo.svg" 
-                      alt="Science Made Simple"
+                      src="/brand/sms-logo-version-sur-fond-blanc-rgb.svg" 
+                      alt="SMS"
                       fill
                       className="object-contain object-left"
                     />
-                  </div>
+                  </button>
                   <button onClick={() => setSidebarOpen(false)}>
                     <X size={20} />
                   </button>
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1 overflow-y-auto">
                   {navigationItems.map((item) => {
                     const IconComponent = item.icon;
                     const isDisabled = !item.hasAccess;
@@ -3745,7 +6174,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             window.open('https://wa.me/33123456789', '_blank');
                             setSidebarOpen(false);
                           } else if (item.hasAccess) {
-                            setActiveSection(item.id);
+                            handleSidebarNavigation(item.id); // Reset contexte + navigation
                             setSidebarOpen(false); // Fermer la sidebar mobile
                           } else if (item.isPremium) {
                             alert(plannerState.plannerAccess.accessMessage);
@@ -3769,7 +6198,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                           )}
                         </div>
-                        <span className="font-medium">{item.label}</span>
+                        <span className="font-medium" style={{ fontSize: '14px' }}>{item.label}</span>
                         
                         {/* Icône premium pour mobile */}
                         {item.isPremium && (
@@ -3795,6 +6224,25 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   })}
                 </div>
                 
+                {/* Mastery Boosters - Mobile */}
+                <div className="mt-auto pt-4 border-t border-gray-100 flex-shrink-0">
+                  <button 
+                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left rounded-lg"
+                    onClick={() => {
+                      setShowMasteryBoostersModal(true);
+                      setSidebarOpen(false);
+                    }}
+                  >
+                    <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
+                      <Plus size={18} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900" style={{ fontSize: '14px' }}>Mastery Boosters</p>
+                      <p className="text-gray-500 truncate" style={{ fontSize: '12px' }}>Booste ton apprentissage</p>
+                    </div>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           </>
@@ -4037,72 +6485,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         onClose={() => setShowParentReportsSettings(false)}
       />
 
-      {/* Navigation mobile en bas */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="flex items-center justify-around py-2 px-2 safe-bottom">
-          {navigationItems.slice(0, 3).map((item) => {
-            const IconComponent = item.icon;
-            const isDisabled = !item.hasAccess;
-            const isActive = activeSection === item.id;
-            
-            return (
-              <button
-                key={item.id}
-                data-tour={`mobile-${item.id}`}
-                onClick={() => {
-                  if (item.id === 'whatsapp') {
-                    window.open('https://wa.me/33123456789', '_blank');
-                  } else if (item.hasAccess) {
-                    setActiveSection(item.id);
-                  } else if (item.isPremium) {
-                    alert(plannerState.plannerAccess.accessMessage);
-                  }
-                }}
-                className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all relative min-w-0 flex-1 ${
-                  item.id === 'whatsapp'
-                    ? 'bg-green-500 text-white'
-                    : isActive
-                    ? 'text-blue-600' 
-                    : isDisabled
-                    ? 'text-gray-400'
-                    : 'text-gray-600'
-                }`}
-                disabled={isDisabled && !item.isPremium}
-              >
-                <div className="relative mb-1">
-                  <IconComponent size={20} />
-                  {item.hasNotification && (
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  )}
-                  {item.isPremium && !item.hasAccess && (
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
-                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2z"/>
-                      </svg>
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs font-medium truncate max-w-full">
-                  {item.label}
-                </span>
-              </button>
-            );
-          })}
-          
-          {/* Bouton Plus pour accéder aux autres fonctionnalités */}
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="flex flex-col items-center justify-center p-2 rounded-lg transition-all relative min-w-0 flex-1 text-gray-600"
-          >
-            <div className="relative mb-1">
-              <MoreHorizontal size={20} />
-            </div>
-            <span className="text-xs font-medium truncate max-w-full">
-              Plus
-            </span>
-          </button>
-        </div>
-      </nav>
+      {/* Navigation mobile en bas - MASQUÉE pour améliorer la lecture du contenu */}
+      {/* La navigation se fait via le menu hamburger et la sidebar */}
 
       {/* Panneau latéral du fil social */}
       <SocialFeedPanel 
@@ -4141,7 +6525,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
 
       {/* 🏆 Événements XP Boost (affiché dans la section courses) */}
       {activeSection === 'courses' && showXPBoost && (
-        <div className="fixed bottom-24 right-6 z-40 max-w-md">
+        <div className="fixed bottom-6 right-6 z-40 max-w-md">
           <XPBoostEvent
             events={[]} // Les événements sont définis dans le composant par défaut
             onDismiss={(eventId) => {
@@ -4174,38 +6558,39 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl"
+              className="bg-white rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Badge Pass */}
               <div className="flex justify-center mb-6">
-                <div className="bg-gray-900 rounded-2xl px-6 py-4 text-center">
-                  <div className="flex justify-center mb-2">
-                    <Gift size={32} className="text-[#48c6ed]" />
+                <div className="bg-gray-900 rounded-2xl px-8 py-5 text-center">
+                  <div className="flex justify-center mb-3">
+                    <Image src="/brand/onboarding-logo.svg" alt="SMS" width={48} height={48} />
                   </div>
-                  <span className="text-white text-sm font-bold tracking-wider uppercase">Pass Invité 14 jours</span>
+                  <span className="text-white font-bold tracking-wider uppercase" style={{ fontSize: '14px' }}>Pass Invité 14 jours</span>
                 </div>
               </div>
 
               {/* Titre */}
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+              <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
                 Apprendre, c'est mieux à plusieurs
               </h2>
 
               {/* Description */}
-              <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              <p className="text-gray-600 text-center mb-6 leading-relaxed" style={{ fontSize: '15px' }}>
                 Partage ton pass exclusif avec tes amis. S'ils s'inscrivent dans les 14 jours, 
                 tu gagnes <span className="font-bold text-gray-900">+2h de contenu gratuit</span> ajoutées à ton compteur !
               </p>
 
               {/* Input emails */}
-              <div className="mb-4">
+              <div className="mb-5">
                 <input
                   type="text"
                   value={guestPassEmails}
                   onChange={(e) => setGuestPassEmails(e.target.value)}
                   placeholder="Emails séparés par des virgules"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  style={{ fontSize: '15px' }}
                 />
               </div>
 
@@ -4219,6 +6604,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   }
                 }}
                 className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+                style={{ fontSize: '16px' }}
               >
                 Envoyer les invitations
               </button>
@@ -4227,14 +6613,132 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               <button
                 onClick={() => setShowGuestPassModal(false)}
                 className="w-full text-center text-gray-900 font-semibold hover:text-gray-600 transition-colors"
+                style={{ fontSize: '15px' }}
               >
                 Passer pour l'instant
               </button>
 
               {/* Terms */}
-              <p className="text-center text-gray-400 text-sm mt-4 underline cursor-pointer hover:text-gray-600">
+              <p className="text-center text-gray-400 mt-4 underline cursor-pointer hover:text-gray-600" style={{ fontSize: '14px' }}>
                 Conditions du Pass Invité
               </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🎯 Duel Full Screen */}
+      <DuelFullScreen
+        isOpen={showDuelFullScreen}
+        onClose={() => setShowDuelFullScreen(false)}
+        trackTitle={selectedCourse?.title || 'Ondes mécaniques'}
+      />
+
+      {/* 📝 Examen Blanc Generator */}
+      <ExamBlancGenerator
+        isOpen={showExamBlancGenerator}
+        onClose={() => setShowExamBlancGenerator(false)}
+        trackTitle={selectedCourse?.title || 'Ondes mécaniques'}
+      />
+
+      {/* 🚀 Mastery Boosters Modal */}
+      <MasteryBoostersModal
+        isOpen={showMasteryBoostersModal}
+        onClose={() => setShowMasteryBoostersModal(false)}
+        onUnlock={(boosterId, price) => {
+          // Rediriger vers le paiement (Stripe, etc.)
+          console.log(`Paiement pour ${boosterId} - ${price}€`);
+          // Ici on pourrait ouvrir Stripe Checkout ou une page de paiement
+          // Pour la démo, on simule un déblocage après "paiement"
+          if (confirm(`Débloquer "${boosterId}" pour ${price}€ ?`)) {
+            setUnlockedBoosters(prev => [...prev, boosterId]);
+          }
+        }}
+        unlockedBoosters={unlockedBoosters}
+      />
+
+      {/* 👥 Buddy Invite Modal */}
+      <BuddyInviteModal
+        isOpen={showBuddyInviteModal}
+        onClose={() => setShowBuddyInviteModal(false)}
+        userId={user?.id || safeData.user?.id || 'user-1'}
+      />
+
+      {/* 🚪 Exit Intent Popup */}
+      <AnimatePresence>
+        {showExitIntent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowExitIntent(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowExitIntent(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Content */}
+              <div className="text-center">
+                <div className="text-5xl mb-4">⏳</div>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: '#FFFFFF' }}>
+                  Attends ! L'offre expire bientôt
+                </h3>
+                <p className="mb-6">
+                  <span className="text-[#48c6ed] font-bold">-60%</span>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.85)' }}> sur tous les Mastery Programs.</span>
+                  <br />
+                  <span style={{ color: 'rgba(255, 255, 255, 0.85)' }}>Il ne reste que </span>
+                  <span className="text-[#48c6ed] font-bold">
+                    {urgencyTimeLeft.hours}h {urgencyTimeLeft.minutes}min
+                  </span>
+                </p>
+
+                {/* Timer display */}
+                <div className="flex justify-center gap-3 mb-6">
+                  {[
+                    { value: urgencyTimeLeft.hours, label: 'Heures' },
+                    { value: urgencyTimeLeft.minutes, label: 'Minutes' },
+                    { value: urgencyTimeLeft.seconds, label: 'Secondes' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="bg-gray-800 rounded-lg px-4 py-3">
+                      <div className="text-2xl font-bold text-white tabular-nums">
+                        {String(item.value).padStart(2, '0')}
+                      </div>
+                      <div className="text-xs text-gray-500">{item.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={() => {
+                    setShowExitIntent(false);
+                    setOnboardingInitialPhase('membership-plans');
+                    setShowOnboarding(true);
+                  }}
+                  className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-4 px-8 rounded-xl text-lg transition-all mb-3"
+                >
+                  Profiter de l'offre
+                </button>
+                <button
+                  onClick={() => setShowExitIntent(false)}
+                  className="text-gray-500 hover:text-gray-300 text-sm transition-colors"
+                >
+                  Non merci, je continue à explorer
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

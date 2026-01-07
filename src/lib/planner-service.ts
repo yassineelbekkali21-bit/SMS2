@@ -83,31 +83,14 @@ export class PlannerService {
       }
     });
 
-    // Déterminer le niveau d'accès
-    const hasAccess = completeCourses.length > 0;
+    // Déterminer le niveau d'accès - DÉBLOQUÉ pour tous
+    const hasAccess = true;
     
-    let accessReason: PlannerAccess['accessReason'];
-    let accessMessage: string;
-
-    if (completeCourses.length === 0 && ownedCourses.length === 0) {
-      accessReason = 'no-courses';
-      accessMessage = "Aucun cours acheté. Le planificateur est ton coach personnel - débute ton aventure d'apprentissage !";
-    } else if (completeCourses.length === 0) {
-      accessReason = 'partial-access';
-      accessMessage = "Le planificateur est disponible uniquement avec le pack complet. C'est ton coach de productivité personnalisé !";
-    } else if (completeCourses.length < courses.length) {
-      accessReason = 'all-lessons';
-      accessMessage = `Planificateur activé pour ${completeCourses.length} cours complet${completeCourses.length > 1 ? 's' : ''}. Ton coach personnel t'attend !`;
-    } else {
-      accessReason = 'full-pack';
-      if (isConfigured) {
-        accessMessage = "Planificateur configuré ! Ton coach stratégique est actif.";
-      } else if (hasPostponed) {
-        accessMessage = "Planificateur disponible mais non configuré. Tu peux le configurer quand tu veux !";
-      } else {
-        accessMessage = "Accès complet au planificateur ! Ton coach stratégique va révolutionner tes études.";
-      }
-    }
+    // Accès débloqué pour tous
+    const accessReason: PlannerAccess['accessReason'] = 'full-pack';
+    const accessMessage = isConfigured 
+      ? "Planificateur configuré ! Ton coach stratégique est actif."
+      : "Accès complet au planificateur ! Ton coach stratégique va révolutionner tes études.";
 
     return {
       hasAccess,

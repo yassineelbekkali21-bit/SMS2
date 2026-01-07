@@ -63,6 +63,10 @@
    ======================================================================== */
 
 :root {
+  /* SMS PRIMARY COLOR */
+  --sms-primary: #00c2ff;
+  --sms-primary-hover: #00d4ff;
+  
   /* MONOCHROME PREMIUM PALETTE */
   --sms-black: #000000;
   --sms-white: #ffffff;
@@ -903,3 +907,163 @@ body.theme-cyan .group:hover .group-hover\:bg-blue-100 { background-color: #ccf3
 body.theme-cyan .to-blue-700 { --tw-gradient-to: #0090c7 !important; }
 body.theme-cyan .hover\:from-blue-700:hover { --tw-gradient-from: #00a8e0 !important; }
 body.theme-cyan .hover\:to-blue-800:hover { --tw-gradient-to: #007099 !important; }
+
+/* ========================================================================
+   SMS GLOBAL COLOR OVERRIDE - #00c2ff as default accent
+   All blue colors are automatically converted to SMS Cyan
+   ======================================================================== */
+
+/* Background colors */
+.bg-blue-500 { background-color: #00c2ff !important; }
+.bg-blue-600 { background-color: #00c2ff !important; }
+.bg-blue-700 { background-color: #00a8e0 !important; }
+.bg-blue-400 { background-color: #33cfff !important; }
+
+/* Text colors */
+.text-blue-500 { color: #00c2ff !important; }
+.text-blue-600 { color: #00c2ff !important; }
+.text-blue-700 { color: #00a8e0 !important; }
+.text-blue-400 { color: #33cfff !important; }
+
+/* Border colors */
+.border-blue-500 { border-color: #00c2ff !important; }
+.border-blue-600 { border-color: #00c2ff !important; }
+.border-blue-700 { border-color: #00a8e0 !important; }
+.border-blue-400 { border-color: #33cfff !important; }
+
+/* Ring colors */
+.ring-blue-500 { --tw-ring-color: #00c2ff !important; }
+.ring-blue-600 { --tw-ring-color: #00c2ff !important; }
+.ring-blue-500\/30 { --tw-ring-color: rgba(0, 194, 255, 0.3) !important; }
+.ring-blue-600\/30 { --tw-ring-color: rgba(0, 194, 255, 0.3) !important; }
+
+/* Hover states */
+.hover\:bg-blue-500:hover { background-color: #00c2ff !important; }
+.hover\:bg-blue-600:hover { background-color: #00c2ff !important; }
+.hover\:bg-blue-700:hover { background-color: #00a8e0 !important; }
+.hover\:text-blue-500:hover { color: #00c2ff !important; }
+.hover\:text-blue-600:hover { color: #00c2ff !important; }
+.hover\:border-blue-500:hover { border-color: #00c2ff !important; }
+.hover\:border-blue-600:hover { border-color: #00c2ff !important; }
+
+/* Focus states */
+.focus\:border-blue-500:focus { border-color: #00c2ff !important; }
+.focus\:border-blue-600:focus { border-color: #00c2ff !important; }
+.focus\:ring-blue-500:focus { --tw-ring-color: #00c2ff !important; }
+.focus\:ring-blue-600:focus { --tw-ring-color: #00c2ff !important; }
+
+/* Gradient colors */
+.from-blue-500 { --tw-gradient-from: #00c2ff !important; }
+.from-blue-600 { --tw-gradient-from: #00c2ff !important; }
+.to-blue-500 { --tw-gradient-to: #00c2ff !important; }
+.to-blue-600 { --tw-gradient-to: #00c2ff !important; }
+.via-blue-500 { --tw-gradient-via: #00c2ff !important; }
+.via-blue-600 { --tw-gradient-via: #00c2ff !important; }
+
+/* Shadow colors */
+.shadow-blue-500\/20 { --tw-shadow-color: rgba(0, 194, 255, 0.2) !important; }
+.shadow-blue-500\/30 { --tw-shadow-color: rgba(0, 194, 255, 0.3) !important; }
+.shadow-blue-600\/20 { --tw-shadow-color: rgba(0, 194, 255, 0.2) !important; }
+.shadow-blue-600\/30 { --tw-shadow-color: rgba(0, 194, 255, 0.3) !important; }
+
+/* Divide colors */
+.divide-blue-500 > :not([hidden]) ~ :not([hidden]) { border-color: #00c2ff !important; }
+.divide-blue-600 > :not([hidden]) ~ :not([hidden]) { border-color: #00c2ff !important; }
+
+/* Placeholder colors */
+.placeholder-blue-500::placeholder { color: #00c2ff !important; }
+.placeholder-blue-600::placeholder { color: #00c2ff !important; }
+
+/* Accent color for form elements */
+.accent-blue-500 { accent-color: #00c2ff !important; }
+.accent-blue-600 { accent-color: #00c2ff !important; }
+
+/* Caret color */
+.caret-blue-500 { caret-color: #00c2ff !important; }
+.caret-blue-600 { caret-color: #00c2ff !important; }
+
+/* Fill & Stroke for SVGs */
+.fill-blue-500 { fill: #00c2ff !important; }
+.fill-blue-600 { fill: #00c2ff !important; }
+.stroke-blue-500 { stroke: #00c2ff !important; }
+.stroke-blue-600 { stroke: #00c2ff !important; }
+
+/* Outline colors */
+.outline-blue-500 { outline-color: #00c2ff !important; }
+.outline-blue-600 { outline-color: #00c2ff !important; }
+
+/* Decoration colors */
+.decoration-blue-500 { text-decoration-color: #00c2ff !important; }
+.decoration-blue-600 { text-decoration-color: #00c2ff !important; }
+
+/* Additional gradient shades */
+.from-blue-700 { --tw-gradient-from: #00a8e0 !important; }
+.from-blue-400 { --tw-gradient-from: #33cfff !important; }
+.to-blue-700 { --tw-gradient-to: #00a8e0 !important; }
+.to-blue-400 { --tw-gradient-to: #33cfff !important; }
+.via-blue-700 { --tw-gradient-via: #00a8e0 !important; }
+.via-blue-400 { --tw-gradient-via: #33cfff !important; }
+
+/* Hover gradient states */
+.hover\:from-blue-400:hover { --tw-gradient-from: #33cfff !important; }
+.hover\:from-blue-500:hover { --tw-gradient-from: #00c2ff !important; }
+.hover\:from-blue-600:hover { --tw-gradient-from: #00c2ff !important; }
+.hover\:from-blue-700:hover { --tw-gradient-from: #00a8e0 !important; }
+.hover\:to-blue-400:hover { --tw-gradient-to: #33cfff !important; }
+.hover\:to-blue-500:hover { --tw-gradient-to: #00c2ff !important; }
+.hover\:to-blue-600:hover { --tw-gradient-to: #00c2ff !important; }
+.hover\:to-blue-700:hover { --tw-gradient-to: #00a8e0 !important; }
+.hover\:to-blue-800:hover { --tw-gradient-to: #008bc2 !important; }
+
+/* Focus gradient states */
+.focus\:from-blue-500:focus { --tw-gradient-from: #00c2ff !important; }
+.focus\:from-blue-600:focus { --tw-gradient-from: #00c2ff !important; }
+.focus\:to-blue-500:focus { --tw-gradient-to: #00c2ff !important; }
+.focus\:to-blue-600:focus { --tw-gradient-to: #00c2ff !important; }
+
+/* Additional background color shades */
+.bg-blue-50 { background-color: #e6f9ff !important; }
+.bg-blue-100 { background-color: #ccf3ff !important; }
+.bg-blue-200 { background-color: #99e6ff !important; }
+.bg-blue-300 { background-color: #66d9ff !important; }
+.bg-blue-800 { background-color: #008bc2 !important; }
+.bg-blue-900 { background-color: #006999 !important; }
+
+/* Additional text color shades */
+.text-blue-50 { color: #e6f9ff !important; }
+.text-blue-100 { color: #ccf3ff !important; }
+.text-blue-200 { color: #99e6ff !important; }
+.text-blue-300 { color: #66d9ff !important; }
+.text-blue-800 { color: #008bc2 !important; }
+.text-blue-900 { color: #006999 !important; }
+
+/* Additional border color shades */
+.border-blue-50 { border-color: #e6f9ff !important; }
+.border-blue-100 { border-color: #ccf3ff !important; }
+.border-blue-200 { border-color: #99e6ff !important; }
+.border-blue-300 { border-color: #66d9ff !important; }
+.border-blue-800 { border-color: #008bc2 !important; }
+.border-blue-900 { border-color: #006999 !important; }
+
+/* Additional hover states */
+.hover\:bg-blue-400:hover { background-color: #33cfff !important; }
+.hover\:bg-blue-800:hover { background-color: #008bc2 !important; }
+.hover\:text-blue-400:hover { color: #33cfff !important; }
+.hover\:text-blue-700:hover { color: #00a8e0 !important; }
+.hover\:text-blue-800:hover { color: #008bc2 !important; }
+.hover\:border-blue-400:hover { border-color: #33cfff !important; }
+.hover\:border-blue-700:hover { border-color: #00a8e0 !important; }
+
+/* Focus states for additional shades */
+.focus\:border-blue-400:focus { border-color: #33cfff !important; }
+.focus\:border-blue-700:focus { border-color: #00a8e0 !important; }
+.focus\:ring-blue-400:focus { --tw-ring-color: #33cfff !important; }
+.focus\:ring-blue-700:focus { --tw-ring-color: #00a8e0 !important; }
+
+/* Shadow for additional shades */
+.shadow-blue-400\/20 { --tw-shadow-color: rgba(51, 207, 255, 0.2) !important; }
+.shadow-blue-400\/30 { --tw-shadow-color: rgba(51, 207, 255, 0.3) !important; }
+.shadow-blue-700\/20 { --tw-shadow-color: rgba(0, 168, 224, 0.2) !important; }
+.shadow-blue-700\/30 { --tw-shadow-color: rgba(0, 168, 224, 0.3) !important; }
+.shadow-blue-500\/25 { --tw-shadow-color: rgba(0, 194, 255, 0.25) !important; }
+.shadow-blue-600\/25 { --tw-shadow-color: rgba(0, 194, 255, 0.25) !important; }

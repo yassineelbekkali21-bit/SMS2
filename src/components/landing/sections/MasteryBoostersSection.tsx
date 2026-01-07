@@ -64,7 +64,7 @@ export function MasteryBoostersSection() {
         <div className="text-center mb-20">
           <h2 
             className="font-title text-4xl mb-6 leading-tight tracking-wide"
-            style={{ fontSize: 'clamp(1.5rem, 6vw, 52px)' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 64px)' }}
           >
             {t('boosters.title')} <span>{t('boosters.title.highlight')}</span>.
           </h2>
@@ -107,22 +107,22 @@ export function MasteryBoostersSection() {
                     
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className={`text-lg font-bold transition-colors whitespace-nowrap ${isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                        <h3 className={`font-bold transition-colors whitespace-nowrap ${isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`} style={{ fontSize: '18px' }}>
                           {booster.title}
                         </h3>
                         {booster.comingSoon && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider text-gray-500 bg-gray-100 border border-gray-200 whitespace-nowrap flex-shrink-0">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md font-medium uppercase tracking-wider text-gray-500 bg-gray-100 border border-gray-200 whitespace-nowrap flex-shrink-0" style={{ fontSize: '14px' }}>
                             Coming soon
                           </span>
                         )}
                       </div>
-                      <p className={`text-sm font-medium mb-2 mt-1 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <p className={`font-medium mb-2 mt-1 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} style={{ fontSize: '14px' }}>
                         {booster.subtitle}
                       </p>
                       
                       <div className={`grid transition-all duration-300 ${isActive ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0'}`}>
                         <div className="overflow-hidden">
-                          <p className="text-gray-600 leading-relaxed text-sm">
+                          <p className="text-gray-600 leading-relaxed" style={{ fontSize: '14px' }}>
                             {booster.description}
                           </p>
                         </div>
@@ -318,22 +318,22 @@ export function MasteryBoostersSection() {
                                 { name: 'Sarah', isMuted: true, hasVideo: true },
                                 { name: 'Tom', isMuted: false, hasVideo: false },
                               ].map((p, i) => (
-                                <motion.div
-                                  key={i}
+                                <motion.div 
+                                    key={i}
                                   initial={{ x: -10, opacity: 0 }}
-                                  animate={{ x: 0, opacity: 1 }}
+                                    animate={{ x: 0, opacity: 1 }}
                                   transition={{ delay: i * 0.1 }}
                                   className="flex items-center gap-2 py-1.5 px-1 text-[10px]"
                                 >
                                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold ${i === 0 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
                                     {p.name[0]}
-                                  </div>
+                                        </div>
                                   <span className="text-gray-700 truncate flex-1">{p.name}</span>
                                   {p.isMuted && <MicOff size={10} className="text-gray-400" />}
                                 </motion.div>
-                              ))}
-                            </div>
-                            
+                            ))}
+                        </div>
+
                             {/* Mini Chat */}
                             <div className="flex-1 bg-gray-100 rounded-xl p-2 flex flex-col">
                               <div className="text-[10px] font-bold text-gray-500 mb-2 flex items-center gap-1">

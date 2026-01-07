@@ -45,7 +45,7 @@ export function FAQSectionMultilang() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="font-title text-4xl md:text-5xl mb-3 tracking-wide"
-            style={{ fontSize: 'clamp(1.75rem, 4vw, 52px)' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 64px)' }}
           >
             {t('faq.title')}
           </motion.h2>
@@ -54,8 +54,8 @@ export function FAQSectionMultilang() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-base md:text-xl text-gray-500"
-            style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}
+            className="text-gray-500"
+            style={{ fontSize: '22px' }}
           >
             {t('faq.subtitle')}
           </motion.p>
@@ -80,7 +80,7 @@ export function FAQSectionMultilang() {
                     : 'bg-white text-black hover:bg-gray-100 border border-gray-200 rounded-2xl'
                 }`}
               >
-                <span className="text-base md:text-lg font-semibold pr-4 md:pr-8">
+                <span className="font-semibold pr-4 md:pr-8" style={{ fontSize: '14px' }}>
                   {item.question}
                 </span>
                 <ChevronDown
@@ -103,7 +103,7 @@ export function FAQSectionMultilang() {
                     className="overflow-hidden"
                   >
                     <div className="px-6 md:px-8 pt-6 pb-8 bg-white border-x border-b border-gray-200 rounded-b-2xl">
-                      <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-line">
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-line" style={{ fontSize: '14px' }}>
                         {item.answer}
                       </p>
                     </div>

@@ -58,8 +58,6 @@ export const viewport = {
   userScalable: false,
 };
 
-import { ColorSwitcher } from "@/components/ColorSwitcher";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -71,7 +69,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/brand/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
-        <meta name="theme-color" content="#3b82f6" />
+        <meta name="theme-color" content="#00c2ff" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -82,7 +80,6 @@ export default function RootLayout({
         <AccessibilityProvider>
           {children}
         </AccessibilityProvider>
-        <ColorSwitcher />
       </body>
     </html>
   );

@@ -4,36 +4,43 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Course } from '@/types';
-import { SmartSearchPrompt } from './SmartSearchPrompt';
+import { CleanHomeHero } from './CleanHomeHero';
 import { CourseRow, SubjectSection } from './CourseRow';
 
 // ============================================================================
 // MOCK DATA
 // ============================================================================
+// Programmes en mode essai (non achetés) - les 10h gratuites s'appliquent ici
+const TRIAL_SUBJECTS = ['Chimie', 'Économie'];
+
 const createCourse = (
   id: string,
   title: string,
   subject: string,
   progress: number = 0,
   totalLessons: number = 10
-): Course => ({
-  id,
-  title,
-  description: `Cours complet sur ${title}`,
-  faculty: 'Sciences',
-  year: '2024',
-  totalLessons,
-  completedLessons: Math.floor((progress / 100) * totalLessons),
-  duration: `${Math.round(totalLessons * 0.75)}h`,
-  isOwned: progress > 0,
-  isPrimary: progress > 50,
-  progress,
-  price: 49,
-  thumbnail: '',
-  previewAvailable: true,
-  tags: [subject],
-  difficulty: 'intermediate',
-});
+): Course => {
+  const isTrial = TRIAL_SUBJECTS.includes(subject);
+  return {
+    id,
+    title,
+    description: `Cours complet sur ${title}`,
+    faculty: 'Sciences',
+    year: '2024',
+    totalLessons,
+    completedLessons: Math.floor((progress / 100) * totalLessons),
+    duration: `${Math.round(totalLessons * 0.75)}h`,
+    isOwned: isTrial ? false : progress > 0, // En mode essai, pas acheté
+    isPrimary: progress > 50,
+    progress: isTrial ? 0 : progress, // En mode essai, pas de progression
+    price: 49,
+    thumbnail: '',
+    previewAvailable: true,
+    tags: [subject],
+    difficulty: 'intermediate',
+    isTrial, // Mode essai activé pour Chimie et Économie
+  };
+};
 
 // Données
 const IN_PROGRESS = [
@@ -151,13 +158,16 @@ const ECONOMICS: Course[][] = [
 interface NetflixCatalogSectionProps {
   onCourseClick: (course: Course) => void;
   onToggleFavorite?: (courseId: string) => void;
+  onNavigateToSectionWithContext?: (section: string, context: { trackId: string; trackTitle: string }) => void;
 }
 
 export function NetflixCatalogSection({ 
   onCourseClick, 
-  onToggleFavorite = () => {} 
+  onToggleFavorite = () => {},
+  onNavigateToSectionWithContext
 }: NetflixCatalogSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [favoritedFromSearch, setFavoritedFromSearch] = useState<Course[]>([]);
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -167,36 +177,46 @@ export function NetflixCatalogSection({
     }, 100);
   };
 
+  // Handle favorites from search results
+  const handleAddToFavorites = (track: { id: string; title: string; subtitle: string; lessons: number; duration: string }) => {
+    // Create a Course object from the track
+    const newCourse: Course = {
+      id: track.id,
+      title: track.title,
+      description: track.subtitle,
+      faculty: 'Sciences',
+      year: '2024',
+      totalLessons: track.lessons,
+      completedLessons: 0,
+      duration: track.duration,
+      isOwned: false,
+      isPrimary: false,
+      progress: 0,
+      price: 49,
+      thumbnail: '',
+      previewAvailable: true,
+      tags: [],
+      difficulty: 'intermediate',
+    };
+    
+    // Add to favorites if not already there
+    setFavoritedFromSearch(prev => {
+      if (prev.some(c => c.id === newCourse.id)) {
+        return prev;
+      }
+      return [newCourse, ...prev];
+    });
+  };
+
+  // Combine recommended courses with favorited from search
+  const recommendedWithFavorites = [...favoritedFromSearch, ...RECOMMENDED.filter(c => !favoritedFromSearch.some(f => f.id === c.id))];
+
   return (
     <div className="overflow-visible">
-      {/* Search Prompt - Toujours visible, change juste de position */}
-      <motion.div
-        layout
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className={`w-full ${!isExpanded ? 'max-w-4xl mx-auto' : ''}`}
-        style={{ 
-          paddingTop: !isExpanded ? 'calc(30vh - 100px)' : '0',
-          paddingBottom: !isExpanded ? '0' : '0'
-        }}
-      >
-        <SmartSearchPrompt
-          onSearch={(query) => {
-            console.log('Search:', query);
-            setIsExpanded(true);
-          }}
-          onUpload={(file) => console.log('Upload:', file)}
-          onProgramSelect={(programId) => {
-            console.log('Program:', programId);
-            setIsExpanded(true);
-          }}
-          compact={isExpanded}
-        />
-      </motion.div>
-
       <AnimatePresence mode="wait">
         {!isExpanded ? (
           /* ============================================================ */
-          /* VUE COLLAPSED - Learning tracks + Arrow */
+          /* VUE COLLAPSED - Centré verticalement */
           /* ============================================================ */
           <motion.div
             key="collapsed"
@@ -204,13 +224,46 @@ export function NetflixCatalogSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="flex flex-col items-center px-4"
+            className="flex flex-col items-center justify-start px-4 pt-4 pb-12"
+            style={{ minHeight: 'calc(100vh - 180px)' }}
           >
+            {/* Clean Home Hero - Search EPILS + Navigation en cascade */}
+            <CleanHomeHero
+              userName="Yassine"
+              onCourseSelect={(courseId, lessonId) => {
+                console.log('Course selected:', courseId, lessonId);
+                // Trouver le cours correspondant dans les listes existantes
+                let course = RECOMMENDED.find(c => c.id === courseId) || 
+                             IN_PROGRESS.find(c => c.id === courseId) ||
+                             NEW_COURSES.find(c => c.id === courseId) ||
+                             favoritedFromSearch.find(c => c.id === courseId);
+                
+                // Si pas trouvé, créer un cours à partir de l'ID (résultat de recherche)
+                if (!course) {
+                  course = createCourse(
+                    courseId,
+                    courseId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                    'Sciences',
+                    0,
+                    8
+                  );
+                }
+                
+                onCourseClick(course);
+                setIsExpanded(true);
+              }}
+              onDocumentUpload={() => {
+                console.log('Document upload triggered');
+                // TODO: Open upload modal
+              }}
+              onAddToFavorites={handleAddToFavorites}
+            />
+
             {/* Learning Tracks conçus pour toi */}
-            <div className="w-full mt-8">
+            <div className="w-full mt-4">
               <CourseRow
-                title="Learning tracks conçus pour toi"
-                courses={RECOMMENDED.slice(0, 6)}
+                title={favoritedFromSearch.length > 0 ? `Learning tracks conçus pour toi (${favoritedFromSearch.length} ajoutés)` : "Learning tracks conçus pour toi"}
+                courses={recommendedWithFavorites.slice(0, 8)}
                 onCourseClick={(course) => {
                   setIsExpanded(true);
                   onCourseClick(course);
@@ -218,6 +271,7 @@ export function NetflixCatalogSection({
                 showProgress={false}
                 defaultFavorites={true}
                 onToggleFavorite={onToggleFavorite}
+                onNavigateToSectionWithContext={onNavigateToSectionWithContext}
               />
             </div>
 
@@ -226,7 +280,7 @@ export function NetflixCatalogSection({
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               onClick={handleExpand}
-              className="mt-12 mb-12 flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors group"
+              className="mt-8 mb-4 flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors group"
             >
               <span className="text-sm font-medium">Découvrir tout le catalogue</span>
               <div className="w-12 h-12 rounded-full border-2 border-gray-200 group-hover:border-gray-400 flex items-center justify-center transition-colors">
@@ -243,114 +297,156 @@ export function NetflixCatalogSection({
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="space-y-6 mt-6"
+            className="space-y-6"
           >
+            {/* Search bar améliorée avec pills */}
+            <div className="w-full mb-6">
+              <CleanHomeHero
+                userName="Yassine"
+                onCourseSelect={(courseId, lessonId) => {
+                  console.log('Course selected:', courseId, lessonId);
+                  // Trouver le cours correspondant dans les listes existantes
+                  let course = RECOMMENDED.find(c => c.id === courseId) || 
+                               IN_PROGRESS.find(c => c.id === courseId) ||
+                               NEW_COURSES.find(c => c.id === courseId) ||
+                               favoritedFromSearch.find(c => c.id === courseId);
+                  
+                  // Si pas trouvé, créer un cours à partir de l'ID (résultat de recherche)
+                  if (!course) {
+                    course = createCourse(
+                      courseId,
+                      courseId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                      'Sciences',
+                      0,
+                      8
+                    );
+                  }
+                  
+                  onCourseClick(course);
+                }}
+                onDocumentUpload={() => {
+                  console.log('Document upload triggered');
+                }}
+                onAddToFavorites={handleAddToFavorites}
+              />
+            </div>
+
             {/* Catalogue */}
             <div>
-              {/* 1. Reprendre ma progression */}
+      {/* 1. Reprendre ma progression */}
               <section className="mb-6">
-                <CourseRow
-                  title="Reprendre ma progression"
-                  courses={IN_PROGRESS}
-                  onCourseClick={onCourseClick}
-                  showProgress={true}
-                  emptyMessage="Tu n'as pas encore commencé de cours"
-                  maxVisible={8}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <CourseRow
+          title="Reprendre ma progression"
+          courses={IN_PROGRESS}
+          onCourseClick={onCourseClick}
+          showProgress={true}
+          emptyMessage="Tu n'as pas encore commencé de cours"
+          maxVisible={8}
+          onToggleFavorite={onToggleFavorite}
+          onNavigateToSectionWithContext={onNavigateToSectionWithContext}
+        />
+      </section>
 
               {/* 2. Conçus pour toi */}
               <section className="mb-6">
                 <CourseRow
-                  title="Learning tracks conçus pour toi"
-                  courses={RECOMMENDED}
+                  title={favoritedFromSearch.length > 0 ? `Learning tracks conçus pour toi (${favoritedFromSearch.length} ajoutés)` : "Learning tracks conçus pour toi"}
+                  courses={recommendedWithFavorites}
                   onCourseClick={onCourseClick}
                   showProgress={false}
                   defaultFavorites={true}
                   onToggleFavorite={onToggleFavorite}
+                  onNavigateToSectionWithContext={onNavigateToSectionWithContext}
                 />
               </section>
 
               {/* 3. Nouveautés */}
               <section className="mb-6">
-                <CourseRow
-                  title="Nouveautés chez SMS"
-                  courses={NEW_COURSES}
-                  onCourseClick={onCourseClick}
-                  showProgress={false}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <CourseRow
+          title="Nouveautés chez SMS"
+          courses={NEW_COURSES}
+          onCourseClick={onCourseClick}
+          showProgress={false}
+          onToggleFavorite={onToggleFavorite}
+          onNavigateToSectionWithContext={onNavigateToSectionWithContext}
+        />
+      </section>
 
-              {/* 4. Mastery Programs */}
+      {/* 4. Mastery Programs - Affichage par BUNDLES avec accordéon */}
               <section className="mb-6">
-                <SubjectSection
-                  subject="Physique"
-                  subGroups={PHYSICS}
-                  onCourseClick={onCourseClick}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
-
-              <section className="mb-6">
-                <SubjectSection
-                  subject="Mathématiques"
-                  subGroups={MATH}
-                  onCourseClick={onCourseClick}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <SubjectSection
+          subject="Physique"
+          subGroups={PHYSICS}
+          onCourseClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+          displayMode="bundles"
+        />
+      </section>
 
               <section className="mb-6">
-                <SubjectSection
-                  subject="Chimie"
-                  subGroups={CHEMISTRY}
-                  onCourseClick={onCourseClick}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <SubjectSection
+          subject="Mathématiques"
+          subGroups={MATH}
+          onCourseClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+          displayMode="bundles"
+        />
+      </section>
 
               <section className="mb-6">
-                <SubjectSection
-                  subject="Informatique"
-                  subGroups={INFORMATICS}
-                  onCourseClick={onCourseClick}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <SubjectSection
+          subject="Chimie"
+          subGroups={CHEMISTRY}
+          onCourseClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+          displayMode="bundles"
+        />
+      </section>
 
               <section className="mb-6">
-                <SubjectSection
-                  subject="Économie"
-                  subGroups={ECONOMICS}
-                  onCourseClick={onCourseClick}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <SubjectSection
+          subject="Informatique"
+          subGroups={INFORMATICS}
+          onCourseClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+          displayMode="bundles"
+        />
+      </section>
 
-              {/* 5. Populaires */}
               <section className="mb-6">
-                <CourseRow
-                  title="Populaires cette semaine"
-                  courses={TRENDING}
-                  onCourseClick={onCourseClick}
-                  showProgress={false}
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <SubjectSection
+          subject="Économie"
+          subGroups={ECONOMICS}
+          onCourseClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+          displayMode="bundles"
+        />
+      </section>
 
-              {/* 6. Revoir */}
+      {/* 5. Populaires */}
               <section className="mb-6">
-                <CourseRow
-                  title="Revoir"
-                  courses={COMPLETED}
-                  onCourseClick={onCourseClick}
-                  showProgress={true}
-                  emptyMessage="Tu n'as pas encore terminé de cours"
-                  onToggleFavorite={onToggleFavorite}
-                />
-              </section>
+        <CourseRow
+          title="Populaires cette semaine"
+          courses={TRENDING}
+          onCourseClick={onCourseClick}
+          showProgress={false}
+          onToggleFavorite={onToggleFavorite}
+          onNavigateToSectionWithContext={onNavigateToSectionWithContext}
+        />
+      </section>
+
+      {/* 6. Revoir */}
+              <section className="mb-6">
+        <CourseRow
+          title="Revoir"
+          courses={COMPLETED}
+          onCourseClick={onCourseClick}
+          showProgress={true}
+          emptyMessage="Tu n'as pas encore terminé de cours"
+          onToggleFavorite={onToggleFavorite}
+          onNavigateToSectionWithContext={onNavigateToSectionWithContext}
+        />
+      </section>
             </div>
           </motion.div>
         )}

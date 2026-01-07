@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Heart, Video, MessageCircle, UserPlus, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Play, Target, Users, Calendar } from 'lucide-react';
 import { Course } from '@/types';
+import { TrackPracticeView } from './TrackPracticeView';
+import { TrackPlanningView } from './TrackPlanningView';
+import { DuelFullScreen } from './DuelFullScreen';
+import { ExamBlancGenerator } from './ExamBlancGenerator';
+import { CommunityFullScreen } from './CommunityFullScreen';
 
 interface CourseRowProps {
   title?: string;
@@ -21,6 +27,7 @@ interface CourseRowProps {
   defaultFavorites?: boolean; // Si true, tous les cours de cette row sont favoris par défaut
   onToggleFavorite?: (courseId: string) => void;
   isSequential?: boolean; // Si true, affiche les numéros de séquence et verrouille les cours non complétés
+  onNavigateToSectionWithContext?: (section: string, context: { trackId: string; trackTitle: string }) => void;
 }
 
 interface CourseCardMiniProps {
@@ -32,6 +39,7 @@ interface CourseCardMiniProps {
   isFavorite?: boolean;
   onToggleFavorite?: (courseId: string) => void;
   sequenceNumber?: number; // Numéro dans la séquence (1, 2, 3...)
+  onNavigateToSectionWithContext?: (section: string, context: { trackId: string; trackTitle: string }) => void;
 }
 
 // Carte identique au SimpleDashboard
@@ -43,20 +51,50 @@ function CourseCardWrapper({
   onToggleFavorite,
   sequenceNumber,
   isLocked = false,
+  onNavigateToSectionWithContext,
 }: CourseCardMiniProps) {
+  const router = useRouter();
   const progress = course.progress || 0;
   const [liked, setLiked] = useState(isFavorite);
+  
+  // États pour les modals des 3 intentions (Avancer ouvre directement le Learning Track Viewer)
+  const [showPracticeModal, setShowPracticeModal] = useState(false);
+  const [showPlanningModal, setShowPlanningModal] = useState(false);
+  
+  // États pour les vues plein écran
+  const [showDuelFullScreen, setShowDuelFullScreen] = useState(false);
+  const [showExamBlancGenerator, setShowExamBlancGenerator] = useState(false);
+  const [showCommunityFullScreen, setShowCommunityFullScreen] = useState(false);
+  const [communityInitialTab, setCommunityInitialTab] = useState<'discussion' | 'rooms' | 'members' | 'competitions'>('discussion');
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setLiked(!liked);
     onToggleFavorite?.(course.id);
   };
+  
+  // Callbacks pour TrackPracticeView
+  const handleOpenQuizRapide = () => {
+    // Redirige vers le flow assessment existant (partie 1: quiz rapide)
+    router.push('/assessment/physics?mode=quick');
+  };
+  
+  const handleOpenQuizApprofondi = () => {
+    // Redirige vers le flow assessment existant (partie 2: quiz approfondi)
+    router.push('/assessment/physics?mode=deep');
+  };
+  
+  const handleOpenExamBlanc = () => {
+    setShowExamBlancGenerator(true);
+  };
+  
+  const handleOpenDuel = () => {
+    setShowDuelFullScreen(true);
+  };
 
   return (
     <div 
-      className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[220px] lg:w-[200px] xl:w-[200px] 2xl:w-[220px] group/card cursor-pointer relative"
-      onClick={() => !isLocked && onClick(course)}
+      className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[220px] lg:w-[200px] xl:w-[200px] 2xl:w-[220px] group/card relative"
       style={{ fontFamily: 'DM Sans, sans-serif' }}
     >
       {/* Sequence Number Badge - pour les cours séquentiels */}
@@ -75,6 +113,15 @@ function CourseCardWrapper({
 
       {/* Card - hauteur réduite avec aspect-[4/5] */}
       <div className={`relative aspect-[4/5] bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 rounded-xl overflow-hidden mb-2 transition-transform ${isLocked ? 'opacity-60' : 'group-hover/card:scale-[1.02]'}`}>
+        {/* Badge ESSAI - en haut à gauche si mode essai */}
+        {course.isTrial && (
+          <div className="absolute top-3 left-3 z-20">
+            <span className="inline-flex items-center px-3 py-1.5 bg-gray-900 rounded-md text-[13px] font-bold text-white uppercase tracking-wider shadow-lg">
+              Essai
+            </span>
+          </div>
+        )}
+
         {/* Heart button - visible au hover OU si liké */}
         <motion.button
           onClick={handleHeartClick}
@@ -102,64 +149,87 @@ function CourseCardWrapper({
           </div>
         )}
 
-        {/* 4 Action buttons - visible au hover de CETTE carte uniquement */}
+        {/* 4 Action buttons - Intentions utilisateur */}
         {!isLocked && (
           <div className="absolute inset-0 flex items-center justify-center z-10 opacity-0 group-hover/card:opacity-100 transition-opacity">
-            <div className="grid grid-cols-2 gap-2">
-              {/* Study Room */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* 1. Avancer - Ouvre le Learning Track Viewer directement */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Study Room:', course.id);
+                  onClick(course); // Ouvre directement le cours dans le Learning Track Viewer
                 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-colors"
-                title="Study Room"
+                title="Avancer"
               >
-                <Video size={18} className="text-gray-900" />
+                <Play size={16} className="text-gray-900 ml-0.5" />
               </motion.button>
               
-              {/* Messages */}
+              {/* 2. Training Club - Navigation contextuelle (désactivé en mode essai) */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Messages:', course.id);
+                  if (course.isTrial) return;
+                  if (onNavigateToSectionWithContext) {
+                    onNavigateToSectionWithContext('training', { trackId: course.id, trackTitle: course.title });
+                  } else {
+                    setShowPracticeModal(true);
+                  }
                 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-colors"
-                title="Messages"
+                whileHover={course.isTrial ? {} : { scale: 1.1 }}
+                whileTap={course.isTrial ? {} : { scale: 0.9 }}
+                className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xl transition-colors ${
+                  course.isTrial 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-white hover:bg-gray-100'
+                }`}
+                title={course.isTrial ? "Débloquer le cours pour accéder" : "Training Club"}
               >
-                <MessageCircle size={18} className="text-gray-900" />
+                <Target size={16} className={course.isTrial ? 'text-gray-600' : 'text-gray-900'} />
               </motion.button>
               
-              {/* Invitation */}
+              {/* 3. Social Club - Navigation contextuelle (désactivé en mode essai) */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Invite:', course.id);
+                  if (course.isTrial) return;
+                  if (onNavigateToSectionWithContext) {
+                    onNavigateToSectionWithContext('community', { trackId: course.id, trackTitle: course.title });
+                  } else {
+                    setCommunityInitialTab('discussion');
+                    setShowCommunityFullScreen(true);
+                  }
                 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-colors"
-                title="Inviter"
+                whileHover={course.isTrial ? {} : { scale: 1.1 }}
+                whileTap={course.isTrial ? {} : { scale: 0.9 }}
+                className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xl transition-colors ${
+                  course.isTrial 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-white hover:bg-gray-100'
+                }`}
+                title={course.isTrial ? "Débloquer le cours pour accéder" : "Social Club"}
               >
-                <UserPlus size={18} className="text-gray-900" />
+                <Users size={16} className={course.isTrial ? 'text-gray-600' : 'text-gray-900'} />
               </motion.button>
               
-              {/* Planner */}
+              {/* 4. Planning - Navigation contextuelle (toujours activé) */}
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Planner:', course.id);
+                  if (onNavigateToSectionWithContext) {
+                    onNavigateToSectionWithContext('planning', { trackId: course.id, trackTitle: course.title });
+                  } else {
+                    setShowPlanningModal(true);
+                  }
                 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-colors"
                 title="Planning"
               >
-                <Calendar size={18} className="text-gray-900" />
+                <Calendar size={16} className="text-gray-900" />
               </motion.button>
             </div>
           </div>
@@ -224,6 +294,49 @@ function CourseCardWrapper({
           Terminez le cours {sequenceNumber - 1} d'abord
         </p>
       )}
+
+      {/* Modals pour les 3 intentions (Avancer ouvre directement le Learning Track Viewer) */}
+      <TrackPracticeView
+        isOpen={showPracticeModal}
+        onClose={() => setShowPracticeModal(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+        onOpenQuizRapide={handleOpenQuizRapide}
+        onOpenQuizApprofondi={handleOpenQuizApprofondi}
+        onOpenExamBlanc={handleOpenExamBlanc}
+        onOpenDuel={handleOpenDuel}
+      />
+      
+      {/* Community Fullscreen */}
+      <CommunityFullScreen
+        isOpen={showCommunityFullScreen}
+        onClose={() => setShowCommunityFullScreen(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+        initialTab={communityInitialTab}
+      />
+      
+      <TrackPlanningView
+        isOpen={showPlanningModal}
+        onClose={() => setShowPlanningModal(false)}
+        trackId={course.id}
+        trackTitle={course.title}
+        totalLessons={course.totalLessons || 12}
+        completedLessons={Math.round(((course.progress || 0) / 100) * (course.totalLessons || 12))}
+      />
+      
+      {/* Vues plein écran */}
+      <DuelFullScreen
+        isOpen={showDuelFullScreen}
+        onClose={() => setShowDuelFullScreen(false)}
+        trackTitle={course.title}
+      />
+      
+      <ExamBlancGenerator
+        isOpen={showExamBlancGenerator}
+        onClose={() => setShowExamBlancGenerator(false)}
+        trackTitle={course.title}
+      />
     </div>
   );
 }
@@ -241,6 +354,7 @@ export function CourseRow({
   defaultFavorites = false,
   onToggleFavorite,
   isSequential = false,
+  onNavigateToSectionWithContext,
 }: CourseRowProps) {
   // Apply DM Sans font
   const fontStyle = { fontFamily: 'DM Sans, sans-serif' };
@@ -372,6 +486,7 @@ export function CourseRow({
                 isFavorite={defaultFavorites}
                 onToggleFavorite={onToggleFavorite}
                 sequenceNumber={isSequential ? index + 1 : undefined}
+                onNavigateToSectionWithContext={onNavigateToSectionWithContext}
               />
             );
           })}
@@ -389,7 +504,82 @@ interface SubjectSectionProps {
   onCourseClick: (course: Course) => void;
   className?: string;
   onToggleFavorite?: (courseId: string) => void;
+  displayMode?: 'tracks' | 'bundles'; // Mode d'affichage
 }
+
+import { Bundle } from '@/types';
+import { BundleRow } from './BundleRow';
+
+// Helper pour convertir un groupe de cours en Bundle
+const coursesToBundle = (courses: Course[], subject: string, groupIndex: number): Bundle => {
+  const completedTracks = courses.filter(c => c.progress === 100).length;
+  const totalProgress = courses.length > 0 
+    ? Math.round(courses.reduce((acc, c) => acc + (c.progress || 0), 0) / courses.length) 
+    : 0;
+  const currentIndex = courses.findIndex(c => c.progress > 0 && c.progress < 100);
+  const totalLessons = courses.reduce((acc, c) => acc + (c.totalLessons || 0), 0);
+  const totalMinutes = courses.reduce((acc, c) => {
+    const duration = parseInt(c.duration || '0');
+    return acc + (isNaN(duration) ? 45 : duration * 60);
+  }, 0);
+  
+  // Déterminer si le bundle est en mode essai (si au moins un cours est en mode essai)
+  const isTrial = courses.some(c => c.isTrial === true);
+  
+  // Générer un titre pour le bundle basé sur le premier cours
+  const firstCourse = courses[0];
+  let bundleTitle = `Parcours ${subject} ${groupIndex + 1}`;
+  
+  // Extraire un meilleur titre si possible
+  if (firstCourse?.title) {
+    if (firstCourse.title.includes('mécanique') || firstCourse.title.toLowerCase().includes('meca')) {
+      bundleTitle = 'Mécanique';
+    } else if (firstCourse.title.includes('électro') || firstCourse.title.includes('elec')) {
+      bundleTitle = 'Électrostatique';
+    } else if (firstCourse.title.includes('thermo')) {
+      bundleTitle = 'Thermodynamique';
+    } else if (firstCourse.title.includes('analyse') || firstCourse.title.includes('Analyse')) {
+      bundleTitle = 'Analyse';
+    } else if (firstCourse.title.includes('algèbre') || firstCourse.title.includes('Algèbre')) {
+      bundleTitle = 'Algèbre linéaire';
+    } else if (firstCourse.title.includes('organique')) {
+      bundleTitle = 'Chimie organique';
+    } else if (firstCourse.title.includes('générale') || firstCourse.title.includes('gen')) {
+      bundleTitle = 'Chimie générale';
+    } else if (firstCourse.title.includes('Python')) {
+      bundleTitle = 'Python';
+    } else if (firstCourse.title.includes('BDD') || firstCourse.title.includes('SQL')) {
+      bundleTitle = 'Bases de données';
+    } else if (firstCourse.title.includes('micro')) {
+      bundleTitle = 'Microéconomie';
+    } else if (firstCourse.title.includes('macro')) {
+      bundleTitle = 'Macroéconomie';
+    }
+  }
+  
+  return {
+    id: `bundle-${subject.toLowerCase().replace(/\s/g, '-')}-${groupIndex}`,
+    title: bundleTitle,
+    description: `Maîtrise complète à travers ${courses.length} learning tracks progressifs`,
+    subject,
+    tracks: courses,
+    totalDuration: totalMinutes >= 60 
+      ? `${Math.floor(totalMinutes / 60)}h${totalMinutes % 60 > 0 ? `${totalMinutes % 60}min` : ''}`
+      : `${totalMinutes}min`,
+    totalLessons,
+    difficulty: courses[0]?.difficulty || 'intermediate',
+    progress: totalProgress,
+    currentTrackIndex: currentIndex >= 0 ? currentIndex : 0,
+    isStarted: totalProgress > 0,
+    isCompleted: completedTracks === courses.length,
+    objectives: [
+      `Comprendre les fondamentaux de ${subject.toLowerCase()}`,
+      'Appliquer les concepts à des exercices pratiques',
+      'Réussir les évaluations de fin de parcours'
+    ],
+    isTrial, // Hériter du mode essai des cours
+  };
+};
 
 export function SubjectSection({
   subject,
@@ -397,13 +587,29 @@ export function SubjectSection({
   onCourseClick,
   className = '',
   onToggleFavorite,
+  displayMode = 'bundles',
 }: SubjectSectionProps) {
+  // Convertir les groupes en bundles
+  const bundles = subGroups.map((courses, index) => coursesToBundle(courses, subject, index));
+  
+  if (displayMode === 'bundles') {
+    // Affichage avec BundleRow (cartes + accordéon inline)
+    return (
+      <div className={className}>
+        <BundleRow
+          subject={subject}
+          bundles={bundles}
+          onTrackClick={onCourseClick}
+          onToggleFavorite={onToggleFavorite}
+        />
+      </div>
+    );
+  }
+  
+  // Affichage classique des tracks (ancien comportement)
   return (
     <div className={`space-y-3 ${className}`} style={{ fontFamily: 'DM Sans, sans-serif' }}>
-      {/* Subject Header */}
       <h2 className="text-lg font-bold text-gray-900">{subject}</h2>
-
-      {/* Sub-groups as separate rows - chaque groupe est séquentiel */}
       {subGroups.map((courses, groupIndex) => (
         <CourseRow
           key={`${subject}-group-${groupIndex}`}
@@ -412,7 +618,7 @@ export function SubjectSection({
           showLockStatus={true}
           showProgress={true}
           onToggleFavorite={onToggleFavorite}
-          isSequential={true} // Les cours d'un groupe sont séquentiels
+          isSequential={true}
         />
       ))}
     </div>

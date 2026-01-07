@@ -25,6 +25,11 @@ interface CreateStudyRoomModalProps {
   onCreateRoom: (roomData: StudyRoomFormData) => void;
   userCourses: Course[];
   isAdmin?: boolean;
+  // Props pour contexte Learning Track (pré-sélection)
+  preSelectedCourseId?: string;
+  preSelectedCourseName?: string;
+  defaultTitlePrefix?: string;
+  hideBackdrop?: boolean;
 }
 
 export interface StudyRoomFormData {
@@ -46,7 +51,11 @@ export function CreateStudyRoomModal({
   onClose,
   onCreateRoom,
   userCourses,
-  isAdmin = false
+  isAdmin = false,
+  preSelectedCourseId,
+  preSelectedCourseName,
+  defaultTitlePrefix,
+  hideBackdrop = false
 }: CreateStudyRoomModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<StudyRoomFormData>({
@@ -63,14 +72,17 @@ export function CreateStudyRoomModal({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Détermine si le cours est pré-sélectionné (contexte Learning Track)
+  const hasPreSelectedCourse = !!(preSelectedCourseId && preSelectedCourseName);
+
   useEffect(() => {
     if (isOpen) {
       // Reset form when modal opens
       setCurrentStep(1);
       setFormData({
-        title: '',
-        courseId: '',
-        courseName: '',
+        title: defaultTitlePrefix ? `${defaultTitlePrefix} / ` : '',
+        courseId: preSelectedCourseId || '',
+        courseName: preSelectedCourseName || '',
         type: 'interactive',
         visibility: 'public',
         description: '',
@@ -81,7 +93,7 @@ export function CreateStudyRoomModal({
       });
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, preSelectedCourseId, preSelectedCourseName, defaultTitlePrefix]);
 
   const validateStep = (step: number): boolean => {
     const newErrors: Record<string, string> = {};
@@ -93,7 +105,8 @@ export function CreateStudyRoomModal({
         newErrors.title = 'Le titre doit contenir au moins 3 caractères';
       }
 
-      if (!formData.courseId) {
+      // Skip courseId validation if pre-selected
+      if (!hasPreSelectedCourse && !formData.courseId) {
         newErrors.courseId = 'Veuillez sélectionner un cours';
       }
     }
@@ -159,7 +172,7 @@ export function CreateStudyRoomModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-4">
+    <div className={`fixed inset-0 flex items-center justify-center z-[110] p-2 md:p-4 ${hideBackdrop ? 'bg-black/20' : 'bg-black/50'}`}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -228,7 +241,7 @@ export function CreateStudyRoomModal({
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Ex: Session focus - Calculs de champ"
+                    placeholder={hasPreSelectedCourse ? `${preSelectedCourseName} / Votre titre...` : "Ex: Session focus - Calculs de champ"}
                     className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       errors.title ? 'border-red-300' : 'border-gray-300'
                     }`}
@@ -241,32 +254,35 @@ export function CreateStudyRoomModal({
                   )}
                 </div>
 
-                {/* Cours associé */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Cours associé <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.courseId}
-                    onChange={(e) => handleCourseSelect(e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.courseId ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  >
-                    <option value="">Sélectionner un cours</option>
-                    {userCourses.map((course) => (
-                      <option key={course.id} value={course.id}>
-                        {course.title}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.courseId && (
-                    <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle size={14} />
-                      {errors.courseId}
-                    </p>
-                  )}
-                </div>
+                {/* Cours associé - Masqué si pré-sélectionné */}
+                {!hasPreSelectedCourse && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Cours associé <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={formData.courseId}
+                      onChange={(e) => handleCourseSelect(e.target.value)}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.courseId ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                    >
+                      <option value="">Sélectionner un cours</option>
+                      {userCourses.map((course) => (
+                        <option key={course.id} value={course.id}>
+                          {course.title}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.courseId && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle size={14} />
+                        {errors.courseId}
+                      </p>
+                    )}
+                  </div>
+                )}
+
 
                 {/* Type */}
                 <div>

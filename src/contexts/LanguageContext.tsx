@@ -66,11 +66,11 @@ const translations: Record<Language, Record<string, string>> = {
     'target.cta': 'Rejoins le mouvement',
 
     // Curriculum Section (Augment Style)
-    'curriculum.title': 'Un programme qui evolue',
-    'curriculum.title.highlight': 'avec toi.',
-    'curriculum.stats.classes': 'Chapitres',
+    'curriculum.title': 'Paiement unique.',
+    'curriculum.title.highlight': 'Accès à vie à tous nos programmes.',
+    'curriculum.stats.classes': 'Cours',
     'curriculum.stats.students': 'Étudiants',
-    'curriculum.stats.resources': 'Fiches PDF',
+    'curriculum.stats.resources': 'Supports PDF',
 
     // Boosters
     'boosters.title': '4 boosters pour',
@@ -163,9 +163,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Parler de ma situation sur WhatsApp',
 
     // Why us
-    'why.title': 'Pourquoi on ne t’offre pas juste des cours,',
+    'why.title': 'De la confusion',
     'why.title.line2': '',
-    'why.title.highlight': 'mais une transformation',
+    'why.title.highlight': 'à la maîtrise',
     'why.reason1.title': 'Parce qu\'on commence par toi, pas par un catalogue',
     'why.reason1.desc': 'Diagnostic humain. On t\'écoute, on te comprend, on t\'oriente. Une progression logique, construite, qui t\'amène vers la maîtrise.',
     'why.reason2.title': 'Parce qu\'on redonne enfin du plaisir à comprendre les sciences',
@@ -347,8 +347,8 @@ const translations: Record<Language, Record<string, string>> = {
     'target.cta': 'Join the movement',
 
     // Curriculum Section (Augment Style)
-    'curriculum.title': 'A curriculum that evolves',
-    'curriculum.title.highlight': 'with you.',
+    'curriculum.title': 'One-time payment.',
+    'curriculum.title.highlight': 'Lifetime access to all our programs.',
     'curriculum.stats.classes': 'Chapters',
     'curriculum.stats.students': 'Students',
     'curriculum.stats.resources': 'PDF Sheets',
@@ -444,9 +444,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Discuss my situation on WhatsApp',
 
     // Why us
-    'why.title': 'Why we don\'t just offer you courses,',
+    'why.title': 'From confusion',
     'why.title.line2': '',
-    'why.title.highlight': 'but a transformation',
+    'why.title.highlight': 'to mastery',
     'why.reason1.title': 'Because we start with you, not a catalog',
     'why.reason1.desc': 'Human diagnosis. We listen to you, we understand you, we guide you. A logical, structured progression that leads you to mastery.',
     'why.reason2.title': 'Because we finally bring back the joy of understanding science',

@@ -17,6 +17,7 @@ interface CircleItem {
 interface CircleDomeGalleryProps {
   circles: CircleItem[];
   onCircleClick?: (circle: CircleItem) => void;
+  recommendedCircleId?: string;
   fit?: number;
   fitBasis?: 'auto' | 'min' | 'max' | 'width' | 'height';
   minRadius?: number;
@@ -50,7 +51,7 @@ function buildItems(pool: CircleItem[], seg: number) {
 
   const coords = xCols.flatMap((x, c) => {
     const ys = c % 2 === 0 ? evenYs : oddYs;
-    return ys.map(y => ({ x, y, sizeX: 2, sizeY: 2 }));
+    return ys.map(y => ({ x, y, sizeX: 2.1, sizeY: 2.1 }));
   });
 
   const totalSlots = coords.length;
@@ -67,6 +68,7 @@ function buildItems(pool: CircleItem[], seg: number) {
 export default function CircleDomeGallery({
   circles,
   onCircleClick,
+  recommendedCircleId,
   fit = 0.5,
   fitBasis = 'auto',
   minRadius = 600,
@@ -323,64 +325,27 @@ export default function CircleDomeGallery({
                   }}
                 >
                   <div
-                    className="item__card bg-gradient-to-br from-white to-gray-50 hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 shadow-lg hover:shadow-2xl"
+                    className="item__card bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-2xl border-0"
                     onClick={() => {
                       if (draggingRef.current || movedRef.current) return;
                       if (performance.now() - lastDragEndAt.current < 80) return;
                       onCircleClick?.(it.circle);
                     }}
-                    style={{
-                      borderColor: it.circle.color,
-                      borderWidth: '2px'
-                    }}
                   >
-                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      {/* Logo/Drapeau/Nom selon le cercle */}
-                      <div className="mb-3 flex items-center justify-center">
-                        {/* Si c'est un pays → Drapeau */}
-                        {it.circle.name.includes('France') || it.circle.name.includes('Français') ? (
-                          <span className="text-5xl">🇫🇷</span>
-                        ) : it.circle.name.includes('Maroc') || it.circle.name.includes('Marocain') ? (
-                          <span className="text-5xl">🇲🇦</span>
-                        ) : it.circle.name.includes('Belgique') || it.circle.name.includes('Belge') ? (
-                          <span className="text-5xl">🇧🇪</span>
-                        ) : it.circle.name.includes('Alumni') ? (
-                          <span className="text-5xl">🎓</span>
-                        ) : it.circle.type === 'faculty' ? (
-                          // Initiales d'université
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                            <span className="text-white font-black text-lg">
-                              {it.circle.name.split(' ').map(w => w[0]).join('').slice(0, 3)}
-                            </span>
-                          </div>
-                        ) : (
-                          // Nom de cours en abrégé
-                          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-                            <span className="text-white font-bold text-xs leading-tight px-1">
-                              {it.circle.name.length > 12 ? it.circle.name.slice(0, 12) + '...' : it.circle.name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Nom complet */}
-                      <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center relative">
+                      {/* Badge recommandé */}
+                      {recommendedCircleId === it.circle.id && (
+                        <div 
+                          className="absolute top-2 right-2 px-2 py-0.5 rounded-full"
+                          style={{ backgroundColor: '#48c6ed' }}
+                        >
+                          <span className="text-[9px] text-white font-semibold">Recommandé</span>
+                        </div>
+                      )}
+                      {/* Nom du cercle */}
+                      <h3 className="text-lg font-bold line-clamp-2 leading-tight" style={{ color: '#ffffff' }}>
                         {it.circle.name}
                       </h3>
-                      
-                      {/* Membres */}
-                      <div className="flex items-center gap-1 text-xs text-gray-600 mb-2">
-                        <Users className="w-3.5 h-3.5" />
-                        <span className="font-semibold">{it.circle.memberCount} membres</span>
-                      </div>
-                      
-                      {/* Badge type */}
-                      <div className="px-3 py-1 bg-gray-900 text-white rounded-full">
-                        <span className="text-[10px] font-bold">
-                          {it.circle.type === 'faculty' ? 'FACULTÉ' : 
-                           it.circle.type === 'course' ? 'COURS' : 'ALUMNI'}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -388,26 +353,7 @@ export default function CircleDomeGallery({
             </div>
           </div>
 
-          {/* Overlays de blur sans rectangle */}
-          <div
-            className="absolute inset-0 m-auto pointer-events-none"
-            style={{
-              backgroundImage: `radial-gradient(rgba(235, 235, 235, 0) 65%, var(--overlay-blur-color, ${overlayBlurColor}) 100%)`
-            }}
-          />
-
-          <div
-            className="absolute left-0 right-0 top-0 h-[120px] pointer-events-none rotate-180"
-            style={{
-              background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))`
-            }}
-          />
-          <div
-            className="absolute left-0 right-0 bottom-0 h-[120px] pointer-events-none"
-            style={{
-              background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))`
-            }}
-          />
+          {/* Overlays removed - no vignette effect */}
         </main>
       </div>
     </>

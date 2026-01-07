@@ -1,16 +1,17 @@
 'use client';
 
 /**
- * LeadCaptureModal - Popup de capture de leads style MasterClass
+ * LeadCaptureModal - Popup de capture de leads style SMS
  * 
- * Apparaît après le clic sur "Débloquer 10h gratuites"
+ * Apparaît après le clic sur "Débloquer 10h gratuites" ou sur un cours
  * Flow: Form → OTP Verification → Success
  * Collecte: Prénom, Email, Téléphone, Établissement
  */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
+import { X, Loader2, CheckCircle, ArrowLeft, ArrowRight, Play } from 'lucide-react';
+import Image from 'next/image';
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -84,14 +85,6 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
       newErrors.email = 'Email invalide';
     }
     
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Téléphone requis';
-    }
-    
-    if (!formData.school.trim()) {
-      newErrors.school = 'Établissement requis';
-    }
-    
     if (!acceptedTerms) {
       newErrors.terms = 'Veuillez accepter les conditions';
     }
@@ -111,7 +104,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // TODO: Send OTP via SMS/Email
-    console.log('Sending OTP to:', formData.phone);
+    console.log('Sending OTP to:', formData.email);
     
     setIsSubmitting(false);
     setStep('otp');
@@ -188,7 +181,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
     setOtpError('');
     
     // Simulate resend
-    console.log('Resending OTP to:', formData.phone);
+    console.log('Resending OTP to:', formData.email);
     
     setResendCooldown(60);
     otpInputRefs[0]?.current?.focus();
@@ -218,33 +211,36 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/80 backdrop-blur-md"
           onClick={onClose}
         />
 
         {/* Modal */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: 'spring', duration: 0.5 }}
-          className="relative w-full max-w-md bg-[#0d1317] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          exit={{ opacity: 0, scale: 0.9, y: 30 }}
+          transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
+          className="relative w-full max-w-lg bg-gradient-to-b from-[#0d1317] to-[#0a0f12] rounded-3xl overflow-hidden shadow-2xl border border-white/10"
         >
+          {/* Decorative line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#48c6ed]" />
+          
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            className="absolute top-5 right-5 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
           >
-            <X className="w-4 h-4 text-white" />
+            <X className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
           </button>
 
           {/* Back Button (OTP step only) */}
           {step === 'otp' && (
             <button
               onClick={() => setStep('form')}
-              className="absolute top-4 left-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              className="absolute top-5 left-5 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
             >
-              <ArrowLeft className="w-4 h-4 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
             </button>
           )}
 
@@ -256,19 +252,35 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
               className="p-12 text-center"
             >
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', delay: 0.2 }}
-                className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-600 flex items-center justify-center"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', delay: 0.2, bounce: 0.5 }}
+                className="w-48 h-48 mx-auto mb-8 relative"
               >
-                <CheckCircle className="w-10 h-10 text-white" />
+                <Image 
+                  src="/brand/sms-logo.svg" 
+                  alt="Science Made Simple" 
+                  fill 
+                  className="object-contain"
+                />
               </motion.div>
-              <h2 className="text-2xl font-bold !text-white mb-3">
-                Bienvenue chez SMS ! 🎉
-              </h2>
-              <p className="!text-white/70">
-                Ton accès gratuit est activé. Prépare-toi à transformer ta façon d'apprendre.
-              </p>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-3xl font-bold !text-white mb-4"
+              >
+                Bienvenue ! 🎉
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="!text-white/60 text-lg"
+              >
+                Ton accès gratuit de 10h est activé.<br />
+                Prépare-toi à tout comprendre.
+              </motion.p>
             </motion.div>
           )}
 
@@ -277,24 +289,24 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="p-8"
+              className="p-8 pt-16"
             >
               {/* Header */}
-              <div className="text-center mb-8 pt-4">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-blue-600 flex items-center justify-center">
-                  <span className="text-2xl">📱</span>
+              <div className="text-center mb-10">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[#48c6ed]/20 to-blue-600/20 border border-[#48c6ed]/30 flex items-center justify-center">
+                  <span className="text-4xl">📧</span>
                 </div>
-                <h2 className="text-2xl font-bold !text-white mb-2">
-                  Vérifie ton numéro
+                <h2 className="text-2xl font-bold !text-white mb-3">
+                  Vérifie ton email
                 </h2>
-                <p className="!text-white/60">
-                  Un code de vérification a été envoyé au{' '}
-                  <span className="!text-white font-medium">{formData.phone}</span>
+                <p className="!text-white/50">
+                  Un code à 6 chiffres a été envoyé à<br />
+                  <span className="!text-white font-medium">{formData.email}</span>
                 </p>
               </div>
 
               {/* OTP Form */}
-              <form onSubmit={handleOtpSubmit} className="space-y-6">
+              <form onSubmit={handleOtpSubmit} className="space-y-8">
                 {/* OTP Inputs */}
                 <div className="flex gap-3 justify-center" onPaste={handleOtpPaste}>
                   {otp.map((digit, index) => (
@@ -307,12 +319,12 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className={`w-12 h-14 rounded-xl border-2 bg-white/10 text-center text-xl font-bold !text-white focus:outline-none transition-all ${
+                      className={`w-14 h-16 rounded-xl border-2 bg-white/5 text-center text-2xl font-bold !text-white focus:outline-none transition-all ${
                         otpError 
-                          ? 'border-red-500' 
+                          ? 'border-red-500/50 bg-red-500/10' 
                           : digit 
-                            ? 'border-blue-500 bg-blue-500/20' 
-                            : 'border-white/20 focus:border-blue-500'
+                            ? 'border-[#48c6ed] bg-[#48c6ed]/10' 
+                            : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
                       }`}
                     />
                   ))}
@@ -320,23 +332,29 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
 
                 {/* Error Message */}
                 {otpError && (
-                  <p className="text-red-400 text-sm text-center">{otpError}</p>
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-sm text-center"
+                  >
+                    {otpError}
+                  </motion.p>
                 )}
 
                 {/* Resend Link */}
                 <div className="text-center">
                   {resendCooldown > 0 ? (
-                    <p className="!text-white/50 text-sm">
-                      Renvoyer le code dans <span className="!text-white">{resendCooldown}s</span>
+                    <p className="!text-white/40 text-sm">
+                      Renvoyer le code dans <span className="!text-white font-medium">{resendCooldown}s</span>
                     </p>
                   ) : (
                     <button
                       type="button"
                       onClick={handleResendOtp}
-                      className="text-sm !text-white/60 hover:!text-white transition-colors"
+                      className="text-sm !text-white/50 hover:!text-white transition-colors"
                     >
                       Pas reçu le code ?{' '}
-                      <span className="font-semibold underline">Renvoyer</span>
+                      <span className="font-semibold text-[#48c6ed] underline">Renvoyer</span>
                     </button>
                   )}
                 </div>
@@ -345,10 +363,10 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                 <button
                   type="submit"
                   disabled={otp.some(d => !d) || isSubmitting}
-                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 ${
                     otp.every(d => d) && !isSubmitting
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-white/10 !text-white/40 cursor-not-allowed'
+                      ? 'bg-gradient-to-r from-[#48c6ed] to-blue-600 hover:from-[#3ab5dc] hover:to-blue-700 text-white shadow-lg shadow-blue-500/25'
+                      : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
                   }`}
                 >
                   {isSubmitting ? (
@@ -357,7 +375,10 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                       Vérification...
                     </>
                   ) : (
-                    'Vérifier et accéder'
+                    <>
+                      Accéder aux cours
+                      <ArrowRight size={20} />
+                    </>
                   )}
                 </button>
               </form>
@@ -366,162 +387,143 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
 
           {/* Form Step */}
           {step === 'form' && (
-            <>
-              {/* Content */}
-              <div className="p-6 md:p-8 pt-12">
-                {/* Header */}
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold !text-white mb-2">
-                    Débloque tout le catalogue
-                  </h2>
-                  <p className="!text-white/60 text-sm md:text-base">
-                    Accède gratuitement à tous nos cours pendant 10 heures.
-                    <br />Zak t'accompagne vers la maîtrise.
-                  </p>
+            <div className="p-8 pt-6">
+              {/* Logo */}
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 relative">
+                  <Image 
+                    src="/brand/onboarding-logo.svg" 
+                    alt="SMS" 
+                    fill 
+                    className="object-contain"
+                  />
                 </div>
+              </div>
 
-                {/* Form */}
-                <form onSubmit={handleFormSubmit} className="space-y-3">
-                  {/* First Name */}
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Prénom"
-                      value={formData.firstName}
-                      onChange={handleChange('firstName')}
-                      className={`w-full px-4 py-3.5 bg-white/10 rounded-xl !text-white placeholder-white/40 text-base border-2 transition-all ${
-                        errors.firstName 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-transparent focus:border-blue-500 focus:bg-white/15'
-                      } focus:outline-none`}
-                    />
-                    {errors.firstName && (
-                      <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
-                    )}
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <input
-                      type="email"
-                      placeholder="email@exemple.com"
-                      value={formData.email}
-                      onChange={handleChange('email')}
-                      className={`w-full px-4 py-3.5 bg-white/10 rounded-xl !text-white placeholder-white/40 text-base border-2 transition-all ${
-                        errors.email 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-transparent focus:border-blue-500 focus:bg-white/15'
-                      } focus:outline-none`}
-                    />
-                    {errors.email && (
-                      <p className="text-red-400 text-xs mt-1">{errors.email}</p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <input
-                      type="tel"
-                      placeholder="Numéro de téléphone"
-                      value={formData.phone}
-                      onChange={handleChange('phone')}
-                      className={`w-full px-4 py-3.5 bg-white/10 rounded-xl !text-white placeholder-white/40 text-base border-2 transition-all ${
-                        errors.phone 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-transparent focus:border-blue-500 focus:bg-white/15'
-                      } focus:outline-none`}
-                    />
-                    {errors.phone && (
-                      <p className="text-red-400 text-xs mt-1">{errors.phone}</p>
-                    )}
-                  </div>
-
-                  {/* School */}
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Ton établissement (Université, École...)"
-                      value={formData.school}
-                      onChange={handleChange('school')}
-                      className={`w-full px-4 py-3.5 bg-white/10 rounded-xl !text-white placeholder-white/40 text-base border-2 transition-all ${
-                        errors.school 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-transparent focus:border-blue-500 focus:bg-white/15'
-                      } focus:outline-none`}
-                    />
-                    {errors.school && (
-                      <p className="text-red-400 text-xs mt-1">{errors.school}</p>
-                    )}
-                  </div>
-
-                  {/* Terms Checkbox */}
-                  <div className="mt-2">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <div className="relative mt-0.5">
-                        <input
-                          type="checkbox"
-                          checked={acceptedTerms}
-                          onChange={(e) => {
-                            setAcceptedTerms(e.target.checked);
-                            if (e.target.checked && errors.terms) {
-                              setErrors(prev => ({ ...prev, terms: '' }));
-                            }
-                          }}
-                          className="sr-only"
-                        />
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                          acceptedTerms 
-                            ? 'bg-blue-600 border-blue-600' 
-                            : errors.terms
-                            ? 'border-red-500 bg-transparent'
-                            : 'border-white/30 bg-transparent group-hover:border-white/50'
-                        }`}>
-                          {acceptedTerms && (
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-                      <span className="text-sm !text-white/70">
-                        J'accepte les{' '}
-                        <a href="/terms" target="_blank" className="underline hover:!text-white transition-colors">
-                          conditions d'utilisation
-                        </a>
-                        {' '}et la{' '}
-                        <a href="/privacy" target="_blank" className="underline hover:!text-white transition-colors">
-                          politique de confidentialité
-                        </a>
-                      </span>
-                    </label>
-                    {errors.terms && (
-                      <p className="text-red-400 text-xs mt-1 ml-8">{errors.terms}</p>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 !text-white font-bold text-base rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Envoi du code...
-                      </>
-                    ) : (
-                      'Recevoir mon code d\'accès'
-                    )}
-                  </button>
-                </form>
-
-                {/* Trust Signals */}
-                <p className="text-center !text-white/40 text-xs mt-5">
-                  🔒 Tes données sont protégées. Pas de spam, promis.
+              {/* Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
+                  Débloque 10h gratuites
+                </h2>
+                <p className="!text-white/80 text-base">
+                  Accède à tous nos programmes. Sans engagement.
                 </p>
               </div>
-            </>
+
+              {/* Form */}
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                {/* First Name */}
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Ton prénom"
+                    value={formData.firstName}
+                    onChange={handleChange('firstName')}
+                    className={`w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 transition-all ${
+                      errors.firstName 
+                        ? 'border-red-500/50 focus:border-red-500 bg-red-500/5' 
+                        : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
+                    } focus:outline-none`}
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-400 text-xs mt-1.5 ml-1">{errors.firstName}</p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Ton email"
+                    value={formData.email}
+                    onChange={handleChange('email')}
+                    className={`w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 transition-all ${
+                      errors.email 
+                        ? 'border-red-500/50 focus:border-red-500 bg-red-500/5' 
+                        : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
+                    } focus:outline-none`}
+                  />
+                  {errors.email && (
+                    <p className="text-red-400 text-xs mt-1.5 ml-1">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="Téléphone"
+                    value={formData.phone}
+                    onChange={handleChange('phone')}
+                    className="w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 border-white/10 focus:border-[#48c6ed] focus:bg-white/10 focus:outline-none transition-all"
+                  />
+                </div>
+
+                {/* Terms Checkbox */}
+                <div className="pt-2">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <div className="relative mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={(e) => {
+                          setAcceptedTerms(e.target.checked);
+                          if (e.target.checked && errors.terms) {
+                            setErrors(prev => ({ ...prev, terms: '' }));
+                          }
+                        }}
+                        className="sr-only"
+                      />
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                        acceptedTerms 
+                          ? 'bg-[#48c6ed] border-[#48c6ed]' 
+                          : errors.terms
+                          ? 'border-red-500/50 bg-red-500/10'
+                          : 'border-white/20 bg-transparent group-hover:border-white/40'
+                      }`}>
+                        {acceptedTerms && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm !text-white/50 leading-relaxed">
+                      J'accepte les{' '}
+                      <a href="/terms" target="_blank" className="text-[#48c6ed] hover:underline">
+                        conditions
+                      </a>
+                      {' '}et la{' '}
+                      <a href="/privacy" target="_blank" className="text-[#48c6ed] hover:underline">
+                        politique de confidentialité
+                      </a>
+                    </span>
+                  </label>
+                  {errors.terms && (
+                    <p className="text-red-400 text-xs mt-1.5 ml-8">{errors.terms}</p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-[#48c6ed] hover:bg-[#3ab5dc] disabled:opacity-50 !text-white font-bold text-lg rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-[#48c6ed]/25 mt-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Play size={20} fill="currentColor" />
+                      Commence maintenant
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           )}
         </motion.div>
       </motion.div>

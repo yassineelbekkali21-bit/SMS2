@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuration pour Firebase Hosting (export statique)
-  output: 'export',
+  // output: 'export', // DÉSACTIVÉ POUR DEV - Réactiver pour build prod
   trailingSlash: true,
   images: {
     unoptimized: true

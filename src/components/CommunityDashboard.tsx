@@ -241,7 +241,7 @@ export function CommunityDashboard() {
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-2.5 px-5 py-2.5 bg-gray-900 rounded-full"><Clock size={16} className="text-white" /><span className="text-base font-bold text-white tabular-nums">00:00:00</span></div>
               <button className="hidden md:flex items-center gap-2 px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-900 rounded-full font-medium transition-colors"><Users size={14} /><span className="text-sm">Inviter</span></button>
-              <button className="hidden md:block px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-full transition-colors text-sm">Finish Sign Up</button>
+              <button className="hidden md:block px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-full transition-colors text-sm">Débloquer</button>
               <div className="relative">
                 <button onClick={() => setShowSettings(!showSettings)} className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-semibold hover:bg-gray-800 transition-colors text-sm">T</button>
                 <AnimatePresence>

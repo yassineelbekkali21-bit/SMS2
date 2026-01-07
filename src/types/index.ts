@@ -126,6 +126,7 @@ export interface Course {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   packId?: string; // ID du pack auquel appartient ce cours
   lessons?: Lesson[]; // Leçons du cours pour la vue escalier
+  isTrial?: boolean; // Mode essai - première leçon gratuite, reste en preview
 }
 
 export interface Lesson {
@@ -192,6 +193,29 @@ export interface Pack {
   isPopular: boolean;
   isPremium?: boolean;
   tags?: string[];
+}
+
+// ========================================================================
+// BUNDLES - Séquences de Learning Tracks
+// ========================================================================
+
+export interface Bundle {
+  id: string;
+  title: string;
+  description: string;
+  subject: string; // Physique, Maths, Chimie, etc.
+  tracks: Course[]; // Learning tracks dans l'ordre séquentiel
+  totalDuration: string; // Durée totale du bundle
+  totalLessons: number;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  progress: number; // 0-100, calculé à partir des tracks
+  currentTrackIndex: number; // Index du track en cours (0-based)
+  isStarted: boolean;
+  isCompleted: boolean;
+  icon?: string; // Emoji ou icône
+  color?: string; // Couleur du bundle (pour le gradient)
+  objectives?: string[]; // Ce que l'étudiant va maîtriser
+  isTrial?: boolean; // Mode essai - accès limité avec 10h gratuites
 }
 
 // ========================================================================
@@ -1048,6 +1072,53 @@ export interface ProposeExamDateData {
 export type BuddyType = 'buddy' | 'tutor';
 export type BuddyStatus = 'pending' | 'accepted' | 'blocked' | 'declined';
 export type UserStatus = 'online' | 'in-study-room' | 'offline';
+
+// Statut social de l'utilisateur - contrôle les interactions sociales
+export type SocialStatus = 'available' | 'busy' | 'focus' | 'invisible';
+
+export interface SocialStatusConfig {
+  status: SocialStatus;
+  allowDuelRequests: boolean;
+  allowStudyRoomInvites: boolean;
+  allowNotifications: boolean;
+  allowBuddyRequests: boolean;
+  showActivityStatus: boolean;
+}
+
+export const SOCIAL_STATUS_PRESETS: Record<SocialStatus, SocialStatusConfig> = {
+  available: {
+    status: 'available',
+    allowDuelRequests: true,
+    allowStudyRoomInvites: true,
+    allowNotifications: true,
+    allowBuddyRequests: true,
+    showActivityStatus: true,
+  },
+  busy: {
+    status: 'busy',
+    allowDuelRequests: false,
+    allowStudyRoomInvites: true,
+    allowNotifications: true,
+    allowBuddyRequests: true,
+    showActivityStatus: true,
+  },
+  focus: {
+    status: 'focus',
+    allowDuelRequests: false,
+    allowStudyRoomInvites: false,
+    allowNotifications: false,
+    allowBuddyRequests: false,
+    showActivityStatus: true,
+  },
+  invisible: {
+    status: 'invisible',
+    allowDuelRequests: false,
+    allowStudyRoomInvites: false,
+    allowNotifications: false,
+    allowBuddyRequests: false,
+    showActivityStatus: false,
+  },
+};
 
 export interface BuddyConsents {
   activity: boolean; // Voir dernière connexion, progression

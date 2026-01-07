@@ -206,7 +206,7 @@ export function HeroSection({ onEnterApp, isMenuOpen, setIsMenuOpen }: HeroSecti
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 border-2 border-white"></div>
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 border-2 border-white"></div>
                 </div>
-                <p className="text-base text-gray-700 font-medium">
+                <p className="text-gray-700 font-medium" style={{ fontSize: '16px' }}>
                   <span className="font-bold">+2,400 étudiants</span> ont déjà décollé avec nous
                 </p>
               </div>

@@ -121,6 +121,7 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
   const particlesRef = useRef<HTMLDivElement>(null);
   const scanLineRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
+  const starRef = useRef<HTMLDivElement>(null); // Étoile complète (2 parties)
 
   // Check if this variant uses DrawSVG
   const usesDrawSVG = DRAW_VARIANTS.includes(variant);
@@ -133,6 +134,7 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
     particles: particlesRef,
     scanLine: scanLineRef,
     flash: flashRef,
+    star: starRef,
   }), []);
 
   // Detect prefers-reduced-motion
@@ -263,6 +265,8 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
         }}
       />
 
+      {/* Étoile séparée pour star-* animations - Sera déplacée dans le logo container */}
+
       {/* Particles container (for community-assemble) */}
       <div 
         ref={particlesRef} 
@@ -352,6 +356,42 @@ export const LogoIntro: React.FC<LogoIntroProps> = ({
             priority
           />
         </div>
+
+        {/* Étoile COMPLÈTE animée - DANS le container du logo */}
+        {/* Utilise les DEUX paths de ETOILEWHITE.svg pour l'étoile shuriken complète */}
+        {usesDrawSVG && variant.startsWith('star-') && (
+          <div
+            ref={starRef}
+            className="absolute z-30 pointer-events-none"
+            style={{
+              width: '7%',
+              height: '7%',
+              left: '68%',
+              top: '38%',
+              transform: 'translate(-50%, -50%) rotate(-45deg)',
+              opacity: 0,
+              willChange: 'transform, opacity, filter',
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 659.4 658.13"
+              className="w-full h-full"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.8))' }}
+            >
+              {/* Partie 1 : branches ↙↗ */}
+              <path
+                fill="#ffffff"
+                d="M356.14,424.36l-87.82,227.77c-3.72,9.64-17.96,7.01-18.1-3.28l-1.61-169.59c-.51-54.02-33.95-102.28-84.39-121.77L5.94,296.53c-9.56-3.72-6.94-17.96,3.28-18.03l244.13-2.34c9.34-.14,18.18,4.46,23.51,12.12l13.43,19.42,51.4,74.03,11.32,16.35c5.33,7.66,6.5,17.52,3.14,26.28Z"
+              />
+              {/* Partie 2 : branches ↖↘ */}
+              <path
+                fill="#ffffff"
+                d="M303.26,233.77L391.08,6c3.72-9.64,17.96-7.01,18.1,3.28l1.61,169.59c.51,54.02,33.95,102.28,84.39,121.77l158.27,60.96c9.56,3.72,6.94,17.96-3.28,18.03l-244.13,2.34c-9.34.14-18.18-4.46-23.51-12.12l-13.43-19.42-51.4-74.03-11.32-16.35c-5.33-7.66-6.5-17.52-3.14-26.28Z"
+              />
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* Flash overlay */}
