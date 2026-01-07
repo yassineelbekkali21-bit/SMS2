@@ -406,7 +406,7 @@ export function OnboardingPopup({
             <motion.div
               className="flex flex-col items-center"
               animate={{ 
-                y: (phase === 'scanning' || phase === 'reveal') ? '-15vh' : 0,
+                y: (phase === 'scanning' || phase === 'reveal') ? '-10vh' : 0,
               }}
               transition={{ 
                 duration: 0.8, 
