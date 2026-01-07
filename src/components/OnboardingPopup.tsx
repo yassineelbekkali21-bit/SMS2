@@ -400,14 +400,14 @@ export function OnboardingPopup({
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
-          <div className="min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+          <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 py-4 md:py-0 overflow-hidden">
             
-            {/* Logo - Always visible */}
+            {/* Logo - Always visible - Smaller on mobile */}
           <motion.div
               layout
               className="flex flex-col items-center"
               animate={{ 
-                marginBottom: phase === 'reveal' ? '1rem' : '2rem',
+                marginBottom: phase === 'reveal' ? '0.5rem' : '1rem',
               }}
               transition={{ 
                 duration: 0.8, 
@@ -433,15 +433,15 @@ export function OnboardingPopup({
               <Image 
                 src="/brand/onboarding-logo.svg" 
                 alt="Science Made Simple" 
-                width={140} 
-                height={140}
-                className="object-contain"
+                width={100} 
+                height={100}
+                className="object-contain md:w-[140px] md:h-[140px]"
               />
               </motion.div>
             </motion.div>
 
             {/* Content Area */}
-            <div className="relative w-full max-w-2xl min-h-[400px] flex flex-col items-center">
+            <div className="relative w-full max-w-2xl flex flex-col items-center">
               
               {/* Loading & Scanning Content */}
               <AnimatePresence mode="wait">
@@ -461,7 +461,7 @@ export function OnboardingPopup({
                     }}
                   >
             {/* Loading Messages */}
-                    <div className="space-y-5 text-center mb-8">
+                    <div className="space-y-3 md:space-y-5 text-center mb-4 md:mb-8">
                       {loadingMessages.map((message, index) => {
                         const isLastMessage = index === loadingMessages.length - 1;
                         const showHeader = phase === 'transition' || phase === 'scanning';
@@ -478,7 +478,7 @@ export function OnboardingPopup({
                               marginBottom: showHeader && !isLastMessage ? 0 : undefined,
                   }}
                   transition={{ duration: 0.5 }}
-                            className="text-2xl md:text-3xl font-bold overflow-hidden"
+                            className="text-lg md:text-2xl lg:text-3xl font-bold overflow-hidden"
                             style={{ color: '#ffffff' }}
                 >
                   {message}
@@ -492,14 +492,14 @@ export function OnboardingPopup({
                       {phase === 'scanning' && (
                         <motion.div
                           key="scanning-content"
-                          initial={{ opacity: 0, y: 30 }}
+                          initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.5 }}
                           className="flex flex-col items-center w-full"
                         >
                           {/* Programs being scanned */}
-                          <div className="w-full space-y-6 mb-8">
+                          <div className="w-full space-y-3 md:space-y-6 mb-4 md:mb-8">
                             {scanningPrograms.map((program, index) => {
                               const isProgramScanning = index === currentScanningProgram && phase === 'scanning';
                               const isComplete = scannedPrograms.includes(index);
@@ -510,44 +510,44 @@ export function OnboardingPopup({
                               return (
                                 <motion.div
                                   key={program.id}
-                                  initial={{ opacity: 0, y: 20 }}
+                                  initial={{ opacity: 0, y: 15 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ duration: 0.4 }}
                                   className="w-full"
                                 >
-                                  <div className="flex items-center gap-4 mb-4">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold text-lg text-white">{program.name}</span>
+                                  <div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-4">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-0.5 md:mb-1">
+                                        <span className="font-semibold text-base md:text-lg text-white truncate">{program.name}</span>
                                         {isComplete && (
                                           <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            className="text-[#00c2ff]"
+                                            className="text-[#00c2ff] flex-shrink-0"
                                           >
-                                            <CheckCircle size={18} />
+                                            <CheckCircle size={16} className="md:w-[18px] md:h-[18px]" />
                                           </motion.span>
                                         )}
                                         {isProgramScanning && (
-                                          <Loader2 size={18} className="text-white/70 animate-spin" />
+                                          <Loader2 size={16} className="text-white/70 animate-spin flex-shrink-0 md:w-[18px] md:h-[18px]" />
                                         )}
                                       </div>
-                                      <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                                      <div className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                                         {program.totalChapters} chapitres
                                       </div>
                                     </div>
                                     
-                                    <div className="text-right">
-                                      <span className="text-2xl font-bold text-white">
+                                    <div className="text-right flex-shrink-0">
+                                      <span className="text-xl md:text-2xl font-bold text-white">
                                         {isComplete ? program.extractedTracks : isProgramScanning ? Math.min(Math.floor(currentChapters.length / 2), program.extractedTracks) : 0}
                                       </span>
-                                      <span className="text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
+                                      <span className="text-xs md:text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
                                     </div>
                                   </div>
                                   
                                   {(isProgramScanning || isComplete) && (
                                     <motion.div 
-                                      className="h-1 rounded-full bg-gray-800/50 mb-4 overflow-hidden"
+                                      className="h-1 rounded-full bg-gray-800/50 mb-2 md:mb-4 overflow-hidden"
                                       initial={{ opacity: 0 }}
                                       animate={{ opacity: 1 }}
                                     >
@@ -569,11 +569,11 @@ export function OnboardingPopup({
                                         transition={{ duration: 0.3 }}
                                         className="mb-2"
                                       >
-                                        <div className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                                        <div className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider mb-1.5 md:mb-2">
                                           Chapitres analysés
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
-                                          {currentChapters.map((chapter, chapterIndex) => {
+                                        <div className="flex flex-wrap gap-1.5 md:gap-2 max-h-[80px] md:max-h-none overflow-hidden">
+                                          {currentChapters.slice(0, 8).map((chapter, chapterIndex) => {
                                             const isRelevant = program.relevantChapters.includes(chapter);
                                             
                                             return (
@@ -581,7 +581,7 @@ export function OnboardingPopup({
                                                 key={`${program.id}-${chapterIndex}`}
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                className={`px-3 py-1 rounded-full text-xs border ${
+                                                className={`px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs border ${
                                                   isRelevant 
                                                     ? 'bg-[#00c2ff]/20 text-[#00c2ff] border-[#00c2ff]/50 font-medium' 
                                                     : 'bg-gray-800/50 text-white/60 border-gray-700/50'
@@ -591,13 +591,16 @@ export function OnboardingPopup({
                                               </motion.span>
                                             );
                                           })}
+                                          {currentChapters.length > 8 && (
+                                            <span className="px-2 py-0.5 text-[10px] text-white/40">+{currentChapters.length - 8}</span>
+                                          )}
                                         </div>
                                       </motion.div>
                                     )}
                                   </AnimatePresence>
                                   
                                   {isComplete && index < scanningPrograms.length - 1 && (
-                                    <div className="border-b border-gray-700/30 mt-4" />
+                                    <div className="border-b border-gray-700/30 mt-2 md:mt-4" />
                                   )}
                                 </motion.div>
                               );
@@ -610,13 +613,13 @@ export function OnboardingPopup({
                             animate={{ opacity: 1 }}
                             className="w-full"
                           >
-                            <div className="relative h-2 bg-gray-800/50 rounded-full overflow-hidden">
+                            <div className="relative h-1.5 md:h-2 bg-gray-800/50 rounded-full overflow-hidden">
                               <motion.div
                                 className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#00c2ff]/50 to-[#00c2ff] rounded-full"
                                 style={{ width: `${scanProgress}%` }}
                               />
                             </div>
-                            <div className="flex justify-between mt-2 text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                            <div className="flex justify-between mt-1.5 md:mt-2 text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                               <span>{Math.floor((scanProgress / 100) * totalChaptersScanned)} / {totalChaptersScanned} chapitres</span>
                               <span>{Math.floor(scanProgress)}%</span>
                             </div>
@@ -876,58 +879,52 @@ export function OnboardingPopup({
               <>
             {/* Deal Banner - Full width below header */}
             <div className="bg-[#0d1317] w-full border-b border-gray-800">
-              <div className="flex items-center justify-center gap-4 sm:gap-6 py-4 px-4" style={{ fontSize: '16px' }}>
-                <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-base">
+              <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 py-2.5 md:py-4 px-3 md:px-4" style={{ fontSize: '16px' }}>
+                <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-[10px] sm:text-xs md:text-base">
                   OFFRE DE LANCEMENT
                 </span>
-                <span className="hidden sm:inline text-white font-medium uppercase">
-                  SUR CHAQUE MASTERY PROGRAM
-                </span>
-                <span className="px-3 py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold">
+                <span className="px-2 md:px-3 py-1 md:py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold text-xs md:text-base">
                       -40%
                 </span>
-                <span className="hidden md:inline text-white font-medium uppercase">
-                  EXPIRE DANS
-                </span>
-                <div className="flex items-center gap-1 text-white font-bold tabular-nums">
+                <div className="flex items-center gap-0.5 md:gap-1 text-white font-bold tabular-nums text-xs md:text-base">
                   <span>02</span>
-                  <span className="text-white text-xs font-normal">j</span>
+                  <span className="text-white text-[8px] md:text-xs font-normal">j</span>
                   <span>23</span>
-                  <span className="text-white text-xs font-normal">h</span>
+                  <span className="text-white text-[8px] md:text-xs font-normal">h</span>
                   <span>59</span>
-                  <span className="text-white text-xs font-normal">m</span>
+                  <span className="text-white text-[8px] md:text-xs font-normal">m</span>
                 </div>
               </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-16">
               {/* Main Content Grid */}
-              <div className="grid lg:grid-cols-12 gap-12 mb-16">
+              <div className="grid lg:grid-cols-12 gap-6 md:gap-12 mb-8 md:mb-16">
                 
                 {/* Left Column - Info */}
                 <div className="lg:col-span-7">
                   {/* Course Count + Title */}
-                  <div className="flex items-start gap-6 mb-10">
+                  <div className="flex items-start gap-4 md:gap-6 mb-6 md:mb-10">
                     {/* Badge nombre de cours prescrits - format carré arrondi, accent thème */}
                     <div className="flex items-center gap-5 flex-shrink-0">
-                      <div className="w-24 h-24 rounded-2xl border-[3px] border-[#00c2ff] flex items-center justify-center">
-                        <span className="text-5xl md:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
+                      <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center">
+                        <span className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
                           {recommendedCourses.length}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <h1 className="text-4xl md:text-5xl font-black !text-white leading-tight mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
+                      <h1 className="text-2xl md:text-4xl lg:text-5xl font-black !text-white leading-tight mb-1 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
                         Parcours conçus pour toi
                       </h1>
-                      <p className="text-lg !text-white">
+                      <p className="text-sm md:text-lg !text-white">
                         basés sur {interests.length} Mastery Programs
                       </p>
                     </div>
                   </div>
 
                   {/* Programme Cards */}
-                  <div className="space-y-3">
+                  <div className="space-y-2 md:space-y-3">
                     {programs.map(program => {
                       const programCourses = recommendedCourses.filter(c => 
                         c.category.toLowerCase().includes(program.id)
@@ -935,7 +932,7 @@ export function OnboardingPopup({
                       return (
                         <div 
                           key={program.id}
-                          className="p-4 bg-[#1a1f24] rounded-xl border border-gray-700/50 hover:border-[#00c2ff]/50 hover:bg-[#00c2ff]/5 transition-all cursor-pointer"
+                          className="p-3 md:p-4 bg-[#1a1f24] rounded-lg md:rounded-xl border border-gray-700/50 hover:border-[#00c2ff]/50 hover:bg-[#00c2ff]/5 transition-all cursor-pointer"
                           onClick={() => {
                             const element = document.getElementById(`carousel-${program.id}`);
                             if (element) {
@@ -943,11 +940,11 @@ export function OnboardingPopup({
                             }
                           }}
                         >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-lg font-semibold !text-white">{program.name}</span>
-                            <span className="text-lg font-bold text-white">{program.price}€</span>
+                          <div className="flex items-center justify-between mb-0.5 md:mb-1">
+                            <span className="text-base md:text-lg font-semibold !text-white">{program.name}</span>
+                            <span className="text-base md:text-lg font-bold text-white">{program.price}€</span>
                           </div>
-                          <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                          <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                             {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • {programCourses.length} parcours créés pour toi
                           </p>
                         </div>
@@ -957,14 +954,14 @@ export function OnboardingPopup({
                 </div>
 
                 {/* Right Column - CTA Card */}
-                <div className="lg:col-span-5">
-                  <div className="bg-[#141414] rounded-xl p-6 border border-gray-800">
+                <div className="lg:col-span-5 mt-4 lg:mt-0">
+                  <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
                     {/* Success Message */}
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-5 h-5 text-white" strokeWidth={3} />
+                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                      <div className="w-6 h-6 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
                       </div>
-                      <span className="text-white text-base">
+                      <span className="text-white text-sm md:text-base">
                         Paiement unique. Accès à vie.
                       </span>
                     </div>
@@ -972,26 +969,26 @@ export function OnboardingPopup({
                     {/* CTA Buttons */}
                     <button
                       onClick={() => setShowLeadCapture(true)}
-                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-4 px-8 rounded-full text-lg transition-all mb-3 flex items-center justify-center gap-2"
+                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full text-base md:text-lg transition-all mb-2 md:mb-3 flex items-center justify-center gap-2"
                     >
                       Débloquer 10h gratuites
-                      <ArrowRight size={20} />
+                      <ArrowRight size={18} className="md:w-5 md:h-5" />
                     </button>
                     <button
                       onClick={() => setPhase('membership-plans')}
-                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-3 px-6 rounded-full text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
+                      className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 px-4 md:px-6 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
                     >
                       Débloquer mes programmes
-                      <span className="w-5 h-5 rounded-full border border-white/50 flex items-center justify-center">
-                        <ArrowRight size={12} />
+                      <span className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/50 flex items-center justify-center">
+                        <ArrowRight size={10} className="md:w-3 md:h-3" />
                       </span>
                     </button>
                   </div>
                   
                   {/* Social proof - Students counter */}
-                  <div className="flex items-center justify-center gap-2 mt-4">
+                  <div className="flex items-center justify-center gap-2 mt-3 md:mt-4">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                       <span className="font-bold text-white">127</span> étudiants ont rejoint cette semaine
                     </p>
                   </div>
