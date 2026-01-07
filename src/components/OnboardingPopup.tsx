@@ -661,10 +661,10 @@ export function OnboardingPopup({
                         stiffness: 120,
                         damping: 15
                       }}
-                      className="mb-1 md:mb-2"
+                      className="mb-2"
                     >
                       <span 
-                        className="text-7xl md:text-[12rem] font-black text-white leading-none"
+                        className="text-9xl md:text-[12rem] font-black text-white leading-none"
                         style={{ fontFamily: "'Parafina', sans-serif" }}
                       >
                         {totalTracksExtracted}
@@ -676,7 +676,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                      className="text-xl md:text-4xl font-bold text-center mb-2 md:mb-3 uppercase tracking-wider"
+                      className="text-2xl md:text-4xl font-bold text-center mb-3 uppercase tracking-wider"
                       style={{ fontFamily: "'Parafina', sans-serif", color: '#ffffff' }}
                     >
                       Parcours créés pour toi
@@ -687,7 +687,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                      className="text-center mb-4 md:mb-8 text-sm md:text-base"
+                      className="text-center mb-8"
                       style={{ color: 'rgba(255, 255, 255, 0.8)' }}
                     >
                       basés sur les Mastery Programs suivants
@@ -698,7 +698,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.0 }}
-                      className="flex flex-col items-center gap-2 md:gap-3 mb-4 md:mb-8"
+                      className="flex flex-col items-center gap-3 mb-8"
                     >
                       {scanningPrograms.map((program, index) => (
                         <motion.div
@@ -706,13 +706,13 @@ export function OnboardingPopup({
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.4, delay: 1.1 + index * 0.1, ease: "easeOut" }}
-                          className="flex flex-wrap items-center justify-center gap-1 md:gap-3 text-sm md:text-lg"
+                          className="flex items-center gap-3 text-lg"
                         >
                           <span className="font-semibold text-white">{program.name}</span>
-                          <span className="hidden md:inline" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span className="text-xs md:text-base" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} chapitres</span>
-                          <span className="hidden md:inline" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span className="text-xs md:text-base" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{program.extractedTracks} parcours</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} chapitres</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{program.extractedTracks} parcours</span>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -722,7 +722,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.5 }}
-                      className="text-xl md:text-3xl font-bold text-center mb-4 md:mb-8"
+                      className="text-2xl md:text-3xl font-bold text-center mb-8"
                       style={{ color: '#ffffff' }}
                     >
                       Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
@@ -736,10 +736,10 @@ export function OnboardingPopup({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setPhase('results')}
-                      className="px-8 md:px-10 py-3 md:py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-2 md:gap-3 shadow-lg shadow-[#00c2ff]/25 text-sm md:text-base"
+                      className="px-10 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25"
                     >
                       Continuer
-                      <ArrowRight size={18} className="md:w-5 md:h-5" />
+                      <ArrowRight size={20} />
                     </motion.button>
 
                     {/* Trust badge */}
@@ -747,7 +747,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.9 }}
-                      className="mt-4 md:mt-6 text-xs md:text-sm"
+                      className="mt-6 text-sm"
                       style={{ color: 'rgba(255, 255, 255, 0.5)' }}
                     >
                       Paiement unique · Accès à vie
