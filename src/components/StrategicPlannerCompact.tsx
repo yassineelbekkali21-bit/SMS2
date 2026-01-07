@@ -726,157 +726,238 @@ export function StrategicPlannerCompact({
                     </div>
                     )}
 
-                    {/* Lessons timeline */}
+                    {/* Two-column layout: Lessons + Sidebar */}
                     <div className="p-6">
-                      <div className="space-y-6">
-                        {/* Unscheduled lessons - À PLANIFIER - Always at top */}
-                        {unscheduledLessons.length > 0 && (
-                          <div>
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-orange-100 text-orange-600">
-                                À planifier
-                              </div>
-                              <div className="flex-1 h-px bg-orange-200" />
-                            </div>
-                            
-                            <div className="space-y-2 ml-2">
-                              {unscheduledLessons.map((lesson) => (
-                                <div 
-                                  key={lesson.id}
-                                  className="flex items-center gap-4 p-4 rounded-xl bg-orange-50 border border-orange-200"
-                                >
-                                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-orange-100">
-                                    <AlertTriangle size={18} className="text-orange-500" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-base font-semibold text-gray-800">
-                                      {lesson.title}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                      Leçon {lesson.lessonNumber} • {lesson.duration}
-                                    </p>
-                                  </div>
-                                  <button className="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors">
-                                    Planifier
-                                  </button>
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+                        
+                        {/* LEFT COLUMN: Lessons */}
+                        <div className="space-y-4">
+                          {/* Unscheduled lessons - À PLANIFIER */}
+                          {unscheduledLessons.length > 0 && (
+                            <div className="mb-6">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-orange-100 text-orange-600">
+                                  À planifier
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Scheduled weeks */}
-                        {Object.entries(groupedByWeek).sort(([a], [b]) => a.localeCompare(b)).map(([weekKey, weekLessons]) => (
-                          <div key={weekKey}>
-                            {/* Week header */}
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-gray-100 text-gray-600">
-                                {formatWeekLabel(weekKey)}
                               </div>
-                              <div className="flex-1 h-px bg-gray-100" />
+                              
+                              <div className="space-y-2">
+                                {unscheduledLessons.map((lesson) => (
+                                  <div 
+                                    key={lesson.id}
+                                    className="flex items-center gap-4 p-4 rounded-xl bg-orange-50 border border-orange-200"
+                                  >
+                                    <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 bg-orange-100">
+                                      <AlertTriangle size={18} className="text-orange-500" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-base font-semibold text-gray-800">{lesson.title}</p>
+                                      <p className="text-sm text-gray-500">Leçon {lesson.lessonNumber} • {lesson.duration}</p>
+                                    </div>
+                                    <button className="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors">
+                                      Planifier
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            
-                            {/* Lessons in this week */}
-                            <div className="space-y-2 ml-2">
-                              {weekLessons.sort((a, b) => (a.scheduledDate?.getTime() || 0) - (b.scheduledDate?.getTime() || 0)).map((lesson) => (
-                                <div 
-                                  key={lesson.id}
-                                  onClick={() => {
-                                    if (onNavigateToCourse && selectedTrackPlanning) {
-                                      onNavigateToCourse(selectedTrackPlanning);
-                                    }
-                                  }}
-                                  className={`flex items-center justify-between gap-4 p-4 rounded-xl transition-all cursor-pointer hover:shadow-md ${
-                                    lesson.status === 'current' 
-                                      ? 'bg-blue-50 border border-blue-200 hover:bg-blue-100' 
-                                      : lesson.status === 'completed'
-                                      ? 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
-                                      : 'bg-white border border-gray-200 hover:bg-gray-50'
-                                  }`}
-                                >
-                                  {/* Left side: Icon + Lesson info + Date */}
-                                  <div className="flex items-center gap-4">
-                                    {/* Status icon */}
+                          )}
+
+                          {/* Scheduled lessons - Option A style with date */}
+                          {Object.entries(groupedByWeek).sort(([a], [b]) => a.localeCompare(b)).map(([weekKey, weekLessons]) => (
+                            <div key={weekKey}>
+                              {/* Week header */}
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-gray-100 text-gray-600">
+                                  {formatWeekLabel(weekKey)}
+                                </div>
+                              </div>
+                              
+                              {/* Lessons with Option A date style */}
+                              <div className="space-y-2">
+                                {weekLessons.sort((a, b) => (a.scheduledDate?.getTime() || 0) - (b.scheduledDate?.getTime() || 0)).map((lesson) => (
+                                  <div 
+                                    key={lesson.id}
+                                    onClick={() => {
+                                      if (onNavigateToCourse && selectedTrackPlanning) {
+                                        onNavigateToCourse(selectedTrackPlanning);
+                                      }
+                                    }}
+                                    className={`flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer hover:shadow-md ${
+                                      lesson.status === 'current' 
+                                        ? 'bg-blue-50 border border-blue-200 hover:bg-blue-100' 
+                                        : lesson.status === 'completed'
+                                        ? 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
+                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                    }`}
+                                  >
+                                    {/* Date block - Option A style */}
                                     <div 
-                                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                      style={{
-                                        backgroundColor: lesson.status === 'completed' 
-                                          ? 'rgba(72,198,237,0.15)' 
+                                      className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${
+                                        lesson.status === 'completed' 
+                                          ? 'bg-gray-100' 
                                           : lesson.status === 'current'
-                                          ? '#48c6ed'
-                                          : '#f3f4f6'
-                                      }}
+                                          ? 'bg-gray-900'
+                                          : 'bg-gray-100'
+                                      }`}
                                     >
-                                      {lesson.status === 'completed' ? (
-                                        <Check size={18} style={{ color: '#48c6ed' }} />
-                                      ) : lesson.status === 'current' ? (
-                                        <Play size={18} className="text-white" />
-                                      ) : (
-                                        <Clock size={18} className="text-gray-400" />
-                                      )}
+                                      <span className={`text-lg font-bold leading-none ${
+                                        lesson.status === 'current' ? 'text-white' : 'text-gray-700'
+                                      }`}>
+                                        {lesson.scheduledDate?.getDate() || '--'}
+                                      </span>
+                                      <span className={`text-[10px] uppercase font-semibold ${
+                                        lesson.status === 'current' ? 'text-gray-300' : 'text-gray-500'
+                                      }`}>
+                                        {lesson.scheduledDate?.toLocaleDateString('fr-FR', { month: 'short' }) || ''}
+                                      </span>
+                                      {/* Status indicator */}
+                                      <div className="mt-1">
+                                        {lesson.status === 'completed' ? (
+                                          <Check size={12} style={{ color: '#48c6ed' }} />
+                                        ) : lesson.status === 'current' ? (
+                                          <Play size={10} className="text-white" fill="white" />
+                                        ) : (
+                                          <Clock size={10} className="text-gray-400" />
+                                        )}
+                                      </div>
                                     </div>
 
-                                    {/* Lesson info with date inline */}
-                                    <div className="min-w-0">
-                                      <p 
-                                        className={`text-base font-semibold ${
-                                          lesson.status === 'completed' 
-                                            ? 'text-gray-400' 
-                                            : lesson.status === 'current'
-                                            ? 'text-gray-900'
-                                            : 'text-gray-800'
-                                        }`}
-                                      >
+                                    {/* Lesson info */}
+                                    <div className="flex-1 min-w-0">
+                                      <p className={`text-base font-semibold ${
+                                        lesson.status === 'completed' ? 'text-gray-400' : 'text-gray-900'
+                                      }`}>
                                         {lesson.title}
                                       </p>
                                       <p className="text-sm text-gray-500">
                                         Leçon {lesson.lessonNumber} • {lesson.duration}
-                                        {lesson.scheduledDate && (
-                                          <span className={`ml-2 ${lesson.status === 'current' ? 'text-blue-600 font-medium' : ''}`}>
-                                            • {formatDate(lesson.scheduledDate)}
-                                          </span>
-                                        )}
                                       </p>
                                     </div>
-                                  </div>
 
-                                  {/* Right side: CTA only */}
-                                  <div className="flex items-center flex-shrink-0">
-                                    {lesson.status === 'current' && (
-                                      <button 
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          if (onNavigateToCourse && selectedTrackPlanning) {
-                                            onNavigateToCourse(selectedTrackPlanning);
-                                          }
-                                        }}
-                                        className="px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:brightness-110"
-                                        style={{ backgroundColor: '#48c6ed', color: '#ffffff' }}
-                                      >
-                                        <Play size={14} fill="#ffffff" />
-                                        Continuer
-                                      </button>
-                                    )}
-                                    {lesson.status === 'completed' && (
-                                      <button 
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          if (onNavigateToCourse && selectedTrackPlanning) {
-                                            onNavigateToCourse(selectedTrackPlanning);
-                                          }
-                                        }}
-                                        className="px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-100 transition-all"
-                                      >
-                                        Revoir
-                                      </button>
-                                    )}
+                                    {/* CTA */}
+                                    <div className="flex-shrink-0">
+                                      {lesson.status === 'current' && (
+                                        <button 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (onNavigateToCourse && selectedTrackPlanning) {
+                                              onNavigateToCourse(selectedTrackPlanning);
+                                            }
+                                          }}
+                                          className="px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:brightness-110"
+                                          style={{ backgroundColor: '#48c6ed', color: '#ffffff' }}
+                                        >
+                                          <Play size={14} fill="#ffffff" />
+                                          Continuer
+                                        </button>
+                                      )}
+                                      {lesson.status === 'completed' && (
+                                        <button 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (onNavigateToCourse && selectedTrackPlanning) {
+                                              onNavigateToCourse(selectedTrackPlanning);
+                                            }
+                                          }}
+                                          className="px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-100 transition-all"
+                                        >
+                                          Revoir
+                                        </button>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* RIGHT COLUMN: Engaging Sidebar */}
+                        <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+                          
+                          {/* Countdown to Exam */}
+                          {track?.examDate && (
+                            <div className="rounded-2xl p-5 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Target size={18} className="text-cyan-400" />
+                                <span className="text-sm font-semibold uppercase tracking-wider text-gray-400">Objectif</span>
+                              </div>
+                              <div className="flex items-baseline gap-2 mb-2">
+                                <span className="text-4xl font-bold" style={{ color: '#48c6ed' }}>
+                                  {Math.max(0, Math.ceil((track.examDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))}
+                                </span>
+                                <span className="text-gray-400">jours restants</span>
+                              </div>
+                              <p className="text-sm text-gray-400">
+                                {totalCount - completedCount} leçons à terminer avant le {track.examDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                              </p>
+                              <div className="mt-3 w-full h-1.5 rounded-full bg-gray-700">
+                                <div 
+                                  className="h-full rounded-full transition-all"
+                                  style={{ 
+                                    width: `${(completedCount / totalCount) * 100}%`,
+                                    backgroundColor: '#48c6ed'
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Study Room - Community */}
+                          <div className="rounded-2xl p-5 bg-white border border-gray-200">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Users size={18} className="text-purple-500" />
+                              <span className="text-sm font-semibold text-gray-900">Study Room</span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="flex -space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs font-bold text-purple-600">M</div>
+                                <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-bold text-blue-600">S</div>
+                                <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-white flex items-center justify-center text-xs font-bold text-green-600">A</div>
+                              </div>
+                              <span className="text-sm text-gray-600">+12 étudient ce parcours</span>
+                            </div>
+                            <button className="w-full py-3 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 hover:bg-purple-100 transition-all flex items-center justify-center gap-2">
+                              <MessageCircle size={16} />
+                              Rejoindre la Study Room
+                            </button>
+                          </div>
+
+                          {/* Quick Stats */}
+                          <div className="rounded-2xl p-5 bg-white border border-gray-200">
+                            <div className="flex items-center gap-2 mb-4">
+                              <TrendingUp size={18} className="text-green-500" />
+                              <span className="text-sm font-semibold text-gray-900">Ta progression</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="text-center p-3 rounded-xl bg-gray-50">
+                                <p className="text-2xl font-bold text-gray-900">{completedCount}</p>
+                                <p className="text-xs text-gray-500">Leçons vues</p>
+                              </div>
+                              <div className="text-center p-3 rounded-xl bg-gray-50">
+                                <p className="text-2xl font-bold text-gray-900">{totalCount - completedCount}</p>
+                                <p className="text-xs text-gray-500">Restantes</p>
+                              </div>
+                            </div>
+                            <div className="mt-4 flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                              <Flame size={18} className="text-amber-500" />
+                              <span className="text-sm font-medium text-amber-700">5 jours de streak ! 🔥</span>
                             </div>
                           </div>
-                        ))}
 
+                          {/* Help */}
+                          <div className="rounded-2xl p-4 bg-gray-50 border border-gray-200">
+                            <button className="w-full flex items-center justify-between text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                              <span className="flex items-center gap-2">
+                                <HelpCircle size={16} />
+                                Besoin d'aide sur ce parcours ?
+                              </span>
+                              <ChevronRight size={16} />
+                            </button>
+                          </div>
+
+                        </div>
                       </div>
                     </div>
                   </div>
