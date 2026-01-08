@@ -459,7 +459,7 @@ export default function ModernBuddiesTab({ userId, userName }: ModernBuddiesTabP
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.03 }}
-            whileHover={{ y: -2, borderColor: '#48c6ed' }}
+            whileHover={{ y: -2, borderColor: '#00c2ff' }}
             className="group relative bg-white rounded-2xl p-5 cursor-pointer overflow-hidden border border-gray-100 hover:shadow-md transition-all"
           >
             {/* Header: Avatar + Name */}

@@ -75,7 +75,7 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen, ha
                   />
                 </div>
               </button>
-
+              
               {/* Menu desktop - Centré */}
               <div className="hidden md:flex items-center gap-16">
                 <button
@@ -133,10 +133,9 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen, ha
                 {/* CTA Button Mobile - Diagnostic */}
                 <button
                   onClick={openDiagnostic}
-                  className="w-10 h-10 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white rounded-full flex items-center justify-center transition-all shadow-lg shadow-[#00c2ff]/25"
-                  aria-label="Diagnostic gratuit"
+                  className="px-4 py-2.5 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white rounded-full font-semibold text-sm transition-all shadow-lg shadow-[#00c2ff]/25"
                 >
-                  <Target size={20} />
+                  Diagnostic
                 </button>
 
                 <button
@@ -215,13 +214,13 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen, ha
 
       {/* Bandeau d'urgence - Position: EN-DESSOUS du header */}
       {urgencyBannerBelow && (
-        <div className="bg-[#0d1317] w-full mt-[30px]">
+        <div className="bg-[#00c2ff] w-full mt-[30px]">
           {urgencyBannerBelow}
         </div>
       )}
 
       {/* Hero Content */}
-      <section className="pt-10 pb-6 md:pt-16 md:pb-12 px-6 md:px-8 lg:px-10 bg-white">
+      <section className="pt-14 pb-10 md:pt-20 md:pb-16 px-6 md:px-8 lg:px-10 bg-white">
         <div className="max-w-[1600px] mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             {/* Left Column */}
@@ -245,8 +244,8 @@ export function HeroSectionMultilang({ onEnterApp, isMenuOpen, setIsMenuOpen, ha
               {/* Texte descriptif */}
               <p className="text-gray-700 mb-5 leading-relaxed" style={{ fontSize: '20px' }}>
                 {language === 'fr' 
-                  ? "Passez de la confusion à la maîtrise, avec des cours qui transforment chaque difficulté en opportunité. Essayez gratuitement et remarquez la différence."
-                  : "Go from confusion to mastery, with courses that transform every difficulty into opportunity. Try it free and notice the difference."
+                  ? "Une décennie de pédagogie scientifique, condensée en cours qui transforment chaque difficulté en opportunité. Essayez gratuitement et remarquez la différence."
+                  : "A decade of scientific pedagogy, condensed into courses that transform every difficulty into opportunity. Try it free and notice the difference."
                 }
               </p>
 

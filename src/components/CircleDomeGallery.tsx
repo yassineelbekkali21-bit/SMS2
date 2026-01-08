@@ -337,7 +337,7 @@ export default function CircleDomeGallery({
                       {recommendedCircleId === it.circle.id && (
                         <div 
                           className="absolute top-2 right-2 px-2 py-0.5 rounded-full"
-                          style={{ backgroundColor: '#48c6ed' }}
+                          style={{ backgroundColor: '#00c2ff' }}
                         >
                           <span className="text-[9px] text-white font-semibold">Recommandé</span>
                         </div>

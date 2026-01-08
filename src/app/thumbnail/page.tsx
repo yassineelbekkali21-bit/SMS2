@@ -25,7 +25,7 @@ const bundles = [
 const GradientMeshThumbnail = ({ bundle, index }: { bundle: typeof bundles[0], index: number }) => {
   const gradients = [
     'from-purple-600 via-pink-500 to-orange-400',
-    'from-blue-600 via-cyan-500 to-emerald-400',
+    'from-blue-600 via-[#00c2ff] to-emerald-400',
     'from-rose-500 via-fuchsia-500 to-indigo-500',
     'from-amber-500 via-orange-500 to-red-500',
     'from-teal-500 via-cyan-400 to-blue-500',
@@ -596,7 +596,7 @@ export default function ThumbnailShowcase() {
                 })}
               </div>
             </div>
-            <button className="px-8 py-3 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-full transition-colors flex items-center gap-2">
+            <button className="px-8 py-3 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white font-bold rounded-full transition-colors flex items-center gap-2">
               <Sparkles size={18} />
               Valider mes choix
             </button>

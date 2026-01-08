@@ -12,7 +12,7 @@ export function PlannerDemo() {
       icon: Calendar,
       title: 'Vues multiples',
       description: 'Navigation fluide entre jour, semaine et mois',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-[#00c2ff]'
     },
     {
       icon: Zap,

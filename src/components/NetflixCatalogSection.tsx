@@ -8,10 +8,59 @@ import { CleanHomeHero } from './CleanHomeHero';
 import { CourseRow, SubjectSection } from './CourseRow';
 
 // ============================================================================
+// MAPPING - Aligne les sujets FR avec les Mastery Program IDs
+// ============================================================================
+const SUBJECT_TO_PROGRAM_ID: Record<string, string> = {
+  'Physique': 'physics',
+  'Mathématiques': 'mathematics',
+  'Chimie': 'chemistry',
+  'Économie': 'economics',
+  'Statistiques': 'statistics',
+  'Biologie': 'biology',
+  'Comptabilité': 'accounting',
+  'Informatique': 'informatique', // Pas de Mastery Program correspondant
+};
+
+// ============================================================================
 // MOCK DATA
 // ============================================================================
-// Programmes en mode essai (non achetés) - les 10h gratuites s'appliquent ici
-const TRIAL_SUBJECTS = ['Chimie', 'Économie'];
+
+// Fonction pour créer un cours avec statut trial basé sur ownedProgramIds
+const createCourseWithOwnership = (
+  id: string,
+  title: string,
+  subject: string,
+  progress: number = 0,
+  totalLessons: number = 10,
+  ownedProgramIds: string[] = []
+): Course => {
+  const programId = SUBJECT_TO_PROGRAM_ID[subject];
+  const isProgramOwned = programId ? ownedProgramIds.includes(programId) : false;
+  const isTrial = !isProgramOwned;
+  
+  return {
+    id,
+    title,
+    description: `Cours complet sur ${title}`,
+    faculty: 'Sciences',
+    year: '2024',
+    totalLessons,
+    completedLessons: isProgramOwned ? Math.floor((progress / 100) * totalLessons) : 0,
+    duration: `${Math.round(totalLessons * 0.75)}h`,
+    isOwned: isProgramOwned,
+    isPrimary: isProgramOwned && progress > 50,
+    progress: isProgramOwned ? progress : 0,
+    price: 49,
+    thumbnail: '',
+    previewAvailable: true,
+    tags: [subject],
+    difficulty: 'intermediate',
+    isTrial,
+  };
+};
+
+// Ancien createCourse pour compatibilité (utilisé avec TRIAL_SUBJECTS hardcodé)
+const LEGACY_TRIAL_SUBJECTS = ['Chimie', 'Économie'];
 
 const createCourse = (
   id: string,
@@ -20,7 +69,7 @@ const createCourse = (
   progress: number = 0,
   totalLessons: number = 10
 ): Course => {
-  const isTrial = TRIAL_SUBJECTS.includes(subject);
+  const isTrial = LEGACY_TRIAL_SUBJECTS.includes(subject);
   return {
     id,
     title,
@@ -30,15 +79,15 @@ const createCourse = (
     totalLessons,
     completedLessons: Math.floor((progress / 100) * totalLessons),
     duration: `${Math.round(totalLessons * 0.75)}h`,
-    isOwned: isTrial ? false : progress > 0, // En mode essai, pas acheté
+    isOwned: isTrial ? false : progress > 0,
     isPrimary: progress > 50,
-    progress: isTrial ? 0 : progress, // En mode essai, pas de progression
+    progress: isTrial ? 0 : progress,
     price: 49,
     thumbnail: '',
     previewAvailable: true,
     tags: [subject],
     difficulty: 'intermediate',
-    isTrial, // Mode essai activé pour Chimie et Économie
+    isTrial,
   };
 };
 
@@ -159,15 +208,47 @@ interface NetflixCatalogSectionProps {
   onCourseClick: (course: Course) => void;
   onToggleFavorite?: (courseId: string) => void;
   onNavigateToSectionWithContext?: (section: string, context: { trackId: string; trackTitle: string }) => void;
+  ownedProgramIds?: string[]; // Aligné avec ProgramsShop - ex: ['physics', 'mathematics']
 }
 
 export function NetflixCatalogSection({ 
   onCourseClick, 
   onToggleFavorite = () => {},
-  onNavigateToSectionWithContext
+  onNavigateToSectionWithContext,
+  ownedProgramIds = ['physics', 'mathematics', 'statistics'] // Par défaut: ces programmes sont débloqués
 }: NetflixCatalogSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [favoritedFromSearch, setFavoritedFromSearch] = useState<Course[]>([]);
+
+  // Helper: applique le statut owned/trial dynamiquement basé sur ownedProgramIds
+  const applyOwnershipStatus = (course: Course): Course => {
+    const subject = course.tags?.[0] || '';
+    const programId = SUBJECT_TO_PROGRAM_ID[subject];
+    const isProgramOwned = programId ? ownedProgramIds.includes(programId) : false;
+    
+    return {
+      ...course,
+      isOwned: isProgramOwned,
+      isTrial: !isProgramOwned,
+      // Si pas owned, reset progression
+      progress: isProgramOwned ? course.progress : 0,
+      completedLessons: isProgramOwned ? course.completedLessons : 0,
+    };
+  };
+
+  // Transformer les cours avec le bon statut ownership
+  const transformedInProgress = IN_PROGRESS.map(applyOwnershipStatus);
+  const transformedCompleted = COMPLETED.map(applyOwnershipStatus);
+  const transformedNewCourses = NEW_COURSES.map(applyOwnershipStatus);
+  const transformedRecommended = RECOMMENDED.map(applyOwnershipStatus);
+  const transformedTrending = TRENDING.map(applyOwnershipStatus);
+  
+  // Transformer les Mastery Programs
+  const transformedPhysics = PHYSICS.map(group => group.map(applyOwnershipStatus));
+  const transformedMath = MATH.map(group => group.map(applyOwnershipStatus));
+  const transformedChemistry = CHEMISTRY.map(group => group.map(applyOwnershipStatus));
+  const transformedInformatics = INFORMATICS.map(group => group.map(applyOwnershipStatus));
+  const transformedEconomics = ECONOMICS.map(group => group.map(applyOwnershipStatus));
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -209,7 +290,7 @@ export function NetflixCatalogSection({
   };
 
   // Combine recommended courses with favorited from search
-  const recommendedWithFavorites = [...favoritedFromSearch, ...RECOMMENDED.filter(c => !favoritedFromSearch.some(f => f.id === c.id))];
+  const recommendedWithFavorites = [...favoritedFromSearch, ...transformedRecommended.filter(c => !favoritedFromSearch.some(f => f.id === c.id))];
 
   return (
     <div className="overflow-visible">
@@ -233,9 +314,9 @@ export function NetflixCatalogSection({
               onCourseSelect={(courseId, lessonId) => {
                 console.log('Course selected:', courseId, lessonId);
                 // Trouver le cours correspondant dans les listes existantes
-                let course = RECOMMENDED.find(c => c.id === courseId) || 
-                             IN_PROGRESS.find(c => c.id === courseId) ||
-                             NEW_COURSES.find(c => c.id === courseId) ||
+                let course = transformedRecommended.find(c => c.id === courseId) || 
+                             transformedInProgress.find(c => c.id === courseId) ||
+                             transformedNewCourses.find(c => c.id === courseId) ||
                              favoritedFromSearch.find(c => c.id === courseId);
                 
                 // Si pas trouvé, créer un cours à partir de l'ID (résultat de recherche)
@@ -306,9 +387,9 @@ export function NetflixCatalogSection({
                 onCourseSelect={(courseId, lessonId) => {
                   console.log('Course selected:', courseId, lessonId);
                   // Trouver le cours correspondant dans les listes existantes
-                  let course = RECOMMENDED.find(c => c.id === courseId) || 
-                               IN_PROGRESS.find(c => c.id === courseId) ||
-                               NEW_COURSES.find(c => c.id === courseId) ||
+                  let course = transformedRecommended.find(c => c.id === courseId) || 
+                               transformedInProgress.find(c => c.id === courseId) ||
+                               transformedNewCourses.find(c => c.id === courseId) ||
                                favoritedFromSearch.find(c => c.id === courseId);
                   
                   // Si pas trouvé, créer un cours à partir de l'ID (résultat de recherche)
@@ -337,7 +418,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <CourseRow
           title="Reprendre ma progression"
-          courses={IN_PROGRESS}
+          courses={transformedInProgress}
           onCourseClick={onCourseClick}
           showProgress={true}
           emptyMessage="Tu n'as pas encore commencé de cours"
@@ -364,7 +445,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <CourseRow
           title="Nouveautés chez SMS"
-          courses={NEW_COURSES}
+          courses={transformedNewCourses}
           onCourseClick={onCourseClick}
           showProgress={false}
           onToggleFavorite={onToggleFavorite}
@@ -376,7 +457,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <SubjectSection
           subject="Physique"
-          subGroups={PHYSICS}
+          subGroups={transformedPhysics}
           onCourseClick={onCourseClick}
           onToggleFavorite={onToggleFavorite}
           displayMode="bundles"
@@ -386,7 +467,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <SubjectSection
           subject="Mathématiques"
-          subGroups={MATH}
+          subGroups={transformedMath}
           onCourseClick={onCourseClick}
           onToggleFavorite={onToggleFavorite}
           displayMode="bundles"
@@ -396,7 +477,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <SubjectSection
           subject="Chimie"
-          subGroups={CHEMISTRY}
+          subGroups={transformedChemistry}
           onCourseClick={onCourseClick}
           onToggleFavorite={onToggleFavorite}
           displayMode="bundles"
@@ -406,7 +487,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <SubjectSection
           subject="Informatique"
-          subGroups={INFORMATICS}
+          subGroups={transformedInformatics}
           onCourseClick={onCourseClick}
           onToggleFavorite={onToggleFavorite}
           displayMode="bundles"
@@ -416,7 +497,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <SubjectSection
           subject="Économie"
-          subGroups={ECONOMICS}
+          subGroups={transformedEconomics}
           onCourseClick={onCourseClick}
           onToggleFavorite={onToggleFavorite}
           displayMode="bundles"
@@ -427,7 +508,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <CourseRow
           title="Populaires cette semaine"
-          courses={TRENDING}
+          courses={transformedTrending}
           onCourseClick={onCourseClick}
           showProgress={false}
           onToggleFavorite={onToggleFavorite}
@@ -439,7 +520,7 @@ export function NetflixCatalogSection({
               <section className="mb-6">
         <CourseRow
           title="Revoir"
-          courses={COMPLETED}
+          courses={transformedCompleted}
           onCourseClick={onCourseClick}
           showProgress={true}
           emptyMessage="Tu n'as pas encore terminé de cours"

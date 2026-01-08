@@ -243,7 +243,7 @@ export function SmartSearchPrompt({
           <div 
             className={`relative bg-white rounded-2xl border-2 transition-all duration-300 max-w-3xl mx-auto ${
               isFocused 
-                ? 'border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.4)]' 
+                ? 'border-[#00c2ff] shadow-[0_0_30px_rgba(34,211,238,0.4)]' 
                 : 'border-gray-200 shadow-md hover:shadow-lg'
             }`}
           >
@@ -309,7 +309,7 @@ export function SmartSearchPrompt({
           <div className="mt-10 flex flex-col items-center gap-4">
             {/* Niveau 1: Programmes (Mastery Programs) - Toujours visible */}
             <div className="flex flex-col items-center gap-2 w-full">
-              <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-cyan-400' : 'text-gray-400'}`}>
+              <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-[#00c2ff]' : 'text-gray-400'}`}>
                 Programme
               </p>
               <div className="flex items-center justify-center gap-2 overflow-x-auto w-full pb-2">
@@ -346,7 +346,7 @@ export function SmartSearchPrompt({
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center gap-2 w-full overflow-hidden"
                 >
-                  <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-cyan-400' : 'text-gray-400'}`}>
+                  <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-[#00c2ff]' : 'text-gray-400'}`}>
                     Cours
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-2">
@@ -363,7 +363,7 @@ export function SmartSearchPrompt({
                           onClick={() => handleChapterClick(chapter)}
                           className={`px-4 py-2 text-sm ${
                             isChapterSelected
-                              ? (darkMode ? 'bg-cyan-500 text-white border border-cyan-500' : 'bg-cyan-500 text-white border border-cyan-500')
+                              ? (darkMode ? 'bg-[#00c2ff] text-white border border-[#00c2ff]' : 'bg-[#00c2ff] text-white border border-[#00c2ff]')
                               : (darkMode 
                                   ? 'bg-gray-800 border border-gray-700 hover:border-gray-500 text-white' 
                                   : 'bg-white border border-gray-200 hover:border-gray-400 text-gray-800')
@@ -388,7 +388,7 @@ export function SmartSearchPrompt({
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center gap-2 w-full overflow-hidden"
                 >
-                  <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-cyan-400' : 'text-gray-400'}`}>
+                  <p className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-[#00c2ff]' : 'text-gray-400'}`}>
                     Leçons
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-2">

@@ -345,7 +345,7 @@ export function ExploreSectionMultilang() {
                       }}
                       className={`w-full text-left px-6 py-4 flex items-center justify-between transition-all ${
                         isActive 
-                          ? 'bg-white shadow-sm border-l-4 border-[#48c6ed] font-bold text-[#48c6ed]' 
+                          ? 'bg-white shadow-sm border-l-4 border-[#00c2ff] font-bold text-[#00c2ff]' 
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border-l-4 border-transparent font-medium'
                       }`}
                     >
@@ -389,7 +389,7 @@ export function ExploreSectionMultilang() {
                 <Link
                   href={`/assessment/${effectiveActiveProgram}/`}
                   target="_blank"
-                  className="block w-full py-3 bg-[#48c6ed] text-white text-center rounded-full font-bold text-base hover:bg-[#3ab5dc] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  className="block w-full py-3 bg-[#00c2ff] text-white text-center rounded-full font-bold text-base hover:bg-[#3ab5dc] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <span>{language === 'fr' ? `Se tester en ${currentProgram?.label.split(' ')[0]}` : `Test ${currentProgram?.label.split(' ')[0]} Skills`}</span>
                   <ArrowRight size={16} />

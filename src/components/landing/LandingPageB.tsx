@@ -67,31 +67,31 @@ function LandingContentB({ onEnterApp }: { onEnterApp?: () => void }) {
 
   const UrgencyBannerContent = () => (
     <div className="flex items-center justify-center gap-3 sm:gap-6 py-4 sm:py-5 px-4" style={{ fontSize: '16px' }}>
-      <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
-        OFFRE DE LANCEMENT
+      <span className="text-white font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
+        OFFRE NOUVELLE ANNÉE
       </span>
-      <span className="hidden sm:inline text-white font-medium uppercase text-[16px]">
+      <span className="hidden sm:inline text-white/90 font-medium uppercase text-[16px]">
         SUR CHAQUE MASTERY PROGRAM
       </span>
-      <span className="px-3 py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold">
+      <span className="px-3 py-1.5 bg-white rounded-full text-[#00c2ff] font-bold">
         -60%
       </span>
-      <span className="hidden md:inline text-white font-medium uppercase">
+      <span className="hidden md:inline text-white/90 font-medium uppercase">
         EXPIRE DANS
       </span>
       <div className="flex items-center gap-1 text-white font-bold tabular-nums">
         <span>{String(Math.floor(urgencyTimeLeft.hours / 24)).padStart(2, '0')}</span>
-        <span className="text-white text-xs font-normal">j</span>
+        <span className="text-white/80 text-xs font-normal">j</span>
         <span>{String(urgencyTimeLeft.hours % 24).padStart(2, '0')}</span>
-        <span className="text-white text-xs font-normal">h</span>
+        <span className="text-white/80 text-xs font-normal">h</span>
         <span>{String(urgencyTimeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-white text-xs font-normal">m</span>
+        <span className="text-white/80 text-xs font-normal">m</span>
         <span>{String(urgencyTimeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-white text-xs font-normal">s</span>
+        <span className="text-white/80 text-xs font-normal">s</span>
       </div>
       <button
         onClick={() => setShowUrgencyBanner(false)}
-        className="ml-2 text-gray-600 hover:text-white transition-colors"
+        className="ml-2 text-white/60 hover:text-white transition-colors"
       >
         <X size={16} />
       </button>
@@ -108,7 +108,7 @@ function LandingContentB({ onEnterApp }: { onEnterApp?: () => void }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="fixed top-0 left-0 right-0 z-[60] bg-[#0a0a0a] overflow-hidden"
+              className="fixed top-0 left-0 right-0 z-[60] bg-[#00c2ff] overflow-hidden"
             >
               <UrgencyBannerContent />
             </motion.div>

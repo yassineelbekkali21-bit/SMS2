@@ -530,7 +530,7 @@ export function StudyRoomMeeting({
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-colors ${
                   showWhiteboard ? 'text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
-                style={showWhiteboard ? { backgroundColor: '#48c6ed' } : undefined}
+                style={showWhiteboard ? { backgroundColor: '#00c2ff' } : undefined}
               >
                 <PenTool size={18} />
               </button>

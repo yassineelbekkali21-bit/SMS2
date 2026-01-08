@@ -47,7 +47,7 @@ export const coursesData: Course[] = [
     lessonCount: 24,
     hours: 12,
     description: 'Comprendre enfin les ondes, particules et dualité',
-    color: 'from-blue-500 to-cyan-500'
+    color: 'from-blue-500 to-[#00c2ff]'
   },
   {
     id: 'analyse-math-1',
@@ -107,7 +107,7 @@ export const coursesData: Course[] = [
     lessonCount: 22,
     hours: 13,
     description: 'Énergies, entropie et cycles thermodynamiques',
-    color: 'from-blue-500 to-cyan-500'
+    color: 'from-blue-500 to-[#00c2ff]'
   },
   {
     id: 'macro-economie',

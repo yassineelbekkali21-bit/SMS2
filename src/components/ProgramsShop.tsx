@@ -245,9 +245,6 @@ export function ProgramsShop({
     }
   };
 
-  // When expanded, we need scrolling; when collapsed, distribute height evenly
-  const isAnyExpanded = expandedIndex !== null;
-
   // Filter programs based on search
   const filteredPrograms = programsWithOwnership.filter(program => {
     if (!searchQuery.trim()) return true;
@@ -277,23 +274,23 @@ export function ProgramsShop({
       </div>
 
       {/* Content - fills available height */}
-      <div className={`flex-1 flex flex-col ${isAnyExpanded ? 'overflow-y-auto' : 'overflow-hidden'}`}>
-        <div className={`flex-1 flex flex-col px-4 md:px-6 lg:px-8 ${isAnyExpanded ? '' : 'h-full'}`}>
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        <div className="flex flex-col px-4 md:px-6 lg:px-8">
 
         {/* ========== PROGRAMS ACCORDION ========== */}
-        <div className={`flex flex-col ${isAnyExpanded ? '' : 'flex-1'}`}>
+        <div className="flex flex-col">
           {filteredPrograms.map((program, index) => {
             const isExpanded = expandedIndex === index;
             const number = (index + 1).toString().padStart(2, '0');
             const discount = Math.round((1 - program.price / program.originalPrice) * 100);
 
             return (
-              <div key={program.id} className={`border-b border-gray-200 ${isAnyExpanded ? '' : 'flex-1 min-h-0'}`}>
-                {/* Collapsed State */}
+              <div key={program.id} className="border-b border-gray-200">
+                {/* Collapsed State - hauteur fixe constante */}
                 {!isExpanded && (
                   <button
                     onClick={() => setExpandedIndex(index)}
-                    className="w-full h-full flex items-center justify-between group text-left px-2"
+                    className="w-full py-7 flex items-center justify-between group text-left px-2"
                   >
                     <div className="flex items-center gap-4 md:gap-8">
                       <span className="text-xl md:text-2xl font-mono text-gray-300 transition-colors">

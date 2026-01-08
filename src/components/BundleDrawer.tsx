@@ -32,7 +32,7 @@ interface BundleDrawerProps {
 // ============================================================================
 const getBundleGradient = (subject: string): string => {
   const gradients: { [key: string]: string } = {
-    'Physique': 'from-blue-600 to-cyan-500',
+    'Physique': 'from-blue-600 to-[#00c2ff]',
     'Mathématiques': 'from-purple-600 to-pink-500',
     'Chimie': 'from-emerald-600 to-teal-500',
     'Informatique': 'from-orange-600 to-amber-500',
@@ -81,10 +81,10 @@ const TrackCard: React.FC<{
       action: 'Revoir'
     },
     'in-progress': {
-      bg: 'bg-[#48c6ed]/5',
-      border: 'border-[#48c6ed]/30',
-      icon: <Play size={18} className="text-[#48c6ed]" />,
-      badge: <span className="px-2 py-0.5 bg-[#48c6ed] text-white text-[10px] font-bold rounded-full">EN COURS</span>,
+      bg: 'bg-[#00c2ff]/5',
+      border: 'border-[#00c2ff]/30',
+      icon: <Play size={18} className="text-[#00c2ff]" />,
+      badge: <span className="px-2 py-0.5 bg-[#00c2ff] text-white text-[10px] font-bold rounded-full">EN COURS</span>,
       action: 'Continuer'
     },
     available: {
@@ -116,7 +116,7 @@ const TrackCard: React.FC<{
       {/* Numéro de séquence */}
       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
         status === 'completed' ? 'bg-gray-800 text-white' :
-        status === 'in-progress' ? 'bg-[#48c6ed] text-white' :
+        status === 'in-progress' ? 'bg-[#00c2ff] text-white' :
         'bg-gray-200 text-gray-600'
       }`}>
         {status === 'completed' ? <CheckCircle size={16} /> : index + 1}
@@ -140,7 +140,7 @@ const TrackCard: React.FC<{
             {track.duration}
           </span>
           {status === 'in-progress' && (
-            <span className="text-[#48c6ed] font-medium">{track.progress}%</span>
+            <span className="text-[#00c2ff] font-medium">{track.progress}%</span>
           )}
         </div>
       </div>
@@ -148,7 +148,7 @@ const TrackCard: React.FC<{
       {/* Action */}
       {config.action && (
         <button className={`flex items-center gap-1 text-sm font-medium ${
-          status === 'in-progress' ? 'text-[#48c6ed]' : 'text-gray-600'
+          status === 'in-progress' ? 'text-[#00c2ff]' : 'text-gray-600'
         }`}>
           {config.action}
           <ChevronRight size={16} />

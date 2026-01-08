@@ -197,7 +197,7 @@ export function BuddyProgressDashboard({
       case 'quiz_perfect': return 'from-yellow-400 to-orange-500';
       case 'level_up': return 'from-red-400 to-pink-500';
       case 'badge_earned': return 'from-purple-400 to-indigo-500';
-      default: return 'from-blue-400 to-cyan-500';
+      default: return 'from-blue-400 to-[#00c2ff]';
     }
   };
 
@@ -325,7 +325,7 @@ export function BuddyProgressDashboard({
                           transition={{ duration: 1, ease: "easeOut" }}
                           className={`h-full rounded-full ${
                             course.progress >= 75 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                            course.progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                            course.progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-[#00c2ff]' :
                             'bg-gradient-to-r from-yellow-500 to-orange-500'
                           }`}
                         />

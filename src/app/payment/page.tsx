@@ -287,7 +287,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div className="p-5 bg-[#0d1318] rounded-2xl border border-white/10 min-w-[300px]">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-2xl">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00c2ff]/20 to-blue-500/20 flex items-center justify-center text-2xl">
           {testimonial.avatar}
         </div>
         <div>
@@ -398,7 +398,176 @@ export default function PaymentPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid lg:grid-cols-3 gap-10">
+        {/* Mobile Layout - uses flex with order */}
+        <div className="flex flex-col lg:hidden gap-10">
+          {/* 1. Benefits - "Paiement unique. Accès à vie." */}
+          <section className="order-1">
+            <h3 className="font-bold !text-white mb-6" style={{ fontSize: '26px' }}>Paiement unique. Accès à vie.</h3>
+            <div className="space-y-4">
+              {BENEFITS.map((benefit, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <Check size={20} className="text-blue-400 flex-shrink-0" />
+                  <span className="text-white/90">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* 2. Programs Section - "Choisis tes programmes" */}
+          <section className="order-2">
+            <h2 className="text-3xl font-bold !text-white mb-6">Choisis tes programmes</h2>
+            <div className="space-y-3">
+              {PROGRAMS.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  selected={selectedPrograms.includes(program.id)}
+                  onToggle={() => toggleProgram(program.id)}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* 3. Boosters Section */}
+          <section className="order-3">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold !text-white">Boosters</h2>
+              <span className="text-sm text-white/50">Optionnel</span>
+            </div>
+            <BoosterPackCard
+              selected={boosterSelected}
+              onToggle={() => setBoosterSelected(!boosterSelected)}
+            />
+          </section>
+
+          {/* 4. Testimonials - "Ils ont réussi avec SMS" */}
+          <section className="order-4">
+            <h3 className="text-lg font-semibold !text-white mb-4">Ils ont réussi avec SMS</h3>
+            <div className="space-y-3">
+              {TESTIMONIALS.slice(0, 2).map((testimonial, i) => (
+                <div key={i} className="p-4 bg-[#12161a] rounded-xl border border-white/10">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-sm">{testimonial.name}</div>
+                      <div className="text-xs text-white/50">{testimonial.role}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-0.5 mb-2">
+                    {[...Array(testimonial.rating)].map((_, j) => (
+                      <Star key={j} size={12} className="text-yellow-400 fill-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="!text-white/90 text-sm mb-2">"{testimonial.text}"</p>
+                  <div className="text-xs text-[#00c2ff]">{testimonial.program}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* 5. Récapitulatif (Summary) */}
+          <section className="order-5">
+            <div className="bg-[#12161a] rounded-2xl border border-white/10 overflow-hidden">
+              <div className="p-5 border-b border-white/10">
+                <h3 className="text-xl font-bold !text-white">Récapitulatif</h3>
+              </div>
+              <div className="p-5 space-y-3 border-b border-white/10">
+                {selectedPrograms.length === 0 ? (
+                  <p className="text-white/40 text-sm text-center py-4">
+                    Sélectionne au moins un programme
+                  </p>
+                ) : (
+                  <>
+                    {PROGRAMS.filter(p => selectedPrograms.includes(p.id)).map((program) => (
+                      <div key={program.id} className="flex items-center justify-between">
+                        <span className="text-white" style={{ fontSize: '13px' }}>{program.name}</span>
+                        <span className="text-white font-medium" style={{ fontSize: '16px' }}>${program.discountedPrice}</span>
+                      </div>
+                    ))}
+                    {boosterSelected && (
+                      <div className="pt-3 mt-3 border-t border-white/10">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-white/70">Pack Boosters</span>
+                          <span className="text-white/70">${BOOSTER_PACK.discountedPrice}/mois</span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="p-5 space-y-3 border-b border-white/10">
+                {totalSavings > 0 && (
+                  <div className="flex items-center justify-between text-sm text-green-400">
+                    <span>Économies</span>
+                    <span>-${totalSavings}</span>
+                  </div>
+                )}
+                <div className="pt-2 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-semibold">Total aujourd'hui</span>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-white">${programsTotal}</span>
+                      {boosterMonthly > 0 && (
+                        <p className="text-xs text-white/50">+ ${boosterMonthly}/mois</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-5">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setIsProcessing(true)}
+                  disabled={selectedPrograms.length === 0 || isProcessing}
+                  className={`w-full py-4 font-bold text-lg rounded-full flex items-center justify-center gap-2 transition-all ${
+                    selectedPrograms.length === 0
+                      ? 'bg-white/10 text-white/40 cursor-not-allowed'
+                      : 'bg-[#00c2ff] text-white hover:bg-[#00d4ff]'
+                  }`}
+                >
+                  {isProcessing ? (
+                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Continuer
+                      <ArrowRight size={18} />
+                    </>
+                  )}
+                </motion.button>
+                <div className="mt-4">
+                  <div className="flex items-center justify-center gap-4 text-xs text-white/40">
+                    <span>Stripe</span>
+                    <span>•</span>
+                    <span>PayPal</span>
+                    <span>•</span>
+                    <span>Apple Pay</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 6. FAQ - "Questions fréquentes" */}
+          <section className="order-6">
+            <h3 className="font-semibold !text-white mb-4" style={{ fontSize: '26px' }}>Questions fréquentes</h3>
+            <div className="bg-[#0d1318] rounded-2xl border border-white/5 p-4">
+              {FAQ_ITEMS.map((item, i) => (
+                <FAQItemComponent
+                  key={i}
+                  item={item}
+                  isOpen={openFAQ === i}
+                  onToggle={() => setOpenFAQ(openFAQ === i ? null : i)}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Desktop Layout - grid with 2 columns */}
+        <div className="hidden lg:grid lg:grid-cols-3 gap-10">
           {/* Left Column: Programs & Boosters */}
           <div className="lg:col-span-2 space-y-10">
             {/* Programs Section */}

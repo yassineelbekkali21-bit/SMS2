@@ -239,7 +239,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl"
             >
               {/* Decorative gradient line */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#48c6ed]/50 to-transparent" />
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#00c2ff]/50 to-transparent" />
               
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
@@ -249,8 +249,8 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       <div 
                         key={i} 
                         className={`w-2 h-2 rounded-full transition-all ${
-                          i < currentQIndex ? 'bg-[#48c6ed]' : 
-                          i === currentQIndex ? 'bg-[#48c6ed] ring-4 ring-[#48c6ed]/20' : 
+                          i < currentQIndex ? 'bg-[#00c2ff]' : 
+                          i === currentQIndex ? 'bg-[#00c2ff] ring-4 ring-[#00c2ff]/20' : 
                           'bg-white/20'
                         }`} 
                       />
@@ -260,7 +260,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                     {currentQIndex + 1} sur {questions.length}
                   </span>
                 </div>
-                <span className="px-4 py-1.5 bg-[#48c6ed]/10 text-[#48c6ed] border border-[#48c6ed]/20 rounded-full text-xs font-bold">
+                <span className="px-4 py-1.5 bg-[#00c2ff]/10 text-[#00c2ff] border border-[#00c2ff]/20 rounded-full text-xs font-bold">
                   Quiz Rapide
                 </span>
               </div>
@@ -282,12 +282,12 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       onClick={() => handleQuizAnswer(idx)}
                       className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
                         isSelected 
-                          ? 'bg-[#48c6ed]/10 border-[#48c6ed] shadow-lg shadow-[#48c6ed]/10' 
+                          ? 'bg-[#00c2ff]/10 border-[#00c2ff] shadow-lg shadow-[#00c2ff]/10' 
                           : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
                       }`}
                     >
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                        isSelected ? 'border-[#48c6ed] bg-[#48c6ed]' : 'border-white/30'
+                        isSelected ? 'border-[#00c2ff] bg-[#00c2ff]' : 'border-white/30'
                       }`}>
                         {isSelected && (
                           <motion.div 
@@ -324,7 +324,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                   disabled={!hasAnswered}
                   className={`px-8 py-3 rounded-xl font-bold text-base transition-all flex items-center gap-2 ${
                     hasAnswered 
-                      ? 'bg-gradient-to-r from-[#48c6ed] to-blue-600 !text-white hover:from-[#3ab5dc] hover:to-blue-700 shadow-lg shadow-blue-500/25' 
+                      ? 'bg-gradient-to-r from-[#00c2ff] to-blue-600 !text-white hover:from-[#3ab5dc] hover:to-blue-700 shadow-lg shadow-blue-500/25' 
                       : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
                   }`}
                 >
@@ -373,7 +373,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
             <div className="w-full space-y-4">
               <button
                 onClick={() => setStep('guided')}
-                className="w-full bg-[#48c6ed] !text-white font-bold py-4 px-10 rounded-2xl shadow-lg shadow-[#48c6ed]/25 hover:bg-[#3ab5dc] transition-all flex items-center justify-center gap-3 text-lg"
+                className="w-full bg-[#00c2ff] !text-white font-bold py-4 px-10 rounded-2xl shadow-lg shadow-[#00c2ff]/25 hover:bg-[#3ab5dc] transition-all flex items-center justify-center gap-3 text-lg"
               >
                 <span>Essayer une question d'examen</span>
                 <span className="bg-white/20 text-xs py-1 px-2 rounded-full">Recommandé</span>
@@ -441,12 +441,12 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       onClick={() => handleGuidedAnswer(idx)}
                       className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
                         selected 
-                          ? 'bg-[#48c6ed]/10 border-[#48c6ed] shadow-lg shadow-[#48c6ed]/10' 
+                          ? 'bg-[#00c2ff]/10 border-[#00c2ff] shadow-lg shadow-[#00c2ff]/10' 
                           : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
                       }`}
                     >
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                        selected ? 'border-[#48c6ed] bg-[#48c6ed]' : 'border-white/30'
+                        selected ? 'border-[#00c2ff] bg-[#00c2ff]' : 'border-white/30'
                       }`}>
                         {selected && (
                           <motion.div 
@@ -494,7 +494,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
 
                       <button
                         onClick={() => setStep('gate')}
-                        className="w-full px-6 py-4 rounded-xl bg-[#48c6ed] !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#48c6ed]/25 flex items-center justify-center gap-2"
+                        className="w-full px-6 py-4 rounded-xl bg-[#00c2ff] !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#00c2ff]/25 flex items-center justify-center gap-2"
                       >
                         <span>Continuer</span>
                         <ArrowRight size={16} />
@@ -548,7 +548,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 shadow-2xl"
             >
               {/* Decorative line */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-[#48c6ed]" />
+              <div className="absolute top-0 left-8 right-8 h-px bg-[#00c2ff]" />
               
               <h2 className="text-xl font-bold !text-white mb-6">
                 Entre tes coordonnées pour voir tes résultats
@@ -565,7 +565,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#48c6ed]/30 focus:border-[#48c6ed] !text-white placeholder-white/40 transition-all"
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/30 focus:border-[#00c2ff] !text-white placeholder-white/40 transition-all"
                     placeholder="ton@email.com"
                   />
                 </div>
@@ -592,7 +592,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       type="tel" 
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="flex-1 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#48c6ed]/30 focus:border-[#48c6ed] !text-white placeholder-white/40 transition-all"
+                      className="flex-1 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/30 focus:border-[#00c2ff] !text-white placeholder-white/40 transition-all"
                       placeholder="123 45 67 89"
                     />
                   </div>
@@ -605,7 +605,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                     id="marketing"
                     checked={marketingConsent}
                     onChange={(e) => setMarketingConsent(e.target.checked)}
-                    className="mt-1 w-4 h-4 border-white/20 rounded bg-white/10 text-[#48c6ed] focus:ring-[#48c6ed]"
+                    className="mt-1 w-4 h-4 border-white/20 rounded bg-white/10 text-[#00c2ff] focus:ring-[#00c2ff]"
                   />
                   <label htmlFor="marketing" className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                     J'accepte de recevoir des communications marketing
@@ -615,7 +615,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                 {/* Submit Button */}
                 <button 
                   type="submit"
-                  className="w-full px-6 py-4 bg-[#48c6ed] rounded-xl !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#48c6ed]/25 flex items-center justify-center gap-2"
+                  className="w-full px-6 py-4 bg-[#00c2ff] rounded-xl !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#00c2ff]/25 flex items-center justify-center gap-2"
                 >
                   <span>Voir mes résultats</span>
                   <ArrowRight size={16} />
@@ -648,7 +648,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               >
                 <div className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl overflow-hidden">
                   {/* Decorative top line */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#48c6ed] via-[#48c6ed] to-transparent" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00c2ff] via-[#00c2ff] to-transparent" />
                   
                   {/* Close Button */}
                   <button
@@ -686,7 +686,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                           value={digit}
                           onChange={(e) => handleOtpChange(index, e.target.value)}
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                          className="w-12 h-14 rounded-xl border-2 border-white/10 bg-white/5 text-center text-xl font-bold !text-white focus:border-[#48c6ed] focus:bg-white/10 focus:outline-none transition-all"
+                          className="w-12 h-14 rounded-xl border-2 border-white/10 bg-white/5 text-center text-xl font-bold !text-white focus:border-[#00c2ff] focus:bg-white/10 focus:outline-none transition-all"
                         />
                       ))}
                     </div>
@@ -701,7 +701,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                         }}
                         className="text-sm transition-colors" style={{ color: 'rgba(255,255,255,0.5)' }}
                       >
-                        Tu n'as pas reçu le code ? <span className="font-semibold underline text-[#48c6ed] hover:text-[#3ab5dc]">Renvoyer</span>
+                        Tu n'as pas reçu le code ? <span className="font-semibold underline text-[#00c2ff] hover:text-[#3ab5dc]">Renvoyer</span>
                       </button>
                     </div>
 
@@ -711,7 +711,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                       disabled={otp.some(d => !d) || isSubmitting}
                       className={`w-full px-6 py-4 rounded-xl font-bold transition-all ${
                         otp.every(d => d) && !isSubmitting
-                          ? 'bg-[#48c6ed] !text-white hover:bg-[#3ab5dc] shadow-lg shadow-[#48c6ed]/25'
+                          ? 'bg-[#00c2ff] !text-white hover:bg-[#3ab5dc] shadow-lg shadow-[#00c2ff]/25'
                           : 'bg-white/10 !text-white/40 cursor-not-allowed'
                       }`}
                     >
@@ -744,7 +744,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#48c6ed]/10 text-[#48c6ed] text-xs font-bold uppercase tracking-widest mb-3 border border-[#48c6ed]/20">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00c2ff]/10 text-[#00c2ff] text-xs font-bold uppercase tracking-widest mb-3 border border-[#00c2ff]/20">
                 <CheckCircle size={14} /> Diagnostic Terminé
               </div>
               <h1 className="text-2xl md:text-3xl font-bold !text-white mb-2">
@@ -815,7 +815,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               >
                 <div className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl p-6 text-center overflow-hidden">
                   {/* Decorative line */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#48c6ed] via-[#48c6ed] to-transparent" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00c2ff] via-[#00c2ff] to-transparent" />
                   
                   <h3 className="text-xl font-bold !text-white mb-2">
                     Prêt à progresser ?
@@ -827,7 +827,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                   {/* Primary CTA - Diagnostic Flow */}
                   <Link 
                     href="/?diagnostic=true"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#48c6ed] !text-white font-bold py-3 px-5 rounded-xl text-base shadow-lg shadow-[#48c6ed]/25 hover:bg-[#3ab5dc] transition-all mb-3"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#00c2ff] !text-white font-bold py-3 px-5 rounded-xl text-base shadow-lg shadow-[#00c2ff]/25 hover:bg-[#3ab5dc] transition-all mb-3"
                   >
                     <Target size={20} />
                     <span>Créer mon parcours</span>

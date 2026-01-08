@@ -45,13 +45,13 @@ import { CreateStudyRoomModal, StudyRoomFormData } from './CreateStudyRoomModal'
 function PresenceChips({ onlineCount, readersCount }: { onlineCount: number; readersCount: number }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
-        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full font-medium" style={{ fontSize: '14px' }}>
+        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
         {onlineCount} en ligne
       </span>
       {readersCount > 0 && (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
-          <Eye size={12} />
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full font-medium" style={{ fontSize: '14px' }}>
+          <Eye size={14} />
           {readersCount} lisent
         </span>
       )}
@@ -420,7 +420,7 @@ export function CommunityFullScreen({
             <div className="h-6 w-px bg-gray-300" />
             <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
               Social Club
-              <span className="text-[#48c6ed] ml-3">• {trackTitle}</span>
+              <span className="text-[#00c2ff] ml-3">• {trackTitle}</span>
             </h1>
           </div>
         </div>
@@ -499,39 +499,39 @@ export function CommunityFullScreen({
                       <MessageCircle size={20} className="text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{trackTitle}</h3>
+                      <h3 className="font-semibold text-gray-900" style={{ fontSize: '28px' }}>{trackTitle}</h3>
                       <PresenceChips onlineCount={onlineCount} readersCount={2} />
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 bg-[#48c6ed] text-white text-xs font-medium rounded-full">
+                  <span className="px-3.5 py-1.5 bg-[#00c2ff] text-white font-semibold rounded-full" style={{ fontSize: '14px' }}>
                     {messages.length > 5 ? messages.length - 5 : 3} nouveaux
                   </span>
                 </div>
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
                 {messages.map((msg) => (
                   <div key={msg.id} className={`flex gap-3 ${msg.author === 'Vous' ? 'justify-end' : ''}`}>
                     {msg.author !== 'Vous' && (
-                      <div className={`w-8 h-8 ${msg.isMentor ? 'bg-blue-600' : 'bg-gray-200'} rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <span className={`text-xs font-medium ${msg.isMentor ? 'text-white' : 'text-gray-600'}`}>{msg.authorInitials}</span>
+                      <div className={`w-11 h-11 ${msg.isMentor ? 'bg-blue-600' : 'bg-gray-200'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                        <span className={`font-semibold ${msg.isMentor ? 'text-white' : 'text-gray-600'}`} style={{ fontSize: '15px' }}>{msg.authorInitials}</span>
                       </div>
                     )}
                     <div className={msg.author === 'Vous' ? 'flex flex-col items-end' : ''}>
-                      <div className="flex items-center gap-2 mb-1">
-                        {msg.author === 'Vous' && <span className="text-xs text-gray-400">{msg.timestamp}</span>}
-                        <span className="font-medium text-gray-900 text-sm">{msg.author}</span>
-                        {msg.isMentor && <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">Fondateur</span>}
-                        {msg.author !== 'Vous' && <span className="text-xs text-gray-400">{msg.timestamp}</span>}
+                      <div className="flex items-center gap-2 mb-1.5">
+                        {msg.author === 'Vous' && <span className="text-gray-400" style={{ fontSize: '16px' }}>{msg.timestamp}</span>}
+                        <span className="font-semibold text-gray-900" style={{ fontSize: '16px' }}>{msg.author}</span>
+                        {msg.isMentor && <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded" style={{ fontSize: '13px' }}>Fondateur</span>}
+                        {msg.author !== 'Vous' && <span className="text-gray-400" style={{ fontSize: '16px' }}>{msg.timestamp}</span>}
                       </div>
-                      <div className={`rounded-2xl px-4 py-2.5 ${msg.author === 'Vous' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-700'}`}>
-                        <p className="text-sm">{msg.content}</p>
+                      <div className={`rounded-2xl px-5 py-3 ${msg.author === 'Vous' ? 'bg-[#00c2ff] text-white' : 'bg-white text-gray-900 shadow-sm border border-gray-100'}`}>
+                        <p style={{ fontSize: '16px' }}>{msg.content}</p>
                       </div>
                     </div>
                     {msg.author === 'Vous' && (
-                      <div className="w-8 h-8 bg-[#48c6ed] rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-medium text-white">Y</span>
+                      <div className="w-11 h-11 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="font-semibold text-white" style={{ fontSize: '15px' }}>Y</span>
                       </div>
                     )}
                   </div>
@@ -551,7 +551,7 @@ export function CommunityFullScreen({
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                     placeholder="Pose ta question ou aide un autre étudiant..."
-                    className="flex-1 px-4 py-2.5 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#48c6ed]/20"
+                    className="flex-1 px-4 py-2.5 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/20"
                   />
                   <button onClick={sendMessage} className="p-2.5 bg-gray-100 rounded-full text-gray-400 hover:bg-gray-200">
                     <Send size={18} />
@@ -561,44 +561,58 @@ export function CommunityFullScreen({
             </div>
             
             {/* COLONNE DROITE - STUDY ROOMS */}
-            <div className="space-y-4 overflow-y-auto h-full">
-              {/* Bouton Inviter */}
+            <div className="space-y-5 overflow-y-auto h-full">
+              {/* Bouton Inviter - même fond que Study Rooms */}
               <button 
                 onClick={() => setShowInviteModal(true)}
-                className="w-full px-4 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+                className="w-full px-5 py-4 bg-[#1a1a1a] text-white rounded-2xl font-semibold hover:bg-[#252525] transition-all flex items-center justify-center gap-2"
+                style={{ fontSize: '18px' }}
               >
-                <UserPlus size={16} />
+                <UserPlus size={22} />
                 Inviter un ami
               </button>
               
-              {/* Study Rooms */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">Study Rooms</h3>
-                  <button onClick={() => setShowCreateRoomModal(true)} className="text-sm text-[#48c6ed] hover:underline flex items-center gap-1">
-                    <Plus size={14} />
+              {/* Study Rooms - DARK MODE */}
+              <div className="bg-[#1a1a1a] rounded-2xl p-5">
+                {/* Header avec titre + subtitle */}
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="font-semibold" style={{ fontSize: '20px', color: '#FFFFFF' }}>Study Rooms</h3>
+                  <button 
+                    onClick={() => setShowCreateRoomModal(true)} 
+                    className="text-[#00c2ff] hover:text-[#00b0e8] font-medium flex items-center gap-1.5 flex-shrink-0"
+                    style={{ fontSize: '14px' }}
+                  >
+                    <Plus size={16} />
                     Créer une room
                   </button>
                 </div>
+                <p className="mb-5" style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                  Rejoins une room live ou programme ta prochaine session.
+                </p>
                 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {ROOMS.map((room) => (
-                    <div key={room.id} className={`p-3 bg-gray-50 rounded-xl ${!room.isLive ? 'opacity-75' : ''}`}>
-                      <div className="flex items-center gap-2 mb-2">
+                    <div key={room.id} className={`p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors ${!room.isLive ? 'opacity-80' : ''}`}>
+                      {/* Badges */}
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
                         {room.isLive ? (
-                          <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                          <span className="px-3 py-1 bg-red-500 text-white font-bold rounded flex items-center gap-1.5" style={{ fontSize: '12px' }}>
+                            <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                             LIVE
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-full">
+                          <span className="px-3 py-1 bg-white/10 text-white/60 font-medium rounded" style={{ fontSize: '12px' }}>
                             {room.scheduledTime}
                           </span>
                         )}
-                        {room.isRecommended && <span className="text-xs text-amber-600">⭐ Recommandée</span>}
+                        {room.isRecommended && <span className="text-amber-400 font-medium" style={{ fontSize: '13px' }}>★ Recommandée</span>}
                       </div>
-                      <h4 className="font-medium text-gray-900 text-sm mb-1">{room.name}</h4>
-                      <p className="text-xs text-gray-500 mb-2">
+                      
+                      {/* Titre de la session */}
+                      <h4 className="font-semibold mb-2" style={{ fontSize: '17px', color: '#FFFFFF' }}>{room.name}</h4>
+                      
+                      {/* Meta info */}
+                      <p className="mb-4" style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)' }}>
                         {room.isLive 
                           ? `Démarrée il y a ${room.duration || '5 min'} · ${room.host}`
                           : room.scheduledTime 
@@ -608,34 +622,55 @@ export function CommunityFullScreen({
                               : `Terminée · ${room.host}`
                         }
                       </p>
+                      
                       {room.isLive ? (
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            <div className="flex -space-x-1.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex -space-x-2">
                               {Array.from({ length: Math.min(room.participants, 3) }).map((_, i) => (
-                                <div key={i} className="w-5 h-5 bg-gray-300 rounded-full border border-white text-xs flex items-center justify-center">{String.fromCharCode(65 + i)}</div>
+                                <div 
+                                  key={i} 
+                                  className="w-7 h-7 bg-gradient-to-br from-white/20 to-white/10 rounded-full border-2 border-[#1a1a1a] flex items-center justify-center font-semibold text-white/70"
+                                  style={{ fontSize: '11px' }}
+                                >
+                                  {String.fromCharCode(65 + i)}
+                                </div>
                               ))}
                               {room.participants > 3 && (
-                                <div className="w-5 h-5 bg-gray-200 rounded-full border border-white text-xs flex items-center justify-center">+{room.participants - 3}</div>
+                                <div 
+                                  className="w-7 h-7 bg-white/10 rounded-full border-2 border-[#1a1a1a] flex items-center justify-center font-medium text-white/50"
+                                  style={{ fontSize: '11px' }}
+                                >
+                                  +{room.participants - 3}
+                                </div>
                               )}
                             </div>
-                            <span className="text-xs text-gray-500 ml-1">{room.participants} dedans</span>
+                            <span className="text-white/60 font-medium" style={{ fontSize: '14px' }}>{room.participants} dedans</span>
                           </div>
-                          <button className="px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800">
+                          <button 
+                            className="px-5 py-2.5 bg-[#00c2ff] text-white font-semibold rounded-full hover:bg-[#00b0e8] transition-colors"
+                            style={{ fontSize: '14px' }}
+                          >
                             Rejoindre
                           </button>
                         </div>
                       ) : room.hasReplay ? (
                         <div className="flex justify-end mt-2">
-                          <button className="px-3 py-1.5 bg-purple-600 text-white text-xs font-medium rounded-lg hover:bg-purple-700 flex items-center gap-1">
-                            <Play size={12} />
+                          <button 
+                            className="px-5 py-2.5 bg-purple-600 text-white font-semibold rounded-full hover:bg-purple-700 flex items-center gap-2 transition-colors"
+                            style={{ fontSize: '14px' }}
+                          >
+                            <Play size={16} />
                             Replay
                           </button>
                         </div>
                       ) : room.scheduledTime ? (
                         <div className="flex justify-end mt-2">
-                          <button className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold rounded-full transition-colors flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                          <button 
+                            className="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold rounded-full transition-colors flex items-center gap-2"
+                            style={{ fontSize: '14px' }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                             Rappel
                           </button>
                         </div>
@@ -847,10 +882,10 @@ export function CommunityFullScreen({
                           <MessageCircle size={24} className="text-gray-600" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-gray-900" style={{ fontSize: '22px' }}>{trackTitle}</h3>
+                          <h3 className="font-bold text-gray-900" style={{ fontSize: '28px' }}>{trackTitle}</h3>
                         </div>
                       </div>
-                      <span className="px-3 py-1.5 bg-blue-600 text-white font-medium rounded-full flex-shrink-0" style={{ fontSize: '13px' }}>3 nouveaux</span>
+                      <span className="px-4 py-2 bg-[#00c2ff] text-white font-semibold rounded-full flex-shrink-0" style={{ fontSize: '14px' }}>3 nouveaux</span>
                     </div>
                     {/* Présence - texte simple */}
                     <p className="text-gray-500 mt-1" style={{ fontSize: '14px' }}>
@@ -888,28 +923,28 @@ export function CommunityFullScreen({
                           <React.Fragment key={msg.id}>
                             <div className={`flex gap-3 ${msg.author === 'Vous' ? 'flex-row-reverse' : ''}`}>
                               {/* Avatar */}
-                              <div className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-semibold ${
-                                msg.isMentor ? 'bg-gray-900 text-white' : msg.author === 'Vous' ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-600'
-                              }`} style={{ fontSize: '14px' }}>
+                              <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-semibold ${
+                                msg.isMentor ? 'bg-blue-600 text-white' : msg.author === 'Vous' ? 'bg-[#00c2ff] text-white' : 'bg-gray-200 text-gray-600'
+                              }`} style={{ fontSize: '15px' }}>
                                 {msg.authorInitials}
                               </div>
                               
                               {/* Message bubble */}
                               <div className={`max-w-[75%] ${msg.author === 'Vous' ? 'items-end' : ''}`}>
                                 <div className={`flex items-center gap-2 mb-1.5 ${msg.author === 'Vous' ? 'justify-end' : ''}`}>
-                                  <span className="font-semibold text-gray-800" style={{ fontSize: '14px' }}>{msg.author}</span>
+                                  <span className="font-semibold text-gray-900" style={{ fontSize: '16px' }}>{msg.author}</span>
                                   {msg.isMentor && (
-                                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 font-medium rounded-md border border-gray-200" style={{ fontSize: '11px' }}>
+                                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 font-medium rounded-md border border-gray-200" style={{ fontSize: '13px' }}>
                                       Fondateur
                                     </span>
                                   )}
-                                  <span className="text-gray-400" style={{ fontSize: '12px' }}>{msg.timestamp}</span>
+                                  <span className="text-gray-400" style={{ fontSize: '16px' }}>{msg.timestamp}</span>
                                 </div>
-                                <div className={`px-4 py-3 rounded-2xl leading-relaxed ${
+                                <div className={`px-5 py-3.5 rounded-2xl leading-relaxed ${
                                   msg.author === 'Vous' 
-                                    ? 'bg-gray-900 text-white rounded-tr-md' 
-                                    : 'bg-white border border-gray-200 text-gray-900 rounded-tl-md'
-                                }`} style={{ fontSize: '15px' }}>
+                                    ? 'bg-[#00c2ff] text-white rounded-tr-md' 
+                                    : 'bg-white text-gray-900 rounded-tl-md shadow-sm border border-gray-100'
+                                }`} style={{ fontSize: '16px' }}>
                                   {msg.content}
                                 </div>
                               </div>
@@ -965,47 +1000,53 @@ export function CommunityFullScreen({
                 {/* COLONNE DROITE - INVITE + STUDY ROOMS (~35-40%) */}
                 <div className="flex flex-col gap-4 min-h-0">
 
-                  {/* INVITER UN AMI - Bouton simple */}
+                  {/* INVITER UN AMI - Même fond que Study Rooms */}
                   <button 
                     onClick={() => setShowInviteModal(true)} 
-                    className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-medium transition-colors flex items-center justify-center gap-2 flex-shrink-0"
-                    style={{ fontSize: '15px' }}
+                    className="w-full py-4 bg-[#1a1a1a] hover:bg-[#252525] text-white rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2 flex-shrink-0"
+                    style={{ fontSize: '18px' }}
                   >
-                    <UserPlus size={18} />
+                    <UserPlus size={22} />
                     Inviter un ami
                   </button>
                   
-                  {/* STUDY ROOMS - Liste verticale */}
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col flex-1">
-                    <div className="p-5 border-b border-gray-100 flex-shrink-0">
-                      <div className="flex items-start justify-between gap-3">
+                  {/* STUDY ROOMS - Liste verticale - DARK MODE */}
+                  <div className="bg-[#1a1a1a] rounded-2xl overflow-hidden flex flex-col flex-1">
+                    <div className="p-6 border-b border-white/10 flex-shrink-0">
+                      <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>Study Rooms</h3>
+                          <h3 className="font-semibold" style={{ fontSize: '22px', color: '#FFFFFF' }}>Study Rooms</h3>
                         </div>
                         <button 
                           onClick={() => setShowCreateRoomModal(true)} 
-                          className="text-gray-600 hover:text-gray-900 font-medium transition-colors flex items-center gap-1.5 flex-shrink-0"
-                          style={{ fontSize: '14px' }}
+                          className="text-[#00c2ff] hover:text-[#00b0e8] font-medium transition-colors flex items-center gap-1.5 flex-shrink-0"
+                          style={{ fontSize: '15px' }}
                         >
-                          <Plus size={16} />
+                          <Plus size={18} />
                           Créer une room
                         </button>
                       </div>
-                      
+                      <p style={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                        Rejoins une room live ou programme ta prochaine session.
+                      </p>
                     </div>
                     
                     {/* Liste des rooms (1 colonne) */}
-                    <div className="flex-1 p-4 overflow-y-auto">
+                    <div className="flex-1 p-5 overflow-y-auto">
                       {ROOMS.filter(r => r.status === 'live' || r.status === 'scheduled' || (r.status === 'ended' && r.hasReplay)).length === 0 ? (
-                        <div className="flex flex-col items-center justify-center text-center py-8">
-                          <Video size={36} className="text-gray-300 mb-3" />
-                          <p className="text-gray-500 mb-3 text-sm">Aucune room en cours.</p>
-                          <button onClick={() => setShowCreateRoomModal(true)} className="px-5 py-2 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-colors text-sm">
+                        <div className="flex flex-col items-center justify-center text-center py-10">
+                          <Video size={48} className="text-white/30 mb-4" />
+                          <p className="text-white/50 mb-4" style={{ fontSize: '15px' }}>Aucune room en cours.</p>
+                          <button 
+                            onClick={() => setShowCreateRoomModal(true)} 
+                            className="px-6 py-3 bg-[#00c2ff] text-white rounded-full font-semibold hover:bg-[#00b0e8] transition-colors"
+                            style={{ fontSize: '15px' }}
+                          >
                             Créer une room
                           </button>
                         </div>
                       ) : (
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-5">
                           {/* Tri: LIVE d'abord, puis scheduled bientôt, puis scheduled, puis replay - max 4 items */}
                           {[...ROOMS]
                             .sort((a, b) => {
@@ -1033,46 +1074,46 @@ export function CommunityFullScreen({
                               return (
                                 <div 
                                   key={room.id} 
-                                  className={`bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors ${
-                                    isRecommended ? 'ring-1 ring-red-200 bg-red-50/30' : ''
+                                  className={`bg-white/5 rounded-2xl p-5 hover:bg-white/10 transition-colors ${
+                                    isRecommended ? 'ring-1 ring-red-500/30 bg-red-500/10' : ''
                                   }`}
                                 >
                                   {/* Header: Badges */}
-                                  <div className="flex items-center gap-2 mb-2.5 flex-wrap">
+                                  <div className="flex items-center gap-2.5 mb-3 flex-wrap">
                                     {room.status === 'live' && (
-                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-600 text-white rounded font-bold" style={{ fontSize: '12px' }}>
+                                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded font-bold" style={{ fontSize: '13px' }}>
                                         <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
                                         LIVE
                                       </span>
                                     )}
                                     {room.status === 'ended' && room.hasReplay && (
-                                      <span className="inline-flex items-center px-2.5 py-1 bg-purple-100 text-purple-700 rounded font-medium" style={{ fontSize: '12px' }}>
+                                      <span className="inline-flex items-center px-3 py-1.5 bg-purple-500/20 text-purple-300 rounded font-medium" style={{ fontSize: '13px' }}>
                                         Replay
                                       </span>
                                     )}
                                     {room.status === 'scheduled' && isSoon && (
-                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 rounded font-medium" style={{ fontSize: '12px' }}>
-                                        <Clock size={12} />
+                                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 text-amber-300 rounded font-medium" style={{ fontSize: '13px' }}>
+                                        <Clock size={14} />
                                         Commence bientôt
                                       </span>
                                     )}
                                     {room.status === 'scheduled' && !isSoon && (
-                                      <span className="inline-flex items-center px-2.5 py-1 bg-gray-200 text-gray-600 rounded font-medium" style={{ fontSize: '12px' }}>
+                                      <span className="inline-flex items-center px-3 py-1.5 bg-white/10 text-white/60 rounded font-medium" style={{ fontSize: '13px' }}>
                                         {room.scheduledDate?.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
                                       </span>
                                     )}
                                     {isRecommended && (
-                                      <span className="text-amber-600 font-medium" style={{ fontSize: '12px' }}>★ Recommandée</span>
+                                      <span className="text-amber-400 font-medium" style={{ fontSize: '14px' }}>★ Recommandée</span>
                                     )}
                                   </div>
 
                                   {/* Titre du type de session */}
-                                  <h4 className="font-semibold text-gray-900 mb-1.5" style={{ fontSize: '17px' }}>
+                                  <h4 className="font-semibold mb-2" style={{ fontSize: '18px', color: '#FFFFFF' }}>
                                     {room.isComplement ? 'Session Compléments' : room.isSilent ? 'Session Silencieuse' : 'Session Interactive'}
                                   </h4>
 
                                   {/* Meta info */}
-                                  <p className="text-gray-500 mb-3" style={{ fontSize: '14px' }}>
+                                  <p className="mb-4" style={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)' }}>
                                     {room.status === 'live' && `Démarrée il y a ${Math.floor(Math.random() * 30) + 5} min`}
                                     {room.status === 'scheduled' && room.scheduledDate && `${room.scheduledDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`}
                                     {room.status === 'ended' && 'Session terminée'}
@@ -1081,48 +1122,48 @@ export function CommunityFullScreen({
 
                                   {/* Participants + Buddies */}
                                   <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2.5">
+                                    <div className="flex items-center gap-3">
                                       {room.participants > 0 && (
                                         <>
                                           <div className="flex -space-x-2">
                                             {Array.from({ length: Math.min(room.participants, 3) }).map((_, i) => (
                                               <div 
                                                 key={i} 
-                                                className="w-7 h-7 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full border-2 border-white flex items-center justify-center font-semibold text-gray-600"
-                                                style={{ fontSize: '11px' }}
+                                                className="w-8 h-8 bg-gradient-to-br from-white/20 to-white/10 rounded-full border-2 border-[#1a1a1a] flex items-center justify-center font-semibold text-white/70"
+                                                style={{ fontSize: '12px' }}
                                               >
                                                 {String.fromCharCode(65 + i)}
                                               </div>
                                             ))}
                                             {room.participants > 3 && (
-                                              <div className="w-7 h-7 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center font-medium text-gray-500" style={{ fontSize: '11px' }}>
+                                              <div className="w-8 h-8 bg-white/10 rounded-full border-2 border-[#1a1a1a] flex items-center justify-center font-medium text-white/50" style={{ fontSize: '12px' }}>
                                                 +{room.participants - 3}
                                               </div>
                                             )}
                                           </div>
-                                          <div style={{ fontSize: '14px' }}>
-                                            <span className="text-gray-600 font-medium">{room.participants} dedans</span>
+                                          <div style={{ fontSize: '15px' }}>
+                                            <span className="text-white/70 font-medium">{room.participants} dedans</span>
                                             {room.buddies && room.buddies.length > 0 && (
-                                              <span className="text-amber-600 ml-1.5">— dont {room.buddies.length} de tes buddy{room.buddies.length > 1 ? 's' : ''}</span>
+                                              <span className="text-amber-400 ml-2">· {room.buddies.length} buddy{room.buddies.length > 1 ? 's' : ''}</span>
                                             )}
                                           </div>
                                         </>
                                       )}
                                       {room.participants === 0 && room.status !== 'ended' && (
-                                        <span className="text-gray-400" style={{ fontSize: '14px' }}>Sois le premier à rejoindre</span>
+                                        <span className="text-white/40" style={{ fontSize: '15px' }}>Sois le premier à rejoindre</span>
                                       )}
                                     </div>
 
                                     {/* CTA */}
                                     <button 
-                                      className={`px-5 py-2 rounded-full font-medium transition-colors ${
+                                      className={`px-6 py-3 rounded-full font-semibold transition-colors ${
                                         room.status === 'ended' && room.hasReplay 
-                                          ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                                          ? 'bg-purple-600 text-white hover:bg-purple-700'
                                           : room.status === 'scheduled' 
-                                          ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
-                                          : 'bg-gray-900 text-white hover:bg-gray-800'
+                                          ? 'bg-white/10 border border-white/20 text-white hover:bg-white/20'
+                                          : 'bg-[#00c2ff] text-white hover:bg-[#00b0e8]'
                                       }`}
-                                      style={{ fontSize: '14px' }}
+                                      style={{ fontSize: '15px' }}
                                     >
                                       {room.status === 'ended' && room.hasReplay 
                                         ? 'Replay' 

@@ -52,7 +52,7 @@ const MiniTrackCard: React.FC<{
         <div className="absolute top-3 left-3 z-20">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-lg ${
             isCompleted ? 'bg-white text-gray-900' :
-            isInProgress ? 'bg-[#48c6ed] text-white' :
+            isInProgress ? 'bg-[#00c2ff] text-white' :
             isLocked ? 'bg-gray-600/80 text-white/60' :
             'bg-white/20 backdrop-blur-sm text-white'
           }`}>
@@ -63,12 +63,12 @@ const MiniTrackCard: React.FC<{
         {/* Badge EN COURS ou ESSAI */}
         <div className="absolute top-3 right-3 z-20 flex flex-col gap-1">
           {isInProgress && (
-            <span className="px-2 py-1 bg-[#48c6ed] text-white text-[9px] font-bold rounded-md uppercase tracking-wider">
+            <span className="px-2 py-1 bg-[#00c2ff] text-white text-[9px] font-bold rounded-md uppercase tracking-wider">
               En cours
             </span>
           )}
           {track.isTrial && !isInProgress && (
-            <span className="inline-flex items-center px-3 py-1.5 bg-gray-900 text-white text-[13px] font-bold rounded-md uppercase tracking-wider shadow-lg">
+            <span className="inline-flex items-center px-3 py-1.5 bg-white text-gray-900 text-[13px] font-bold rounded-md uppercase tracking-wider shadow-lg">
               Essai
             </span>
           )}
@@ -102,7 +102,7 @@ const MiniTrackCard: React.FC<{
         {progress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700/50">
             <div 
-              className={`h-full ${isCompleted ? 'bg-white' : 'bg-[#48c6ed]'}`}
+              className={`h-full ${isCompleted ? 'bg-white' : 'bg-[#00c2ff]'}`}
               style={{ width: `${progress}%` }}
             />
           </div>

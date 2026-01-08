@@ -259,14 +259,14 @@ export default function EndOfDiagnosticPage() {
       </header>
 
       {/* Urgency Banner */}
-      <div className="bg-gradient-to-r from-[#0d1317] via-[#1a2530] to-[#0d1317] border-b border-white/5">
+      <div className="bg-[#00c2ff]">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-4 text-sm">
-          <span className="text-white font-semibold tracking-wider">OFFRE DE LANCEMENT</span>
-          <span className="text-white/80">SUR CHAQUE MASTERY PROGRAM</span>
-          <span className="bg-white text-black font-bold px-3 py-1 rounded-full text-xs">
+          <span className="text-white font-semibold tracking-wider">OFFRE NOUVELLE ANNÉE</span>
+          <span className="text-white/90">SUR CHAQUE MASTERY PROGRAM</span>
+          <span className="bg-white text-[#00c2ff] font-bold px-3 py-1 rounded-full text-xs">
             -{discount}%
           </span>
-          <span className="text-white/60">EXPIRE DANS</span>
+          <span className="text-white/90">EXPIRE DANS</span>
           <div className="flex items-center gap-1 font-mono font-bold">
             <span className="text-white">02</span>
             <span className="text-white/40">j</span>
@@ -550,9 +550,9 @@ function ResultsPhase({ programs, tracks, totalChapters, totalTracks, totalPrice
             {/* Primary CTA */}
             <button 
               onClick={() => setShowLeadCapture(true)}
-              className="w-full py-4 bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 mb-3"
+              className="w-full py-4 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 mb-3"
             >
-              Débloquer 10h gratuites
+              Teste ton parcours – 10h offertes
               <ArrowRight size={18} />
             </button>
             

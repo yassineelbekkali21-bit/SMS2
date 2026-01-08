@@ -17,7 +17,12 @@ import {
   RefreshCw,
   CalendarDays,
   ChevronDown,
-  ExternalLink
+  ExternalLink,
+  MessageCircle,
+  TrendingUp,
+  Flame,
+  HelpCircle,
+  ArrowRight
 } from 'lucide-react';
 import { PlannerAccess, StudyPreferences, StudyPlan, BuddySystem, Course } from '@/types/index';
 import { SocialPlannerIntegration } from './SocialPlannerIntegration';
@@ -676,7 +681,7 @@ export function StrategicPlannerCompact({
                 return (
                   <div 
                     id="track-planning-view"
-                    className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
+                    className="bg-white rounded-2xl border border-gray-200"
                   >
                     {/* Header - Hidden when hideHeader (contextual mode) */}
                     {!hideHeader && (
@@ -773,8 +778,8 @@ export function StrategicPlannerCompact({
                                 </div>
                               </div>
                               
-                              {/* Lessons with Option A date style */}
-                              <div className="space-y-2">
+                              {/* Lessons - Clean style like planningbis */}
+                              <div className="divide-y divide-gray-100 rounded-xl overflow-hidden bg-white border border-gray-200">
                                 {weekLessons.sort((a, b) => (a.scheduledDate?.getTime() || 0) - (b.scheduledDate?.getTime() || 0)).map((lesson) => (
                                   <div 
                                     key={lesson.id}
@@ -783,55 +788,63 @@ export function StrategicPlannerCompact({
                                         onNavigateToCourse(selectedTrackPlanning);
                                       }
                                     }}
-                                    className={`flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer hover:shadow-md ${
+                                    className={`flex items-center gap-5 px-5 py-4 cursor-pointer transition-all ${
                                       lesson.status === 'current' 
-                                        ? 'bg-blue-50 border border-blue-200 hover:bg-blue-100' 
-                                        : lesson.status === 'completed'
-                                        ? 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
-                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                        ? 'bg-[#00c2ff]/5' 
+                                        : 'hover:bg-gray-50'
                                     }`}
                                   >
-                                    {/* Date block - Option A style */}
-                                    <div 
-                                      className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${
-                                        lesson.status === 'completed' 
-                                          ? 'bg-gray-100' 
-                                          : lesson.status === 'current'
-                                          ? 'bg-gray-900'
-                                          : 'bg-gray-100'
-                                      }`}
-                                    >
-                                      <span className={`text-lg font-bold leading-none ${
-                                        lesson.status === 'current' ? 'text-white' : 'text-gray-700'
-                                      }`}>
+                                    {/* Date Column */}
+                                    <div className="w-14 flex-shrink-0 text-center">
+                                      <p 
+                                        className="text-2xl font-bold"
+                                        style={{ 
+                                          color: lesson.status === 'completed' 
+                                            ? '#d1d5db' 
+                                            : lesson.status === 'current' 
+                                            ? '#00c2ff' 
+                                            : '#374151' 
+                                        }}
+                                      >
                                         {lesson.scheduledDate?.getDate() || '--'}
-                                      </span>
-                                      <span className={`text-[10px] uppercase font-semibold ${
-                                        lesson.status === 'current' ? 'text-gray-300' : 'text-gray-500'
-                                      }`}>
-                                        {lesson.scheduledDate?.toLocaleDateString('fr-FR', { month: 'short' }) || ''}
-                                      </span>
-                                      {/* Status indicator */}
-                                      <div className="mt-1">
+                                      </p>
+                                      <p className="text-[10px] uppercase text-gray-400">
+                                        {lesson.scheduledDate?.toLocaleDateString('fr-FR', { weekday: 'short' }) || ''}
+                                      </p>
+                                    </div>
+
+                                    {/* Status Indicator */}
+                                    <div className="flex-shrink-0">
+                                      <div 
+                                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                                        style={{
+                                          backgroundColor: lesson.status === 'completed' 
+                                            ? '#1f2937' 
+                                            : lesson.status === 'current'
+                                            ? '#00c2ff'
+                                            : '#f3f4f6',
+                                          border: lesson.status === 'upcoming' ? '2px solid #e5e7eb' : 'none'
+                                        }}
+                                      >
                                         {lesson.status === 'completed' ? (
-                                          <Check size={12} style={{ color: '#48c6ed' }} />
+                                          <Check size={18} className="text-white" />
                                         ) : lesson.status === 'current' ? (
-                                          <Play size={10} className="text-white" fill="white" />
+                                          <Play size={16} className="text-white ml-0.5" fill="white" />
                                         ) : (
-                                          <Clock size={10} className="text-gray-400" />
+                                          <Clock size={14} className="text-gray-400" />
                                         )}
                                       </div>
                                     </div>
 
-                                    {/* Lesson info */}
+                                    {/* Lesson Info */}
                                     <div className="flex-1 min-w-0">
-                                      <p className={`text-base font-semibold ${
+                                      <p className={`font-semibold mb-0.5 ${
                                         lesson.status === 'completed' ? 'text-gray-400' : 'text-gray-900'
                                       }`}>
                                         {lesson.title}
                                       </p>
                                       <p className="text-sm text-gray-500">
-                                        Leçon {lesson.lessonNumber} • {lesson.duration}
+                                        Leçon {lesson.lessonNumber} · {lesson.duration}
                                       </p>
                                     </div>
 
@@ -845,8 +858,8 @@ export function StrategicPlannerCompact({
                                               onNavigateToCourse(selectedTrackPlanning);
                                             }
                                           }}
-                                          className="px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:brightness-110"
-                                          style={{ backgroundColor: '#48c6ed', color: '#ffffff' }}
+                                          className="px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:brightness-110"
+                                          style={{ backgroundColor: '#00c2ff', color: '#ffffff' }}
                                         >
                                           <Play size={14} fill="#ffffff" />
                                           Continuer
@@ -860,7 +873,7 @@ export function StrategicPlannerCompact({
                                               onNavigateToCourse(selectedTrackPlanning);
                                             }
                                           }}
-                                          className="px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-100 transition-all"
+                                          className="px-5 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all"
                                         >
                                           Revoir
                                         </button>
@@ -873,31 +886,31 @@ export function StrategicPlannerCompact({
                           ))}
                         </div>
 
-                        {/* RIGHT COLUMN: Engaging Sidebar */}
+                        {/* RIGHT COLUMN: Sidebar - Dark with subtle blue touches */}
                         <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
                           
                           {/* Countdown to Exam */}
                           {track?.examDate && (
-                            <div className="rounded-2xl p-5 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                            <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
                               <div className="flex items-center gap-2 mb-3">
-                                <Target size={18} className="text-cyan-400" />
-                                <span className="text-sm font-semibold uppercase tracking-wider text-gray-400">Objectif</span>
+                                <Target size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
+                                <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.85)' }}>Objectif</span>
                               </div>
                               <div className="flex items-baseline gap-2 mb-2">
-                                <span className="text-4xl font-bold" style={{ color: '#48c6ed' }}>
+                                <span className="text-4xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
                                   {Math.max(0, Math.ceil((track.examDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))}
                                 </span>
-                                <span className="text-gray-400">jours restants</span>
+                                <span style={{ color: 'rgba(255,255,255,0.85)' }}>jours restants</span>
                               </div>
-                              <p className="text-sm text-gray-400">
+                              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
                                 {totalCount - completedCount} leçons à terminer avant le {track.examDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
                               </p>
-                              <div className="mt-3 w-full h-1.5 rounded-full bg-gray-700">
+                              <div className="mt-3 w-full h-1.5 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
                                 <div 
                                   className="h-full rounded-full transition-all"
                                   style={{ 
                                     width: `${(completedCount / totalCount) * 100}%`,
-                                    backgroundColor: '#48c6ed'
+                                    backgroundColor: '#00c2ff'
                                   }}
                                 />
                               </div>
@@ -905,50 +918,53 @@ export function StrategicPlannerCompact({
                           )}
 
                           {/* Study Room - Community */}
-                          <div className="rounded-2xl p-5 bg-white border border-gray-200">
+                          <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
                             <div className="flex items-center gap-2 mb-3">
-                              <Users size={18} className="text-purple-500" />
-                              <span className="text-sm font-semibold text-gray-900">Study Room</span>
+                              <Users size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
+                              <span className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>Study Room</span>
                             </div>
                             <div className="flex items-center gap-2 mb-3">
                               <div className="flex -space-x-2">
-                                <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs font-bold text-purple-600">M</div>
-                                <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-bold text-blue-600">S</div>
-                                <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-white flex items-center justify-center text-xs font-bold text-green-600">A</div>
+                                <div className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: '#0d1317', color: 'rgba(255,255,255,0.85)' }}>M</div>
+                                <div className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: '#0d1317', color: 'rgba(255,255,255,0.85)' }}>S</div>
+                                <div className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: '#0d1317', color: 'rgba(255,255,255,0.85)' }}>A</div>
                               </div>
-                              <span className="text-sm text-gray-600">+12 étudient ce parcours</span>
+                              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>+12 étudient ce parcours</span>
                             </div>
-                            <button className="w-full py-3 rounded-xl text-sm font-semibold bg-purple-50 text-purple-700 hover:bg-purple-100 transition-all flex items-center justify-center gap-2">
+                            <button 
+                              className="w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 text-white hover:brightness-110"
+                              style={{ backgroundColor: '#00c2ff' }}
+                            >
                               <MessageCircle size={16} />
                               Rejoindre la Study Room
                             </button>
                           </div>
 
                           {/* Quick Stats */}
-                          <div className="rounded-2xl p-5 bg-white border border-gray-200">
+                          <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
                             <div className="flex items-center gap-2 mb-4">
-                              <TrendingUp size={18} className="text-green-500" />
-                              <span className="text-sm font-semibold text-gray-900">Ta progression</span>
+                              <TrendingUp size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
+                              <span className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>Ta progression</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
-                              <div className="text-center p-3 rounded-xl bg-gray-50">
-                                <p className="text-2xl font-bold text-gray-900">{completedCount}</p>
-                                <p className="text-xs text-gray-500">Leçons vues</p>
+                              <div className="text-center p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                                <p className="text-2xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>{completedCount}</p>
+                                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.85)' }}>Leçons vues</p>
                               </div>
-                              <div className="text-center p-3 rounded-xl bg-gray-50">
-                                <p className="text-2xl font-bold text-gray-900">{totalCount - completedCount}</p>
-                                <p className="text-xs text-gray-500">Restantes</p>
+                              <div className="text-center p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                                <p className="text-2xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>{totalCount - completedCount}</p>
+                                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.85)' }}>Restantes</p>
                               </div>
                             </div>
-                            <div className="mt-4 flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
-                              <Flame size={18} className="text-amber-500" />
-                              <span className="text-sm font-medium text-amber-700">5 jours de streak ! 🔥</span>
+                            <div className="mt-4 flex items-center gap-2 p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                              <Flame size={18} style={{ color: '#00c2ff' }} />
+                              <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>5 jours de streak</span>
                             </div>
                           </div>
 
                           {/* Help */}
-                          <div className="rounded-2xl p-4 bg-gray-50 border border-gray-200">
-                            <button className="w-full flex items-center justify-between text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                          <div className="rounded-2xl p-4" style={{ backgroundColor: '#0d1317' }}>
+                            <button className="w-full flex items-center justify-between text-sm font-medium transition-colors" style={{ color: 'rgba(255,255,255,0.85)' }}>
                               <span className="flex items-center gap-2">
                                 <HelpCircle size={16} />
                                 Besoin d'aide sur ce parcours ?
@@ -1043,7 +1059,7 @@ export function StrategicPlannerCompact({
                                 backgroundColor: session.status === 'completed' 
                                   ? 'rgba(255,255,255,0.15)' 
                                   : session.status === 'current'
-                                  ? '#48c6ed'
+                                  ? '#00c2ff'
                                   : 'rgba(255,255,255,0.12)',
                                 border: session.status === 'current' 
                                   ? 'none' 
@@ -1117,7 +1133,7 @@ export function StrategicPlannerCompact({
                                   }}
                                   className="px-6 py-3 rounded-full text-base font-bold flex items-center gap-2 transition-all hover:brightness-110"
                                   style={{ 
-                                    backgroundColor: '#48c6ed', 
+                                    backgroundColor: '#00c2ff', 
                                     color: '#0d1317',
                                     boxShadow: '0 4px 14px rgba(72,198,237,0.3), 0 2px 4px rgba(0,0,0,0.2)'
                                   }}
@@ -1299,7 +1315,7 @@ export function StrategicPlannerCompact({
                           <button
                             onClick={() => setCurrentWeekOffset(0)}
                             className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
-                            style={{ backgroundColor: 'rgba(72,198,237,0.15)', color: '#48c6ed' }}
+                            style={{ backgroundColor: 'rgba(72,198,237,0.15)', color: '#00c2ff' }}
                           >
                             Aujourd'hui
                           </button>
@@ -1332,7 +1348,7 @@ export function StrategicPlannerCompact({
                           {idx === 0 && (
                             <span 
                               className="inline-block px-3 py-1 text-sm font-semibold rounded-full mt-2"
-                              style={{ backgroundColor: '#48c6ed', color: '#0d1317' }}
+                              style={{ backgroundColor: '#00c2ff', color: '#0d1317' }}
                             >
                               Aujourd'hui
                             </span>
@@ -1346,7 +1362,7 @@ export function StrategicPlannerCompact({
                       {weekSessions.map((day, idx) => (
                         <div 
                           key={day.day} 
-                          className={`min-h-[200px] rounded-xl p-4 transition-all duration-200 ${dragOverDay === day.day ? 'ring-2 ring-[#48c6ed] ring-opacity-50' : ''}`}
+                          className={`min-h-[200px] rounded-xl p-4 transition-all duration-200 ${dragOverDay === day.day ? 'ring-2 ring-[#00c2ff] ring-opacity-50' : ''}`}
                           style={{
                             backgroundColor: dragOverDay === day.day 
                               ? 'rgba(72,198,237,0.1)' 
@@ -1417,7 +1433,7 @@ export function StrategicPlannerCompact({
                                     <div className="absolute top-2 right-2 opacity-0 group-hover/session:opacity-100 transition-opacity">
                                       <div 
                                         className="w-7 h-7 rounded-full flex items-center justify-center"
-                                        style={{ backgroundColor: '#48c6ed' }}
+                                        style={{ backgroundColor: '#00c2ff' }}
                                       >
                                         <Play size={12} className="text-white ml-0.5" fill="white" />
                                       </div>
@@ -1554,12 +1570,12 @@ export function StrategicPlannerCompact({
                           {week.days.map((day) => (
                               <div 
                                 key={day.date}
-                                className={`min-h-[120px] p-3 rounded-xl transition-all ${dragOverDay === day.date ? 'ring-2 ring-[#48c6ed] ring-opacity-50' : ''}`}
+                                className={`min-h-[120px] p-3 rounded-xl transition-all ${dragOverDay === day.date ? 'ring-2 ring-[#00c2ff] ring-opacity-50' : ''}`}
                                 style={{
                                   backgroundColor: dragOverDay === day.date
                                     ? 'rgba(72,198,237,0.15)'
                                     : day.isToday 
-                                    ? '#48c6ed' 
+                                    ? '#00c2ff' 
                                     : day.hasExam
                                     ? 'rgba(251,146,60,0.15)'
                                     : 'rgba(255,255,255,0.025)',
@@ -1643,7 +1659,7 @@ export function StrategicPlannerCompact({
                     {/* Legend */}
                     <div className="mt-6 flex items-center gap-6 text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded" style={{ backgroundColor: '#48c6ed' }} />
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: '#00c2ff' }} />
                         <span>Aujourd'hui</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1686,165 +1702,162 @@ export function StrategicPlannerCompact({
                   </span>
                 </motion.button>
                 
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden" style={{ boxShadow: '0 4px 25px rgba(0,0,0,0.08)' }}>
-                <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-2xl font-bold text-gray-900">Parcours en cours</h2>
-                </div>
-                
-                <div className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {mockLearningTracks.map((track) => (
-                      <motion.div
-                        key={track.id}
-                        onClick={() => setExpandedTrack(expandedTrack === track.id ? null : track.id)}
-                        className={`rounded-xl border cursor-pointer transition-all ${
-                          !track.isOnTrack 
-                            ? 'border-orange-200 bg-orange-50/50' 
-                            : 'border-gray-200 bg-white hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="p-5">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                track.status === 'active' ? 'bg-gray-900' :
-                                track.status === 'behind' ? 'bg-orange-500' :
-                                'bg-gray-200'
-                              }`}>
-                                <BookOpen size={22} className={track.status === 'not-started' ? 'text-gray-500' : 'text-white'} />
-                          </div>
-                              <div>
-                                <h3 className="text-lg font-semibold text-gray-900">{track.title}</h3>
-                                <p className="text-sm text-gray-500">{track.programme}</p>
-                              </div>
-                </div>
-
-                            {/* Status indicator */}
-                            {!track.isOnTrack && (
-                              <span className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium rounded-full flex items-center gap-1">
+              {/* LEARNING TRACKS - Light mode, Grid 3 columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {mockLearningTracks.map((track, idx) => (
+                  <motion.div
+                    key={track.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.08, duration: 0.4 }}
+                    className="group cursor-pointer rounded-2xl transition-all duration-300 hover:shadow-lg bg-white"
+                    style={{ 
+                      border: !track.isOnTrack 
+                        ? '1px solid rgba(251,146,60,0.3)'
+                        : '1px solid #e5e7eb',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                    }}
+                  >
+                    {/* Top accent bar */}
+                    <div 
+                      className="h-1 rounded-t-2xl"
+                      style={{ 
+                        background: !track.isOnTrack 
+                          ? 'linear-gradient(90deg, #fb923c, #f97316)' 
+                          : track.progress === 0 
+                          ? '#e5e7eb'
+                          : '#0d1317'
+                      }}
+                    />
+                    
+                    <div className="p-5">
+                      {/* Header row - Title left, Progress ring right */}
+                      <div className="flex items-start justify-between mb-4">
+                        {/* Left side - Title & info */}
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="text-lg font-bold text-gray-900 mb-0.5 truncate">
+                            {track.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-3">
+                            {track.programme}
+                          </p>
+                          
+                          {/* Status badge */}
+                          <div className="mb-3">
+                            {!track.isOnTrack ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-orange-50 text-orange-600">
                                 <Clock size={11} />
-                                {track.missedSessions} à rattraper
+                                {track.missedSessions} en retard
                               </span>
-                            )}
-                            {track.isOnTrack && track.progress > 0 && (
-                              <span className="px-3 py-1 text-sm font-medium rounded-full flex items-center gap-1" style={{ backgroundColor: '#0d1317', color: '#ffffff' }}>
-                                <Check size={11} style={{ color: '#ffffff' }} />
+                            ) : track.progress > 0 ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                                <Check size={11} />
                                 Dans le rythme
                               </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-gray-50 text-gray-500">
+                                Pas commencé
+                              </span>
                             )}
                           </div>
 
-                          {/* Progress */}
-                          <div className="mb-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm text-gray-600">{getProgressHint(track.progress, track.isOnTrack)}</span>
-                              <span className="text-base font-bold text-gray-900">{track.progress}%</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-100 rounded-full">
-                              <div 
-                                className={`h-full rounded-full transition-all duration-500 ${
-                                  !track.isOnTrack ? 'bg-orange-500' : 'bg-gray-900'
-                                }`}
-                                style={{ width: `${track.progress}%` }}
-                              />
-                            </div>
+                          {/* Info row */}
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            {track.examDate && (
+                              <div className="flex items-center gap-1.5">
+                                <Calendar size={12} className="text-gray-400" />
+                                <span>
+                                  <span className="font-semibold text-gray-700">{formatDate(track.examDate)}</span>
+                                </span>
+                              </div>
+                            )}
+                            {track.sessionsThisWeek > 0 && (
+                              <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                                {track.sessionsThisWeek}/sem
+                              </span>
+                            )}
                           </div>
+                        </div>
 
-                          {/* Quick info */}
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center gap-4">
-                              {track.examDate && (
-                                <span className="text-gray-600">
-                                  Examen : <span className="font-medium text-gray-900">{formatDate(track.examDate)}</span>
-                                </span>
-                              )}
-                              {track.sessionsThisWeek > 0 && (
-                                <span className="text-gray-600">
-                                  <span className="font-medium text-gray-900">{track.sessionsThisWeek}</span> sessions/sem
-                                </span>
-                              )}
-                            </div>
-                            <ChevronDown 
-                              size={18} 
-                              className={`text-gray-400 transition-transform ${expandedTrack === track.id ? 'rotate-180' : ''}`} 
+                        {/* Right side - Progress ring */}
+                        <div className="relative w-[68px] h-[68px] flex-shrink-0">
+                          <svg className="w-[68px] h-[68px] transform -rotate-90" viewBox="0 0 68 68">
+                            <circle 
+                              cx="34" cy="34" r="28" 
+                              stroke="#f3f4f6" 
+                              strokeWidth="5" 
+                              fill="none"
                             />
+                            <circle 
+                              cx="34" cy="34" r="28" 
+                              stroke={!track.isOnTrack ? '#fb923c' : '#0d1317'}
+                              strokeWidth="5" 
+                              fill="none"
+                              strokeDasharray={`${(track.progress / 100) * 175.9} 175.9`}
+                              strokeLinecap="round"
+                              className="transition-all duration-700"
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-lg font-bold text-gray-900 leading-none">
+                              {track.progress}
+                            </span>
+                            <span className="text-[9px] text-gray-400">%</span>
                           </div>
                         </div>
+                      </div>
 
-                        {/* Expanded content */}
-                        <AnimatePresence>
-                          {expandedTrack === track.id && (
-                      <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden border-t border-gray-100"
-                            >
-                              <div className="p-5 bg-gray-50">
-                                {/* Current chapter & next step - side by side */}
-                                <div className="grid grid-cols-2 gap-6 mb-4">
-                                  {track.currentChapter && (
-                                    <div className="flex items-start gap-3">
-                                      <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center flex-shrink-0">
-                                        <BookOpen size={14} className="text-white" />
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">Chapitre en cours</p>
-                                        <p className="text-sm font-semibold text-gray-900">{track.currentChapter}</p>
-                                      </div>
-                                    </div>
-                                  )}
-                                  
-                                  {track.nextSession && (
-                                    <div className="flex items-start gap-3">
-                                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(72,198,237,0.15)' }}>
-                                        <Target size={14} style={{ color: '#48c6ed' }} />
-                                      </div>
-                                      <div>
-                                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">Prochaine session</p>
-                                        <p className="text-sm font-semibold text-gray-900">{track.nextSession}</p>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
+                      {/* Separator */}
+                      <div className="border-t border-gray-100 pt-4 mb-4"></div>
 
-                                {/* CTAs */}
-                                <div className="flex gap-3">
-                            <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (onNavigateToCourse) onNavigateToCourse(track.id);
-                                    }}
-                                    className="flex-1 px-5 py-3 bg-gray-900 text-white rounded-full text-sm font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-                                  >
-                                    <Play size={16} />
-                                    {track.progress > 0 ? 'Continuer' : 'Commencer'}
-                                  </button>
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedTrackPlanning(track.id);
-                                      setTimeout(() => {
-                                        const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
-                                        if (scrollContainer) {
-                                          scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
-                                        }
-                                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                                      }, 50);
-                                    }}
-                                    className="px-5 py-3 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-semibold hover:bg-gray-50 transition-colors"
-                                  >
-                                    Planning
-                            </button>
-                          </div>
+                      {/* Current chapter preview */}
+                      {track.currentChapter && (
+                        <div className="p-3 rounded-xl mb-4 bg-gray-50">
+                          <p className="text-[10px] uppercase tracking-wider mb-1 text-gray-400">
+                            En cours
+                          </p>
+                          <p className="text-sm font-medium truncate text-gray-700">
+                            {track.currentChapter}
+                          </p>
                         </div>
-                      </motion.div>
-                    )}
-                        </AnimatePresence>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                      )}
+
+                      {/* CTAs - Two buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onNavigateToCourse) onNavigateToCourse(track.id);
+                          }}
+                          className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-gray-900 text-white hover:bg-gray-800"
+                        >
+                          <Play size={15} />
+                          {track.progress > 0 ? 'Continuer' : 'Commencer'}
+                        </button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTrackPlanning(track.id);
+                            setTimeout(() => {
+                              const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
+                              if (scrollContainer) {
+                                scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                              }
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }, 50);
+                          }}
+                          className="px-5 py-3 rounded-full text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-90"
+                          style={{
+                            backgroundColor: '#00c2ff',
+                            color: '#ffffff'
+                          }}
+                        >
+                          Planification
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
               </>
               )}

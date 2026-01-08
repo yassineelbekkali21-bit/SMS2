@@ -441,7 +441,7 @@ export function CleanHomeHero({
         <div 
           className={`relative bg-white rounded-2xl border-2 transition-all duration-300 ${
             isFocused 
-              ? 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.3)]' 
+              ? 'border-[#00c2ff] shadow-[0_0_20px_rgba(34,211,238,0.3)]' 
               : 'border-gray-200 shadow-md hover:shadow-lg'
           }`}
         >
@@ -552,7 +552,7 @@ export function CleanHomeHero({
       <div 
         className={`relative bg-white rounded-xl border-2 transition-all duration-300 max-w-2xl mx-auto ${
           isFocused 
-            ? 'border-cyan-400 shadow-[0_0_24px_rgba(34,211,238,0.35)]' 
+            ? 'border-[#00c2ff] shadow-[0_0_24px_rgba(34,211,238,0.35)]' 
             : 'border-gray-200 shadow-md hover:shadow-lg'
         }`}
       >
@@ -770,7 +770,7 @@ export function CleanHomeHero({
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="group relative bg-gradient-to-br from-[#1a1f25] to-[#0d1117] rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300 hover:-translate-y-1 h-[220px]"
+                      className="group relative bg-gradient-to-br from-[#1a1f25] to-[#0d1117] rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-[#00c2ff]/10 transition-all duration-300 hover:-translate-y-1 h-[220px]"
                       onClick={() => onCourseSelect?.(track.id)}
                     >
                       {/* Top gradient area */}
@@ -811,7 +811,7 @@ export function CleanHomeHero({
                       {/* Content */}
                       <div className="p-5 flex flex-col justify-between h-[124px]">
                         <div>
-                          <h3 className="font-semibold text-base mb-1 group-hover:text-cyan-300 transition-colors line-clamp-2 h-[48px]" style={{ color: '#FFFFFF' }}>
+                          <h3 className="font-semibold text-base mb-1 group-hover:text-[#00c2ff] transition-colors line-clamp-2 h-[48px]" style={{ color: '#FFFFFF' }}>
                             {track.title}
                           </h3>
                           <p className="text-sm line-clamp-1" style={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -836,19 +836,19 @@ export function CleanHomeHero({
                       {track.progress > 0 ? (
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700/60">
                           <div 
-                            className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-[#00c2ff] to-[#00c2ff] transition-all duration-500"
                             style={{ width: `${track.progress}%` }}
                           />
                         </div>
                       ) : (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00c2ff] to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                       )}
                     </motion.div>
                     
                     {/* Progress text below card */}
                     {track.progress > 0 ? (
                       <p className="text-center text-sm text-gray-500 mt-2 h-5">
-                        <span className="font-medium text-cyan-500">{track.progress}%</span> complété
+                        <span className="font-medium text-[#00c2ff]">{track.progress}%</span> complété
                       </p>
                     ) : (
                       <div className="h-5 mt-2" />

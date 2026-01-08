@@ -1100,8 +1100,8 @@ function AddFriendModal({ isOpen, onClose, track, onInviteUser, onCreateInvitati
           ) : (
             /* Lien généré */
             <div className="text-center">
-              <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check size={32} className="text-cyan-600" />
+              <div className="w-16 h-16 bg-[#00c2ff]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check size={32} className="text-[#00c2ff]" />
               </div>
               
               <h3 className="font-bold text-gray-900 text-lg mb-2">Lien créé !</h3>
@@ -1367,7 +1367,7 @@ function TrackCard({
           >
             <Mail size={18} />
             {track.unreadMessages > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-cyan-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg">
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#00c2ff] text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg">
                 {track.unreadMessages}
               </span>
             )}
@@ -1398,7 +1398,7 @@ function TrackCard({
                 step.status === 'done' 
                   ? 'bg-gray-900 shadow-md' 
                   : step.status === 'current'
-                    ? 'bg-cyan-500 ring-4 ring-cyan-100 shadow-md'
+                    ? 'bg-[#00c2ff] ring-4 ring-[#00c2ff]/20 shadow-md'
                     : 'bg-gray-200'
               }`}
               title={step.title}
@@ -1903,7 +1903,7 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
         <motion.p 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-cyan-400 font-medium text-sm tracking-widest uppercase mb-3"
+          className="text-[#00c2ff] font-medium text-sm tracking-widest uppercase mb-3"
         >
           Catalogue complet
         </motion.p>
@@ -1945,12 +1945,12 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
               }}
               className={`relative p-4 rounded-xl transition-all duration-300 text-left group overflow-hidden ${
                 isSelected 
-                  ? 'bg-white ring-2 ring-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.3)]'
+                  ? 'bg-white ring-2 ring-[#00c2ff] shadow-[0_0_30px_rgba(34,211,238,0.3)]'
                   : 'bg-gray-800/50 border border-gray-700/50 hover:border-gray-600 hover:bg-gray-800'
               }`}
             >
               {/* Glow effect on hover */}
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${!isSelected ? 'bg-gradient-to-br from-cyan-500/5 to-transparent' : ''}`} />
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${!isSelected ? 'bg-gradient-to-br from-[#00c2ff]/5 to-transparent' : ''}`} />
               
               <div className="relative z-10">
                 <div className={`font-bold text-sm mb-1 ${isSelected ? 'text-gray-900' : 'text-white'}`}>
@@ -1965,7 +1965,7 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
               {isSelected && (
                 <motion.div 
                   layoutId="selectedIndicator"
-                  className="absolute top-2 right-2 w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center"
+                  className="absolute top-2 right-2 w-5 h-5 bg-[#00c2ff] rounded-full flex items-center justify-center"
                 >
                   <Check size={12} className="text-white" />
                 </motion.div>
@@ -2035,11 +2035,11 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
                         className="w-full flex items-center justify-between p-6 transition-all group hover:bg-gray-800/50"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border border-gray-600 group-hover:border-cyan-500/50 transition-colors">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border border-gray-600 group-hover:border-[#00c2ff]/50 transition-colors">
                             <span className="text-white font-bold text-lg">{courseIndex + 1}</span>
                           </div>
                           <div className="text-left">
-                            <h4 className="font-bold text-lg text-white group-hover:text-cyan-400 transition-colors">
+                            <h4 className="font-bold text-lg text-white group-hover:text-[#00c2ff] transition-colors">
                               {course.name}
                             </h4>
                             <p className="text-gray-400 text-sm mt-0.5">
@@ -2081,11 +2081,11 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
                                 >
                                   {/* Connector line */}
                                   <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-700" />
-                                  <div className="absolute left-[21px] top-6 w-3 h-3 rounded-full bg-gray-700 group-hover/lesson:bg-cyan-500 transition-colors" />
+                                  <div className="absolute left-[21px] top-6 w-3 h-3 rounded-full bg-gray-700 group-hover/lesson:bg-[#00c2ff] transition-colors" />
                                   
                                   <div className="p-5 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-gray-600 hover:bg-gray-800 transition-all cursor-pointer">
                                     <div className="flex items-start justify-between mb-3">
-                                      <h5 className="font-semibold text-white group-hover/lesson:text-cyan-400 transition-colors">
+                                      <h5 className="font-semibold text-white group-hover/lesson:text-[#00c2ff] transition-colors">
                                         {lesson.name}
                                       </h5>
                                       <span className="text-xs text-gray-300 bg-gray-700/50 px-2 py-1 rounded">
@@ -2096,7 +2096,7 @@ function MasteryProgramsSection({ onSelectSubject, darkMode = false }: MasteryPr
                                       {lesson.items.map((item, idx) => (
                                         <span 
                                           key={idx}
-                                          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-700 text-gray-200 hover:bg-cyan-500/20 hover:text-cyan-400 transition-colors cursor-pointer"
+                                          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-700 text-gray-200 hover:bg-[#00c2ff]/20 hover:text-[#00c2ff] transition-colors cursor-pointer"
                                         >
                                           {item}
                                         </span>

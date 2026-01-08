@@ -119,123 +119,123 @@ export function AssessmentSetup({ subject, onStart }: AssessmentSetupProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
         <div className="w-full max-w-4xl">
-          
-          {/* HEADER SECTION */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        
+        {/* HEADER SECTION */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
-          >
-            {/* Main Title */}
+        >
+          {/* Main Title */}
             <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight !text-white">
               Choisis les sujets à évaluer en {currentSubjectLabel}
-            </h1>
-            
-            {/* Description */}
+          </h1>
+          
+          {/* Description */}
             <p className="text-base md:text-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.85)' }}>
               Sélectionne un ou plusieurs sujets pour identifier tes lacunes en moins de 2 minutes.
-            </p>
-          </motion.div>
+          </p>
+        </motion.div>
 
-          {/* INTERACTIVE SECTION */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
+        {/* INTERACTIVE SECTION */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
             className="w-full"
-          >
-            {/* Subject Selector & Search Bar */}
+        >
+          {/* Subject Selector & Search Bar */}
             <div className="flex items-center gap-3 mb-8 justify-center flex-wrap">
-              {/* Subject Selector */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsSubjectMenuOpen(!isSubjectMenuOpen)}
+            {/* Subject Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsSubjectMenuOpen(!isSubjectMenuOpen)}
                   className="flex items-center gap-2 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white font-medium text-sm hover:bg-gray-700 transition-colors"
-                >
-                  <span>{currentSubjectLabel}</span>
+              >
+                <span>{currentSubjectLabel}</span>
                   <ChevronDown size={16} className={`text-gray-400 transition-transform ${isSubjectMenuOpen ? 'rotate-180' : ''}`} />
-                </button>
+              </button>
 
-                <AnimatePresence>
-                  {isSubjectMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
+              <AnimatePresence>
+                {isSubjectMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
                       className="absolute top-full left-0 mt-2 w-48 bg-[#1a1a1a] rounded-xl shadow-lg border border-gray-700 overflow-hidden py-2 z-50"
-                    >
-                      {SUBJECTS.map((s) => (
-                        <Link 
-                          key={s.id} 
-                          href={`/assessment/${s.id}`}
-                          onClick={() => setIsSubjectMenuOpen(false)}
-                          className={`block px-4 py-2 text-sm font-medium transition-colors ${
-                            s.id === subject 
+                  >
+                    {SUBJECTS.map((s) => (
+                      <Link 
+                        key={s.id} 
+                        href={`/assessment/${s.id}`}
+                        onClick={() => setIsSubjectMenuOpen(false)}
+                        className={`block px-4 py-2 text-sm font-medium transition-colors ${
+                          s.id === subject 
                               ? 'bg-blue-600/20 text-blue-400' 
                               : 'text-white/80 hover:bg-gray-800'
-                          }`}
-                        >
-                          {s.label}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                        }`}
+                      >
+                        {s.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-              {/* Search Input */}
-              <div className="relative flex-grow max-w-md">
+            {/* Search Input */}
+            <div className="relative flex-grow max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                <input
-                  type="text"
+              <input
+                type="text"
                   className="w-full bg-[#1a1a1a] border border-gray-700 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder-gray-500 text-white text-sm"
                   placeholder="Rechercher un sujet..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+          </div>
 
-            {/* TOPICS TAGS */}
-            <div className="flex flex-wrap justify-center gap-3 px-4">
-              <AnimatePresence>
-                {filteredTopics.map((topic) => {
-                  const isSelected = selectedIds.includes(topic.id);
-                  const Icon = topic.icon;
-                  
-                  return (
-                    <motion.button
-                      key={topic.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      onClick={() => toggleTopic(topic.id)}
-                      className={`
-                        flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200
-                        ${isSelected 
-                          ? 'bg-blue-600 border-blue-600 text-white' 
+          {/* TOPICS TAGS */}
+          <div className="flex flex-wrap justify-center gap-3 px-4">
+            <AnimatePresence>
+              {filteredTopics.map((topic) => {
+                const isSelected = selectedIds.includes(topic.id);
+                const Icon = topic.icon;
+                
+                return (
+                  <motion.button
+                    key={topic.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    onClick={() => toggleTopic(topic.id)}
+                    className={`
+                      flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200
+                      ${isSelected 
+                        ? 'bg-blue-600 border-blue-600 text-white' 
                           : 'bg-[#1a1a1a] border-gray-700 text-white/80 hover:border-gray-600'
-                        }
-                      `}
-                    >
-                      <Icon size={16} className={isSelected ? 'text-white' : 'text-gray-500'} />
-                      <span className="font-medium text-sm">{topic.label}</span>
-                      {isSelected && (
-                        <Check size={14} className="ml-1" />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </AnimatePresence>
-              
-              {filteredTopics.length === 0 && (
+                      }
+                    `}
+                  >
+                    <Icon size={16} className={isSelected ? 'text-white' : 'text-gray-500'} />
+                    <span className="font-medium text-sm">{topic.label}</span>
+                    {isSelected && (
+                      <Check size={14} className="ml-1" />
+                    )}
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
+            
+            {filteredTopics.length === 0 && (
                 <div className="text-white/50 py-8 font-medium text-sm text-center w-full">
                   Aucun sujet trouvé pour "{searchQuery}" en {currentSubjectLabel}.
-                </div>
-              )}
-            </div>
-          </motion.div>
+              </div>
+            )}
+          </div>
+        </motion.div>
         </div>
       </div>
 
@@ -253,7 +253,7 @@ export function AssessmentSetup({ subject, onStart }: AssessmentSetupProps) {
                 : 'Sélectionne au moins un sujet pour commencer'
               }
             </span>
-          </div>
+      </div>
 
           {/* CTA Button */}
           <button
@@ -264,10 +264,10 @@ export function AssessmentSetup({ subject, onStart }: AssessmentSetupProps) {
                 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/25'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
             }`}
-          >
+            >
             <span>Commencer le test</span>
             <ArrowRight size={20} />
-          </button>
+            </button>
         </div>
       </div>
     </div>

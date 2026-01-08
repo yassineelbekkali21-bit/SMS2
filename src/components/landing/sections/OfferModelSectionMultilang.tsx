@@ -218,7 +218,7 @@ export function OfferModelSectionMultilang() {
         >
           <button
             onClick={openDiagnostic}
-            className="inline-flex px-8 py-4 text-white rounded-full font-semibold items-center justify-center gap-3 transition-all bg-[#48c6ed] hover:bg-[#3ab5dc] hover:scale-105 shadow-lg shadow-[#48c6ed]/25 cursor-pointer"
+            className="inline-flex px-8 py-4 text-white rounded-full font-semibold items-center justify-center gap-3 transition-all bg-[#00c2ff] hover:bg-[#3ab5dc] hover:scale-105 shadow-lg shadow-[#00c2ff]/25 cursor-pointer"
             style={{ fontSize: '17px' }}
           >
             {language === 'fr' ? "Commencer mon diagnostic gratuit" : "Start my free diagnostic"}

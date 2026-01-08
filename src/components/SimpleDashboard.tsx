@@ -687,7 +687,7 @@ function QuizRapideInline({ trackContext }: { trackContext?: { trackId: string; 
                       ? 'text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
-                  style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                  style={selectedProgramme === prog.id ? { backgroundColor: '#00c2ff' } : undefined}
                 >
                   {prog.label}
                 </button>
@@ -709,7 +709,7 @@ function QuizRapideInline({ trackContext }: { trackContext?: { trackId: string; 
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedBundles.includes(bundle.id) && <Check size={14} />}
                     {bundle.label}
@@ -733,7 +733,7 @@ function QuizRapideInline({ trackContext }: { trackContext?: { trackId: string; 
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedCours.includes(cours.id) && <Check size={14} />}
                     {cours.label}
@@ -757,7 +757,7 @@ function QuizRapideInline({ trackContext }: { trackContext?: { trackId: string; 
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedLecons.includes(lecon.id) && <Check size={14} />}
                     {lecon.label}
@@ -1135,7 +1135,7 @@ function QuizProfondInline({ trackContext }: { trackContext?: { trackId: string;
                       ? 'text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
-                  style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                  style={selectedProgramme === prog.id ? { backgroundColor: '#00c2ff' } : undefined}
                 >
                   {prog.label}
                 </button>
@@ -1157,7 +1157,7 @@ function QuizProfondInline({ trackContext }: { trackContext?: { trackId: string;
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedBundles.includes(bundle.id) && <Check size={14} />}
                     {bundle.label}
@@ -1181,7 +1181,7 @@ function QuizProfondInline({ trackContext }: { trackContext?: { trackId: string;
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedCours.includes(cours.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedCours.includes(cours.id) && <Check size={14} />}
                     {cours.label}
@@ -1205,7 +1205,7 @@ function QuizProfondInline({ trackContext }: { trackContext?: { trackId: string;
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {selectedLecons.includes(lecon.id) && <Check size={14} />}
                     {lecon.label}
@@ -1901,7 +1901,7 @@ function ExamBlancGeneratorInline({ trackContext }: { trackContext?: { trackId: 
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={selectedProgramme === prog.id ? { backgroundColor: '#48c6ed' } : undefined}
+                    style={selectedProgramme === prog.id ? { backgroundColor: '#00c2ff' } : undefined}
                   >
                     {prog.label}
                   </button>
@@ -1922,7 +1922,7 @@ function ExamBlancGeneratorInline({ trackContext }: { trackContext?: { trackId: 
                           ? 'text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                      style={selectedBundles.includes(bundle.id) ? { backgroundColor: '#00c2ff' } : undefined}
                     >
                       {selectedBundles.includes(bundle.id) && <Check size={14} />}
                       {bundle.label}
@@ -1945,7 +1945,7 @@ function ExamBlancGeneratorInline({ trackContext }: { trackContext?: { trackId: 
                           ? 'text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      style={selectedCours.includes(cours.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                      style={selectedCours.includes(cours.id) ? { backgroundColor: '#00c2ff' } : undefined}
                     >
                       {selectedCours.includes(cours.id) && <Check size={14} />}
                       {cours.label}
@@ -1968,7 +1968,7 @@ function ExamBlancGeneratorInline({ trackContext }: { trackContext?: { trackId: 
                           ? 'text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#48c6ed' } : undefined}
+                      style={selectedLecons.includes(lecon.id) ? { backgroundColor: '#00c2ff' } : undefined}
                     >
                       {selectedLecons.includes(lecon.id) && <Check size={14} />}
                       {lecon.label}
@@ -2652,6 +2652,71 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const [urgencyTimeLeft, setUrgencyTimeLeft] = useState({ hours: 71, minutes: 59, seconds: 59 });
   const [showExitIntent, setShowExitIntent] = useState(false);
   const [exitIntentShown, setExitIntentShown] = useState(false);
+  
+  // État pour les heures gratuites restantes (10h = 36000 secondes)
+  const TOTAL_FREE_SECONDS = 36000; // 10 heures en secondes
+  const [freeTimeRemaining, setFreeTimeRemaining] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sms_free_time_remaining');
+      return saved ? parseInt(saved, 10) : TOTAL_FREE_SECONDS;
+    }
+    return TOTAL_FREE_SECONDS;
+  });
+  const [showTimeExpiredModal, setShowTimeExpiredModal] = useState(false);
+  const [showMilestoneNotification, setShowMilestoneNotification] = useState<'50' | '80' | null>(null);
+  const [milestone50Shown, setMilestone50Shown] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sms_milestone_50_shown') === 'true';
+    }
+    return false;
+  });
+  const [milestone80Shown, setMilestone80Shown] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sms_milestone_80_shown') === 'true';
+    }
+    return false;
+  });
+  const [offerFinishLesson, setOfferFinishLesson] = useState(false);
+
+  // Calculer le pourcentage de temps consommé
+  const timeConsumedPercent = ((TOTAL_FREE_SECONDS - freeTimeRemaining) / TOTAL_FREE_SECONDS) * 100;
+  const freeHoursRemaining = Math.floor(freeTimeRemaining / 3600);
+  const freeMinutesRemaining = Math.floor((freeTimeRemaining % 3600) / 60);
+  const freeSecondsRemaining = freeTimeRemaining % 60;
+  const isTimeWarning = freeTimeRemaining <= 7200; // 2h ou moins = warning orange
+  const isTimeExpired = freeTimeRemaining <= 0;
+
+  // Persister le temps restant dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sms_free_time_remaining', freeTimeRemaining.toString());
+    }
+  }, [freeTimeRemaining]);
+
+  // Vérifier les milestones (50% et 80%)
+  useEffect(() => {
+    if (timeConsumedPercent >= 50 && !milestone50Shown) {
+      setShowMilestoneNotification('50');
+      setMilestone50Shown(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sms_milestone_50_shown', 'true');
+      }
+    } else if (timeConsumedPercent >= 80 && !milestone80Shown) {
+      setShowMilestoneNotification('80');
+      setMilestone80Shown(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sms_milestone_80_shown', 'true');
+      }
+    }
+  }, [timeConsumedPercent, milestone50Shown, milestone80Shown]);
+
+  // Vérifier si le temps est expiré
+  useEffect(() => {
+    if (isTimeExpired && !showTimeExpiredModal && !offerFinishLesson) {
+      // Au lieu de bloquer immédiatement, on offre de finir la leçon
+      setOfferFinishLesson(true);
+    }
+  }, [isTimeExpired, showTimeExpiredModal, offerFinishLesson]);
   
   // Timer pour le countdown d'urgence
   useEffect(() => {
@@ -4259,7 +4324,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               onOpenParentReports={() => setShowParentReportsSettings(true)}
               onOpenHelpCenter={() => window.open('https://wa.me/32477025622', '_blank')}
               onVerifyIdentity={handleTriggerIdentityVerification}
-              themeColor="#48c6ed"
+              themeColor="#00c2ff"
             />
           )}
 
@@ -4332,9 +4397,17 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             {/* Right - Timer + Débloquer + Cadeau + Avatar */}
             <div className="flex items-center gap-4">
               {/* Timer heures gratuites disponibles */}
-              <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-full border-2 border-gray-300">
-                <Clock size={22} className="text-gray-700" />
-                <span className="text-xl font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
+              <div className={`hidden md:flex items-center gap-3 px-6 py-3 rounded-full border-2 transition-colors ${
+                isTimeWarning 
+                  ? 'bg-orange-50 border-orange-400' 
+                  : 'bg-gray-100 border-gray-300'
+              }`}>
+                <Clock size={22} className={isTimeWarning ? 'text-orange-600' : 'text-gray-700'} />
+                <span className={`text-xl font-bold tabular-nums tracking-tight ${
+                  isTimeWarning ? 'text-orange-600' : 'text-gray-900'
+                }`}>
+                  {String(freeHoursRemaining).padStart(2, '0')}:{String(freeMinutesRemaining).padStart(2, '0')}:{String(freeSecondsRemaining).padStart(2, '0')}
+                </span>
               </div>
 
               {/* Débloquer mes programmes CTA */}
@@ -4343,7 +4416,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   setOnboardingInitialPhase('membership-plans');
                   setShowOnboarding(true);
                 }}
-                className="hidden md:block px-5 py-2.5 bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-medium rounded-full transition-colors"
+                className="hidden md:block px-5 py-2.5 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-medium rounded-full transition-colors"
               >
                 Débloquer
               </button>
@@ -4783,45 +4856,45 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="bg-[#0a0a0a] overflow-hidden"
+                className="bg-[#00c2ff] overflow-hidden"
               >
                 <div className="flex items-center justify-center gap-3 sm:gap-6 py-4 sm:py-5 px-4" style={{ fontSize: '16px' }}>
-                  {/* OFFRE DE LANCEMENT - Theme color accent */}
-                  <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
-                    OFFRE DE LANCEMENT
+                  {/* OFFRE NOUVELLE ANNÉE */}
+                  <span className="text-white font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
+                    OFFRE NOUVELLE ANNÉE
                   </span>
                   
                   {/* Message principal */}
-                  <span className="hidden sm:inline text-white font-medium uppercase text-[16px]">
+                  <span className="hidden sm:inline text-white/90 font-medium uppercase text-[16px]">
                     SUR CHAQUE MASTERY PROGRAM
                   </span>
                   
                   {/* Badge -60% */}
-                  <span className="px-3 py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold">
+                  <span className="px-3 py-1.5 bg-white rounded-full text-[#00c2ff] font-bold">
                     -60%
                   </span>
                   
                   {/* Separator + Ends in */}
-                  <span className="hidden md:inline text-white font-medium uppercase">
+                  <span className="hidden md:inline text-white/90 font-medium uppercase">
                     EXPIRE DANS
                   </span>
                   
                   {/* Timer - Style épuré */}
                   <div className="flex items-center gap-1 text-white font-bold tabular-nums">
                     <span>{String(Math.floor(urgencyTimeLeft.hours / 24)).padStart(2, '0')}</span>
-                    <span className="text-white text-xs font-normal">j</span>
+                    <span className="text-white/80 text-xs font-normal">j</span>
                     <span>{String(urgencyTimeLeft.hours % 24).padStart(2, '0')}</span>
-                    <span className="text-white text-xs font-normal">h</span>
+                    <span className="text-white/80 text-xs font-normal">h</span>
                     <span>{String(urgencyTimeLeft.minutes).padStart(2, '0')}</span>
-                    <span className="text-white text-xs font-normal">m</span>
+                    <span className="text-white/80 text-xs font-normal">m</span>
                     <span>{String(urgencyTimeLeft.seconds).padStart(2, '0')}</span>
-                    <span className="text-white text-xs font-normal">s</span>
+                    <span className="text-white/80 text-xs font-normal">s</span>
                   </div>
                   
                   {/* Close button */}
                   <button
                     onClick={() => setShowUrgencyBanner(false)}
-                    className="ml-2 text-gray-600 hover:text-white transition-colors"
+                    className="ml-2 text-white/60 hover:text-white transition-colors"
                   >
                     <X size={16} />
                   </button>
@@ -4846,7 +4919,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     <div className="h-6 w-px bg-gray-300" />
                     <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
                       Planification
-                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                      <span className="text-[#00c2ff] ml-3">• {trackContext.trackTitle}</span>
                     </h1>
                   </div>
                 </div>
@@ -4896,7 +4969,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     <div className="h-6 w-px bg-gray-300" />
                     <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
                       Study Rooms
-                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                      <span className="text-[#00c2ff] ml-3">• {trackContext.trackTitle}</span>
                     </h1>
                   </div>
                 </div>
@@ -4975,7 +5048,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                             style={{ 
                               fontFamily: 'var(--font-parafina)', 
                               fontSize: '18px',
-                              color: communityInitialTab === tab.id ? '#48c6ed' : '#111827' 
+                              color: communityInitialTab === tab.id ? '#00c2ff' : '#111827' 
                             }}
                           >
                             {tab.label}
@@ -5009,7 +5082,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       style={{ 
                         fontFamily: 'var(--font-parafina)', 
                         fontSize: '28px',
-                        color: communityInitialTab === 'buddies' ? '#48c6ed' : '#111827' 
+                        color: communityInitialTab === 'buddies' ? '#00c2ff' : '#111827' 
                       }}
                     >
                       Buddies
@@ -5030,7 +5103,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         style={{ 
                           fontFamily: 'var(--font-parafina)', 
                           fontSize: '28px',
-                          color: communityInitialTab === 'circles' ? '#48c6ed' : '#111827' 
+                          color: communityInitialTab === 'circles' ? '#00c2ff' : '#111827' 
                         }}
                       >
                         Cercles
@@ -5051,7 +5124,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                       style={{ 
                         fontFamily: 'var(--font-parafina)', 
                         fontSize: '28px',
-                        color: communityInitialTab === 'qa' ? '#48c6ed' : '#111827' 
+                        color: communityInitialTab === 'qa' ? '#00c2ff' : '#111827' 
                       }}
                     >
                       Chat
@@ -5121,7 +5194,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     <div className="h-6 w-px bg-gray-300" />
                     <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: 'clamp(24px, 5vw, 40px)' }}>
                       Training Club
-                      <span className="text-[#48c6ed] ml-3">• {trackContext.trackTitle}</span>
+                      <span className="text-[#00c2ff] ml-3">• {trackContext.trackTitle}</span>
                     </h1>
                   </div>
                 ) : (
@@ -5156,7 +5229,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                           style={{ 
                             fontFamily: 'var(--font-parafina)', 
                             fontSize: '18px',
-                            color: trainingMode === tab.id ? '#48c6ed' : '#111827' 
+                            color: trainingMode === tab.id ? '#00c2ff' : '#111827' 
                           }}
                         >
                           {tab.label}
@@ -5182,7 +5255,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         style={{ 
                           fontFamily: 'var(--font-parafina)', 
                           fontSize: '28px',
-                          color: trainingMode === 'main' ? '#48c6ed' : '#111827' 
+                          color: trainingMode === 'main' ? '#00c2ff' : '#111827' 
                         }}
                       >
                         Flash
@@ -5203,7 +5276,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         style={{ 
                           fontFamily: 'var(--font-parafina)', 
                           fontSize: '28px',
-                          color: trainingMode === 'solo-quiz' ? '#48c6ed' : '#111827' 
+                          color: trainingMode === 'solo-quiz' ? '#00c2ff' : '#111827' 
                         }}
                       >
                         Révision
@@ -5224,7 +5297,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         style={{ 
                           fontFamily: 'var(--font-parafina)', 
                           fontSize: '28px',
-                          color: trainingMode === 'duel' ? '#48c6ed' : '#111827' 
+                          color: trainingMode === 'duel' ? '#00c2ff' : '#111827' 
                         }}
                       >
                         Examen
@@ -5245,7 +5318,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                         style={{ 
                           fontFamily: 'var(--font-parafina)', 
                           fontSize: '28px',
-                          color: trainingMode === 'duel-mode' ? '#48c6ed' : '#111827' 
+                          color: trainingMode === 'duel-mode' ? '#00c2ff' : '#111827' 
                         }}
                       >
                         Duel
@@ -6608,7 +6681,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                     setShowGuestPassModal(false);
                   }
                 }}
-                className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+                className="w-full py-4 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
                 style={{ fontSize: '16px' }}
               >
                 Envoyer les invitations
@@ -6669,79 +6742,251 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         userId={user?.id || safeData.user?.id || 'user-1'}
       />
 
-      {/* 🚪 Exit Intent Popup */}
+      {/* 🎯 Milestone Notification (50% / 80%) */}
+      <AnimatePresence>
+        {showMilestoneNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-6 right-6 z-[9998] max-w-md"
+          >
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 relative overflow-hidden">
+              {/* Accent bar */}
+              <div className={`absolute top-0 left-0 right-0 h-1 ${showMilestoneNotification === '50' ? 'bg-[#00c2ff]' : 'bg-orange-500'}`} />
+              
+              <button
+                onClick={() => setShowMilestoneNotification(null)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  showMilestoneNotification === '50' ? 'bg-[#00c2ff]/10' : 'bg-orange-100'
+                }`}>
+                  <span className="text-2xl">{showMilestoneNotification === '50' ? '🎉' : '⏰'}</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-900 mb-1">
+                    {showMilestoneNotification === '50' 
+                      ? 'Tu as déjà consommé 5h de contenu !'
+                      : 'Plus que 2h de contenu gratuit !'}
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {showMilestoneNotification === '50'
+                      ? 'Tu kiffes ? Débloque l\'accès illimité et continue sans interruption.'
+                      : 'Passe à l\'accès illimité maintenant et profite de -40% !'}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        setShowMilestoneNotification(null);
+                        setOnboardingInitialPhase('membership-plans');
+                        setShowOnboarding(true);
+                      }}
+                      className="px-4 py-2 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white text-sm font-semibold rounded-full transition-colors"
+                    >
+                      Débloquer -40%
+                    </button>
+                    <button
+                      onClick={() => setShowMilestoneNotification(null)}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+                    >
+                      Continuer gratuitement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ⏳ Offer to Finish Lesson (Soft Lock) */}
+      <AnimatePresence>
+        {offerFinishLesson && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center"
+            >
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Clock size={32} className="text-orange-600" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                Tes 10h offertes sont terminées
+              </h3>
+              <p className="text-gray-600 mb-6">
+                On t'offre la fin de cette leçon ! Ensuite, débloque l'accès illimité pour continuer ta progression.
+              </p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setOfferFinishLesson(false);
+                    setOnboardingInitialPhase('membership-plans');
+                    setShowOnboarding(true);
+                  }}
+                  className="w-full py-4 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-bold rounded-full transition-colors flex items-center justify-center gap-2"
+                >
+                  Débloquer l'accès illimité
+                  <ArrowRight size={18} />
+                </button>
+                <button
+                  onClick={() => {
+                    setOfferFinishLesson(false);
+                    // Donner 5 minutes supplémentaires pour finir la leçon
+                    setFreeTimeRemaining(300);
+                  }}
+                  className="w-full py-3 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Terminer cette leçon d'abord
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🔒 Time Expired Modal (Hard Block) */}
+      <AnimatePresence>
+        {showTimeExpiredModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-[#1a1a1a] rounded-3xl p-10 max-w-lg w-full mx-4 text-center"
+            >
+              <div className="w-20 h-20 bg-[#00c2ff]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Lock size={40} className="text-[#00c2ff]" />
+              </div>
+              
+              <h3 
+                className="text-3xl font-normal mb-4"
+                style={{ fontFamily: 'var(--font-parafina)', color: '#FFFFFF' }}
+              >
+                Continue ton parcours
+              </h3>
+              <p className="text-white/70 mb-8">
+                Tu as utilisé tes 10h de découverte. Débloque l'accès à vie et génère des parcours illimités !
+              </p>
+              
+              <button
+                onClick={() => {
+                  setShowTimeExpiredModal(false);
+                  setOnboardingInitialPhase('membership-plans');
+                  setShowOnboarding(true);
+                }}
+                className="w-full py-4 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-bold rounded-full transition-colors flex items-center justify-center gap-2 mb-4"
+              >
+                Débloquer mes programmes
+                <ArrowRight size={18} />
+              </button>
+              
+              <p className="text-xs text-white/50">
+                Paiement unique • Accès à vie • Parcours illimités
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🚪 Exit Intent Popup - Loop Style */}
       <AnimatePresence>
         {showExitIntent && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70"
             onClick={() => setShowExitIntent(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl"
+              className="bg-[#1a1a1a] rounded-3xl p-12 max-w-lg w-full mx-4 relative"
             >
               {/* Close button */}
               <button
                 onClick={() => setShowExitIntent(false)}
-                className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
               >
                 <X size={20} />
               </button>
 
               {/* Content */}
-              <div className="text-center">
-                <div className="text-5xl mb-4">⏳</div>
-                <h3 className="text-2xl font-bold mb-2" style={{ color: '#FFFFFF' }}>
-                  Attends ! L'offre expire bientôt
-                </h3>
-                <p className="mb-6">
-                  <span className="text-[#48c6ed] font-bold">-60%</span>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.85)' }}> sur tous les Mastery Programs.</span>
-                  <br />
-                  <span style={{ color: 'rgba(255, 255, 255, 0.85)' }}>Il ne reste que </span>
-                  <span className="text-[#48c6ed] font-bold">
-                    {urgencyTimeLeft.hours}h {urgencyTimeLeft.minutes}min
-                  </span>
+              <div className="text-center px-4">
+                {/* Title - Parafina serif style, bigger, 1 line */}
+                <h2 
+                  className="text-3xl md:text-4xl font-normal mb-5 leading-tight whitespace-nowrap"
+                  style={{ fontFamily: 'var(--font-parafina)', color: '#FFFFFF' }}
+                >
+                  Débloque une offre exclusive
+                </h2>
+                
+                {/* Subtitle - 1 line, -60% bold cyan, rest white 85%, semi-bold */}
+                <p className="text-xl md:text-2xl font-semibold mb-8 whitespace-nowrap">
+                  <span className="text-[#00c2ff] font-bold">-60%</span>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.85)' }}> sur tous les Mastery Programs</span>
                 </p>
 
-                {/* Timer display */}
-                <div className="flex justify-center gap-3 mb-6">
+                {/* Timer display - 3 boxes */}
+                <div className="flex justify-center gap-3 mb-8">
                   {[
                     { value: urgencyTimeLeft.hours, label: 'Heures' },
                     { value: urgencyTimeLeft.minutes, label: 'Minutes' },
                     { value: urgencyTimeLeft.seconds, label: 'Secondes' }
                   ].map((item, idx) => (
-                    <div key={idx} className="bg-gray-800 rounded-lg px-4 py-3">
+                    <div key={idx} className="bg-white/5 rounded-xl px-5 py-3 min-w-[80px]">
                       <div className="text-2xl font-bold text-white tabular-nums">
                         {String(item.value).padStart(2, '0')}
                       </div>
-                      <div className="text-xs text-gray-500">{item.label}</div>
+                      <div className="text-[10px] text-gray-500 uppercase tracking-wider">{item.label}</div>
                     </div>
                   ))}
                 </div>
 
-                {/* CTA */}
+                {/* CTA Primary - SMS Blue pill button */}
                 <button
                   onClick={() => {
                     setShowExitIntent(false);
                     setOnboardingInitialPhase('membership-plans');
                     setShowOnboarding(true);
                   }}
-                  className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-4 px-8 rounded-xl text-lg transition-all mb-3"
+                  className="w-full bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold py-4 px-10 rounded-full transition-all mb-4"
+                  style={{ fontSize: '16px' }}
                 >
                   Profiter de l'offre
                 </button>
+                
+                {/* CTA Secondary - Bordered pill button */}
                 <button
                   onClick={() => setShowExitIntent(false)}
-                  className="text-gray-500 hover:text-gray-300 text-sm transition-colors"
+                  className="w-full border border-white/30 hover:border-white/50 text-white/70 hover:text-white font-medium py-4 px-10 rounded-full transition-all"
+                  style={{ fontSize: '16px' }}
                 >
-                  Non merci, je continue à explorer
+                  Non merci
                 </button>
               </div>
             </motion.div>

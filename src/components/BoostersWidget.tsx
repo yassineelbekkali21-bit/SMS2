@@ -198,7 +198,7 @@ export function BoostersWidget({ floating = true }: BoostersWidgetProps) {
                                 ) : (
                                   <div className="flex items-center gap-2">
                                     <span className="text-gray-400 text-sm line-through">${booster.originalPrice}</span>
-                                    <span className="text-[#48c6ed] text-sm font-bold">Gratuit</span>
+                                    <span className="text-[#00c2ff] text-sm font-bold">Gratuit</span>
                                   </div>
                                 )}
                               </div>

@@ -246,13 +246,13 @@ export default function LoadingPhasePage() {
             alt="Science Made Simple" 
             width={140} 
             height={140}
-            className="object-contain"
+            className="object-contain md:w-[180px] md:h-[180px]"
           />
         </motion.div>
       </motion.div>
 
       {/* ========== CONTENT AREA ========== */}
-      <div className="relative w-full max-w-2xl min-h-[400px] flex flex-col items-center">
+      <div className="relative w-full max-w-2xl md:max-w-4xl min-h-[400px] md:min-h-[500px] flex flex-col items-center">
         
         {/* Loading & Scanning Content */}
         <AnimatePresence mode="wait">
@@ -272,7 +272,7 @@ export default function LoadingPhasePage() {
               }}
             >
               {/* Loading Messages */}
-              <div className="space-y-5 text-center mb-8">
+              <div className="space-y-5 md:space-y-6 text-center mb-8 md:mb-12">
                 {loadingMessages.map((message, index) => {
                   const isLastMessage = index === loadingMessages.length - 1;
                   
@@ -288,7 +288,7 @@ export default function LoadingPhasePage() {
                         marginBottom: showHeader && !isLastMessage ? 0 : undefined,
                       }}
                       transition={{ duration: 0.5 }}
-                      className="text-2xl md:text-3xl font-bold overflow-hidden"
+                      className="text-2xl md:text-4xl font-bold overflow-hidden"
                       style={{ color: '#ffffff' }}
                     >
                       {message}
@@ -309,7 +309,7 @@ export default function LoadingPhasePage() {
                     className="flex flex-col items-center w-full"
                   >
                     {/* Programs being scanned */}
-                    <div className="w-full space-y-6 mb-8">
+                    <div className="w-full space-y-6 md:space-y-8 mb-8 md:mb-12">
                       {programs.map((program, index) => {
                         const isProgramScanning = index === currentScanningProgram && phase === 'scanning';
                         const isComplete = scannedPrograms.includes(index);
@@ -325,39 +325,39 @@ export default function LoadingPhasePage() {
                             transition={{ duration: 0.4 }}
                             className="w-full"
                           >
-                            <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-5">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-semibold text-lg text-white">{program.name}</span>
+                                <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                                  <span className="font-semibold text-lg md:text-2xl text-white">{program.name}</span>
                                   {isComplete && (
                                     <motion.span
                                       initial={{ scale: 0 }}
                                       animate={{ scale: 1 }}
                                       className="text-[#00c2ff]"
                                     >
-                                      <CheckCircle size={18} />
+                                      <CheckCircle size={18} className="md:w-6 md:h-6" />
                                     </motion.span>
                                   )}
                                   {isProgramScanning && (
-                                    <Loader2 size={18} className="text-white/70 animate-spin" />
+                                    <Loader2 size={18} className="md:w-6 md:h-6 text-white/70 animate-spin" />
                                   )}
                                 </div>
-                                <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                                <div className="text-sm md:text-lg" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                                   {program.totalChapters} chapitres
                                 </div>
                               </div>
                               
                               <div className="text-right">
-                                <span className="text-2xl font-bold text-white">
+                                <span className="text-2xl md:text-4xl font-bold text-white">
                                   {isComplete ? program.extractedTracks : isProgramScanning ? Math.min(Math.floor(currentChapters.length / 2), program.extractedTracks) : 0}
                                 </span>
-                                <span className="text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
+                                <span className="text-sm md:text-lg ml-1 md:ml-2" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
                               </div>
                             </div>
                             
                             {(isProgramScanning || isComplete) && (
                               <motion.div 
-                                className="h-1 rounded-full bg-gray-800/50 mb-4 overflow-hidden"
+                                className="h-1 md:h-2 rounded-full bg-gray-800/50 mb-4 md:mb-5 overflow-hidden"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                               >
@@ -377,12 +377,12 @@ export default function LoadingPhasePage() {
                                   animate={{ opacity: 1, height: 'auto' }}
                                   exit={{ opacity: 0, height: 0 }}
                                   transition={{ duration: 0.3 }}
-                                  className="mb-2"
+                                  className="mb-2 md:mb-4"
                                 >
-                                  <div className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                                  <div className="text-xs md:text-sm text-white/40 uppercase tracking-wider mb-2 md:mb-3">
                                     Chapitres analysés
                                   </div>
-                                  <div className="flex flex-wrap gap-2">
+                                  <div className="flex flex-wrap gap-2 md:gap-3">
                                     {currentChapters.map((chapter, chapterIndex) => {
                                       const isRelevant = program.relevantChapters.includes(chapter);
                                       
@@ -391,7 +391,7 @@ export default function LoadingPhasePage() {
                                           key={`${program.id}-${chapterIndex}`}
                                           initial={{ opacity: 0, scale: 0.8 }}
                                           animate={{ opacity: 1, scale: 1 }}
-                                          className={`px-3 py-1 rounded-full text-xs border ${
+                                          className={`px-3 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm border ${
                                             isRelevant 
                                               ? 'bg-[#00c2ff]/20 text-[#00c2ff] border-[#00c2ff]/50 font-medium' 
                                               : 'bg-gray-800/50 text-white/60 border-gray-700/50'
@@ -407,7 +407,7 @@ export default function LoadingPhasePage() {
                             </AnimatePresence>
                             
                             {isComplete && index < programs.length - 1 && (
-                              <div className="border-b border-gray-700/30 mt-4" />
+                              <div className="border-b border-gray-700/30 mt-4 md:mt-6" />
                             )}
                           </motion.div>
                         );
@@ -420,13 +420,13 @@ export default function LoadingPhasePage() {
                       animate={{ opacity: 1 }}
                       className="w-full"
                     >
-                      <div className="relative h-2 bg-gray-800/50 rounded-full overflow-hidden">
+                      <div className="relative h-2 md:h-3 bg-gray-800/50 rounded-full overflow-hidden">
                         <motion.div
                           className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#00c2ff]/50 to-[#00c2ff] rounded-full"
                           style={{ width: `${scanProgress}%` }}
                         />
                       </div>
-                      <div className="flex justify-between mt-2 text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                      <div className="flex justify-between mt-2 md:mt-3 text-xs md:text-base" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                         <span>{Math.floor((scanProgress / 100) * totalChapters)} / {totalChapters} chapitres</span>
                         <span>{Math.floor(scanProgress)}%</span>
                       </div>
@@ -443,7 +443,7 @@ export default function LoadingPhasePage() {
           {isReveal && (
             <motion.div
               key="reveal"
-              className="flex flex-col items-center w-full max-w-3xl"
+              className="flex flex-col items-center w-full max-w-3xl md:max-w-4xl"
               initial={{ 
                 opacity: 0,
                 scale: 1.05,
@@ -471,10 +471,10 @@ export default function LoadingPhasePage() {
                   stiffness: 120,
                   damping: 15
                 }}
-                className="mb-2"
+                className="mb-2 md:mb-4"
               >
                 <span 
-                  className="text-9xl md:text-[12rem] font-black text-white leading-none"
+                  className="text-9xl md:text-[14rem] font-black text-white leading-none"
                   style={{ fontFamily: 'var(--font-parafina)' }}
                 >
                   {totalTracks}
@@ -486,7 +486,7 @@ export default function LoadingPhasePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                className="text-2xl md:text-4xl font-bold text-center mb-3 uppercase tracking-wider"
+                className="text-2xl md:text-5xl font-bold text-center mb-3 md:mb-4 uppercase tracking-wider"
                 style={{ fontFamily: 'var(--font-parafina)', color: '#ffffff' }}
               >
                 Parcours créés pour toi
@@ -497,7 +497,7 @@ export default function LoadingPhasePage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                className="text-center mb-8"
+                className="text-center mb-8 md:mb-10 text-base md:text-xl"
                 style={{ color: 'rgba(255, 255, 255, 0.8)' }}
               >
                 basés sur les Mastery Programs suivants
@@ -508,7 +508,7 @@ export default function LoadingPhasePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1.0 }}
-                className="flex flex-col items-center gap-3 mb-8"
+                className="flex flex-col items-center gap-3 md:gap-5 mb-8 md:mb-12"
               >
                 {programs.map((program, index) => (
                   <motion.div
@@ -516,7 +516,7 @@ export default function LoadingPhasePage() {
                     initial={{ opacity: 0, x: -15 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: 1.1 + index * 0.1, ease: "easeOut" }}
-                    className="flex items-center gap-3 text-lg"
+                    className="flex items-center gap-3 md:gap-4 text-lg md:text-xl"
                   >
                     <span className="font-semibold text-white">{program.name}</span>
                     <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
@@ -532,7 +532,7 @@ export default function LoadingPhasePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1.5 }}
-                className="text-2xl md:text-3xl font-bold text-center mb-8"
+                className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-10"
                 style={{ color: '#ffffff' }}
               >
                 Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
@@ -545,10 +545,10 @@ export default function LoadingPhasePage() {
                 transition={{ duration: 0.5, delay: 1.7, ease: "easeOut" }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-10 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25"
+                className="px-10 md:px-14 py-4 md:py-5 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25 text-base md:text-xl"
               >
                 Continuer
-                <ArrowRight size={20} />
+                <ArrowRight size={20} className="md:w-6 md:h-6" />
               </motion.button>
 
               {/* Trust badge */}
@@ -556,7 +556,7 @@ export default function LoadingPhasePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1.9 }}
-                className="mt-6 text-sm"
+                className="mt-6 md:mt-8 text-sm md:text-base"
                 style={{ color: 'rgba(255, 255, 255, 0.5)' }}
               >
                 Paiement unique · Accès à vie

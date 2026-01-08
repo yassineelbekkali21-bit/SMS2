@@ -116,7 +116,7 @@ function CourseCardWrapper({
         {/* Badge ESSAI - en haut à gauche si mode essai */}
         {course.isTrial && (
           <div className="absolute top-3 left-3 z-20">
-            <span className="inline-flex items-center px-3 py-1.5 bg-gray-900 rounded-md text-[13px] font-bold text-white uppercase tracking-wider shadow-lg">
+            <span className="inline-flex items-center px-3 py-1.5 bg-white rounded-md text-[13px] font-bold text-gray-900 uppercase tracking-wider shadow-lg">
               Essai
             </span>
           </div>

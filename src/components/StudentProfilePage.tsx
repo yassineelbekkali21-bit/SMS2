@@ -590,7 +590,7 @@ export function StudentProfilePage() {
                     animate={{ width: `${profileCompletion}%` }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="h-full rounded-full"
-                    style={{ backgroundColor: '#48c6ed' }}
+                    style={{ backgroundColor: '#00c2ff' }}
                   />
                 </div>
               </div>

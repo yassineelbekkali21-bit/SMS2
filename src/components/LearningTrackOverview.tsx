@@ -259,9 +259,9 @@ function LessonRow({
     if (isDateToday(scheduledDate)) {
       // Today - highlight with theme color
       return {
-        bg: 'bg-[#48c6ed]/10',
-        text: 'text-[#48c6ed]',
-        icon: <Calendar size={11} className="text-[#48c6ed]" />
+        bg: 'bg-[#00c2ff]/10',
+        text: 'text-[#00c2ff]',
+        icon: <Calendar size={11} className="text-[#00c2ff]" />
       };
     }
     
@@ -535,7 +535,7 @@ export function LearningTrackOverview({
                   <span className="text-sm text-gray-400 ml-auto">
                     {isTrialMode ? (
                       <span className="flex items-center gap-2">
-                        <span className="px-3 py-1 bg-gray-900 text-white text-[13px] font-bold rounded">Essai</span>
+                        <span className="px-3 py-1 bg-white text-gray-900 text-[13px] font-bold rounded shadow-sm border border-gray-200">Essai</span>
                         1/{lessons.length} leçon accessible
                       </span>
                     ) : (
@@ -581,7 +581,7 @@ export function LearningTrackOverview({
                   <button
                     onClick={() => currentLesson && onStartLesson(currentLesson)}
                     className="px-8 py-3.5 rounded-full font-semibold text-base flex items-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                    style={{ backgroundColor: '#48c6ed', color: '#ffffff' }}
+                    style={{ backgroundColor: '#00c2ff', color: '#ffffff' }}
                   >
                     <Play size={16} fill="white" />
                     {completedLessons === 0 ? 'Commencer' : 
@@ -625,7 +625,7 @@ export function LearningTrackOverview({
                       }`}
                       style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
                       onMouseEnter={(e) => {
-                        if (!isDisabled) e.currentTarget.style.backgroundColor = '#48c6ed';
+                        if (!isDisabled) e.currentTarget.style.backgroundColor = '#00c2ff';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)';
@@ -821,7 +821,7 @@ export function LearningTrackOverview({
                         lesson.isCompleted 
                           ? 'bg-gray-100 text-gray-400' 
                           : isDateToday(scheduledDate) 
-                            ? 'bg-[#48c6ed]/10 text-[#48c6ed]' 
+                            ? 'bg-[#00c2ff]/10 text-[#00c2ff]' 
                             : isDatePast(scheduledDate) && !lesson.isCompleted
                               ? 'bg-red-50 text-red-500'
                               : 'bg-gray-50 text-gray-500'

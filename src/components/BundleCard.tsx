@@ -41,12 +41,12 @@ export function BundleCard({ bundle, onClick, isSelected = false }: BundleCardPr
           <div>
             {/* Badge SÉRIE + ESSAI si applicable */}
             <div className="flex items-center gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-md text-[10px] font-bold text-gray-900 uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-900 rounded-md text-[10px] font-bold text-white uppercase tracking-wider">
                 <Layers size={10} />
                 Série
               </span>
               {bundle.isTrial && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 rounded-md text-[13px] font-bold text-white uppercase tracking-wider shadow-lg">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-md text-[13px] font-bold text-gray-900 uppercase tracking-wider shadow-lg">
                   Essai
                 </span>
               )}

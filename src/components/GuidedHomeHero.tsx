@@ -132,7 +132,7 @@ const PROGRAMS = {
     id: 'informatics',
     label: 'Informatique',
     icon: Code,
-    color: 'from-cyan-500 to-blue-600',
+    color: 'from-[#00c2ff] to-blue-600',
     bundles: {
       'python': {
         id: 'python',
@@ -374,7 +374,7 @@ export function GuidedHomeHero({
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center gap-3 w-full overflow-hidden"
                 >
-                  <p className="text-xs uppercase tracking-wider font-semibold text-cyan-600">
+                  <p className="text-xs uppercase tracking-wider font-semibold text-[#00c2ff]">
                     Bundle
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-3">
@@ -391,12 +391,12 @@ export function GuidedHomeHero({
                           onClick={() => handleBundleClick(bundle.id)}
                           className={`group flex flex-col items-start px-5 py-3 rounded-xl text-left transition-all ${
                             isSelected
-                              ? 'bg-cyan-500 text-white border-2 border-cyan-500 shadow-lg'
-                              : 'bg-white border-2 border-gray-200 text-gray-800 hover:border-cyan-300 hover:shadow-md'
+                              ? 'bg-[#00c2ff] text-white border-2 border-[#00c2ff] shadow-lg'
+                              : 'bg-white border-2 border-gray-200 text-gray-800 hover:border-[#00c2ff] hover:shadow-md'
                           }`}
                         >
                           <span className="font-semibold text-sm">{bundle.label}</span>
-                          <span className={`text-xs ${isSelected ? 'text-cyan-100' : 'text-gray-500'}`}>
+                          <span className={`text-xs ${isSelected ? 'text-[#00c2ff]/60' : 'text-gray-500'}`}>
                             {bundle.description}
                           </span>
                         </motion.button>
@@ -502,7 +502,7 @@ export function GuidedHomeHero({
                   onClick={() => fileInputRef.current?.click()}
                   className={`relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all ${
                     isDragging 
-                      ? 'border-cyan-500 bg-cyan-50' 
+                      ? 'border-[#00c2ff] bg-[#00c2ff]/10' 
                       : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
                   }`}
                 >

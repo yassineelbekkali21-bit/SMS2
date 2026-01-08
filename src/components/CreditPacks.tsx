@@ -70,7 +70,7 @@ const creditPacks: CreditPack[] = [
       'Valable 6 mois'
     ],
     icon: <Sparkles size={24} />,
-    color: 'from-blue-500 to-cyan-500'
+    color: 'from-blue-500 to-[#00c2ff]'
   },
   {
     id: 'student',

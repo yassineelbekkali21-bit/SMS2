@@ -176,7 +176,7 @@ export function StudyRoomPreJoin({
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div 
                       className="h-full rounded-full"
-                      style={{ backgroundColor: '#48c6ed' }}
+                      style={{ backgroundColor: '#00c2ff' }}
                       animate={{ width: `${micLevel}%` }}
                       transition={{ duration: 0.1 }}
                     />
@@ -216,7 +216,7 @@ export function StudyRoomPreJoin({
                 <button
                   onClick={handleTestSpeakers}
                   className="px-5 py-2.5 rounded-full text-sm font-medium text-white transition-colors flex items-center gap-2"
-                  style={{ backgroundColor: '#48c6ed' }}
+                  style={{ backgroundColor: '#00c2ff' }}
                 >
                   <Volume2 size={16} />
                   Tester les haut-parleurs
@@ -373,7 +373,7 @@ export function StudyRoomPreJoin({
             <button
               onClick={handleJoin}
               className="px-6 py-2.5 rounded-full text-sm font-medium text-white transition-colors flex items-center gap-2"
-              style={{ backgroundColor: '#48c6ed' }}
+              style={{ backgroundColor: '#00c2ff' }}
             >
               Rejoindre la room
               <ArrowRight size={16} />

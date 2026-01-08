@@ -440,7 +440,7 @@ function ProgressionTab({ onNavigate }: { onNavigate?: (linkType: string, linkId
       id: 'social',
       title: 'Social Butterfly',
       emoji: '🦋',
-      color: 'from-cyan-500 to-blue-500',
+      color: 'from-[#00c2ff] to-blue-500',
       earned: profile.badges.filter(b => 
         b.name.includes('Social') || b.name.includes('Communauté') || b.name.includes('Buddy')
       ).length,

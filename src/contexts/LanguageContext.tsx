@@ -163,9 +163,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Parler de ma situation sur WhatsApp',
 
     // Why us
-    'why.title': 'De la confusion',
+    'why.title': 'Une décennie de pédagogie',
     'why.title.line2': '',
-    'why.title.highlight': 'à la maîtrise',
+    'why.title.highlight': 'scientifique',
     'why.reason1.title': 'Parce qu\'on commence par toi, pas par un catalogue',
     'why.reason1.desc': 'Diagnostic humain. On t\'écoute, on te comprend, on t\'oriente. Une progression logique, construite, qui t\'amène vers la maîtrise.',
     'why.reason2.title': 'Parce qu\'on redonne enfin du plaisir à comprendre les sciences',
@@ -444,9 +444,9 @@ const translations: Record<Language, Record<string, string>> = {
     'how.cta': 'Discuss my situation on WhatsApp',
 
     // Why us
-    'why.title': 'From confusion',
+    'why.title': 'A decade of scientific',
     'why.title.line2': '',
-    'why.title.highlight': 'to mastery',
+    'why.title.highlight': 'pedagogy',
     'why.reason1.title': 'Because we start with you, not a catalog',
     'why.reason1.desc': 'Human diagnosis. We listen to you, we understand you, we guide you. A logical, structured progression that leads you to mastery.',
     'why.reason2.title': 'Because we finally bring back the joy of understanding science',

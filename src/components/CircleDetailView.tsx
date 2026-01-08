@@ -532,7 +532,7 @@ export function CircleDetailView({ circle, onBack, onOpenMessaging }: CircleDeta
                         {/* Date Block - Left */}
                         <div 
                           className="w-20 flex-shrink-0 flex flex-col items-center justify-center py-5 border-r border-gray-100"
-                          style={{ backgroundColor: isUpcoming ? '#48c6ed' : '#f9fafb' }}
+                          style={{ backgroundColor: isUpcoming ? '#00c2ff' : '#f9fafb' }}
                         >
                           <span 
                             className="text-2xl font-bold"
@@ -587,7 +587,7 @@ export function CircleDetailView({ circle, onBack, onOpenMessaging }: CircleDeta
                               {/* CTA Button */}
                               <button 
                                 className="px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                style={{ backgroundColor: '#48c6ed', color: 'white' }}
+                                style={{ backgroundColor: '#00c2ff', color: 'white' }}
                               >
                       Participer
                     </button>
@@ -642,7 +642,7 @@ export function CircleDetailView({ circle, onBack, onOpenMessaging }: CircleDeta
                       <div 
                         className="w-8 h-8 rounded-full mx-auto mb-3 flex items-center justify-center text-sm font-bold"
                         style={{ 
-                          backgroundColor: isFirst ? '#48c6ed' : '#f3f4f6',
+                          backgroundColor: isFirst ? '#00c2ff' : '#f3f4f6',
                           color: isFirst ? 'white' : '#6b7280'
                         }}
                       >
@@ -673,7 +673,7 @@ export function CircleDetailView({ circle, onBack, onOpenMessaging }: CircleDeta
                       {/* Points */}
                       <div 
                         className="text-lg font-bold"
-                        style={{ color: isFirst ? '#48c6ed' : '#111827' }}
+                        style={{ color: isFirst ? '#00c2ff' : '#111827' }}
                       >
                         {actualMember.points.toLocaleString()}
                       </div>
@@ -743,7 +743,7 @@ export function CircleDetailView({ circle, onBack, onOpenMessaging }: CircleDeta
                   <div className="flex items-center gap-3">
                     <div 
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                      style={{ backgroundColor: '#48c6ed' }}
+                      style={{ backgroundColor: '#00c2ff' }}
                     >
                       YS
                     </div>

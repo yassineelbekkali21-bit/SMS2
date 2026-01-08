@@ -31,7 +31,7 @@ export function LessonNavigator({
   const getLessonIcon = (status: string) => {
     switch (status) {
       case 'current':
-        return <Play size={16} className="text-[#48c6ed]" />;
+        return <Play size={16} className="text-[#00c2ff]" />;
       case 'completed':
         return <CheckCircle size={16} className="text-gray-900" />;
       case 'available':
@@ -104,7 +104,7 @@ export function LessonNavigator({
                 whileTap={isClickable ? { scale: 0.99 } : {}}
                 className={`w-full p-3 rounded-xl text-left transition-all ${
                   status === 'current'
-                    ? 'bg-[#48c6ed]/10 border-2 border-[#48c6ed]/30 shadow-sm'
+                    ? 'bg-[#00c2ff]/10 border-2 border-[#00c2ff]/30 shadow-sm'
                     : status === 'completed'
                     ? 'bg-white border border-gray-200 hover:bg-gray-50'
                     : status === 'available'
@@ -117,7 +117,7 @@ export function LessonNavigator({
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                       status === 'current'
-                        ? 'bg-[#48c6ed] text-white'
+                        ? 'bg-[#00c2ff] text-white'
                         : status === 'completed'
                         ? 'bg-gray-900 text-white'
                         : status === 'available'
@@ -146,7 +146,7 @@ export function LessonNavigator({
                       <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                           status === 'current'
-                            ? 'bg-[#48c6ed]/10 text-[#48c6ed]'
+                            ? 'bg-[#00c2ff]/10 text-[#00c2ff]'
                             : status === 'completed'
                             ? 'bg-gray-900 text-white'
                             : status === 'available'

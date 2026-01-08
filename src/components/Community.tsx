@@ -1374,7 +1374,7 @@ function CirclesTab({
                           <div className="text-xs text-gray-500">Actifs aujourd'hui</div>
                         </div>
                         <div className="text-center p-3 bg-gray-50 rounded-xl">
-                          <div className="text-lg font-bold" style={{ color: '#48c6ed' }}>{mockSharedCourses}</div>
+                          <div className="text-lg font-bold" style={{ color: '#00c2ff' }}>{mockSharedCourses}</div>
                           <div className="text-xs text-gray-500">Cours communs</div>
                         </div>
                     </div>
@@ -1431,7 +1431,7 @@ function CirclesTab({
                         }}
                         type="button"
                           className="flex-1 px-4 py-3.5 text-white rounded-full font-semibold transition-all text-sm hover:opacity-90"
-                          style={{ backgroundColor: '#48c6ed' }}
+                          style={{ backgroundColor: '#00c2ff' }}
                       >
                         Rejoindre
                       </button>

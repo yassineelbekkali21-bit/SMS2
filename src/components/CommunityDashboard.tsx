@@ -241,7 +241,7 @@ export function CommunityDashboard() {
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-2.5 px-5 py-2.5 bg-gray-900 rounded-full"><Clock size={16} className="text-white" /><span className="text-base font-bold text-white tabular-nums">00:00:00</span></div>
               <button className="hidden md:flex items-center gap-2 px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-900 rounded-full font-medium transition-colors"><Users size={14} /><span className="text-sm">Inviter</span></button>
-              <button className="hidden md:block px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-full transition-colors text-sm">Débloquer</button>
+              <button className="hidden md:block px-5 py-2.5 bg-[#00c2ff] hover:bg-[#00a8e0] text-white font-semibold rounded-full transition-colors text-sm">Débloquer</button>
               <div className="relative">
                 <button onClick={() => setShowSettings(!showSettings)} className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-semibold hover:bg-gray-800 transition-colors text-sm">T</button>
                 <AnimatePresence>
@@ -330,7 +330,7 @@ export function CommunityDashboard() {
                     <div className="p-3 bg-gray-900 text-white rounded-xl">
                       <div className="flex items-center justify-between">
                         <div><p className="text-sm font-medium">vs Thomas</p><p className="text-xs text-white/60">Électromagnétisme</p></div>
-                        <div className="text-right"><p className="text-lg font-bold">450 - 420</p><p className="text-xs text-cyan-400">Finit dans 2h</p></div>
+                        <div className="text-right"><p className="text-lg font-bold">450 - 420</p><p className="text-xs text-[#00c2ff]">Finit dans 2h</p></div>
                       </div>
                     </div>
                     <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl">
@@ -407,21 +407,21 @@ export function CommunityDashboard() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="xl:col-span-2">
               <div className="bg-gray-900 rounded-2xl p-6 lg:p-8 h-full">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center"><Target size={20} className="text-white" /></div>
+                  <div className="w-10 h-10 bg-[#00c2ff] rounded-xl flex items-center justify-center"><Target size={20} className="text-white" /></div>
                   <div><h2 className="font-semibold" style={{ color: '#ffffff' }}>Mission du jour</h2><p className="text-xs text-white/50">Choisis ta mission</p></div>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {/* Mission 1 */}
                   <div className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 cursor-pointer transition-all group">
                     <div className="flex items-start justify-between mb-3">
-                      <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-[10px] font-medium rounded-full">Mathématiques</span>
+                      <span className="px-2 py-0.5 bg-[#00c2ff]/20 text-[#00c2ff] text-[10px] font-medium rounded-full">Mathématiques</span>
                       <div className="flex items-center gap-1 text-white/50 text-xs"><Users size={12} /><span>47</span></div>
                     </div>
                     <h3 className="font-semibold text-base mb-2" style={{ color: '#ffffff' }}>Intégrales curvilignes</h3>
                     <p className="text-white/60 text-xs mb-3">Calculer le travail sur un cercle</p>
                     <div className="flex items-center justify-between">
                       <span className="text-white/50 text-xs flex items-center gap-1"><Clock size={12} />18 min</span>
-                      <button className="px-3 py-1.5 bg-white text-gray-900 rounded-lg text-xs font-semibold group-hover:bg-cyan-400 group-hover:text-white transition-colors">Choisir</button>
+                      <button className="px-3 py-1.5 bg-white text-gray-900 rounded-lg text-xs font-semibold group-hover:bg-[#00c2ff] group-hover:text-white transition-colors">Choisir</button>
                     </div>
                   </div>
                   {/* Mission 2 */}
@@ -434,7 +434,7 @@ export function CommunityDashboard() {
                     <p className="text-white/60 text-xs mb-3">QCM sur le champ électrique</p>
                     <div className="flex items-center justify-between">
                       <span className="text-white/50 text-xs flex items-center gap-1"><Clock size={12} />12 min</span>
-                      <button className="px-3 py-1.5 bg-white text-gray-900 rounded-lg text-xs font-semibold group-hover:bg-cyan-400 group-hover:text-white transition-colors">Choisir</button>
+                      <button className="px-3 py-1.5 bg-white text-gray-900 rounded-lg text-xs font-semibold group-hover:bg-[#00c2ff] group-hover:text-white transition-colors">Choisir</button>
                     </div>
                   </div>
                 </div>
@@ -445,11 +445,11 @@ export function CommunityDashboard() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
               <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 h-full flex flex-col justify-between border border-gray-700">
                 <div>
-                  <div className="flex items-center gap-2 mb-4"><Swords size={20} className="text-cyan-400" /><h3 className="font-semibold text-white">Défis & Battles</h3></div>
+                  <div className="flex items-center gap-2 mb-4"><Swords size={20} className="text-[#00c2ff]" /><h3 className="font-semibold text-white">Défis & Battles</h3></div>
                   <div className="space-y-3">
                     <div className="bg-white/5 rounded-xl p-3 cursor-pointer hover:bg-white/10 transition-colors">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-cyan-400">Quiz du jour</span>
+                        <span className="text-xs font-medium text-[#00c2ff]">Quiz du jour</span>
                         <span className="text-[10px] text-white/50">+50 XP</span>
                       </div>
                       <p className="text-sm text-white font-medium">Électrostatique</p>
@@ -465,7 +465,7 @@ export function CommunityDashboard() {
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-cyan-500 text-white rounded-xl font-semibold hover:bg-cyan-600 transition-colors"><Swords size={16} />Lancer un défi</button>
+                <button className="mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-[#00c2ff] text-white rounded-xl font-semibold hover:bg-[#00a8e0] transition-colors"><Swords size={16} />Lancer un défi</button>
               </div>
             </motion.div>
           </div>
@@ -512,7 +512,7 @@ export function CommunityDashboard() {
                           </span>
                         )}
                         {track.studyRoomTonight && (
-                          <span className="text-xs px-2 py-0.5 bg-cyan-500/30 rounded-full flex items-center gap-1" style={{ color: '#00c2ff' }}>
+                          <span className="text-xs px-2 py-0.5 bg-[#00c2ff]/30 rounded-full flex items-center gap-1" style={{ color: '#00c2ff' }}>
                             <Video size={10} />{track.studyRoomTime}
                           </span>
                         )}
@@ -604,7 +604,7 @@ export function CommunityDashboard() {
                       </div>
                       <span className="text-[10px] font-semibold text-gray-900">{challenge.progress}%</span>
                     </div>
-                    <p className="text-[10px] text-cyan-600 mt-1.5 font-medium">{challenge.reward}</p>
+                    <p className="text-[10px] text-[#00c2ff] mt-1.5 font-medium">{challenge.reward}</p>
                   </div>
                 ))}
               </div>
@@ -635,7 +635,7 @@ export function CommunityDashboard() {
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute top-3 left-3">
-                      <span className="px-2 py-0.5 bg-cyan-500/90 text-white text-[10px] font-medium rounded-full">{track.subject}</span>
+                      <span className="px-2 py-0.5 bg-[#00c2ff]/90 text-white text-[10px] font-medium rounded-full">{track.subject}</span>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-3">
                       <h3 className="font-bold text-sm leading-tight line-clamp-2" style={{ color: '#ffffff' }}>{track.title}</h3>

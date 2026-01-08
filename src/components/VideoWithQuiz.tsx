@@ -555,14 +555,14 @@ export function VideoWithQuiz({
                 >
                   {/* Label - UNIQUEMENT visible au hover de CE widget */}
                   {hoveredWidget === widget.id && (
-                    <span className="pointer-events-none absolute right-full mr-4 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-[#48c6ed] text-white shadow-xl">
+                    <span className="pointer-events-none absolute right-full mr-4 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-[#00c2ff] text-white shadow-xl">
                       {widget.label}
                     </span>
                   )}
                   {/* Icône - Couleur thème uniquement au hover */}
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
                     hoveredWidget === widget.id
-                      ? 'bg-[#48c6ed] text-white border border-[#48c6ed]'
+                      ? 'bg-[#00c2ff] text-white border border-[#00c2ff]'
                       : 'bg-white/10 border border-white/20 text-white/70'
                   }`}>
                     <widget.icon size={18} />
@@ -726,7 +726,7 @@ export function VideoWithQuiz({
             {quizMarkers.map((position, index) => (
               <div
                 key={index}
-                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-[#48c6ed] rounded-full"
+                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-[#00c2ff] rounded-full"
                 style={{ left: `${position}%` }}
                 title={`Quiz à ${formatTime(questions[index].timestamp)}`}
               />

@@ -104,7 +104,7 @@ export function GlobalHeader({
   onOpenParentReports,
   onOpenHelpCenter,
   onVerifyIdentity,
-  themeColor = '#48c6ed',
+  themeColor = '#00c2ff',
 }: GlobalHeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -453,9 +453,9 @@ export function GlobalHeader({
           {/* 3. BLOC DROIT — ACTIONS (positionné à droite) */}
           <div className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 items-center gap-3">
             {/* Timer heures gratuites disponibles */}
-            <div className="flex items-center gap-3 px-5 py-2.5 bg-gray-900 rounded-full">
-              <Clock size={20} className="text-white" />
-              <span className="text-lg font-bold text-white tabular-nums tracking-tight">10:00:00</span>
+            <div className="flex items-center gap-3 px-5 py-2.5 bg-white rounded-full shadow-sm border border-gray-200">
+              <Clock size={20} className="text-gray-900" />
+              <span className="text-lg font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
             </div>
 
             {/* Débloquer OU Level/XP */}

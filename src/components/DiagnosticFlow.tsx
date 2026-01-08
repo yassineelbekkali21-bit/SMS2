@@ -20,8 +20,26 @@ import {
   FileText,
   MessageCircle,
   SkipForward,
-  Loader2
+  Loader2,
+  ArrowLeft,
+  Layers,
+  Compass,
+  Heart,
+  Lock,
+  PenTool,
+  MoreHorizontal
 } from 'lucide-react';
+
+// Icon mapping for struggle options
+const STRUGGLE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Layers,
+  Clock,
+  Compass,
+  Heart,
+  Lock,
+  PenTool,
+  MoreHorizontal
+};
 
 interface DiagnosticFlowProps {
   isOpen: boolean;
@@ -102,12 +120,13 @@ const GOAL_OPTIONS = [
 ];
 
 const STRUGGLE_OPTIONS = [
-  { id: 'too-much', label: 'Trop de matière, je ne sais pas par où commencer', icon: '😵' },
-  { id: 'no-time', label: 'Pas assez de temps pour tout réviser', icon: '⏰' },
-  { id: 'no-method', label: 'Je n\'ai pas la bonne méthode', icon: '🤔' },
-  { id: 'no-confidence', label: 'Je manque de confiance en moi', icon: '😰' },
-  { id: 'specific-topic', label: 'Je bloque sur des chapitres précis', icon: '🧱' },
-  { id: 'exercises', label: 'Je comprends mais je rate les exercices', icon: '📝' }
+  { id: 'too-much', label: 'Trop de matière', description: 'Je ne sais pas par où commencer ni comment prioriser', icon: 'Layers' },
+  { id: 'no-time', label: 'Manque de temps', description: 'Pas assez de temps pour tout réviser avant l\'examen', icon: 'Clock' },
+  { id: 'no-method', label: 'Pas la bonne méthode', description: 'Je révise mais je ne retiens pas ou je ne progresse pas', icon: 'Compass' },
+  { id: 'no-confidence', label: 'Manque de confiance', description: 'Je doute de mes capacités et je stresse facilement', icon: 'Heart' },
+  { id: 'specific-topic', label: 'Blocages précis', description: 'Je bloque sur des chapitres ou notions spécifiques', icon: 'Lock' },
+  { id: 'exercises', label: 'Exercices difficiles', description: 'Je comprends le cours mais je rate les exercices', icon: 'PenTool' },
+  { id: 'other', label: 'Autre', description: '', icon: 'MoreHorizontal' }
 ];
 
 // Programmes avec leurs topics et notions
@@ -245,8 +264,8 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
     school.toLowerCase().includes(schoolSearch.toLowerCase())
   );
 
-  // Total steps (4 étapes: profil, objectif, difficultés, sujets)
-  const TOTAL_STEPS = 4;
+  // Total steps (5 étapes: profil, objectif, difficultés, documents, sujets)
+  const TOTAL_STEPS = 5;
   
   // Reset on close
   useEffect(() => {
@@ -592,41 +611,56 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
             exit={{ opacity: 0, x: -50 }}
             className="space-y-6"
           >
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-2">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
                 Quel est ton objectif cette année ?
               </h2>
-              <p className="!text-white opacity-80">
+              <p className="!text-white/60 text-base max-w-lg mx-auto">
                 On adapte l'intensité à ton objectif
               </p>
             </div>
 
-            <div className="space-y-4 max-w-xl mx-auto">
+            {/* Single column - stacked vertically */}
+            <div className="flex flex-col gap-4 max-w-xl mx-auto">
               {GOAL_OPTIONS.map((goal) => {
                 const Icon = goal.icon;
+                const isSelected = formData.goal === goal.id;
                 return (
                   <button
                     key={goal.id}
                     onClick={() => setFormData({ ...formData, goal: goal.id })}
-                    className={`w-full p-6 rounded-2xl border-2 transition-all text-left ${
-                      formData.goal === goal.id
-                        ? 'border-[#00c2ff] bg-[#00c2ff]/10'
-                        : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
+                    className={`p-5 rounded-2xl border-2 transition-all text-left group ${
+                      isSelected
+                        ? 'border-[#00c2ff]'
+                        : 'border-white/10 hover:border-white/20'
                     }`}
+                    style={{
+                      backgroundColor: isSelected ? 'rgba(13, 19, 23, 0.95)' : 'rgba(255,255,255,0.02)',
+                      boxShadow: isSelected ? 'inset 0 0 0 1px rgba(72,198,237,0.3)' : 'none'
+                    }}
                   >
-                    <div className="flex items-center gap-5">
-                      <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                        formData.goal === goal.id
-                          ? 'bg-[#00c2ff]'
-                          : 'bg-gray-700'
-                      }`}>
-                        <Icon size={28} className="text-white" />
+                    <div className="flex items-center gap-4">
+                      {/* Icon in rounded square */}
+                      <div 
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+                        style={{
+                          backgroundColor: isSelected ? '#00c2ff' : 'rgba(255,255,255,0.05)'
+                        }}
+                      >
+                        <Icon 
+                          size={22} 
+                          className={isSelected ? 'text-[#0d1317]' : 'text-white/60'} 
+                        />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-lg !text-white opacity-95">
+                      
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <h3 style={{ color: 'rgba(255,255,255,0.95)' }} className="font-semibold text-base mb-1">
                           {goal.label}
                         </h3>
-                        <p className="!text-white text-sm opacity-80">{goal.description}</p>
+                        <p style={{ color: 'rgba(255,255,255,0.65)' }} className="text-sm leading-relaxed">
+                          {goal.description}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -635,10 +669,10 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
             </div>
 
             {/* Skip button */}
-            <div className="text-center pt-4">
+            <div className="flex justify-center pt-4">
               <button
                 onClick={handleSkip}
-                className="text-white/60 hover:text-white/90 text-sm flex items-center gap-2 mx-auto transition-colors"
+                className="flex items-center gap-2 text-white/50 hover:text-white/80 text-sm font-medium transition-colors"
               >
                 <SkipForward size={16} />
                 Passer cette étape
@@ -647,7 +681,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
           </motion.div>
         );
 
-      // Step 2: Difficultés (avec option skip)
+      // Step 2: Difficultés (avec option skip) - Loop-inspired design
       case 2:
         return (
           <motion.div
@@ -655,44 +689,81 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="space-y-6"
+            className="space-y-8"
           >
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-2">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
                 Quels défis rencontres-tu actuellement ?
               </h2>
-              <p className="!text-white opacity-80">
+              <p className="!text-white/60 text-base max-w-lg mx-auto">
                 Sélectionne tout ce qui te parle (plusieurs choix possibles)
               </p>
             </div>
 
-            <div className="space-y-3 max-w-md mx-auto">
-              {STRUGGLE_OPTIONS.map((struggle) => (
-                <button
-                  key={struggle.id}
-                  onClick={() => toggleStruggle(struggle.id)}
-                  className={`w-full p-4 rounded-xl border-2 transition-all text-left flex items-center gap-4 ${
-                    formData.struggles?.includes(struggle.id)
-                      ? 'border-[#00c2ff] bg-[#00c2ff]/10'
-                      : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
-                  }`}
-                >
-                  <span className="text-2xl">{struggle.icon}</span>
-                  <span className="font-medium !text-white opacity-95">
-                    {struggle.label}
-                  </span>
-                  {formData.struggles?.includes(struggle.id) && (
-                    <CheckCircle size={20} className="text-[#00c2ff] ml-auto" />
-                  )}
-                </button>
-              ))}
+            {/* Grid 2 columns - Loop style */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+              {STRUGGLE_OPTIONS.map((struggle) => {
+                const isSelected = formData.struggles?.includes(struggle.id);
+                const IconComponent = STRUGGLE_ICONS[struggle.icon];
+                const isOther = struggle.id === 'other';
+                
+                return (
+                  <button
+                    key={struggle.id}
+                    onClick={() => toggleStruggle(struggle.id)}
+                    className={`p-5 rounded-2xl border-2 transition-all text-left group ${
+                      isSelected
+                        ? 'border-[#00c2ff]'
+                        : 'border-white/10 hover:border-white/20'
+                    } ${isOther ? 'md:col-span-2 md:max-w-md md:mx-auto md:w-full' : ''}`}
+                    style={{
+                      backgroundColor: isSelected ? 'rgba(13, 19, 23, 0.95)' : 'rgba(255,255,255,0.02)',
+                      boxShadow: isSelected ? 'inset 0 0 0 1px rgba(72,198,237,0.3)' : 'none'
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Icon in rounded square */}
+                      <div 
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+                        style={{
+                          backgroundColor: isSelected ? '#00c2ff' : 'rgba(255,255,255,0.05)'
+                        }}
+                      >
+                        {IconComponent && (
+                          <IconComponent 
+                            size={22} 
+                            className={isSelected ? 'text-[#0d1317]' : 'text-white/60'} 
+                          />
+                        )}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 style={{ color: 'rgba(255,255,255,0.95)' }} className="font-semibold text-base">
+                            {struggle.label}
+                          </h3>
+                          {isSelected && (
+                            <CheckCircle size={18} className="text-[#00c2ff] flex-shrink-0" />
+                          )}
+                        </div>
+                        {struggle.description && (
+                          <p style={{ color: 'rgba(255,255,255,0.65)' }} className="text-sm leading-relaxed mt-1">
+                            {struggle.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Skip button */}
-            <div className="text-center pt-4">
+            <div className="flex justify-center pt-4">
               <button
                 onClick={handleSkip}
-                className="text-white/60 hover:text-white/90 text-sm flex items-center gap-2 mx-auto transition-colors"
+                className="flex items-center gap-2 text-white/50 hover:text-white/80 text-sm font-medium transition-colors"
               >
                 <SkipForward size={16} />
                 Passer cette étape
@@ -701,8 +772,114 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
           </motion.div>
         );
 
-      // Step 3: Sujets préoccupants (avec analyse IA des documents)
+      // Step 3: Import Documents - Clean and focused
       case 3:
+        return (
+          <motion.div
+            key="step-3"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            className="space-y-8 max-w-xl mx-auto"
+          >
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
+                Importe tes cours ou exercices
+              </h2>
+              <p className="!text-white/60 text-base max-w-lg mx-auto">
+                On analyse tes documents et on identifie tes points de blocage
+              </p>
+            </div>
+
+            {/* Zone d'upload principale - grande et centrale */}
+            <div 
+              onClick={() => !isAnalyzing && fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-2xl p-10 cursor-pointer transition-all ${
+                isAnalyzing 
+                  ? 'border-[#00c2ff] bg-[#00c2ff]/10' 
+                  : uploadedFiles.length > 0
+                  ? 'border-[#00c2ff] bg-[#00c2ff]/5'
+                  : 'border-white/20 hover:border-[#00c2ff] hover:bg-white/[0.02]'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              
+              <div className="flex flex-col items-center text-center">
+                <div 
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-colors"
+                  style={{
+                    backgroundColor: isAnalyzing || uploadedFiles.length > 0 ? '#00c2ff' : 'rgba(255,255,255,0.05)'
+                  }}
+                >
+                  {isAnalyzing ? (
+                    <Loader2 className="text-[#0d1317] animate-spin" size={28} />
+                  ) : (
+                    <Upload 
+                      size={28} 
+                      className={isAnalyzing || uploadedFiles.length > 0 ? 'text-[#0d1317]' : 'text-white/60'} 
+                    />
+                  )}
+                </div>
+                <p style={{ color: 'rgba(255,255,255,0.95)' }} className="font-semibold text-lg mb-2">
+                  {isAnalyzing ? 'Analyse en cours...' : uploadedFiles.length > 0 ? `${uploadedFiles.length} fichier(s) sélectionné(s)` : 'Glisse tes fichiers ici'}
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.5)' }} className="text-sm">
+                  {isAnalyzing 
+                    ? 'Identification de tes points de blocage...' 
+                    : 'PDF, Word, Images • Max 10 fichiers'}
+                </p>
+              </div>
+            </div>
+
+            {/* Liste des fichiers uploadés */}
+            {uploadedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-2 justify-center">
+                {uploadedFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                  >
+                    <FileText size={14} className="text-[#00c2ff]" />
+                    <span style={{ color: 'rgba(255,255,255,0.8)' }} className="text-sm truncate max-w-[150px]">
+                      {file.name}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(index);
+                      }}
+                      className="text-white/40 hover:text-red-400 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Skip button */}
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={handleSkip}
+                className="flex items-center gap-2 text-white/50 hover:text-white/80 text-sm font-medium transition-colors"
+              >
+                <SkipForward size={16} />
+                Je n'ai pas de documents
+              </button>
+            </div>
+          </motion.div>
+        );
+
+      // Step 4: Manual Selection - Search and pick topics
+      case 4:
         // Filtrer les notions selon le programme et topic sélectionnés
         const allNotions = Object.values(DIAGNOSTIC_NOTIONS).flat();
         const filteredNotions = allNotions.filter(notion => {
@@ -724,95 +901,19 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
 
         return (
           <motion.div
-            key="step-3"
+            key="step-4"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="space-y-3 max-w-4xl mx-auto"
+            className="space-y-4 max-w-4xl mx-auto"
           >
-            <div className="text-center mb-2">
-              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-2">
-                Quels sujets te préoccupent le plus ?
+            <div className="text-center mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
+                Sur quels sujets veux-tu progresser ?
               </h2>
-              <p className="!text-white opacity-80">
-                Recherche ou importe un document pour identifier automatiquement tes points de blocage
+              <p className="!text-white/60 text-base max-w-lg mx-auto">
+                Sélectionne les notions sur lesquelles tu souhaites t'améliorer
               </p>
-            </div>
-
-            {/* Zone d'upload de documents avec analyse IA */}
-            <div className="max-w-xl mx-auto mb-6">
-              <div 
-                onClick={() => !isAnalyzing && fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${
-                  isAnalyzing 
-                    ? 'border-[#00c2ff] bg-[#00c2ff]/10' 
-                    : 'border-gray-600 hover:border-[#00c2ff] hover:bg-[#00c2ff]/5'
-                }`}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                
-                <div className="flex items-center justify-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    isAnalyzing ? 'bg-[#00c2ff]/30' : 'bg-[#00c2ff]/20'
-                  }`}>
-                    {isAnalyzing ? (
-                      <Loader2 className="text-[#00c2ff] animate-spin" size={18} />
-                    ) : (
-                      <Upload className="text-[#00c2ff]" size={18} />
-                    )}
-                  </div>
-                  <div className="text-left">
-                    <p className="!text-white/90 font-medium text-sm">
-                      {isAnalyzing ? 'Analyse IA en cours...' : 'Importer tes documents'}
-                    </p>
-                    <p className="text-gray-500 text-xs">
-                      {isAnalyzing 
-                        ? 'Détection automatique des notions' 
-                        : 'L\'IA identifie automatiquement les sujets • Max 10 fichiers'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Liste des fichiers uploadés */}
-              {uploadedFiles.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {uploadedFiles.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg"
-                    >
-                      <FileText size={14} className="text-[#00c2ff]" />
-                      <span className="text-xs !text-white/80 truncate max-w-[120px]">
-                        {file.name}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFile(index);
-                        }}
-                        className="text-gray-500 hover:text-red-400 transition-colors"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Séparateur "ou" */}
-            <div className="flex items-center gap-6 max-w-xl mx-auto my-4">
-              <div className="flex-1 h-px bg-gray-700"></div>
-              <span className="text-gray-500 text-sm font-medium uppercase tracking-wider">ou</span>
-              <div className="flex-1 h-px bg-gray-700"></div>
             </div>
 
             {/* Barre de recherche */}
@@ -882,17 +983,21 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                     <button
                       key={notion.id}
                       onClick={() => toggleBlockingPoint(notion.id)}
-                      className={`p-4 rounded-xl border-2 transition-all text-left flex items-center justify-between ${
+                      className={`p-4 rounded-2xl border-2 transition-all text-left flex items-center justify-between ${
                         isSelected
-                          ? 'border-[#00c2ff] bg-[#00c2ff]/10'
-                          : 'border-gray-700 bg-[#1a1a1a] hover:border-gray-600'
+                          ? 'border-[#00c2ff]'
+                          : 'border-white/10 hover:border-white/20'
                       }`}
+                      style={{
+                        backgroundColor: isSelected ? 'rgba(13, 19, 23, 0.95)' : 'rgba(255,255,255,0.02)',
+                        boxShadow: isSelected ? 'inset 0 0 0 1px rgba(72,198,237,0.3)' : 'none'
+                      }}
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="font-medium text-sm !text-white opacity-95 block truncate">
+                        <span style={{ color: 'rgba(255,255,255,0.95)' }} className="font-medium text-sm block truncate">
                           {notion.label}
                         </span>
-                        <span className="text-xs !text-white/50 block truncate">
+                        <span style={{ color: 'rgba(255,255,255,0.5)' }} className="text-xs block truncate mt-0.5">
                           {notion.topic}
                         </span>
                       </div>
@@ -964,7 +1069,8 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 { label: 'Profil', step: 0 },
                 { label: 'Objectif', step: 1 },
                 { label: 'Défis', step: 2 },
-                { label: 'Sujets', step: 3 }
+                { label: 'Documents', step: 3 },
+                { label: 'Sujets', step: 4 }
               ].map((item, idx) => {
                 const isCompleted = currentStep > item.step;
                 const isCurrent = currentStep === item.step;
@@ -991,8 +1097,8 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                       </span>
                     </div>
                     {/* Line connector */}
-                    {idx < 3 && (
-                      <div className={`w-8 md:w-16 h-1 rounded-full transition-all duration-500 ${
+                    {idx < 4 && (
+                      <div className={`w-6 md:w-12 h-1 rounded-full transition-all duration-500 ${
                         isCompleted ? 'bg-[#00c2ff]' : 'bg-gray-700'
                       }`} />
                     )}
@@ -1029,7 +1135,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 <CheckCircle size={22} className="text-[#00c2ff]" />
               </div>
               <span className="text-white text-base md:text-lg font-medium">
-                Tu es sur le point d'obtenir <span className="text-[#00c2ff]">10h gratuites</span> !
+                Tu es sur le point d'obtenir <span className="text-[#00c2ff]">10h de ton parcours offertes</span> !
               </span>
             </div>
 

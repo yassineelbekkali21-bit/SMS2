@@ -216,23 +216,21 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
           onClick={onClose}
         />
 
-        {/* Modal */}
+        {/* Modal - Loop Style */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
-          className="relative w-full max-w-lg bg-gradient-to-b from-[#0d1317] to-[#0a0f12] rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-lg bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl"
         >
-          {/* Decorative line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-[#48c6ed]" />
           
-          {/* Close Button */}
+          {/* Close Button - Loop style */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
+            className="absolute top-6 right-6 z-10 text-gray-500 hover:text-white transition-colors"
           >
-            <X className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+            <X className="w-5 h-5" />
           </button>
 
           {/* Back Button (OTP step only) */}
@@ -301,7 +299,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
             >
               {/* Header */}
               <div className="text-center mb-10">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[#48c6ed]/20 to-blue-600/20 border border-[#48c6ed]/30 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[#00c2ff]/20 to-blue-600/20 border border-[#00c2ff]/30 flex items-center justify-center">
                   <span className="text-4xl">📧</span>
                 </div>
                 <h2 className="text-2xl font-bold !text-white mb-3">
@@ -331,8 +329,8 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                         otpError 
                           ? 'border-red-500/50 bg-red-500/10' 
                           : digit 
-                            ? 'border-[#48c6ed] bg-[#48c6ed]/10' 
-                            : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
+                            ? 'border-[#00c2ff] bg-[#00c2ff]/10' 
+                            : 'border-white/10 focus:border-[#00c2ff] focus:bg-white/10'
                       }`}
                     />
                   ))}
@@ -362,7 +360,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                       className="text-sm !text-white/50 hover:!text-white transition-colors"
                     >
                       Pas reçu le code ?{' '}
-                      <span className="font-semibold text-[#48c6ed] underline">Renvoyer</span>
+                      <span className="font-semibold text-[#00c2ff] underline">Renvoyer</span>
                     </button>
                   )}
                 </div>
@@ -373,7 +371,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                   disabled={otp.some(d => !d) || isSubmitting}
                   className={`w-full py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 ${
                     otp.every(d => d) && !isSubmitting
-                      ? 'bg-gradient-to-r from-[#48c6ed] to-blue-600 hover:from-[#3ab5dc] hover:to-blue-700 text-white shadow-lg shadow-blue-500/25'
+                      ? 'bg-gradient-to-r from-[#00c2ff] to-blue-600 hover:from-[#3ab5dc] hover:to-blue-700 text-white shadow-lg shadow-blue-500/25'
                       : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
                   }`}
                 >
@@ -393,12 +391,12 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
             </motion.div>
           )}
 
-          {/* Form Step */}
+          {/* Form Step - Loop Style */}
           {step === 'form' && (
-            <div className="p-8 pt-6">
+            <div className="p-10 pt-8">
               {/* Logo */}
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 relative">
+              <div className="flex justify-center mb-8">
+                <div className="w-16 h-16 relative">
                   <Image 
                     src="/brand/onboarding-logo.svg" 
                     alt="SMS" 
@@ -408,17 +406,20 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                 </div>
               </div>
 
-              {/* Header */}
+              {/* Header - Parafina style */}
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold !text-white mb-3">
-                  Débloque 10h gratuites
+                <h2 
+                  className="text-3xl md:text-4xl font-normal !text-white mb-3"
+                  style={{ fontFamily: 'var(--font-parafina)' }}
+                >
+                  Teste ton parcours – 10h offertes
                 </h2>
-                <p className="!text-white/80 text-base">
+                <p style={{ color: 'rgba(255, 255, 255, 0.9)' }} className="text-base">
                   Accède à tous nos programmes. Sans engagement.
                 </p>
               </div>
 
-              {/* Form */}
+              {/* Form - Loop style inputs */}
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 {/* First Name */}
                 <div>
@@ -427,14 +428,14 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                     placeholder="Ton prénom"
                     value={formData.firstName}
                     onChange={handleChange('firstName')}
-                    className={`w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 transition-all ${
+                    className={`w-full px-5 py-4 bg-transparent rounded-full !text-white placeholder-white/40 text-base border transition-all ${
                       errors.firstName 
-                        ? 'border-red-500/50 focus:border-red-500 bg-red-500/5' 
-                        : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
+                        ? 'border-red-500/50 focus:border-red-500' 
+                        : 'border-white/20 focus:border-white/40'
                     } focus:outline-none`}
                   />
                   {errors.firstName && (
-                    <p className="text-red-400 text-xs mt-1.5 ml-1">{errors.firstName}</p>
+                    <p className="text-red-400 text-xs mt-1.5 ml-4">{errors.firstName}</p>
                   )}
                 </div>
 
@@ -445,14 +446,14 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                     placeholder="Ton email"
                     value={formData.email}
                     onChange={handleChange('email')}
-                    className={`w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 transition-all ${
+                    className={`w-full px-5 py-4 bg-transparent rounded-full !text-white placeholder-white/40 text-base border transition-all ${
                       errors.email 
-                        ? 'border-red-500/50 focus:border-red-500 bg-red-500/5' 
-                        : 'border-white/10 focus:border-[#48c6ed] focus:bg-white/10'
+                        ? 'border-red-500/50 focus:border-red-500' 
+                        : 'border-white/20 focus:border-white/40'
                     } focus:outline-none`}
                   />
                   {errors.email && (
-                    <p className="text-red-400 text-xs mt-1.5 ml-1">{errors.email}</p>
+                    <p className="text-red-400 text-xs mt-1.5 ml-4">{errors.email}</p>
                   )}
                 </div>
 
@@ -463,7 +464,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                     placeholder="Téléphone"
                     value={formData.phone}
                     onChange={handleChange('phone')}
-                    className="w-full px-5 py-4 bg-white/5 rounded-xl !text-white placeholder-white/30 text-base border-2 border-white/10 focus:border-[#48c6ed] focus:bg-white/10 focus:outline-none transition-all"
+                    className="w-full px-5 py-4 bg-transparent rounded-full !text-white placeholder-white/40 text-base border border-white/20 focus:border-white/40 focus:outline-none transition-all"
                   />
                 </div>
 
@@ -484,7 +485,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                       />
                       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
                         acceptedTerms 
-                          ? 'bg-[#48c6ed] border-[#48c6ed]' 
+                          ? 'bg-[#00c2ff] border-[#00c2ff]' 
                           : errors.terms
                           ? 'border-red-500/50 bg-red-500/10'
                           : 'border-white/20 bg-transparent group-hover:border-white/40'
@@ -498,11 +499,11 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                     </div>
                     <span className="text-sm !text-white/50 leading-relaxed">
                       J'accepte les{' '}
-                      <a href="/terms" target="_blank" className="text-[#48c6ed] hover:underline">
+                      <a href="/terms" target="_blank" className="text-[#00c2ff] hover:underline">
                         conditions
                       </a>
                       {' '}et la{' '}
-                      <a href="/privacy" target="_blank" className="text-[#48c6ed] hover:underline">
+                      <a href="/privacy" target="_blank" className="text-[#00c2ff] hover:underline">
                         politique de confidentialité
                       </a>
                     </span>
@@ -512,11 +513,11 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                   )}
                 </div>
 
-                {/* Submit Button */}
+                {/* Submit Button - Loop style pill */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-[#48c6ed] hover:bg-[#3ab5dc] disabled:opacity-50 !text-white font-bold text-lg rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-[#48c6ed]/25 mt-2"
+                  className="w-full py-4 bg-[#00c2ff] hover:bg-[#00b0e8] disabled:opacity-50 !text-white font-semibold text-base rounded-full transition-all flex items-center justify-center gap-3 mt-4"
                 >
                   {isSubmitting ? (
                     <>

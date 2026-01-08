@@ -661,7 +661,7 @@ export function CourseCard({
           className={`w-full py-3 px-4 font-semibold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-4 ${
             course.isOwned || cardState === 'partiallyUnlocked'
               ? 'bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:shadow-xl focus:ring-gray-900/20 hover:from-gray-800 hover:to-gray-700'
-              : 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:shadow-xl focus:ring-cyan-500/20 hover:from-cyan-600 hover:to-cyan-700'
+              : 'bg-gradient-to-r from-[#00c2ff] to-[#00a8e0] text-white hover:shadow-xl focus:ring-[#00c2ff]/20 hover:from-[#00a8e0] hover:to-[#0090c0]'
           }`}
         >
           {course.isOwned || cardState === 'partiallyUnlocked' ? (

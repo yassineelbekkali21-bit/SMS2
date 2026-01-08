@@ -202,11 +202,11 @@ const CourseNode: React.FC<{
       case 'completed':
         return 'bg-white border-2 border-gray-900 shadow-lg text-gray-900';
       case 'inProgress':
-        return 'bg-[#48c6ed] border-2 border-[#48c6ed] shadow-lg text-white';
+        return 'bg-[#00c2ff] border-2 border-[#00c2ff] shadow-lg text-white';
       case 'trialPreview':
         return 'bg-gray-800 border-2 border-gray-600 shadow-md text-gray-300 hover:border-gray-500';
       case 'available':
-        return 'bg-white border-2 border-gray-300 shadow-md text-gray-700 hover:border-[#48c6ed]';
+        return 'bg-white border-2 border-gray-300 shadow-md text-gray-700 hover:border-[#00c2ff]';
     }
   };
   
@@ -295,7 +295,7 @@ const CourseNode: React.FC<{
             animate={{ rotate: [0, 180, 360] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="text-[#48c6ed]" size={12} />
+            <Sparkles className="text-[#00c2ff]" size={12} />
           </motion.div>
         )}
         
@@ -407,14 +407,14 @@ const BackgroundSelector: React.FC<{
                   onClick={() => onSelect(bg.id)}
                   className={`relative h-16 rounded-xl border-2 overflow-hidden transition-all ${
                     selectedBackground === bg.id 
-                      ? 'border-[#48c6ed] ring-2 ring-blue-200' 
+                      ? 'border-[#00c2ff] ring-2 ring-blue-200' 
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   style={{ background: bg.preview }}
                 >
                   {selectedBackground === bg.id && (
-                    <div className="absolute inset-0 bg-[#48c6ed]/20 flex items-center justify-center">
-                      <CheckCircle className="text-[#48c6ed]" size={20} />
+                    <div className="absolute inset-0 bg-[#00c2ff]/20 flex items-center justify-center">
+                      <CheckCircle className="text-[#00c2ff]" size={20} />
                     </div>
                   )}
                 </button>
@@ -1296,9 +1296,9 @@ export function IntegratedCourseViewer({
               <GlobalHeader
                 activeSection="courses"
                 onNavigate={(sectionId) => {
-                  onClose();
+                          onClose();
                   onNavigateToSection?.(sectionId);
-                }}
+                        }}
                 userName={user?.name || 'Utilisateur'}
                 userAvatar={user?.avatar}
                 userLevel={userXPProfile?.level || 1}
@@ -1307,12 +1307,12 @@ export function IntegratedCourseViewer({
                 onOpenGuestPass={() => setShowGuestPassModal(true)}
                 onFinishSignup={onClose}
                 onOpenProfile={() => {
-                  onClose();
+                          onClose();
                   onNavigateToSection?.('profile');
                 }}
                 onOpenSettings={() => {}}
                 onLogout={onClose}
-                themeColor="#48c6ed"
+                themeColor="#00c2ff"
               />
 
               {/* Contenu principal - Map (sans sidebar) */}
@@ -1379,9 +1379,9 @@ export function IntegratedCourseViewer({
                             }}
                             className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
                               selectedLessonForDetail?.id === lesson.id
-                                ? 'border-[#48c6ed] bg-[#48c6ed]/5'
+                                ? 'border-[#00c2ff] bg-[#00c2ff]/5'
                                 : isCurrentLesson && !isTrialPreview
-                                ? 'border-[#48c6ed]/50 bg-white'
+                                ? 'border-[#00c2ff]/50 bg-white'
                                 : lesson.isCompleted
                                 ? 'border-gray-300 bg-gray-50'
                                 : isTrialPreview
@@ -1394,7 +1394,7 @@ export function IntegratedCourseViewer({
                                 lesson.isCompleted
                                   ? 'bg-gray-900 text-white'
                                   : isCurrentLesson && !isTrialPreview
-                                  ? 'bg-[#48c6ed] text-white'
+                                  ? 'bg-[#00c2ff] text-white'
                                   : isTrialPreview
                                   ? 'bg-gradient-to-br from-orange-400 to-orange-500 text-white'
                                   : 'bg-gray-200 text-gray-500'
@@ -1415,7 +1415,7 @@ export function IntegratedCourseViewer({
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                   {!isLocked && !lesson.isCompleted && !isTrialPreview && (
-                                    <Play size={14} className="text-[#48c6ed] flex-shrink-0" />
+                                    <Play size={14} className="text-[#00c2ff] flex-shrink-0" />
                                   )}
                                   {isTrialPreview && (
                                     <Eye size={14} className="text-orange-500 flex-shrink-0" />
@@ -1433,7 +1433,7 @@ export function IntegratedCourseViewer({
                                     Preview
                                   </span>
                                 ) : isCurrentLesson ? (
-                                  <span className="text-sm font-medium text-[#48c6ed] bg-[#48c6ed]/10 px-2 py-1 rounded-full">En cours</span>
+                                  <span className="text-sm font-medium text-[#00c2ff] bg-[#00c2ff]/10 px-2 py-1 rounded-full">En cours</span>
                                 ) : isLocked ? (
                                   <span className="text-sm font-medium text-gray-400">Verrouillée</span>
                                 ) : null}
@@ -1455,7 +1455,7 @@ export function IntegratedCourseViewer({
                             <h4 className="font-semibold text-gray-900">Mode Essai</h4>
                             <p className="text-sm text-gray-600 mt-1">
                               La première leçon est entièrement accessible. Les autres leçons sont disponibles en preview.
-                              Utilise tes 10h gratuites pour débloquer plus de contenu !
+                              Utilise tes 10h offertes pour débloquer plus de contenu !
                             </p>
                           </div>
                         </div>
@@ -1540,9 +1540,9 @@ export function IntegratedCourseViewer({
               <GlobalHeader
                 activeSection="courses"
                 onNavigate={(sectionId) => {
-                  onClose();
+                          onClose();
                   onNavigateToSection?.(sectionId);
-                }}
+                        }}
                 userName={user?.name || 'Utilisateur'}
                 userAvatar={user?.avatar}
                 userLevel={userXPProfile?.level || 1}
@@ -1551,12 +1551,12 @@ export function IntegratedCourseViewer({
                 onOpenGuestPass={() => setShowGuestPassModal(true)}
                 onFinishSignup={onClose}
                 onOpenProfile={() => {
-                  onClose();
+                          onClose();
                   onNavigateToSection?.('profile');
                 }}
                 onOpenSettings={() => {}}
                 onLogout={onClose}
-                themeColor="#48c6ed"
+                themeColor="#00c2ff"
               />
 
               {/* Contenu principal leçon - Layout Web 3.0 (sans sidebar) */}
@@ -1578,7 +1578,7 @@ export function IntegratedCourseViewer({
                         <div className="hidden sm:block h-6 w-px bg-gray-200 flex-shrink-0"></div>
                         <div className="min-w-0">
                           <h1 className="font-title font-bold text-gray-900 truncate" style={{ fontSize: '48px' }}>{selectedLesson.title}</h1>
-                        </div>
+                    </div>
                       </div>
 
                       {/* Right: Navigation rapide - Icônes avec badges */}
@@ -1599,29 +1599,29 @@ export function IntegratedCourseViewer({
                             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
                           </span>
                         </button>
-
+                        
                         {/* Planning - Badge nombre de sessions aujourd'hui */}
-                        <button
-                          onClick={() => {
-                            onClose();
-                            onNavigateToSection?.('planning');
-                          }}
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onNavigateToSection?.('planning');
+                        }}
                           className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
                           title="Planning"
-                        >
+                      >
                           <Calendar size={20} />
                           {/* Badge nombre */}
-                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#48c6ed] text-white text-[10px] font-bold rounded-full px-1">
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#00c2ff] text-white text-[10px] font-bold rounded-full px-1">
                             3
                           </span>
-                        </button>
+                      </button>
 
                         {/* Training */}
                         <button
-                          onClick={() => {
-                            onClose();
+                            onClick={() => {
+                                onClose();
                             onNavigateToSection?.('training');
-                          }}
+                            }}
                           className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
                           title="Training Club"
                         >
@@ -1629,17 +1629,17 @@ export function IntegratedCourseViewer({
                         </button>
 
                         {/* Social Club - Badge messages non lus */}
-                        <button
+                          <button
                           onClick={() => {
-                            onClose();
+                                    onClose();
                             onNavigateToSection?.('community');
                           }}
                           className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
                           title="Social Club"
-                        >
+                              >
                           <Users size={20} />
                           {/* Badge messages */}
-                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#48c6ed] text-white text-[10px] font-bold rounded-full px-1">
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#00c2ff] text-white text-[10px] font-bold rounded-full px-1">
                             12
                           </span>
                         </button>
@@ -1763,8 +1763,8 @@ export function IntegratedCourseViewer({
                                 {/* Label - UNIQUEMENT visible au hover, couleur thème */}
                                 <span className={`pointer-events-none absolute right-full mr-3 px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-opacity duration-200 ${
                                   activeContextPanel === widget.id 
-                                    ? 'bg-[#48c6ed] text-white opacity-100' 
-                                    : 'bg-[#48c6ed] text-white opacity-0 group-hover:opacity-100 shadow-lg'
+                                    ? 'bg-[#00c2ff] text-white opacity-100' 
+                                    : 'bg-[#00c2ff] text-white opacity-0 group-hover:opacity-100 shadow-lg'
                                 }`}>
                                   {widget.label}
                                 </span>
@@ -1772,8 +1772,8 @@ export function IntegratedCourseViewer({
                                 {/* Icône */}
                                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
                                   activeContextPanel === widget.id 
-                                    ? 'bg-[#48c6ed] text-white' 
-                                    : 'bg-white/10 border border-white/20 text-white/70 group-hover:bg-[#48c6ed] group-hover:text-white group-hover:border-[#48c6ed]'
+                                    ? 'bg-[#00c2ff] text-white' 
+                                    : 'bg-white/10 border border-white/20 text-white/70 group-hover:bg-[#00c2ff] group-hover:text-white group-hover:border-[#00c2ff]'
                                 }`}>
                                   <widget.icon size={18} />
                                 </div>
@@ -1841,9 +1841,9 @@ export function IntegratedCourseViewer({
                                   <div>
                                   <div className="flex items-center justify-between mb-6">
                                         <p className="text-sm text-gray-500">Teste tes connaissances</p>
-                                    <div className="flex items-center gap-2 bg-[#48c6ed]/10 px-3 py-1.5 rounded-lg">
-                                      <Trophy size={16} className="text-[#48c6ed]" />
-                                      <span className="text-sm font-medium text-[#48c6ed]">+50 XP</span>
+                                    <div className="flex items-center gap-2 bg-[#00c2ff]/10 px-3 py-1.5 rounded-lg">
+                                      <Trophy size={16} className="text-[#00c2ff]" />
+                                      <span className="text-sm font-medium text-[#00c2ff]">+50 XP</span>
                                 </div>
                             </div>
                             
@@ -1933,8 +1933,8 @@ export function IntegratedCourseViewer({
                               </div>
                                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
                                       <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-[#48c6ed]/10 rounded-lg flex items-center justify-center">
-                                          <FileText size={18} className="text-[#48c6ed]" />
+                                        <div className="w-10 h-10 bg-[#00c2ff]/10 rounded-lg flex items-center justify-center">
+                                          <FileText size={18} className="text-[#00c2ff]" />
                                 </div>
                                         <div>
                                           <p className="font-medium text-gray-900 text-sm">Exercices corrigés</p>
@@ -2172,7 +2172,7 @@ export function IntegratedCourseViewer({
                 
                 {/* Particules animées */}
                 <motion.div 
-                  className="absolute top-4 left-16 w-1.5 h-1.5 bg-[#48c6ed]/40 rounded-full"
+                  className="absolute top-4 left-16 w-1.5 h-1.5 bg-[#00c2ff]/40 rounded-full"
                   animate={{ y: [0, -6, 0], opacity: [0.4, 0.7, 0.4] }}
                   transition={{ duration: 3, repeat: Infinity }}
                 />
@@ -2186,7 +2186,7 @@ export function IntegratedCourseViewer({
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-4 left-6 flex items-center gap-2 bg-[#48c6ed]/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full shadow-lg border border-[#48c6ed]/50"
+                  className="absolute top-4 left-6 flex items-center gap-2 bg-[#00c2ff]/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full shadow-lg border border-[#00c2ff]/50"
                 >
                   <Clock size={16} />
                   <span className="text-sm font-bold">7:23 / 10:00</span>
@@ -2212,7 +2212,7 @@ export function IntegratedCourseViewer({
                       className="relative w-20 h-20 rounded-2xl bg-gray-900 shadow-lg flex items-center justify-center"
                     >
                       <Eye size={32} className="text-white drop-shadow-lg" />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#48c6ed] rounded-full flex items-center justify-center shadow-lg">
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#00c2ff] rounded-full flex items-center justify-center shadow-lg">
                         <Gift size={16} className="text-white" />
                       </div>
                     </motion.div>
@@ -2225,7 +2225,7 @@ export function IntegratedCourseViewer({
                         transition={{ delay: 0.1 }}
                         className="flex items-center gap-3"
                       >
-                        <div className="flex items-center gap-2 bg-[#48c6ed] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
+                        <div className="flex items-center gap-2 bg-[#00c2ff] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
                           <Sparkles size={16} />
                           Aperçu Gratuit
                         </div>
@@ -2268,7 +2268,7 @@ export function IntegratedCourseViewer({
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="w-24 h-24 bg-[#48c6ed] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+                        className="w-24 h-24 bg-[#00c2ff] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
                       >
                         <Play size={32} className="text-white ml-1" />
                       </motion.div>
@@ -2280,7 +2280,7 @@ export function IntegratedCourseViewer({
                   <div className="absolute bottom-0 left-0 right-0 bg-black/20 backdrop-blur-sm p-4">
                     <div className="w-full bg-white/20 rounded-full h-2 mb-2">
                       <motion.div 
-                        className="bg-[#48c6ed] h-2 rounded-full"
+                        className="bg-[#00c2ff] h-2 rounded-full"
                         initial={{ width: "0%" }}
                         animate={{ width: "33%" }}
                         transition={{ duration: 1, delay: 0.5 }}
@@ -2345,7 +2345,7 @@ export function IntegratedCourseViewer({
                       {/* Statistiques */}
                       <div className="flex justify-center gap-4 text-xs text-gray-400">
                         <div className="flex items-center gap-1">
-                          <Star size={12} className="text-[#48c6ed]" />
+                          <Star size={12} className="text-[#00c2ff]" />
                           <span>4.9/5</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -2516,7 +2516,7 @@ export function IntegratedCourseViewer({
                     setShowGuestPassModal(false);
                   }
                 }}
-                className="w-full py-4 bg-[#48c6ed] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
+                className="w-full py-4 bg-[#00c2ff] hover:bg-[#3bb5dc] text-white font-bold rounded-xl transition-colors mb-4"
                 style={{ fontSize: '16px' }}
               >
                 Envoyer les invitations

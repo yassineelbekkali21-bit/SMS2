@@ -406,7 +406,7 @@ export function OnboardingPopup({
             <motion.div
               className="flex flex-col items-center"
               animate={{ 
-                y: (phase === 'scanning' || phase === 'reveal') ? '-10vh' : 0,
+                y: (phase === 'scanning' || phase === 'reveal') ? '-5vh' : 0,
               }}
               transition={{ 
                 duration: 0.8, 
@@ -445,13 +445,13 @@ export function OnboardingPopup({
                     alt="Science Made Simple" 
                     width={140} 
                     height={140}
-                    className="object-contain"
+                    className="object-contain md:w-[180px] md:h-[180px]"
                   />
                 </motion.div>
               </motion.div>
 
               {/* Content Area */}
-              <div className="relative w-full max-w-2xl min-h-[350px] md:min-h-[400px] flex flex-col items-center">
+              <div className="relative w-full max-w-2xl md:max-w-4xl min-h-[200px] md:min-h-[250px] flex flex-col items-center">
               
               {/* Loading & Scanning Content */}
               <AnimatePresence mode="wait">
@@ -471,7 +471,7 @@ export function OnboardingPopup({
                     }}
                   >
             {/* Loading Messages */}
-                    <div className="space-y-5 text-center mb-8">
+                    <div className="space-y-5 md:space-y-6 text-center mb-8 md:mb-12">
                       {loadingMessages.map((message, index) => {
                         const isLastMessage = index === loadingMessages.length - 1;
                         const showHeader = phase === 'transition' || phase === 'scanning';
@@ -509,7 +509,7 @@ export function OnboardingPopup({
                           className="flex flex-col items-center w-full"
                         >
                           {/* Programs being scanned */}
-                          <div className="w-full space-y-6 mb-8">
+                          <div className="w-full space-y-6 md:space-y-8 mb-8 md:mb-12">
                             {scanningPrograms.map((program, index) => {
                               const isProgramScanning = index === currentScanningProgram && phase === 'scanning';
                               const isComplete = scannedPrograms.includes(index);
@@ -525,39 +525,39 @@ export function OnboardingPopup({
                                   transition={{ duration: 0.4 }}
                                   className="w-full"
                                 >
-                                  <div className="flex items-center gap-4 mb-4">
+                                  <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-5">
                                     <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold text-lg text-white">{program.name}</span>
+                                      <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                                        <span className="font-semibold text-lg md:text-2xl text-white">{program.name}</span>
                                         {isComplete && (
                                           <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             className="text-[#00c2ff]"
                                           >
-                                            <CheckCircle size={18} />
+                                            <CheckCircle size={18} className="md:w-6 md:h-6" />
                                           </motion.span>
                                         )}
                                         {isProgramScanning && (
-                                          <Loader2 size={18} className="text-white/70 animate-spin" />
+                                          <Loader2 size={18} className="md:w-6 md:h-6 text-white/70 animate-spin" />
                                         )}
                                       </div>
-                                      <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                                      <div className="text-sm md:text-lg" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                                         {program.totalChapters} chapitres
                                       </div>
                                     </div>
                                     
                                     <div className="text-right">
-                                      <span className="text-2xl font-bold text-white">
+                                      <span className="text-2xl md:text-4xl font-bold text-white">
                                         {isComplete ? program.extractedTracks : isProgramScanning ? Math.min(Math.floor(currentChapters.length / 2), program.extractedTracks) : 0}
                                       </span>
-                                      <span className="text-sm ml-1" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
+                                      <span className="text-sm md:text-lg ml-1 md:ml-2" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>parcours</span>
                                     </div>
                                   </div>
                                   
                                   {(isProgramScanning || isComplete) && (
                                     <motion.div 
-                                      className="h-1 rounded-full bg-gray-800/50 mb-4 overflow-hidden"
+                                      className="h-1 md:h-2 rounded-full bg-gray-800/50 mb-4 md:mb-5 overflow-hidden"
                                       initial={{ opacity: 0 }}
                                       animate={{ opacity: 1 }}
                                     >
@@ -577,12 +577,12 @@ export function OnboardingPopup({
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.3 }}
-                                        className="mb-2"
+                                        className="mb-2 md:mb-4"
                                       >
-                                        <div className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                                        <div className="text-xs md:text-sm text-white/40 uppercase tracking-wider mb-2 md:mb-3">
                                           Chapitres analysés
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-2 md:gap-3">
                                           {currentChapters.map((chapter, chapterIndex) => {
                                             const isRelevant = program.relevantChapters.includes(chapter);
                                             
@@ -591,7 +591,7 @@ export function OnboardingPopup({
                                                 key={`${program.id}-${chapterIndex}`}
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                className={`px-3 py-1 rounded-full text-xs border ${
+                                                className={`px-3 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm border ${
                                                   isRelevant 
                                                     ? 'bg-[#00c2ff]/20 text-[#00c2ff] border-[#00c2ff]/50 font-medium' 
                                                     : 'bg-gray-800/50 text-white/60 border-gray-700/50'
@@ -607,7 +607,7 @@ export function OnboardingPopup({
                                   </AnimatePresence>
                                   
                                   {isComplete && index < scanningPrograms.length - 1 && (
-                                    <div className="border-b border-gray-700/30 mt-4" />
+                                    <div className="border-b border-gray-700/30 mt-4 md:mt-6" />
                                   )}
                                 </motion.div>
                               );
@@ -626,7 +626,7 @@ export function OnboardingPopup({
                                 style={{ width: `${scanProgress}%` }}
                               />
                             </div>
-                            <div className="flex justify-between mt-2 text-xs" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
+                            <div className="flex justify-between mt-2 text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
                               <span>{Math.floor((scanProgress / 100) * totalChaptersScanned)} / {totalChaptersScanned} chapitres</span>
                               <span>{Math.floor(scanProgress)}%</span>
                             </div>
@@ -643,7 +643,7 @@ export function OnboardingPopup({
                 {phase === 'reveal' && (
                   <motion.div
                     key="reveal"
-                    className="flex flex-col items-center w-full max-w-3xl"
+                    className="flex flex-col items-center w-full max-w-3xl md:max-w-4xl"
                     initial={{ 
                       opacity: 0,
                       scale: 1.05,
@@ -671,7 +671,7 @@ export function OnboardingPopup({
                         stiffness: 120,
                         damping: 15
                       }}
-                      className="mb-2"
+                      className="mb-2 md:mb-4"
                     >
                       <span 
                         className="text-9xl md:text-[12rem] font-black text-white leading-none"
@@ -686,7 +686,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                      className="text-2xl md:text-4xl font-bold text-center mb-3 uppercase tracking-wider"
+                      className="text-2xl md:text-5xl font-bold text-center mb-3 md:mb-4 uppercase tracking-wider"
                       style={{ fontFamily: "'Parafina', sans-serif", color: '#ffffff' }}
                     >
                       Parcours créés pour toi
@@ -697,7 +697,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                      className="text-center mb-8"
+                      className="text-center mb-8 md:mb-10 text-base md:text-xl"
                       style={{ color: 'rgba(255, 255, 255, 0.8)' }}
                     >
                       basés sur les Mastery Programs suivants
@@ -708,7 +708,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.0 }}
-                      className="flex flex-col items-center gap-3 mb-8"
+                      className="flex flex-col items-center gap-3 md:gap-5 mb-8 md:mb-12"
                     >
                       {scanningPrograms.map((program, index) => (
                         <motion.div
@@ -716,7 +716,7 @@ export function OnboardingPopup({
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.4, delay: 1.1 + index * 0.1, ease: "easeOut" }}
-                          className="flex items-center gap-3 text-lg"
+                          className="flex items-center gap-3 md:gap-4 text-lg md:text-xl"
                         >
                           <span className="font-semibold text-white">{program.name}</span>
                           <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
@@ -732,7 +732,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.5 }}
-                      className="text-2xl md:text-3xl font-bold text-center mb-8"
+                      className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-10"
                       style={{ color: '#ffffff' }}
                     >
                       Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
@@ -746,10 +746,10 @@ export function OnboardingPopup({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setPhase('results')}
-                      className="px-10 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25"
+                      className="px-10 md:px-14 py-4 md:py-5 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25 text-base md:text-xl"
                     >
                       Continuer
-                      <ArrowRight size={20} />
+                      <ArrowRight size={20} className="md:w-6 md:h-6" />
                     </motion.button>
 
                     {/* Trust badge */}
@@ -757,7 +757,7 @@ export function OnboardingPopup({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 1.9 }}
-                      className="mt-6 text-sm"
+                      className="mt-6 md:mt-8 text-sm md:text-base"
                       style={{ color: 'rgba(255, 255, 255, 0.5)' }}
                     >
                       Paiement unique · Accès à vie
@@ -887,12 +887,12 @@ export function OnboardingPopup({
             {showPersonalizedContent && (
               <>
             {/* Deal Banner - Full width below header */}
-            <div className="bg-[#0d1317] w-full border-b border-gray-800">
+            <div className="bg-[#00c2ff] w-full">
               <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 py-2.5 md:py-4 px-3 md:px-4" style={{ fontSize: '16px' }}>
-                <span className="text-[#48c6ed] font-bold tracking-wide uppercase whitespace-nowrap text-[10px] sm:text-xs md:text-base">
-                  OFFRE DE LANCEMENT
+                <span className="text-white font-bold tracking-wide uppercase whitespace-nowrap text-[10px] sm:text-xs md:text-base">
+                  OFFRE NOUVELLE ANNÉE
                 </span>
-                <span className="px-2 md:px-3 py-1 md:py-1.5 border border-[#48c6ed] rounded-full text-[#48c6ed] font-bold text-xs md:text-base">
+                <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-full text-[#00c2ff] font-bold text-xs md:text-base">
                       -40%
                 </span>
                 <div className="flex items-center gap-0.5 md:gap-1 text-white font-bold tabular-nums text-xs md:text-base">
@@ -938,10 +938,12 @@ export function OnboardingPopup({
                       const programCourses = recommendedCourses.filter(c => 
                         c.category.toLowerCase().includes(program.id)
                       );
+                      const programPrice = program.id === 'physics' ? '49€' : program.id === 'mathematics' ? '59€' : '45€';
+                      const programOriginalPrice = program.id === 'physics' ? '129€' : program.id === 'mathematics' ? '149€' : '119€';
                       return (
                         <div 
                           key={program.id}
-                          className="p-3 md:p-4 bg-[#1a1f24] rounded-lg md:rounded-xl border border-gray-700/50 hover:border-[#00c2ff]/50 hover:bg-[#00c2ff]/5 transition-all cursor-pointer"
+                          className="p-3 md:p-4 bg-[#1a1f24] rounded-lg md:rounded-xl border border-gray-700/50 hover:border-[#00c2ff]/50 hover:bg-[#00c2ff]/5 transition-all cursor-pointer group"
                           onClick={() => {
                             const element = document.getElementById(`carousel-${program.id}`);
                             if (element) {
@@ -949,37 +951,59 @@ export function OnboardingPopup({
                             }
                           }}
                         >
-                          <div className="mb-0.5 md:mb-1">
+                          <div className="flex items-center justify-between mb-0.5 md:mb-1">
                             <span className="text-sm md:text-lg font-semibold !text-white">{program.name}</span>
+                            <div className="flex items-center gap-2 relative">
+                              <span className="text-xs md:text-sm text-white/40 line-through">{programOriginalPrice}</span>
+                              <span className="text-sm md:text-lg font-bold text-[#00c2ff] cursor-help">{programPrice}</span>
+                              {/* Tooltip on hover - desktop only */}
+                              <div className="hidden md:block absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                <div className="bg-white text-gray-900 text-xs px-3 py-2 rounded-lg shadow-xl whitespace-nowrap">
+                                  Accès à vie + Parcours illimités
+                                  <div className="absolute -bottom-1 right-4 w-2 h-2 bg-white transform rotate-45"></div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                           <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                            {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • {programCourses.length} parcours créés pour toi
+                            {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • Parcours illimités
                           </p>
                         </div>
                       );
                     })}
                   </div>
+
                 </div>
 
                 {/* Right Column - CTA Card */}
                 <div className="lg:col-span-5 mt-3 lg:mt-0">
                   <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
-                    {/* Success Message */}
-                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                      <div className="w-6 h-6 md:w-8 md:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
+                    {/* Value Props - Two lines */}
+                    <div className="space-y-3 mb-4 md:mb-6">
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
+                        </div>
+                        <span className="text-white text-base md:text-lg">
+                          Un Programme génère autant de parcours personnalisés que tu veux.
+                        </span>
                       </div>
-                      <span className="text-white text-sm md:text-base">
-                        Paiement unique. Accès à vie.
-                      </span>
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
+                        </div>
+                        <span className="text-white text-base md:text-lg">
+                          Paiement unique. Accès à vie.
+                        </span>
+                      </div>
                     </div>
 
                     {/* CTA Buttons */}
                     <button
                       onClick={() => setShowLeadCapture(true)}
-                      className="w-full bg-[#48c6ed] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-lg transition-all mb-3 flex items-center justify-center gap-2"
+                      className="w-full bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-lg transition-all mb-3 flex items-center justify-center gap-2"
                     >
-                      Débloquer 10h gratuites
+                      Teste ton parcours – 10h offertes
                       <ArrowRight size={18} className="flex-shrink-0" />
                     </button>
                     <button
@@ -1023,7 +1047,7 @@ export function OnboardingPopup({
 
                       {/* Carousel Controls */}
                       <div className="flex items-center gap-1.5 md:gap-4">
-                        {/* Bouton Tester mes connaissances - hidden on mobile */}
+                        {/* Bouton Tester mes connaissances - visible on mobile, replace nav buttons */}
                         <button
                           onClick={() => {
                             const subject = interest.toLowerCase().includes('physics') ? 'physics' 
@@ -1031,21 +1055,22 @@ export function OnboardingPopup({
                               : 'chemistry';
                             window.open(`/assessment/${subject}`, '_blank');
                           }}
-                          className="hidden md:block px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-full transition-colors"
+                          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-full transition-colors"
                         >
                           Tester mes connaissances
                         </button>
                         
-                        <div className="flex gap-1 md:gap-2">
+                        {/* Navigation buttons - hidden on mobile */}
+                        <div className="hidden md:flex gap-2">
                           <button
-                            className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronLeft size={14} className="md:w-5 md:h-5" />
+                            <ChevronLeft size={20} />
                           </button>
                           <button
-                            className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
+                            className="w-10 h-10 rounded-full bg-gray-800/50 border border-gray-700 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-white transition-all"
                           >
-                            <ChevronRight size={14} className="md:w-5 md:h-5" />
+                            <ChevronRight size={20} />
                           </button>
                         </div>
                       </div>
