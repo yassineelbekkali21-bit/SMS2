@@ -916,9 +916,9 @@ export function OnboardingPopup({
                 {/* Left Column - Info */}
                 <div className="lg:col-span-7">
                   {/* Course Count + Title - Stack on mobile */}
-                  <div className="flex items-center gap-3 md:gap-6 mb-4 md:mb-10">
+                  <div className="flex items-start gap-3 md:gap-6 mb-4 md:mb-10">
                     {/* Badge */}
-                    <div className="w-14 h-14 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
+                    <div className="w-14 h-[72px] md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0 self-start mt-0.5">
                       <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
                         {interests.length}
                       </span>
@@ -1029,6 +1029,7 @@ export function OnboardingPopup({
               </div>
 
               {/* Course Rows - One per Mastery Program */}
+              <div className="mt-8 md:mt-0" />
               {interests.map((interest, rowIndex) => {
                 const coursesForProgram = recommendedCourses.filter(c => c.category === interest);
                 const programId = interest.toLowerCase().includes('physics') ? 'physics' 
