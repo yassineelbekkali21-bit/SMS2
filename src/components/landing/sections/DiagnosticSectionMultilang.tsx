@@ -33,7 +33,7 @@ export function DiagnosticSectionMultilang() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const content = language === 'fr' ? {
-    title: 'On commence par toi',
+    title: 'On commence par toi.',
     subtitle: 'On cerne ton niveau et tes objectifs, sans jugement ni prérequis.',
     cta: 'Créer mon parcours',
   } : {

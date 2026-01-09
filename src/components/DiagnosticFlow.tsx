@@ -258,6 +258,7 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
     blockingPoints: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [otherStruggleText, setOtherStruggleText] = useState('');
 
   // Filter schools based on search
   const filteredSchools = SCHOOLS_DATABASE.filter(school =>
@@ -708,53 +709,70 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 const isOther = struggle.id === 'other';
                 
                 return (
-                  <button
+                  <div
                     key={struggle.id}
-                    onClick={() => toggleStruggle(struggle.id)}
-                    className={`p-5 rounded-2xl border-2 transition-all text-left group ${
-                      isSelected
-                        ? 'border-[#00c2ff]'
-                        : 'border-white/10 hover:border-white/20'
-                    } ${isOther ? 'md:col-span-2 md:max-w-md md:mx-auto md:w-full' : ''}`}
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(13, 19, 23, 0.95)' : 'rgba(255,255,255,0.02)',
-                      boxShadow: isSelected ? 'inset 0 0 0 1px rgba(72,198,237,0.3)' : 'none'
-                    }}
+                    className={`${isOther ? 'md:col-span-2 md:max-w-md md:mx-auto md:w-full' : ''}`}
                   >
-                    <div className="flex items-center gap-4">
-                      {/* Icon in rounded square */}
-                      <div 
-                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
-                        style={{
-                          backgroundColor: isSelected ? '#00c2ff' : 'rgba(255,255,255,0.05)'
-                        }}
-                      >
-                        {IconComponent && (
-                          <IconComponent 
-                            size={22} 
-                            className={isSelected ? 'text-[#0d1317]' : 'text-white/60'} 
-                          />
-                        )}
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <h3 style={{ color: 'rgba(255,255,255,0.95)' }} className="font-semibold text-base">
-                            {struggle.label}
-                          </h3>
-                          {isSelected && (
-                            <CheckCircle size={18} className="text-[#00c2ff] flex-shrink-0" />
+                    <button
+                      onClick={() => toggleStruggle(struggle.id)}
+                      className={`w-full p-5 rounded-2xl border-2 transition-all text-left group ${
+                        isSelected
+                          ? 'border-[#00c2ff]'
+                          : 'border-white/10 hover:border-white/20'
+                      }`}
+                      style={{
+                        backgroundColor: isSelected ? 'rgba(13, 19, 23, 0.95)' : 'rgba(255,255,255,0.02)',
+                        boxShadow: isSelected ? 'inset 0 0 0 1px rgba(72,198,237,0.3)' : 'none'
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        {/* Icon in rounded square */}
+                        <div 
+                          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+                          style={{
+                            backgroundColor: isSelected ? '#00c2ff' : 'rgba(255,255,255,0.05)'
+                          }}
+                        >
+                          {IconComponent && (
+                            <IconComponent 
+                              size={22} 
+                              className={isSelected ? 'text-[#0d1317]' : 'text-white/60'} 
+                            />
                           )}
                         </div>
-                        {struggle.description && (
-                          <p style={{ color: 'rgba(255,255,255,0.65)' }} className="text-sm leading-relaxed mt-1">
-                            {struggle.description}
-                          </p>
-                        )}
+                        
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <h3 style={{ color: 'rgba(255,255,255,0.95)' }} className="font-semibold text-base">
+                              {struggle.label}
+                            </h3>
+                            {isSelected && (
+                              <CheckCircle size={18} className="text-[#00c2ff] flex-shrink-0" />
+                            )}
+                          </div>
+                          {struggle.description && (
+                            <p style={{ color: 'rgba(255,255,255,0.65)' }} className="text-sm leading-relaxed mt-1">
+                              {struggle.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                    
+                    {/* Input field for "Autre" when selected */}
+                    {isOther && isSelected && (
+                      <input
+                        type="text"
+                        value={otherStruggleText}
+                        onChange={(e) => setOtherStruggleText(e.target.value)}
+                        placeholder="Décris ta difficulté..."
+                        className="w-full mt-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#00c2ff] transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                        autoFocus
+                      />
+                    )}
+                  </div>
                 );
               })}
             </div>

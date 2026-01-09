@@ -10,7 +10,7 @@ const WHATSAPP_DEFAULT_MESSAGE = 'Salut Science Made Simple 👋, j\'aimerais qu
 const steps = [
   {
     icon: MessageCircle,
-    title: 'On commence par toi',
+    title: 'On commence par toi.',
     description: 'On identifie tes difficultés, ton niveau et ce que tu veux vraiment maîtriser.\nPas de jugement, pas de prérequis — juste un diagnostic clair pour comprendre d\'où tu pars.',
     details: [
       { text: 'Diagnostic académique', highlight: false, isPremium: false },

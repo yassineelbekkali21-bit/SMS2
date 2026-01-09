@@ -154,7 +154,7 @@ const translations: Record<Language, Record<string, string>> = {
     'how.title': 'On t\'accompagne avec',
     'how.title.highlight': 'exigence et bienveillance',
     'how.subtitle': '',
-    'how.step1.title': 'On commence par toi',
+    'how.step1.title': 'On commence par toi.',
     'how.step1.desc': 'On identifie tes difficultés, ton niveau et ce que tu veux vraiment maîtriser.\nPas de jugement, pas de prérequis — [[juste un diagnostic clair pour comprendre d\'où tu pars.]]',
     'how.step2.title': 'On t\'oriente dans ton programme Mastery',
     'how.step2.desc': '[[Tu accèdes au programme complet]].\nOn t\'oriente vers le bon niveau du programme Mastery, selon ton niveau actuel et tes objectifs.',

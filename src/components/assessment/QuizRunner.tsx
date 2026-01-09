@@ -241,8 +241,8 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               {/* Decorative gradient line */}
               <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#00c2ff]/50 to-transparent" />
               
-              {/* Header */}
-              <div className="flex items-center justify-between mb-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     {[...Array(questions.length)].map((_, i) => (
@@ -258,37 +258,37 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                   </div>
                   <span className="text-sm font-medium !text-white/50">
                     {currentQIndex + 1} sur {questions.length}
-                  </span>
+            </span>
                 </div>
                 <span className="px-4 py-1.5 bg-[#00c2ff]/10 text-[#00c2ff] border border-[#00c2ff]/20 rounded-full text-xs font-bold">
                   Quiz Rapide
-                </span>
-              </div>
+            </span>
+          </div>
 
-              {/* Question */}
+          {/* Question */}
               <h2 className="text-2xl md:text-3xl font-bold !text-white mb-8 leading-tight">
-                {currentQ.text}
-              </h2>
+            {currentQ.text}
+          </h2>
 
-              {/* Answer Options Grid */}
+          {/* Answer Options Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-                {currentQ.options.map((option, idx) => {
-                  const isSelected = answers[currentQ.id] === idx;
-                  return (
+            {currentQ.options.map((option, idx) => {
+              const isSelected = answers[currentQ.id] === idx;
+              return (
                     <motion.button
-                      key={idx}
+                  key={idx}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleQuizAnswer(idx)}
+                  onClick={() => handleQuizAnswer(idx)}
                       className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
                         isSelected 
                           ? 'bg-[#00c2ff]/10 border-[#00c2ff] shadow-lg shadow-[#00c2ff]/10' 
                           : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
                       }`}
-                    >
+                >
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected ? 'border-[#00c2ff] bg-[#00c2ff]' : 'border-white/30'
-                      }`}>
+                  }`}>
                         {isSelected && (
                           <motion.div 
                             initial={{ scale: 0 }}
@@ -296,14 +296,14 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                             className="w-2 h-2 bg-white rounded-full" 
                           />
                         )}
-                      </div>
+                  </div>
                       <span className={`text-base font-medium ${isSelected ? '!text-white' : '!text-white/70'}`}>
                         {option}
                       </span>
                     </motion.button>
-                  );
-                })}
-              </div>
+              );
+            })}
+          </div>
 
               {/* Navigation */}
               <div className="flex justify-between items-center pt-4 border-t border-white/5">
@@ -319,18 +319,18 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                   <ArrowLeft size={18} />
                   <span className="font-medium">Précédent</span>
                 </button>
-                <button
-                  onClick={handleNextQuestion}
-                  disabled={!hasAnswered}
+            <button
+              onClick={handleNextQuestion}
+              disabled={!hasAnswered}
                   className={`px-8 py-3 rounded-xl font-bold text-base transition-all flex items-center gap-2 ${
-                    hasAnswered 
+                hasAnswered 
                       ? 'bg-gradient-to-r from-[#00c2ff] to-blue-600 !text-white hover:from-[#3ab5dc] hover:to-blue-700 shadow-lg shadow-blue-500/25' 
                       : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
-                  }`}
-                >
+              }`}
+            >
                   <span>Suivant</span>
                   <ArrowRight size={18} />
-                </button>
+            </button>
               </div>
             </motion.div>
           </div>
@@ -351,42 +351,42 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-xl"
           >
-            <motion.div 
+      <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', bounce: 0.5 }}
               className="text-6xl mb-6"
-            >
+      >
               🎯
             </motion.div>
             
             <h2 className="text-3xl font-bold mb-4 !text-white">
               Premières questions terminées !
-            </h2>
+        </h2>
             <p className="text-lg mb-2" style={{ color: 'rgba(255,255,255,0.85)' }}>
               Tu as répondu aux questions de base.
-            </p>
+        </p>
             <p className="text-xl font-semibold mb-10" style={{ color: 'rgba(255,255,255,0.85)' }}>
               Maintenant, voyons comment tu te débrouilles dans des conditions d'examen.
-            </p>
+        </p>
 
-            <div className="w-full space-y-4">
-              <button
-                onClick={() => setStep('guided')}
+        <div className="w-full space-y-4">
+          <button
+            onClick={() => setStep('guided')}
                 className="w-full bg-[#00c2ff] !text-white font-bold py-4 px-10 rounded-2xl shadow-lg shadow-[#00c2ff]/25 hover:bg-[#3ab5dc] transition-all flex items-center justify-center gap-3 text-lg"
-              >
+          >
                 <span>Essayer une question d'examen</span>
                 <span className="bg-white/20 text-xs py-1 px-2 rounded-full">Recommandé</span>
-              </button>
-              
-              <button
-                onClick={() => setStep('gate')}
+          </button>
+          
+          <button
+            onClick={() => setStep('gate')}
                 className="w-full !text-white/50 font-medium py-4 px-10 rounded-2xl border border-white/10 hover:bg-white/5 transition-all"
-              >
+          >
                 Passer directement aux résultats
-              </button>
-            </div>
-          </motion.div>
+          </button>
+        </div>
+      </motion.div>
         </div>
       </div>
     );
@@ -410,44 +410,44 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               {/* Decorative gradient line */}
               <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
               
-              {/* Header */}
-              <div className="flex items-center justify-between mb-8">
-                <button 
-                  onClick={() => setStep('transition')} 
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <button 
+              onClick={() => setStep('transition')} 
                   className="!text-white/50 hover:!text-white flex items-center gap-2 transition-colors"
-                >
+            >
                   <ArrowLeft size={16} />
                   Retour
-                </button>
+            </button>
                 <span className="px-4 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full text-xs font-bold">
                   Style Examen
-                </span>
-              </div>
+            </span>
+          </div>
 
-              {/* Question */}
+          {/* Question */}
               <h2 className="text-2xl md:text-3xl font-bold !text-white mb-8 leading-tight">
-                {guidedQuestion.text}
-              </h2>
+            {guidedQuestion.text}
+          </h2>
 
-              {/* Answer Options Grid */}
+          {/* Answer Options Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-                {guidedQuestion.options.map((opt, idx) => {
-                  const selected = answers[guidedQuestion.id] === idx;
-                  return (
+            {guidedQuestion.options.map((opt, idx) => {
+              const selected = answers[guidedQuestion.id] === idx;
+              return (
                     <motion.button
-                      key={idx}
+                  key={idx}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleGuidedAnswer(idx)}
+                  onClick={() => handleGuidedAnswer(idx)}
                       className={`border-2 rounded-2xl p-4 flex items-center gap-4 transition-all text-left ${
                         selected 
                           ? 'bg-[#00c2ff]/10 border-[#00c2ff] shadow-lg shadow-[#00c2ff]/10' 
                           : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
                       }`}
-                    >
+                >
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                         selected ? 'border-[#00c2ff] bg-[#00c2ff]' : 'border-white/30'
-                      }`}>
+                  }`}>
                         {selected && (
                           <motion.div 
                             initial={{ scale: 0 }}
@@ -455,53 +455,53 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                             className="w-2 h-2 bg-white rounded-full" 
                           />
                         )}
-                      </div>
+                  </div>
                       <span className={`text-base font-medium ${selected ? '!text-white' : '!text-white/70'}`}>
                         {opt}
                       </span>
                     </motion.button>
-                  );
-                })}
-              </div>
+              );
+            })}
+          </div>
 
-              {/* Reveal Resolution */}
+          {/* Reveal Resolution */}
               <div className="pt-4 border-t border-white/5">
-                <AnimatePresence mode="wait">
-                  {!showResolution ? (
-                    <div className="flex flex-col items-center gap-4">
-                      <button 
-                        onClick={() => setShowResolution(true)}
+          <AnimatePresence mode="wait">
+            {!showResolution ? (
+              <div className="flex flex-col items-center gap-4">
+                <button 
+                  onClick={() => setShowResolution(true)}
                         className="px-8 py-3 rounded-xl bg-white/5 !text-white font-medium hover:bg-white/10 border border-white/10 transition-all"
-                      >
+                >
                         Révéler la correction
-                      </button>
-                    </div>
-                  ) : (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-6"
-                    >
+                </button>
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
                       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                         <h3 className="font-bold !text-white mb-3 flex items-center gap-2">
                           <span className="text-xl">💡</span>
                           Méthode SMS
                         </h3>
                         <p style={{ color: 'rgba(255,255,255,0.7)' }} className="leading-relaxed">
-                          {guidedQuestion.explanation}
-                        </p>
-                      </div>
+                    {guidedQuestion.explanation}
+                  </p>
+                </div>
 
-                      <button
-                        onClick={() => setStep('gate')}
+                <button
+                  onClick={() => setStep('gate')}
                         className="w-full px-6 py-4 rounded-xl bg-[#00c2ff] !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#00c2ff]/25 flex items-center justify-center gap-2"
-                      >
+                >
                         <span>Continuer</span>
                         <ArrowRight size={16} />
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
               </div>
             </motion.div>
           </div>
@@ -517,8 +517,8 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
         <Header />
         
         <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
-          <div className="w-full max-w-lg">
-            {/* Title */}
+        <div className="w-full max-w-lg">
+          {/* Title */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -534,13 +534,13 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               </motion.div>
               <h1 className="text-3xl md:text-4xl font-bold !text-white mb-2">
                 Quiz terminé !
-              </h1>
+            </h1>
               <p className="text-lg" style={{ color: 'rgba(255,255,255,0.85)' }}>
                 Tes réponses ont été enregistrées.
-              </p>
+            </p>
             </motion.div>
 
-            {/* Contact Form Card */}
+          {/* Contact Form Card */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -552,75 +552,75 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               
               <h2 className="text-xl font-bold !text-white mb-6">
                 Entre tes coordonnées pour voir tes résultats
-              </h2>
+            </h2>
 
               <form onSubmit={handleContactSubmit} className="space-y-5">
-                {/* Email */}
-                <div>
+              {/* Email */}
+              <div>
                   <label className="block text-sm font-medium !text-white/80 mb-2">
                     Email <span className="text-red-400">*</span>
-                  </label>
-                  <input 
-                    type="email" 
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                </label>
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/30 focus:border-[#00c2ff] !text-white placeholder-white/40 transition-all"
                     placeholder="ton@email.com"
-                  />
-                </div>
+                />
+              </div>
 
-                {/* Phone */}
-                <div>
+              {/* Phone */}
+              <div>
                   <label className="block text-sm font-medium !text-white/80 mb-2">
-                    Téléphone
-                  </label>
-                  <div className="flex gap-2">
+                  Téléphone
+                </label>
+                <div className="flex gap-2">
                     <div className="flex items-center gap-2 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl">
-                      <span className="text-2xl">🇧🇪</span>
-                      <select 
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
+                    <span className="text-2xl">🇧🇪</span>
+                    <select 
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
                         className="bg-transparent border-none outline-none !text-white font-medium"
-                      >
-                        <option value="+32">+32</option>
-                        <option value="+33">+33</option>
-                        <option value="+1">+1</option>
-                      </select>
-                    </div>
-                    <input 
-                      type="tel" 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="flex-1 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/30 focus:border-[#00c2ff] !text-white placeholder-white/40 transition-all"
-                      placeholder="123 45 67 89"
-                    />
+                    >
+                      <option value="+32">+32</option>
+                      <option value="+33">+33</option>
+                      <option value="+1">+1</option>
+                    </select>
                   </div>
-                </div>
-
-                {/* Marketing Consent */}
-                <div className="flex items-start gap-3">
                   <input 
-                    type="checkbox" 
-                    id="marketing"
-                    checked={marketingConsent}
-                    onChange={(e) => setMarketingConsent(e.target.checked)}
-                    className="mt-1 w-4 h-4 border-white/20 rounded bg-white/10 text-[#00c2ff] focus:ring-[#00c2ff]"
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                      className="flex-1 px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/30 focus:border-[#00c2ff] !text-white placeholder-white/40 transition-all"
+                    placeholder="123 45 67 89"
                   />
-                  <label htmlFor="marketing" className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                    J'accepte de recevoir des communications marketing
-                  </label>
                 </div>
+              </div>
 
-                {/* Submit Button */}
-                <button 
-                  type="submit"
+              {/* Marketing Consent */}
+              <div className="flex items-start gap-3">
+                <input 
+                  type="checkbox" 
+                  id="marketing"
+                  checked={marketingConsent}
+                  onChange={(e) => setMarketingConsent(e.target.checked)}
+                    className="mt-1 w-4 h-4 border-white/20 rounded bg-white/10 text-[#00c2ff] focus:ring-[#00c2ff]"
+                />
+                  <label htmlFor="marketing" className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  J'accepte de recevoir des communications marketing
+                </label>
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                type="submit"
                   className="w-full px-6 py-4 bg-[#00c2ff] rounded-xl !text-white font-bold hover:bg-[#3ab5dc] transition-all shadow-lg shadow-[#00c2ff]/25 flex items-center justify-center gap-2"
-                >
+              >
                   <span>Voir mes résultats</span>
                   <ArrowRight size={16} />
-                </button>
-              </form>
+              </button>
+            </form>
             </motion.div>
           </div>
         </div>
@@ -738,7 +738,7 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
         
         <div className="flex-1 flex flex-col justify-center px-6 py-4">
           <div className="max-w-5xl mx-auto w-full">
-            {/* Header */}
+          {/* Header */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -746,17 +746,17 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
             >
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00c2ff]/10 text-[#00c2ff] text-xs font-bold uppercase tracking-widest mb-3 border border-[#00c2ff]/20">
                 <CheckCircle size={14} /> Diagnostic Terminé
-              </div>
+            </div>
               <h1 className="text-2xl md:text-3xl font-bold !text-white mb-2">
                 C'est un point de départ — pas un verdict.
-              </h1>
+            </h1>
               <p className="text-base" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 Tu as obtenu <span className="!text-white font-bold text-lg">{score}/{totalQuestions}</span> bonnes réponses.
-              </p>
+            </p>
             </motion.div>
 
             <div className="grid md:grid-cols-12 gap-4">
-              {/* LEFT: Question Breakdown */}
+            {/* LEFT: Question Breakdown */}
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -765,15 +765,15 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
               >
                 <h3 className="text-sm font-bold !text-white/60 uppercase tracking-wider mb-3">
                   Détail de tes réponses
-                </h3>
-                
+              </h3>
+              
                 <div className="space-y-2 max-h-[calc(100vh-380px)] overflow-y-auto pr-2 custom-scrollbar">
                   {allQuestions.map((q) => {
-                    const userAnswer = answers[q.id];
-                    const isCorrect = userAnswer === q.correctAnswer;
-                    const isGuided = guidedQuestion && q.id === guidedQuestion.id;
+                  const userAnswer = answers[q.id];
+                  const isCorrect = userAnswer === q.correctAnswer;
+                  const isGuided = guidedQuestion && q.id === guidedQuestion.id;
 
-                    return (
+                  return (
                       <div 
                         key={q.id} 
                         className={`relative bg-white/5 border rounded-xl p-4 transition-all hover:bg-white/10 ${
@@ -784,12 +784,12 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                             isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
                           }`}>
-                            {isCorrect ? (
+                        {isCorrect ? (
                               <CheckCircle size={14} className="text-green-400" />
-                            ) : (
+                        ) : (
                               <XCircle size={14} className="text-red-400" />
-                            )}
-                          </div>
+                        )}
+                      </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium !text-white text-sm leading-snug mb-1 line-clamp-2">
                               {isGuided && <span className="text-purple-400 text-xs mr-1">[Examen]</span>}
@@ -798,15 +798,15 @@ export function QuizRunner({ selectedTopicIds }: QuizRunnerProps) {
                             <p className={`text-xs font-medium ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
                               {q.options[userAnswer] || "Non répondu"}
                             </p>
-                          </div>
-                        </div>
                       </div>
-                    );
-                  })}
-                </div>
+                        </div>
+                    </div>
+                  );
+                })}
+              </div>
               </motion.div>
 
-              {/* RIGHT: CTA */}
+            {/* RIGHT: CTA */}
               <motion.div 
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

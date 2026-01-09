@@ -289,7 +289,7 @@ export function ExploreSectionMultilang() {
             className="font-bold text-gray-900 mb-4 uppercase"
             style={{ fontFamily: 'Parafina, sans-serif', fontSize: '64px' }}
           >
-            {language === 'fr' ? 'Dévoile ton potentiel' : 'Reveal your true potential'}
+            {language === 'fr' ? 'Dévoile ton potentiel.' : 'Reveal your true potential.'}
           </h2>
           <p className="text-gray-500 max-w-6xl mx-auto" style={{ fontSize: '22px' }}>
             {language === 'fr' 

@@ -25,9 +25,11 @@ const SCANNING_PROGRAMS: ScanningProgram[] = [
     chapters: [
       'Mécanique newtonienne', 'Cinématique', 'Dynamique', 'Travail et énergie',
       'Quantité de mouvement', 'Rotation', 'Gravitation', 'Oscillations',
-      'Ondes mécaniques', 'Thermodynamique',
+      'Ondes mécaniques', 'Thermodynamique', 'Électrostatique', 'Champ électrique',
+      'Potentiel électrique', 'Circuits électriques', 'Magnétisme', 'Induction',
+      'Optique géométrique', 'Optique ondulatoire', 'Relativité restreinte', 'Mécanique quantique',
     ],
-    relevantChapters: ['Mécanique newtonienne', 'Dynamique', 'Travail et énergie', 'Ondes mécaniques'],
+    relevantChapters: ['Mécanique newtonienne', 'Dynamique', 'Travail et énergie', 'Ondes mécaniques', 'Électrostatique'],
   },
   {
     id: 'mathematics',
@@ -37,9 +39,11 @@ const SCANNING_PROGRAMS: ScanningProgram[] = [
     chapters: [
       'Algèbre linéaire', 'Calcul différentiel', 'Calcul intégral', 'Équations différentielles',
       'Probabilités', 'Statistiques', 'Géométrie analytique', 'Trigonométrie',
-      'Nombres complexes', 'Suites et séries',
+      'Nombres complexes', 'Suites et séries', 'Matrices', 'Déterminants',
+      'Espaces vectoriels', 'Applications linéaires', 'Valeurs propres', 'Limites',
+      'Continuité', 'Dérivées partielles', 'Intégrales multiples', 'Séries de Fourier',
     ],
-    relevantChapters: ['Algèbre linéaire', 'Calcul intégral', 'Probabilités'],
+    relevantChapters: ['Algèbre linéaire', 'Calcul intégral', 'Probabilités', 'Matrices', 'Équations différentielles'],
   },
   {
     id: 'chemistry',
@@ -49,9 +53,11 @@ const SCANNING_PROGRAMS: ScanningProgram[] = [
     chapters: [
       'Structure atomique', 'Tableau périodique', 'Liaisons chimiques', 'Géométrie moléculaire',
       'États de la matière', 'Solutions', 'Réactions chimiques', 'Stœchiométrie',
-      'Thermochimie', 'Cinétique chimique',
+      'Thermochimie', 'Cinétique chimique', 'Équilibre chimique', 'Acides et bases',
+      'Électrochimie', 'Chimie organique', 'Alcanes et alcènes', 'Groupes fonctionnels',
+      'Réactions organiques', 'Polymères', 'Biochimie', 'Spectroscopie',
     ],
-    relevantChapters: ['Réactions chimiques', 'Cinétique chimique'],
+    relevantChapters: ['Structure atomique', 'Liaisons chimiques', 'Réactions chimiques', 'Chimie organique', 'Acides et bases'],
   }
 ];
 
@@ -69,21 +75,21 @@ const programs: Program[] = [
     id: 'physics',
     name: 'Physics Mastery',
     description: 'Mécanique, Électromagnétisme, Thermodynamique, Ondes',
-    price: 999,
+    price: 2167,
     icon: '',
   },
   {
     id: 'mathematics',
     name: 'Mathematics Mastery',
     description: 'Analyse, Algèbre linéaire, Probabilités, Suites',
-    price: 1099,
+    price: 1833,
     icon: '',
   },
   {
     id: 'chemistry',
     name: 'Chemistry Mastery',
     description: 'Chimie organique, Acides-bases, Redox, Cinétique',
-    price: 799,
+    price: 1617,
     icon: '',
   },
 ];
@@ -180,6 +186,7 @@ export function OnboardingPopup({
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [showPersonalizedContent, setShowPersonalizedContent] = useState(false);
   const [videoMuted, setVideoMuted] = useState(false);
+  const [videoWatchedCompletely, setVideoWatchedCompletely] = useState(false);
   
   // Scanning state
   const [scanProgress, setScanProgress] = useState(0);
@@ -312,7 +319,7 @@ export function OnboardingPopup({
   useEffect(() => {
     if (phase !== 'scanning') return;
     
-    const scanDurationPerProgram = 2500;
+    const scanDurationPerProgram = 5000;
     let isActive = true;
     
     const scanProgram = (programIndex: number) => {
@@ -543,7 +550,7 @@ export function OnboardingPopup({
                                         )}
                                       </div>
                                       <div className="text-sm md:text-lg" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
-                                        {program.totalChapters} chapitres
+                                        {program.totalChapters} sujets
                                       </div>
                                     </div>
                                     
@@ -580,7 +587,7 @@ export function OnboardingPopup({
                                         className="mb-2 md:mb-4"
                                       >
                                         <div className="text-xs md:text-sm text-white/40 uppercase tracking-wider mb-2 md:mb-3">
-                                          Chapitres analysés
+                                          Sujets analysés
                                         </div>
                                         <div className="flex flex-wrap gap-2 md:gap-3">
                                           {currentChapters.map((chapter, chapterIndex) => {
@@ -627,7 +634,7 @@ export function OnboardingPopup({
                               />
                             </div>
                             <div className="flex justify-between mt-2 text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>
-                              <span>{Math.floor((scanProgress / 100) * totalChaptersScanned)} / {totalChaptersScanned} chapitres</span>
+                              <span>{Math.floor((scanProgress / 100) * totalChaptersScanned)} / {totalChaptersScanned} sujets</span>
                               <span>{Math.floor(scanProgress)}%</span>
                             </div>
                           </motion.div>
@@ -677,7 +684,7 @@ export function OnboardingPopup({
                         className="text-9xl md:text-[12rem] font-black text-white leading-none"
                         style={{ fontFamily: "'Parafina', sans-serif" }}
                       >
-                        {totalTracksExtracted}
+                        {scanningPrograms.length}
                       </span>
                     </motion.div>
 
@@ -689,7 +696,7 @@ export function OnboardingPopup({
                       className="text-2xl md:text-5xl font-bold text-center mb-3 md:mb-4 uppercase tracking-wider"
                       style={{ fontFamily: "'Parafina', sans-serif", color: '#ffffff' }}
                     >
-                      Parcours créés pour toi
+                      Programmes pour toi
                     </motion.h1>
 
                     {/* Subtitle */}
@@ -697,10 +704,10 @@ export function OnboardingPopup({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                      className="text-center mb-8 md:mb-10 text-base md:text-xl"
-                      style={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                      className="text-center mb-8 md:mb-10"
+                      style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px' }}
                     >
-                      basés sur les Mastery Programs suivants
+                      Ces programmes couvrent tes besoins, du début à la maîtrise.
                     </motion.p>
 
                     {/* Program List */}
@@ -720,9 +727,9 @@ export function OnboardingPopup({
                         >
                           <span className="font-semibold text-white">{program.name}</span>
                           <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} chapitres</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.totalChapters} sujets</span>
                           <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>•</span>
-                          <span style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{program.extractedTracks} parcours</span>
+                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{program.id === 'physics' ? '+250h' : program.id === 'mathematics' ? '+200h' : '+180h'}</span>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -735,7 +742,7 @@ export function OnboardingPopup({
                       className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-10"
                       style={{ color: '#ffffff' }}
                     >
-                      Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
+                      Un Programme<span className="text-[#00c2ff]">.</span> Des Parcours illimités<span className="text-[#00c2ff]">.</span> À vie<span className="text-[#00c2ff]">.</span>
                     </motion.p>
 
                     {/* CTA Button */}
@@ -748,20 +755,9 @@ export function OnboardingPopup({
                       onClick={() => setPhase('results')}
                       className="px-10 md:px-14 py-4 md:py-5 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25 text-base md:text-xl"
                     >
-                      Continuer
+                      Voir mon contenu personnalisé
                       <ArrowRight size={20} className="md:w-6 md:h-6" />
                     </motion.button>
-
-                    {/* Trust badge */}
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 1.9 }}
-                      className="mt-6 md:mt-8 text-sm md:text-base"
-                      style={{ color: 'rgba(255, 255, 255, 0.5)' }}
-                    >
-                      Paiement unique · Accès à vie
-                    </motion.p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -828,10 +824,10 @@ export function OnboardingPopup({
                   {showPersonalizedContent && (
                 <button
                       onClick={() => setShowPersonalizedContent(false)}
-                      className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                      className="flex items-center gap-1 md:gap-1.5 text-gray-400 hover:text-white text-xs md:text-sm font-medium transition-colors"
                 >
-                      <Play size={14} className="rotate-180" />
-                      Revoir la vidéo
+                      <Play size={12} className="md:w-[14px] md:h-[14px] rotate-180" />
+                      {videoWatchedCompletely ? 'Revoir la vidéo' : 'Continuer la vidéo'}
                 </button>
                   )}
                 </div>
@@ -852,6 +848,12 @@ export function OnboardingPopup({
                     loop
                     muted={videoMuted}
                     playsInline
+                    onTimeUpdate={(e) => {
+                      const video = e.currentTarget;
+                      if (video.duration && video.currentTime >= video.duration - 0.5) {
+                        setVideoWatchedCompletely(true);
+                      }
+                    }}
                   />
                   
                   {/* Overlay gradient en bas */}
@@ -918,19 +920,25 @@ export function OnboardingPopup({
                     {/* Badge */}
                     <div className="w-14 h-14 md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
                       <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
-                        {recommendedCourses.length}
+                        {interests.length}
                       </span>
                     </div>
                     {/* Title */}
                     <div className="flex-1">
                       <h1 className="text-base md:text-4xl lg:text-5xl font-black !text-white leading-tight mb-0.5 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
-                        Parcours conçus pour toi
+                        Programmes pour toi
                       </h1>
-                      <p className="text-xs md:text-lg !text-white/70">
-                        basés sur {interests.length} Mastery Programs
+                      <p className="!text-white/70" style={{ fontSize: '16px' }}>
+                        Ces programmes couvrent tes besoins, du début à la maîtrise.
                       </p>
                     </div>
                   </div>
+
+                  {/* Value proposition */}
+                  <p className="mb-4" style={{ fontSize: '18px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                    Tu débloques un programme à vie,<br />
+                    avec tous les parcours inclus sans limite.
+                  </p>
 
                   {/* Programme Cards */}
                   <div className="space-y-2 md:space-y-3">
@@ -938,8 +946,9 @@ export function OnboardingPopup({
                       const programCourses = recommendedCourses.filter(c => 
                         c.category.toLowerCase().includes(program.id)
                       );
-                      const programPrice = program.id === 'physics' ? '49€' : program.id === 'mathematics' ? '59€' : '45€';
-                      const programOriginalPrice = program.id === 'physics' ? '129€' : program.id === 'mathematics' ? '149€' : '119€';
+                      const discountedPrice = Math.round(program.price * 0.6);
+                      const programPrice = `${discountedPrice}€`;
+                      const programOriginalPrice = `${program.price}€`;
                       return (
                         <div 
                           key={program.id}
@@ -959,14 +968,14 @@ export function OnboardingPopup({
                               {/* Tooltip on hover - desktop only */}
                               <div className="hidden md:block absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
                                 <div className="bg-white text-gray-900 text-xs px-3 py-2 rounded-lg shadow-xl whitespace-nowrap">
-                                  Accès à vie + Parcours illimités
+                                  Accès à vie + Parcours illimités + Mises à jour incluses
                                   <div className="absolute -bottom-1 right-4 w-2 h-2 bg-white transform rotate-45"></div>
                                 </div>
                               </div>
                             </div>
                           </div>
                           <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                            {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} chapitres • Parcours illimités
+                            {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} sujets • {program.id === 'physics' ? '+250h' : program.id === 'mathematics' ? '+200h' : '+180h'} de contenu
                           </p>
                         </div>
                       );
@@ -978,16 +987,8 @@ export function OnboardingPopup({
                 {/* Right Column - CTA Card */}
                 <div className="lg:col-span-5 mt-3 lg:mt-0">
                   <div className="bg-[#141414] rounded-xl p-4 md:p-6 border border-gray-800">
-                    {/* Value Props - Two lines */}
-                    <div className="space-y-3 mb-4 md:mb-6">
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <div className="w-6 h-6 md:w-8 md:h-8 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
-                        </div>
-                        <span className="text-white text-base md:text-lg">
-                          Un Programme génère autant de parcours personnalisés que tu veux.
-                        </span>
-                      </div>
+                    {/* Value Prop */}
+                    <div className="mb-4 md:mb-6">
                       <div className="flex items-center gap-2 md:gap-3">
                         <div className="w-6 h-6 md:w-8 md:h-8 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
                           <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
@@ -1010,7 +1011,7 @@ export function OnboardingPopup({
                       onClick={() => setPhase('membership-plans')}
                       className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
                     >
-                      Débloquer mes programmes
+                      Débloquer mon accès à vie
                       <span className="w-5 h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
                         <ArrowRight size={10} />
                       </span>
@@ -1041,7 +1042,7 @@ export function OnboardingPopup({
                       <h2 className="text-base md:text-3xl font-bold !text-white">
                         {interest}
                         <span className="!text-white/70 font-normal text-xs md:text-lg ml-1.5 md:ml-3">
-                          {coursesForProgram.length} parcours
+                          Tes {coursesForProgram.length} premiers parcours
                         </span>
                       </h2>
 

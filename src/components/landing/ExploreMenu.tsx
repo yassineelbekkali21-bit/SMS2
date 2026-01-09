@@ -441,27 +441,7 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
               </div>
             </div>
 
-            {/* Assessment First CTA */}
-            <div className="px-1 space-y-4">
-              <p className="text-xs text-gray-500 text-center font-medium">
-                {language === 'fr' ? 'Teste tes bases sur les notions clés' : 'Test your basics on key concepts'}
-              </p>
-              <Link 
-                href={`/assessment/${selectedProgram.id}`}
-                className="block w-full py-4 bg-blue-600 text-white text-center rounded-full font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                 <span>{language === 'fr' ? `Se tester en ${selectedProgram.label.split(' ')[0]}` : `Test ${selectedProgram.label.split(' ')[0]} Skills`}</span>
-                 <ArrowRight size={18} />
-              </Link>
-              
-              <Link 
-                href={`/program/${selectedProgram.id}`}
-                className="block w-full text-center text-sm font-bold text-gray-600 hover:text-gray-400 transition-colors"
-              >
-                 {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
-              </Link>
-            </div>
-          </motion.div>
+            </motion.div>
         )}
 
         {/* Level 3: Lesson Details */}
@@ -502,8 +482,8 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                </h3>
              </div>
 
-             {/* Standard Minimal List */}
-             <div className="mt-2">
+{/* Standard Minimal List */}
+            <div className="mt-2">
                <div className="divide-y divide-gray-800 border-t border-gray-800 border-b">
                  {/* @ts-ignore - Transitioning data structure */}
                  {(selectedTopic.lessons || [selectedTopic.lesson]).map((lesson, idx) => (
@@ -517,6 +497,27 @@ export function MobileExploreOverlay({ isOpen, onClose }: { isOpen: boolean; onC
                    </div>
                  ))}
                </div>
+             </div>
+
+             {/* Assessment CTA - Below Notions Clés */}
+             <div className="mt-8 space-y-4">
+               <p className="text-xs text-gray-500 text-center font-medium">
+                 {language === 'fr' ? 'Teste tes bases sur les notions clés' : 'Test your basics on key concepts'}
+               </p>
+               <Link 
+                 href={`/assessment/${selectedProgram.id}`}
+                 className="block w-full py-4 bg-blue-600 text-white text-center rounded-full font-bold text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+               >
+                 <span>{language === 'fr' ? `Se tester en ${selectedProgram.label.split(' ')[0]}` : `Test ${selectedProgram.label.split(' ')[0]} Skills`}</span>
+                 <ArrowRight size={18} />
+               </Link>
+               
+               <Link 
+                 href={`/program/${selectedProgram.id}`}
+                 className="block w-full text-center text-sm font-bold text-gray-600 hover:text-gray-400 transition-colors"
+               >
+                 {language === 'fr' ? 'Voir tout le programme' : 'View Full Program'}
+               </Link>
              </div>
            </div>
          </motion.div>

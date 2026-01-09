@@ -414,7 +414,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                 >
                   Teste ton parcours – 10h offertes
                 </h2>
-                <p style={{ color: 'rgba(255, 255, 255, 0.9)' }} className="text-base">
+                <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px' }}>
                   Accède à tous nos programmes. Sans engagement.
                 </p>
               </div>
