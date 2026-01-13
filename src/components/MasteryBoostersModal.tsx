@@ -261,7 +261,7 @@ export function MasteryBoostersModal({
                           onUnlock?.('pack-all', packPrice);
                           window.location.href = '/checkout?pack=mastery-boosters';
                         }}
-                        className="w-full md:w-auto px-8 py-3 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+                        className="w-full md:w-auto px-8 py-3 bg-[#00c2ff] hover:bg-[#00a8e0] text-white font-bold rounded-full transition-colors flex items-center justify-center gap-2"
                       >
                         Procéder au paiement
                         <ArrowRight size={18} />
