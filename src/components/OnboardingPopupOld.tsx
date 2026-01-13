@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Play, Clock, ArrowRight, ChevronLeft, ChevronRight, X, ChevronDown, Volume2, VolumeX, Gift, Star, CheckCircle, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { LeadCaptureModal } from './LeadCaptureModal';
 
 // Scanning data for the animation
@@ -93,34 +92,6 @@ const programs: Program[] = [
     price: 1617,
     icon: '',
   },
-  {
-    id: 'biology',
-    name: 'Biology Mastery',
-    description: 'Biologie cellulaire, Génétique, Physiologie, Écologie',
-    price: 1917,
-    icon: '',
-  },
-  {
-    id: 'economics',
-    name: 'Economics Mastery',
-    description: 'Microéconomie, Macroéconomie, Marchés, Politique économique',
-    price: 1500,
-    icon: '',
-  },
-  {
-    id: 'accounting',
-    name: 'Accounting Mastery',
-    description: 'Comptabilité générale, Analyse financière, Fiscalité',
-    price: 1417,
-    icon: '',
-  },
-  {
-    id: 'statistics',
-    name: 'Statistics Mastery',
-    description: 'Probabilités, Inférence statistique, Tests d\'hypothèses',
-    price: 1583,
-    icon: '',
-  },
 ];
 
 // Boosters (optional add-ons)
@@ -165,7 +136,7 @@ interface RecommendedCourse {
   gradient: string;
 }
 
-type OnboardingPhase = 'loading' | 'transition' | 'scanning' | 'reveal' | 'video' | 'blurred-dashboard' | 'results' | 'membership-intro' | 'membership-plans';
+type OnboardingPhase = 'loading' | 'transition' | 'scanning' | 'reveal' | 'video' | 'results' | 'membership-intro' | 'membership-plans';
 
 interface OnboardingPopupProps {
   isOpen: boolean;
@@ -173,8 +144,6 @@ interface OnboardingPopupProps {
   recommendedCourses?: RecommendedCourse[];
   interests?: string[];
   initialPhase?: OnboardingPhase;
-  flowType?: 'new' | 'old' | 'diagnostic'; // 'new' = blurred-dashboard, 'old' = results page, 'diagnostic' = direct to dashboard after video
-  embedded?: boolean; // Si true, utilise absolute au lieu de fixed pour rester dans le parent
 }
 
 // Mock data for recommended courses
@@ -206,32 +175,12 @@ export function OnboardingPopup({
   onComplete, 
   recommendedCourses = defaultCourses,
   interests = defaultInterests,
-  initialPhase = 'loading',
-  flowType = 'new',
-  embedded = false
+  initialPhase = 'loading'
 }: OnboardingPopupProps) {
-  const router = useRouter();
   const [phase, setPhase] = useState<OnboardingPhase>(initialPhase);
   const [loadingStep, setLoadingStep] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  
-  // Récupérer les programmes prescrits du diagnostic depuis localStorage
-  const getPrescribedPrograms = (): string[] => {
-    if (typeof window !== 'undefined') {
-      const diagnosticData = localStorage.getItem('sms_diagnostic_data');
-      if (diagnosticData) {
-        try {
-          const parsed = JSON.parse(diagnosticData);
-          return parsed.prescribedPrograms || ['physics', 'mathematics', 'chemistry'];
-        } catch {
-          return ['physics', 'mathematics', 'chemistry'];
-        }
-      }
-    }
-    return ['physics', 'mathematics', 'chemistry'];
-  };
-  
-  const [selectedPrograms, setSelectedPrograms] = useState<string[]>(getPrescribedPrograms());
+  const [selectedPrograms, setSelectedPrograms] = useState<string[]>(['physics', 'mathematics', 'chemistry']);
   const [boostersEnabled, setBoostersEnabled] = useState<boolean>(false);
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
   const [showLeadCapture, setShowLeadCapture] = useState(false);
@@ -454,14 +403,14 @@ export function OnboardingPopup({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className={`${embedded ? 'absolute' : 'fixed'} inset-0 ${embedded ? '' : 'z-[100]'} bg-[#0d1317] overflow-y-auto overflow-x-hidden`}
+        className="fixed inset-0 z-[100] bg-[#0d1317] overflow-y-auto overflow-x-hidden"
       >
         {/* Loading + Transition + Scanning + Reveal Phases */}
         {(phase === 'loading' || phase === 'transition' || phase === 'scanning' || phase === 'reveal') && (
           <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 overflow-hidden">
             
             {/* Main content wrapper with animated position */}
-          <motion.div
+            <motion.div
               className="flex flex-col items-center"
               animate={{ 
                 y: (phase === 'scanning' || phase === 'reveal') ? '-5vh' : 0,
@@ -472,9 +421,9 @@ export function OnboardingPopup({
               }}
             >
               {/* Logo - Always visible */}
-            <motion.div
+              <motion.div
                 className="flex flex-col items-center"
-              animate={{
+                animate={{ 
                   marginBottom: phase === 'reveal' ? '1rem' : '2rem',
                 }}
                 transition={{ 
@@ -484,29 +433,29 @@ export function OnboardingPopup({
               >
                 <motion.div
                   animate={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
-                scale: [1, 1.08, 1],
-                opacity: [0.7, 1, 0.7]
+                    scale: [1, 1.08, 1],
+                    opacity: [0.7, 1, 0.7]
                   } : {
                     scale: 1,
                     opacity: 1
-              }}
+                  }}
                   transition={(phase === 'loading' || phase === 'transition' || phase === 'scanning') ? {
-                duration: 2.5,
-                repeat: Infinity,
-                ease: "easeInOut"
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
                   } : {
                     duration: 0.5
-              }}
-            >
-              <Image 
-                src="/brand/onboarding-logo.svg" 
-                alt="Science Made Simple" 
-                width={140} 
-                height={140}
+                  }}
+                >
+                  <Image 
+                    src="/brand/onboarding-logo.svg" 
+                    alt="Science Made Simple" 
+                    width={140} 
+                    height={140}
                     className="object-contain md:w-[180px] md:h-[180px]"
-              />
+                  />
                 </motion.div>
-            </motion.div>
+              </motion.div>
 
               {/* Content Area */}
               <div className="relative w-full max-w-2xl md:max-w-4xl min-h-[200px] md:min-h-[250px] flex flex-col items-center">
@@ -812,8 +761,8 @@ export function OnboardingPopup({
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
           </div>
         )}
 
@@ -841,14 +790,9 @@ export function OnboardingPopup({
                 
                 {/* Center - Progress Steps */}
                 <div className="flex items-center gap-1.5 md:gap-3 absolute left-1/2 -translate-x-1/2">
-                  {(flowType === 'diagnostic' 
-                    ? ['Diagnostic', 'Analyse', 'Résultats'] 
-                    : ['Tes cours', 'Offre', 'Paiement']
-                  ).map((step, idx) => {
-                    // Pour le mode diagnostic, on est à l'étape 3 (Résultats)
-                    const stepPosition = flowType === 'diagnostic' ? 2 : 0;
-                    const isCompleted = idx < stepPosition;
-                    const isCurrent = idx === stepPosition;
+                  {['Tes cours', 'Offre', 'Finaliser'].map((step, idx) => {
+                    const isCompleted = idx < 0; // Phase results = step 0
+                    const isCurrent = idx === 0;
                     return (
                       <React.Fragment key={step}>
                         <div className="flex flex-col items-center">
@@ -924,36 +868,17 @@ export function OnboardingPopup({
                   </button>
                 </div>
                 
-                {/* Bouton pour continuer */}
-                <div className="p-4 md:p-6 flex flex-col items-center relative z-50">
-                  {flowType === 'diagnostic' ? (
-                    // Mode diagnostic: atterrir directement sur le dashboard
-                    <button
-                      onClick={() => onComplete()}
-                      className="px-8 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full text-base md:text-lg transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25 cursor-pointer"
-                    >
-                      Découvrir mon parcours
-                      <ArrowRight size={20} />
-                    </button>
-                  ) : flowType === 'new' ? (
-                    <button
-                      onClick={() => setPhase('blurred-dashboard')}
-                      className="px-8 py-4 bg-[#00c2ff] hover:bg-[#00b0e8] text-white font-semibold rounded-full text-base md:text-lg transition-all flex items-center gap-3 shadow-lg shadow-[#00c2ff]/25 cursor-pointer"
-                    >
-                      Accéder à mon parcours
-                      <ArrowRight size={20} />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setShowPersonalizedContent(true)}
-                      className="flex flex-col items-center gap-3 text-white/70 hover:text-white transition-all group cursor-pointer"
-                    >
-                      <span className="text-base md:text-lg">Voir mon contenu personnalisé</span>
-                      <div className="w-12 h-12 rounded-full border-2 border-white/30 group-hover:border-white/60 flex items-center justify-center transition-all">
-                        <ChevronDown size={24} className="animate-bounce" />
-                      </div>
-                    </button>
-                  )}
+                {/* Bouton pour voir le contenu personnalisé */}
+                <div className="p-4 md:p-6 flex flex-col items-center gap-3 md:gap-4">
+                  <span className="text-gray-400 text-sm md:text-lg font-medium italic">
+                    Voir mon contenu personnalisé
+                  </span>
+                  <button
+                    onClick={() => setShowPersonalizedContent(true)}
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gray-600 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-300 transition-all"
+                  >
+                    <ChevronDown size={20} className="md:w-6 md:h-6" />
+                  </button>
                 </div>
               </div>
             )}
@@ -993,18 +918,17 @@ export function OnboardingPopup({
                   {/* Course Count + Title - Stack on mobile */}
                   <div className="flex items-start gap-3 md:gap-6 mb-4 md:mb-10">
                     {/* Badge */}
-                    <div className="w-14 h-[52px] md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0 self-start mt-0.5">
+                    <div className="w-14 h-[72px] md:w-24 md:h-24 rounded-xl md:rounded-2xl border-2 md:border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0 self-start mt-0.5">
                       <span className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white leading-none" style={{ fontFamily: "'Parafina', sans-serif" }}>
                         {interests.length}
-                        </span>
-                      </div>
+                      </span>
+                    </div>
                     {/* Title */}
                     <div className="flex-1">
-                      <h1 className="font-black !text-white leading-tight mb-0.5 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
-                        <span className="md:hidden text-lg">Programmes couvrent tes besoins.</span>
-                        <span className="hidden md:block text-4xl lg:text-5xl">Programmes pour toi</span>
+                      <h1 className="text-base md:text-4xl lg:text-5xl font-black !text-white leading-tight mb-0.5 md:mb-2 uppercase" style={{ fontFamily: 'var(--font-parafina)' }}>
+                        Programmes pour toi
                       </h1>
-                      <p className="!text-white/70 hidden md:block" style={{ fontSize: '16px' }}>
+                      <p className="!text-white/70" style={{ fontSize: '16px' }}>
                         Ces programmes couvrent tes besoins, du début à la maîtrise.
                       </p>
                     </div>
@@ -1037,10 +961,10 @@ export function OnboardingPopup({
                           }}
                         >
                           <div className="flex items-center justify-between mb-0.5 md:mb-1">
-                            <span className="font-semibold !text-white" style={{ fontSize: '15px' }}>{program.name}</span>
+                            <span className="text-sm md:text-lg font-semibold !text-white">{program.name}</span>
                             <div className="flex items-center gap-2 relative">
-                              <span className="text-white/40 line-through" style={{ fontSize: '12px' }}>{programOriginalPrice}</span>
-                              <span className="font-bold text-[#00c2ff] cursor-help" style={{ fontSize: '15px' }}>{programPrice}</span>
+                              <span className="text-xs md:text-sm text-white/40 line-through">{programOriginalPrice}</span>
+                              <span className="text-sm md:text-lg font-bold text-[#00c2ff] cursor-help">{programPrice}</span>
                               {/* Tooltip on hover - desktop only */}
                               <div className="hidden md:block absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
                                 <div className="bg-white text-gray-900 text-xs px-3 py-2 rounded-lg shadow-xl whitespace-nowrap">
@@ -1050,18 +974,13 @@ export function OnboardingPopup({
                               </div>
                             </div>
                           </div>
-                          <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                          <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                             {program.id === 'physics' ? '47' : program.id === 'mathematics' ? '63' : '52'} sujets • {program.id === 'physics' ? '+250h' : program.id === 'mathematics' ? '+200h' : '+180h'} de contenu
                           </p>
                         </div>
                       );
                     })}
                   </div>
-
-                  {/* Micro-copy */}
-                  <p className="mt-3 text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-                    Basé sur ton diagnostic. Ajustable à tout moment.
-                  </p>
 
                 </div>
 
@@ -1073,10 +992,10 @@ export function OnboardingPopup({
                       <div className="flex items-center gap-2 md:gap-3">
                         <div className="w-6 h-6 md:w-8 md:h-8 bg-[#00c2ff] rounded-full flex items-center justify-center flex-shrink-0">
                           <Check className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
-                      </div>
+                        </div>
                         <span className="text-white text-base md:text-lg">
-                          Sans engagement, tu explores librement.
-                      </span>
+                          Paiement unique. Accès à vie.
+                        </span>
                       </div>
                     </div>
 
@@ -1092,7 +1011,7 @@ export function OnboardingPopup({
                       onClick={() => setPhase('membership-plans')}
                       className="w-full bg-transparent hover:bg-white/5 text-white font-medium py-2.5 md:py-3 rounded-full text-sm md:text-lg transition-all border border-gray-600 flex items-center justify-center gap-2"
                     >
-                      Débloquer mon accès complet
+                      Débloquer mon accès à vie
                       <span className="w-5 h-5 rounded-full border border-white/50 flex items-center justify-center flex-shrink-0">
                         <ArrowRight size={10} />
                       </span>
@@ -1110,7 +1029,7 @@ export function OnboardingPopup({
               </div>
 
               {/* Course Rows - One per Mastery Program */}
-              <div className="mt-12 md:mt-0" />
+              <div className="mt-8 md:mt-0" />
               {interests.map((interest, rowIndex) => {
                 const coursesForProgram = recommendedCourses.filter(c => c.category === interest);
                 const programId = interest.toLowerCase().includes('physics') ? 'physics' 
@@ -1122,11 +1041,11 @@ export function OnboardingPopup({
                     {/* Row Header */}
                     <div className="flex items-center justify-between mb-3 md:mb-6">
                       <h2 className="text-base md:text-3xl font-bold !text-white">
-                          {interest}
+                        {interest}
                         <span className="!text-white/70 font-normal text-xs md:text-lg ml-1.5 md:ml-3">
                           Tes {coursesForProgram.length} premiers parcours
-                          </span>
-                        </h2>
+                        </span>
+                      </h2>
 
                       {/* Carousel Controls */}
                       <div className="flex items-center gap-1.5 md:gap-4">
@@ -1172,12 +1091,12 @@ export function OnboardingPopup({
                             {/* Course Title Overlay */}
                             <div className="absolute inset-0 flex flex-col justify-end p-2.5 md:p-4">
                               <h3 className="!text-white font-bold text-sm md:text-xl leading-tight tracking-tight mb-0.5 md:mb-1">
-                              {course.title}
-                            </h3>
+                                {course.title}
+                              </h3>
                               <div className="w-5 md:w-8 h-0.5 bg-white/40 mb-1 md:mb-2" />
                               <p className="!text-white/80 text-[9px] md:text-xs font-medium">
-                              {course.subtitle}
-                            </p>
+                                {course.subtitle}
+                              </p>
                             </div>
 
                             {/* Play Button on Hover */}
@@ -1194,43 +1113,10 @@ export function OnboardingPopup({
                 );
               })}
 
-            </div>
+              </div>
             </div>
               </>
             )}
-          </motion.div>
-        )}
-
-        {/* Blurred Dashboard Phase - Lead Capture Gate */}
-        {phase === 'blurred-dashboard' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="min-h-screen relative overflow-hidden"
-          >
-            {/* Blurred Dashboard Screenshot - Background */}
-            <div className="absolute inset-0">
-              <Image
-                src="/screenshots/simple-dashboard.png"
-                alt="Dashboard Preview"
-                fill
-                className="object-cover object-top blur-md scale-105"
-                priority
-              />
-              {/* Dark overlay */}
-              <div className="absolute inset-0 bg-black/40" />
-            </div>
-
-            {/* Lead Capture Modal - Directly displayed */}
-            <LeadCaptureModal
-              isOpen={true}
-              allowClose={false}
-              onClose={() => {}}
-              onSuccess={() => {
-                // Same behavior as existing flow - close popup and stay on SimpleDashboard
-                onComplete();
-              }}
-            />
           </motion.div>
         )}
 
@@ -1253,7 +1139,7 @@ export function OnboardingPopup({
                 
                 {/* Progress Steps - 4 steps */}
                 <div className="flex items-center gap-3">
-                  {['Tes cours', 'Compte', 'Offre', 'Paiement'].map((step, idx) => {
+                  {['Tes cours', 'Compte', 'Offre', 'Finaliser'].map((step, idx) => {
                     const isCompleted = idx < 0; // No step completed yet at membership-intro
                     const isCurrent = idx === 0; // Currently showing "Tes cours" info
                     return (
@@ -1333,16 +1219,16 @@ export function OnboardingPopup({
           </motion.div>
         )}
 
-        {/* Membership Plans Phase */}
-        {phase === 'membership-plans' && (
+        {/* Account Creation Phase - NOW SECOND STEP after choosing programs */}
+        {phase === 'account-creation' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="min-h-full bg-[#0d1317] relative"
+            className="min-h-full"
           >
-            {/* Header with Breadcrumb */}
-            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-white/5 px-6 py-4 z-20">
-              <div className="w-full flex items-center justify-between">
+            {/* Header */}
+            <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
+              <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Image 
                   src="/brand/onboarding-logo.svg" 
                   alt="Science Made Simple" 
@@ -1350,9 +1236,323 @@ export function OnboardingPopup({
                   height={85}
                 />
                 
-                {/* Progress Steps - 2 steps: Offre → Paiement */}
+                {/* Progress Steps - 3 steps: Offre → Compte → Finaliser */}
                 <div className="flex items-center gap-3">
-                  {['Offre', 'Paiement'].map((step, idx) => {
+                  {['Offre', 'Compte', 'Finaliser'].map((step, idx) => {
+                    const isCompleted = idx < 1; // Step 0 (Offre) is completed
+                    const isCurrent = idx === 1; // Currently on step 1 (Compte)
+                    return (
+                      <React.Fragment key={step}>
+                        <div className="flex flex-col items-center">
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-[#00c2ff]' 
+                              : isCurrent 
+                                ? 'bg-[#00c2ff] ring-[5px] ring-[#00c2ff]/30' 
+                                : 'bg-gray-600'
+                          }`} />
+                          <span className={`text-[11px] md:text-sm mt-2 font-semibold hidden md:block !text-white ${
+                            isCompleted || isCurrent ? 'opacity-100' : 'opacity-50'
+                          }`}>
+                            {step}
+                          </span>
+                        </div>
+                        {idx < 2 && (
+                          <div className={`w-10 md:w-16 h-1.5 rounded-full ${
+                            isCompleted ? 'bg-[#00c2ff]' : 'bg-gray-700'
+                          }`} />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setPhase('membership-plans')}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </header>
+
+            {/* Content */}
+            <div className="max-w-xl mx-auto px-6 py-12">
+              <div className="text-center mb-10">
+                <h1 className="text-3xl md:text-4xl font-bold !text-white mb-3">
+                  Crée ton compte pour sécuriser ton accès
+                </h1>
+                <p className="!text-white/70 text-lg">
+                  Ton compte te permettra d'accéder à tes programmes sélectionnés en toute sécurité
+                </p>
+              </div>
+
+              {/* Form */}
+              <div className="space-y-5">
+                {/* First Name & Last Name */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium !text-white/80 mb-2">
+                      Prénom
+                    </label>
+                    <input
+                      type="text"
+                      value={accountForm.firstName}
+                      onChange={(e) => setAccountForm(prev => ({ ...prev, firstName: e.target.value }))}
+                      placeholder="Jean"
+                      className={`w-full px-4 py-3.5 bg-gray-800/50 border ${accountErrors.firstName ? 'border-red-500' : 'border-gray-700'} rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2ff] focus:ring-1 focus:ring-[#00c2ff] transition-all`}
+                    />
+                    {accountErrors.firstName && (
+                      <p className="text-red-400 text-sm mt-1">{accountErrors.firstName}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium !text-white/80 mb-2">
+                      Nom
+                    </label>
+                    <input
+                      type="text"
+                      value={accountForm.lastName}
+                      onChange={(e) => setAccountForm(prev => ({ ...prev, lastName: e.target.value }))}
+                      placeholder="Dupont"
+                      className={`w-full px-4 py-3.5 bg-gray-800/50 border ${accountErrors.lastName ? 'border-red-500' : 'border-gray-700'} rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2ff] focus:ring-1 focus:ring-[#00c2ff] transition-all`}
+                    />
+                    {accountErrors.lastName && (
+                      <p className="text-red-400 text-sm mt-1">{accountErrors.lastName}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium !text-white/80 mb-2">
+                    Adresse email
+                  </label>
+                  <input
+                    type="email"
+                    value={accountForm.email}
+                    onChange={(e) => setAccountForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="jean.dupont@email.com"
+                    className={`w-full px-4 py-3.5 bg-gray-800/50 border ${accountErrors.email ? 'border-red-500' : 'border-gray-700'} rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2ff] focus:ring-1 focus:ring-[#00c2ff] transition-all`}
+                  />
+                  {accountErrors.email && (
+                    <p className="text-red-400 text-sm mt-1">{accountErrors.email}</p>
+                  )}
+                </div>
+
+                {/* Phone with OTP */}
+                <div>
+                  <label className="block text-sm font-medium !text-white/80 mb-2">
+                    Numéro de téléphone
+                  </label>
+                  <div className="flex gap-3">
+                    <input
+                      type="tel"
+                      value={accountForm.phone}
+                      onChange={(e) => {
+                        setAccountForm(prev => ({ ...prev, phone: e.target.value }));
+                        setOtpSent(false);
+                        setOtpVerified(false);
+                        setOtpCode('');
+                      }}
+                      placeholder="+32 470 12 34 56"
+                      disabled={otpVerified}
+                      className={`flex-1 px-4 py-3.5 bg-gray-800/50 border ${accountErrors.phone ? 'border-red-500' : otpVerified ? 'border-green-500' : 'border-gray-700'} rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2ff] focus:ring-1 focus:ring-[#00c2ff] transition-all ${otpVerified ? 'opacity-70' : ''}`}
+                    />
+                    {!otpVerified && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (accountForm.phone.trim()) {
+                            // TODO: Send OTP via SMS
+                            console.log('Sending OTP to:', accountForm.phone);
+                            setOtpSent(true);
+                            setOtpError('');
+                          }
+                        }}
+                        disabled={!accountForm.phone.trim() || otpSent}
+                        className={`px-4 py-3.5 rounded-xl font-medium transition-all whitespace-nowrap ${
+                          accountForm.phone.trim() && !otpSent
+                            ? 'bg-[#00c2ff] hover:bg-[#00d4ff] text-white'
+                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        {otpSent ? 'Code envoyé' : 'Envoyer code'}
+                      </button>
+                    )}
+                    {otpVerified && (
+                      <div className="flex items-center px-4 text-green-400">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  {accountErrors.phone && (
+                    <p className="text-red-400 text-sm mt-1">{accountErrors.phone}</p>
+                  )}
+                </div>
+
+                {/* OTP Input - Shows after sending code */}
+                {otpSent && !otpVerified && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="overflow-hidden"
+                  >
+                    <label className="block text-sm font-medium !text-white/80 mb-2">
+                      Code de vérification
+                    </label>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="123456"
+                        maxLength={6}
+                        className={`flex-1 px-4 py-3.5 bg-gray-800/50 border ${otpError ? 'border-red-500' : 'border-gray-700'} rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2ff] focus:ring-1 focus:ring-[#00c2ff] transition-all text-center text-xl tracking-[0.5em] font-mono`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // TODO: Verify OTP with backend
+                          if (otpCode === '123456' || otpCode.length === 6) {
+                            setOtpVerified(true);
+                            setOtpError('');
+                          } else {
+                            setOtpError('Code invalide');
+                          }
+                        }}
+                        disabled={otpCode.length !== 6}
+                        className={`px-6 py-3.5 rounded-xl font-medium transition-all ${
+                          otpCode.length === 6
+                            ? 'bg-green-600 hover:bg-green-700 text-white'
+                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        Vérifier
+                      </button>
+                    </div>
+                    {otpError && (
+                      <p className="text-red-400 text-sm mt-1">{otpError}</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Resend OTP
+                        console.log('Resending OTP to:', accountForm.phone);
+                      }}
+                      className="text-[#00c2ff] hover:text-[#00d4ff] text-sm mt-2 transition-colors"
+                    >
+                      Renvoyer le code
+                    </button>
+                  </motion.div>
+                )}
+
+                {/* Terms and Conditions Checkbox */}
+                <div className="pt-4">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <div className="relative mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="sr-only"
+                      />
+                      <div className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
+                        acceptedTerms 
+                          ? 'bg-[#00c2ff] border-[#00c2ff]' 
+                          : 'border-gray-500 group-hover:border-gray-400'
+                      }`}>
+                        {acceptedTerms && (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm text-gray-300 leading-relaxed">
+                      J'accepte les{' '}
+                      <a href="/terms" target="_blank" className="text-[#00c2ff] hover:text-[#00d4ff] underline">
+                        Conditions Générales d'Utilisation
+                      </a>{' '}
+                      et la{' '}
+                      <a href="/privacy" target="_blank" className="text-[#00c2ff] hover:text-[#00d4ff] underline">
+                        Politique de Confidentialité
+                      </a>
+                    </span>
+                  </label>
+                  {accountErrors.terms && (
+                    <p className="text-red-400 text-sm mt-1 ml-8">{accountErrors.terms}</p>
+                  )}
+                </div>
+
+                {/* Trust indicators */}
+                <div className="flex items-center gap-2 text-gray-400 text-sm pt-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span>Tes données sont sécurisées et ne seront jamais partagées</span>
+                </div>
+
+                {/* Submit Button - Goes to Stripe (final step) */}
+                <button
+                  onClick={() => {
+                    // Validate form
+                    const errors: Record<string, string> = {};
+                    if (!accountForm.firstName.trim()) errors.firstName = 'Prénom requis';
+                    if (!accountForm.lastName.trim()) errors.lastName = 'Nom requis';
+                    if (!accountForm.email.trim()) errors.email = 'Email requis';
+                    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(accountForm.email)) errors.email = 'Email invalide';
+                    if (!accountForm.phone.trim()) errors.phone = 'Téléphone requis';
+                    if (!otpVerified) errors.phone = 'Vérifie ton numéro avec le code SMS';
+                    if (!acceptedTerms) errors.terms = 'Tu dois accepter les conditions';
+                    
+                    setAccountErrors(errors);
+                    
+                    if (Object.keys(errors).length === 0) {
+                      // TODO: Create account in backend
+                      console.log('Creating account:', accountForm);
+                      // Redirect to Stripe payment
+                      const items = selectedPrograms.join(',');
+                      const boostersParam = boostersEnabled ? '&boosters=true' : '';
+                      window.open(`https://buy.stripe.com/checkout?programs=${items}&total=${programsTotal}${boostersParam}&email=${encodeURIComponent(accountForm.email)}&name=${encodeURIComponent(accountForm.firstName + ' ' + accountForm.lastName)}`, '_blank');
+                    }
+                  }}
+                  disabled={!accountForm.firstName || !accountForm.lastName || !accountForm.email || !otpVerified || !acceptedTerms}
+                  className={`w-full py-4 px-8 rounded-xl text-lg font-bold transition-all mt-4 ${
+                    accountForm.firstName && accountForm.lastName && accountForm.email && otpVerified && acceptedTerms
+                      ? 'bg-[#00c2ff] hover:bg-[#00d4ff] text-white'
+                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  Finaliser mon accès
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Membership Plans Phase - NOW FIRST STEP after "Finaliser l'inscription" */}
+        {phase === 'membership-plans' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-full bg-[#0a0c10]"
+          >
+            {/* Header with Breadcrumb */}
+            <header className="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-sm border-b border-white/5 px-6 py-4 z-20">
+              <div className="max-w-6xl mx-auto flex items-center justify-between">
+                <Image 
+                  src="/brand/onboarding-logo.svg" 
+                  alt="Science Made Simple" 
+                  width={85} 
+                  height={85}
+                />
+                
+                {/* Progress Steps - 3 steps: Offre → Compte → Finaliser */}
+                <div className="flex items-center gap-3">
+                  {['Offre', 'Compte', 'Finaliser'].map((step, idx) => {
                     const isCompleted = idx < 0;
                     const isCurrent = idx === 0;
                     return (
@@ -1371,7 +1571,7 @@ export function OnboardingPopup({
                             {step}
                           </span>
                         </div>
-                        {idx < 1 && (
+                        {idx < 2 && (
                           <div className={`w-10 md:w-16 h-1.5 rounded-full ${
                             isCompleted ? 'bg-[#00c2ff]' : 'bg-gray-700'
                           }`} />
@@ -1382,7 +1582,7 @@ export function OnboardingPopup({
                 </div>
 
                 <button
-                  onClick={onComplete}
+                  onClick={() => setPhase('results')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   <X size={24} />
@@ -1392,7 +1592,7 @@ export function OnboardingPopup({
 
             {/* Urgency Banner */}
             <div className="bg-[#00c2ff] py-3 px-4">
-              <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-white">
+              <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-white">
                 <div className="flex items-center gap-2">
                   <Gift size={18} />
                   <span className="font-medium">Offre Spéciale -40%</span>
@@ -1411,16 +1611,16 @@ export function OnboardingPopup({
               </div>
             </div>
 
-            {/* Main Content - Slightly reduced width */}
-            <div className="w-full max-w-[95%] mx-auto px-6 py-10">
-              <div className="grid grid-cols-12 gap-6 h-full">
-                {/* Left Column: Programs - More Space */}
-                <div className="col-span-12 xl:col-span-9 space-y-6">
-              {/* Programs Section - 2 Column Grid */}
+            {/* Main Content */}
+            <div className="max-w-6xl mx-auto px-6 py-10">
+              <div className="grid lg:grid-cols-3 gap-10">
+                {/* Left Column: Programs & Boosters */}
+                <div className="lg:col-span-2 space-y-10">
+              {/* Programs Section */}
                   <section>
                     <h2 className="text-3xl font-bold !text-white mb-6">Choisis tes programmes</h2>
                     
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-3">
                       {programs.map((program) => {
                         const discountedPrice = Math.round(program.price * 0.6);
                         const discount = 40;
@@ -1457,128 +1657,97 @@ export function OnboardingPopup({
                     </div>
                         );
                       })}
-                    </div>
+                </div>
                   </section>
 
-                  {/* Boosters - Alone on one line */}
+              {/* Boosters Section */}
                   <section>
-                    <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4">
                       <h2 className="text-2xl font-bold !text-white">Boosters</h2>
                       <span className="text-sm text-white/50">Optionnel</span>
-                    </div>
-                    
-                    <div
-                      onClick={() => setBoostersEnabled(!boostersEnabled)}
+                </div>
+                
+                <div
+                  onClick={() => setBoostersEnabled(!boostersEnabled)}
                       className={`relative px-5 py-4 rounded-xl cursor-pointer transition-all border-2 ${
-                        boostersEnabled
+                    boostersEnabled
                           ? 'bg-[#00c2ff]/10 border-[#00c2ff]'
                           : 'bg-transparent border-white/10 hover:border-white/20'
-                      }`}
-                    >
+                  }`}
+                >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                           <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
-                            boostersEnabled 
+                        boostersEnabled 
                               ? 'bg-[#00c2ff] border-[#00c2ff]' 
                               : 'border-white/30 bg-transparent'
-                          }`}>
+                      }`}>
                             {boostersEnabled && <Check size={16} className="text-white" strokeWidth={3} />}
-                          </div>
-                          <div>
+                      </div>
+                      <div>
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-white" style={{ fontSize: '19px' }}>Pack Complet (4 Boosters)</span>
                               <span className="px-2 py-0.5 bg-[#00c2ff] text-white text-xs font-bold rounded-md">-25%</span>
-                            </div>
+                      </div>
                             <p className="text-sm !text-white/90 mt-0.5">Planification · Study Rooms · Suivi Apprentissage · Examen blanc</p>
-                          </div>
+                    </div>
                         </div>
                         
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2">
                           <span className="text-white/40 line-through text-sm">$60</span>
                           <span className="text-xl font-bold text-white">$45</span>
                           <span className="text-white/50 text-sm">/mois</span>
-                        </div>
                       </div>
                     </div>
+                  </div>
                   </section>
 
-                  {/* Benefits + Testimonials - Side by side */}
-                  <div className="grid grid-cols-2 gap-6">
-                    {/* Benefits */}
-                    <section>
-                      <h2 className="text-3xl font-bold !text-white mb-6">Paiement unique. Accès à vie.</h2>
-                      <div className="space-y-3">
-                        {[
-                          'Tu paies une fois, tu accèdes pour toujours.',
-                          'Mises à jour gratuites incluses à vie',
-                        ].map((benefit, i) => (
-                          <div key={i} className="flex items-start gap-2">
-                            <Check size={16} className="text-[#00c2ff] flex-shrink-0 mt-0.5" />
-                            <span className="text-white/90" style={{ fontSize: '14px' }}>{benefit}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
+                  {/* Benefits */}
+                  <section>
+                    <h3 className="font-bold !text-white mb-6" style={{ fontSize: '26px' }}>Paiement unique. Accès à vie.</h3>
+                    <div className="space-y-4">
+                      {[
+                        'Tu paies une fois, tu accèdes pour toujours.',
+                        'Mises à jour gratuites incluses à vie',
+                        '...',
+                        '...',
+                      ].map((benefit, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                          <Check size={20} className="text-[#00c2ff] flex-shrink-0" />
+                          <span className="text-white/90">{benefit}</span>
+                </div>
+                      ))}
+              </div>
+                  </section>
 
-                    {/* Testimonials */}
-                    <section>
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-3xl font-bold !text-white">Ils ont réussi avec SMS</h2>
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={() => setTestimonialIndex(prev => Math.max(0, prev - 1))}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors disabled:opacity-30"
-                            disabled={testimonialIndex === 0}
-                          >
-                            <ChevronLeft size={16} className="text-white" />
-                          </button>
+                  {/* FAQ */}
+                  <section>
+                    <h3 className="font-semibold !text-white mb-4" style={{ fontSize: '26px' }}>Questions fréquentes</h3>
+                    <div className="bg-[#12161a] rounded-2xl border border-white/10 p-4">
+                      {[
+                        { q: 'L\'accès est-il vraiment à vie ?', a: 'Oui, une fois que vous achetez un programme, vous y avez accès pour toujours. Cela inclut toutes les mises à jour futures du contenu.' },
+                        { q: 'Puis-je annuler les boosters à tout moment ?', a: 'Absolument. Le pack boosters est un abonnement mensuel sans engagement. Vous pouvez l\'annuler en un clic.' },
+                        { q: 'Comment fonctionne la garantie ?', a: 'Vous avez 14 jours pour tester nos cours. Si vous n\'êtes pas satisfait, nous vous remboursons intégralement.' },
+                      ].map((faq, i) => (
+                        <div key={i} className="border-b border-white/10 last:border-0">
                           <button
-                            onClick={() => setTestimonialIndex(prev => Math.min(Math.ceil(allTestimonials.length / 2) - 1, prev + 1))}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors disabled:opacity-30"
-                            disabled={testimonialIndex >= Math.ceil(allTestimonials.length / 2) - 1}
+                            onClick={() => setExpandedFaq(expandedFaq === `faq-${i}` ? null : `faq-${i}`)}
+                            className="w-full py-4 flex items-center justify-between text-left"
                           >
-                            <ChevronRight size={16} className="text-white" />
+                            <span className="font-medium text-white pr-4">{faq.q}</span>
+                            <ChevronDown className={`w-5 h-5 text-white/60 transition-transform ${expandedFaq === `faq-${i}` ? 'rotate-180' : ''}`} />
                           </button>
+                          {expandedFaq === `faq-${i}` && (
+                            <p className="pb-4 text-white/60 text-sm">{faq.a}</p>
+                          )}
                         </div>
-                      </div>
-                      <div className="overflow-hidden">
-                        <motion.div 
-                          className="flex gap-3"
-                          animate={{ x: -testimonialIndex * 100 + '%' }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        >
-                          {Array.from({ length: Math.ceil(allTestimonials.length / 2) }).map((_, pageIndex) => (
-                            <div key={pageIndex} className="min-w-full flex gap-3">
-                              {allTestimonials.slice(pageIndex * 2, pageIndex * 2 + 2).map((testimonial, i) => (
-                                <div key={i} className="flex-1 p-3 bg-[#12161a] rounded-xl border border-white/10">
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">
-                                      {testimonial.avatar}
-                                    </div>
-                                    <div>
-                                      <div className="font-semibold text-white text-sm">{testimonial.name}</div>
-                                      <div className="text-xs text-white/50">{testimonial.role}</div>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-0.5 mb-2">
-                                    {[...Array(5)].map((_, j) => (
-                                      <Star key={j} size={12} className="text-yellow-400 fill-yellow-400" />
-                                    ))}
-                                  </div>
-                                  <p className="!text-white/90 text-sm mb-2">"{testimonial.text}"</p>
-                                  <div className="text-xs text-[#00c2ff]">{testimonial.program}</div>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </motion.div>
-                      </div>
-                    </section>
-                  </div>
+                      ))}
+                    </div>
+                  </section>
                 </div>
 
-                {/* Right Column: Order Summary (Sticky) - Reduced Width */}
-                <div className="col-span-12 xl:col-span-3">
+                {/* Right Column: Order Summary (Sticky) */}
+                <div className="lg:col-span-1">
                   <div className="sticky top-24">
                     <div className="bg-[#12161a] rounded-2xl border border-white/10 overflow-hidden">
                       {/* Header */}
@@ -1646,15 +1815,7 @@ export function OnboardingPopup({
                       {/* CTA */}
                       <div className="p-5">
               <button
-                onClick={() => {
-                  // Save selected programs and boosters to localStorage for payment page
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem('sms_selected_programs', JSON.stringify(selectedPrograms));
-                    localStorage.setItem('sms_boosters_enabled', JSON.stringify(boostersEnabled));
-                  }
-                  // Redirect to payment page
-                  router.push('/payment');
-                }}
+                onClick={() => setPhase('account-creation')}
                 disabled={selectedPrograms.length === 0}
                           className={`w-full py-4 font-bold text-lg rounded-full flex items-center justify-center gap-2 transition-all ${
                             selectedPrograms.length === 0
@@ -1679,17 +1840,83 @@ export function OnboardingPopup({
                       </div>
                     </div>
 
+                    {/* Testimonials Carousel */}
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold !text-white">Ils ont réussi avec SMS</h3>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => setTestimonialIndex(prev => Math.max(0, prev - 1))}
+                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors disabled:opacity-30"
+                            disabled={testimonialIndex === 0}
+                          >
+                            <ChevronLeft size={16} className="text-white" />
+                          </button>
+                          <button 
+                            onClick={() => setTestimonialIndex(prev => Math.min(Math.ceil(allTestimonials.length / 2) - 1, prev + 1))}
+                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors disabled:opacity-30"
+                            disabled={testimonialIndex >= Math.ceil(allTestimonials.length / 2) - 1}
+                          >
+                            <ChevronRight size={16} className="text-white" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="overflow-hidden">
+                        <motion.div 
+                          className="flex gap-3"
+                          animate={{ x: -testimonialIndex * 100 + '%' }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        >
+                          {Array.from({ length: Math.ceil(allTestimonials.length / 2) }).map((_, pageIndex) => (
+                            <div key={pageIndex} className="min-w-full space-y-3">
+                              {allTestimonials.slice(pageIndex * 2, pageIndex * 2 + 2).map((testimonial, i) => (
+                                <div key={i} className="p-4 bg-[#12161a] rounded-xl border border-white/10">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">
+                                      {testimonial.avatar}
+                                    </div>
+                                    <div>
+                                      <div className="font-semibold text-white text-sm">{testimonial.name}</div>
+                                      <div className="text-xs text-white/50">{testimonial.role}</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-0.5 mb-2">
+                                    {[...Array(5)].map((_, j) => (
+                                      <Star key={j} size={12} className="text-yellow-400 fill-yellow-400" />
+                                    ))}
+                                  </div>
+                                  <p className="!text-white/90 text-sm mb-2">"{testimonial.text}"</p>
+                                  <div className="text-xs text-[#00c2ff]">{testimonial.program}</div>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </motion.div>
+                      </div>
+                      {/* Pagination dots */}
+                      <div className="flex justify-center gap-1.5 mt-3">
+                        {Array.from({ length: Math.ceil(allTestimonials.length / 2) }).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setTestimonialIndex(i)}
+                            className={`w-2 h-2 rounded-full transition-colors ${
+                              testimonialIndex === i ? 'bg-[#00c2ff]' : 'bg-white/20'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Floating WhatsApp Button - Inside popup, positioned absolute */}
+            {/* Floating WhatsApp Button - Bottom right on mobile, middle right on desktop */}
             <a
               href="https://wa.me/33612345678"
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute right-4 bottom-16 md:right-6 md:bottom-16 z-50 px-4 py-3 md:px-6 md:py-4 bg-[#25D366] rounded-full text-white font-semibold flex items-center gap-2 md:gap-3 hover:bg-[#20bd5a] transition-all shadow-lg shadow-[#25D366]/30 hover:scale-105 text-sm md:text-base"
+              className="fixed right-4 bottom-6 md:right-6 md:bottom-auto md:top-[60%] md:-translate-y-1/2 z-50 px-4 py-3 md:px-6 md:py-4 bg-[#25D366] rounded-full text-white font-semibold flex items-center gap-2 md:gap-3 hover:bg-[#20bd5a] transition-all shadow-lg shadow-[#25D366]/30 hover:scale-105 text-sm md:text-base"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 fill-current">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>

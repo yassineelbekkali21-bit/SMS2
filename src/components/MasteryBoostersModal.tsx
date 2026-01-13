@@ -10,8 +10,10 @@ import {
   Map,
   FileCheck,
   Users,
-  Play
+  Play,
+  MessageCircle
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Booster {
   id: string;
@@ -36,7 +38,7 @@ const boosters: Booster[] = [
     id: 'planner',
     title: 'Smart Planner',
     subtitle: 'IA qui planifie pour toi',
-    description: 'Planification automatique de tes révisions basée sur ton énergie et tes objectifs.',
+    description: 'Un planning intelligent qui s\'adapte à ton rythme et tes objectifs.\nMoins de stress, plus de régularité.',
     icon: Calendar,
     comingSoon: false,
     price: 0,
@@ -46,7 +48,7 @@ const boosters: Booster[] = [
     id: 'path',
     title: 'Learning Path Creator',
     subtitle: 'Parcours personnalisé',
-    description: 'Création automatique de parcours d\'apprentissage sur mesure.',
+    description: 'Crée des parcours personnalisés à partir de tes besoins et de tes cours.\nTu sais toujours quoi travailler, et dans quel ordre.',
     icon: Map,
     comingSoon: true,
     price: 12,
@@ -56,7 +58,7 @@ const boosters: Booster[] = [
     id: 'exams',
     title: 'Mock Exams',
     subtitle: 'Examens blancs IA',
-    description: 'Entraîne-toi avec des examens générés par l\'IA.',
+    description: 'Entraîne-toi dans des conditions proches de l\'examen.\nIdentifie tes lacunes avant le jour J.',
     icon: FileCheck,
     comingSoon: true,
     price: 8,
@@ -66,7 +68,7 @@ const boosters: Booster[] = [
     id: 'community',
     title: 'Study Community',
     subtitle: 'Apprends en groupe',
-    description: 'Rejoins une communauté avec accès à des mentors experts.',
+    description: 'Avance avec d\'autres étudiants et pose tes questions quand tu bloques.\nTu n\'es jamais seul face à une difficulté.',
     icon: Users,
     comingSoon: true,
     price: 4,
@@ -75,9 +77,9 @@ const boosters: Booster[] = [
 ];
 
 // Prix total si achetés séparément (avec prix originaux)
-const totalPrice = boosters.reduce((sum, b) => sum + b.originalPrice, 0); // 40€
+const totalPrice = 50; // Prix total initial
 // Prix du pack
-const packPrice = 19.99;
+const packPrice = 30;
 
 export function MasteryBoostersModal({ 
   isOpen, 
@@ -85,11 +87,11 @@ export function MasteryBoostersModal({
   onUnlock
 }: MasteryBoostersModalProps) {
 
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
+      {isOpen && (
       <motion.div
+        key="mastery-boosters-modal"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -101,42 +103,64 @@ export function MasteryBoostersModal({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="bg-white rounded-3xl max-w-7xl w-full mx-4 shadow-2xl overflow-hidden"
+          className="bg-[#0d1317] rounded-3xl w-[90%] max-w-7xl mx-auto shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
-          <div className="relative p-8 pb-6 border-b border-gray-100">
-            <div className="absolute top-6 right-6 flex items-center gap-3">
-              {/* Support WhatsApp */}
-              <a 
-                href="https://wa.me/33123456789?text=Bonjour%2C%20j%27ai%20une%20question%20sur%20les%20Mastery%20Boosters"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#25D366] hover:bg-[#20BA5A] text-white font-semibold rounded-xl transition-colors text-base"
-              >
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                <span>Support WhatsApp</span>
-              </a>
+          {/* Header - Style Diagnostic/Onboarding */}
+          <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-white/5 px-6 py-4 z-20">
+            <div className="flex items-center justify-between">
+              <Image 
+                src="/brand/onboarding-logo.svg" 
+                alt="Science Made Simple" 
+                width={85} 
+                height={85}
+              />
               
-              {/* Bouton fermer */}
               <button
                 onClick={onClose}
-                className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
+                className="text-gray-400 hover:text-white transition-colors"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
+          </header>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-              Des bases solides. Une progression accélérée.
-            </h1>
-          </div>
+          {/* Content */}
+          <div className="px-6 pt-8 pb-6">
+            {/* Title */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <h1 
+                  className="text-3xl md:text-4xl font-bold !text-white leading-tight flex-1"
+                  style={{ fontFamily: 'var(--font-parafina), system-ui', fontWeight: 900 }}
+                >
+                  DES BASES SOLIDES.<br />UNE PROGRESSION ACCÉLÉRÉE.
+                </h1>
+                
+                {/* Social Proof - Right aligned */}
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="flex -space-x-2">
+                    <div className="w-10 h-10 rounded-full bg-blue-500 border-2 border-[#0d1317]"></div>
+                    <div className="w-10 h-10 rounded-full bg-purple-500 border-2 border-[#0d1317]"></div>
+                    <div className="w-10 h-10 rounded-full bg-pink-500 border-2 border-[#0d1317]"></div>
+                    <div className="w-10 h-10 rounded-full bg-orange-500 border-2 border-[#0d1317]"></div>
+                  </div>
+                  
+                  <p className="text-sm whitespace-nowrap">
+                    <span className="font-bold text-white">+2,400</span> <span style={{ color: 'rgba(255, 255, 255, 0.8)' }}>étudiants ont déjà décollé avec nous</span>
+                  </p>
+                </div>
+              </div>
+              <p 
+                className="text-base max-w-5xl whitespace-pre-line"
+                style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.9)' }}
+              >
+                Tu les actives uniquement si et quand tu en as besoin, selon ta façon d'apprendre.
+              </p>
+            </div>
 
-          {/* Grid 2x2 */}
-          <div className="p-8">
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Grid 2x2 - Dark Cards */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
               {boosters.map((booster, index) => {
                 const Icon = booster.icon;
                 
@@ -146,56 +170,54 @@ export function MasteryBoostersModal({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white border border-gray-200 rounded-2xl overflow-hidden group hover:border-gray-300 hover:shadow-lg transition-all"
+                    className="bg-[#12161a] border border-white/10 rounded-2xl overflow-hidden group hover:border-white/20 hover:shadow-lg transition-all"
                   >
                     {/* Card Header */}
                     <div className="p-5 pb-3">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-[#00c2ff] flex items-center justify-center">
                             <Icon size={20} className="text-white" />
                           </div>
-                          <div className="h-6 w-px bg-gray-200" />
-                          <span className="text-gray-400 text-sm font-medium">SMS</span>
+                          <div className="h-6 w-px bg-white/20" />
+                          <span className="font-medium" style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.95)' }}>{booster.title}</span>
                         </div>
                         
                         {/* Prix individuel */}
                         <div className="text-right">
                           {booster.comingSoon ? (
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-400 text-sm line-through">${booster.originalPrice}</span>
-                              <span className="text-gray-900 text-sm font-bold">${booster.price}</span>
-                              <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase rounded">
+                              <span className="text-white/40 line-through" style={{ fontSize: '14px' }}>${booster.originalPrice}</span>
+                              <span className="text-white font-bold" style={{ fontSize: '14px' }}>${booster.price}</span>
+                              <span className="ml-2 px-2 py-0.5 bg-white/10 text-white/70 text-[10px] font-bold uppercase rounded">
                                 Bientôt
                               </span>
                             </div>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-400 text-sm line-through">${booster.originalPrice}</span>
-                              <span className="text-[#00c2ff] text-sm font-bold">Gratuit</span>
+                              <span className="text-white/40 line-through" style={{ fontSize: '14px' }}>${booster.originalPrice}</span>
+                              <span className="text-[#00c2ff] font-bold" style={{ fontSize: '14px' }}>Gratuit</span>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">{booster.title}</h3>
-                      <p className="text-gray-500 text-sm">{booster.description}</p>
+                      <p className="whitespace-pre-line" style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '12px' }}>{booster.description}</p>
                     </div>
 
                     {/* Visual Preview - Video */}
                     <div 
-                      className="relative h-36 bg-gradient-to-br from-gray-100 to-gray-200 mx-4 mb-4 rounded-xl overflow-hidden group-hover:from-gray-200 group-hover:to-gray-300 transition-colors cursor-pointer"
+                      className="relative h-36 bg-gradient-to-br from-[#1a1f24] to-[#0f1418] mx-4 mb-4 rounded-xl overflow-hidden group-hover:from-[#1f252a] group-hover:to-[#14191d] transition-colors cursor-pointer border border-white/5"
                       onClick={() => {
-                        // Ouvrir la vidéo de démo
                         console.log(`Voir la démo de ${booster.title}`);
                       }}
                     >
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                            <Play size={20} className="text-gray-900 ml-1" fill="currentColor" />
+                          <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                            <Play size={20} className="text-white ml-1" fill="currentColor" />
                           </div>
-                          <p className="text-gray-500 text-sm font-medium">Voir la démo</p>
+                          <p className="text-white/70 text-sm font-medium">Voir comment ça marche</p>
                         </div>
                       </div>
                     </div>
@@ -204,21 +226,18 @@ export function MasteryBoostersModal({
               })}
             </div>
 
-            {/* Pack CTA - Style exact du process de paiement */}
-            <div className="mt-8">
-              <div className="bg-[#1E252E] rounded-2xl p-6 shadow-lg">
+            {/* Pack CTA - Dark Style */}
+            <div className="mb-0">
+              <div className="bg-[#1a1f24] border border-white/10 rounded-2xl p-6 shadow-lg">
                 <div className="flex items-start">
-                  {/* Contenu principal */}
                   <div className="flex-1">
-                    {/* Titre + Badge */}
                     <div className="flex items-center gap-3 mb-4">
-                      <h3 className="text-xl font-semibold" style={{ color: '#FFFFFF' }}>Pack Complet (4 Boosters)</h3>
-                      <span className="px-2.5 py-1 bg-[#404B57] text-white text-xs font-bold rounded">
-                        -50%
+                      <h3 className="text-xl font-semibold !text-white">Pack Complet (4 Boosters)</h3>
+                      <span className="px-2.5 py-1 bg-white/10 text-white text-xs font-bold rounded flex-shrink-0">
+                        -40%
                       </span>
                     </div>
                     
-                    {/* Prix */}
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                       <div className="flex items-center gap-3 flex-wrap">
                         <span 
@@ -234,13 +253,11 @@ export function MasteryBoostersModal({
                           ${totalPrice}
                         </span>
                         <span className="text-white text-3xl font-bold">${packPrice}</span>
-                        <span className="text-sm" style={{ color: '#A6AAAD' }}>par mois · sans engagement</span>
+                        <span className="text-sm text-white/60">par mois · Résiliable à tout moment</span>
                       </div>
                       
-                      {/* Bouton CTA Paiement */}
                       <button
                         onClick={() => {
-                          // Redirection vers le process de paiement
                           onUnlock?.('pack-all', packPrice);
                           window.location.href = '/checkout?pack=mastery-boosters';
                         }}
@@ -254,27 +271,22 @@ export function MasteryBoostersModal({
                 </div>
               </div>
             </div>
-
-            {/* Social Proof */}
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <div className="flex items-center justify-center gap-3">
-                {/* Cercles colorés qui se chevauchent */}
-                <div className="flex items-center -space-x-2">
-                  <div className="w-10 h-10 rounded-full bg-blue-500 border-2 border-white"></div>
-                  <div className="w-10 h-10 rounded-full bg-purple-500 border-2 border-white"></div>
-                  <div className="w-10 h-10 rounded-full bg-pink-500 border-2 border-white"></div>
-                  <div className="w-10 h-10 rounded-full bg-orange-500 border-2 border-white"></div>
-                </div>
-                
-                {/* Texte social proof */}
-                <p className="text-gray-700 text-sm">
-                  <span className="font-bold text-gray-900">+2,400</span> étudiants ont déjà décollé avec nous
-                </p>
-              </div>
-            </div>
           </div>
         </motion.div>
+
+        {/* Bouton WhatsApp - Style DiagnosticFlow */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          onClick={() => window.open('https://wa.me/32477025622', '_blank')}
+          className="fixed bottom-32 md:bottom-40 right-6 z-50 flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-5 py-4 rounded-full shadow-lg shadow-green-500/30 transition-all hover:scale-105 font-medium text-base"
+        >
+          <MessageCircle size={22} className="flex-shrink-0" />
+          <span>On t'écoute</span>
+        </motion.button>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 }

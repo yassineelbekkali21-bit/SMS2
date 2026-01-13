@@ -12,8 +12,10 @@ import {
   ArrowRight,
   HelpCircle,
   ChevronDown,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 // ============================================================================
 // TYPES
@@ -343,6 +345,7 @@ function FAQItemComponent({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
 // MAIN PAGE
 // ============================================================================
 export default function PaymentPage() {
+  const router = useRouter();
   // Pre-select recommended programs
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>(
     PROGRAMS.filter(p => p.recommended).map(p => p.id)
@@ -350,6 +353,14 @@ export default function PaymentPage() {
   const [boosterSelected, setBoosterSelected] = useState(false);
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  const handleClose = () => {
+    // Set activeSection to 'courses' in localStorage before redirect
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('activeSection', 'courses');
+    }
+    router.push('/dashboard');
+  };
 
   const toggleProgram = (id: string) => {
     setSelectedPrograms(prev => 
@@ -390,9 +401,17 @@ export default function PaymentPage() {
       <header className="py-6 px-6 border-b border-white/5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Image src="/brand/sms-logo.svg" alt="SMS" width={120} height={40} className="h-10 w-auto brightness-0 invert" />
-          <div className="flex items-center gap-2 text-sm text-white/60">
-            <Lock size={14} />
-            Paiement sécurisé
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-white/60">
+              <Lock size={14} />
+              Paiement sécurisé
+            </div>
+            <button
+              onClick={handleClose}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white"
+            >
+              <X size={20} />
+            </button>
           </div>
         </div>
       </header>

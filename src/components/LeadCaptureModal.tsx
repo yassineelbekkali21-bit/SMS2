@@ -18,11 +18,12 @@ interface LeadCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  allowClose?: boolean;
 }
 
 type ModalStep = 'form' | 'otp' | 'success';
 
-export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModalProps) {
+export function LeadCaptureModal({ isOpen, onClose, onSuccess, allowClose = true }: LeadCaptureModalProps) {
   const [step, setStep] = useState<ModalStep>('form');
   const [formData, setFormData] = useState({
     firstName: '',
@@ -213,7 +214,7 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="absolute inset-0 bg-black/80 backdrop-blur-md"
-          onClick={onClose}
+          onClick={allowClose ? onClose : undefined}
         />
 
         {/* Modal - Loop Style */}
@@ -226,12 +227,14 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
         >
           
           {/* Close Button - Loop style */}
-          <button
-            onClick={onClose}
-            className="absolute top-6 right-6 z-10 text-gray-500 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {allowClose && (
+            <button
+              onClick={onClose}
+              className="absolute top-6 right-6 z-10 text-gray-500 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
 
           {/* Back Button (OTP step only) */}
           {step === 'otp' && (
@@ -369,9 +372,9 @@ export function LeadCaptureModal({ isOpen, onClose, onSuccess }: LeadCaptureModa
                 <button
                   type="submit"
                   disabled={otp.some(d => !d) || isSubmitting}
-                  className={`w-full py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 ${
+                  className={`w-full py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-3 ${
                     otp.every(d => d) && !isSubmitting
-                      ? 'bg-gradient-to-r from-[#00c2ff] to-blue-600 hover:from-[#3ab5dc] hover:to-blue-700 text-white shadow-lg shadow-blue-500/25'
+                      ? 'bg-[#00c2ff] hover:bg-[#00b0e8] text-white shadow-lg shadow-[#00c2ff]/25'
                       : 'bg-white/5 !text-white/30 cursor-not-allowed border border-white/10'
                   }`}
                 >

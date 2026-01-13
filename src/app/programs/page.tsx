@@ -597,7 +597,7 @@ export default function ProgramsPage() {
             MASTERY PROGRAMS
           </h1>
           <p className="text-xl text-white/60 max-w-2xl mx-auto mb-6">
-            Débloque un accès à vie. Génère autant de parcours que nécessaire.
+            Débloque un accès à vie.
           </p>
           
           {/* Value Props */}

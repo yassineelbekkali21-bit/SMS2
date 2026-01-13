@@ -379,6 +379,12 @@ export function StrategicPlannerCompact({
   const [draggedSession, setDraggedSession] = useState<{ sessionId: string; fromDay: string | number } | null>(null);
   const [dragOverDay, setDragOverDay] = useState<string | number | null>(null);
   const [expandedTrack, setExpandedTrack] = useState<string | null>(null);
+  
+  // État pour les sessions manquées (à replanifier)
+  const [missedSessions, setMissedSessions] = useState([
+    { id: 'missed-1', lessonTitle: 'Diffraction des ondes', trackTitle: 'Ondes mécaniques' },
+    { id: 'missed-2', lessonTitle: 'Théorème de comparaison', trackTitle: 'Suites et Limites' },
+  ]);
   // Helper function to map course to track ID
   const mapCourseToTrackId = (course: Course | null | undefined): string | null => {
     if (!course) return null;
@@ -450,17 +456,39 @@ export function StrategicPlannerCompact({
     setWeekSessions(prev => {
       const newSessions = prev.map(day => ({ ...day, sessions: [...day.sessions] }));
       
-      // Trouver et retirer la session du jour source
-      const fromDayIndex = newSessions.findIndex(d => d.day === draggedSession.fromDay);
       const toDayIndex = newSessions.findIndex(d => d.day === toDay);
+      if (toDayIndex === -1) return prev;
       
-      if (fromDayIndex === -1 || toDayIndex === -1) return prev;
-      
-      const sessionIndex = newSessions[fromDayIndex].sessions.findIndex(s => s.id === draggedSession.sessionId);
-      if (sessionIndex === -1) return prev;
-      
-      const [session] = newSessions[fromDayIndex].sessions.splice(sessionIndex, 1);
-      newSessions[toDayIndex].sessions.push(session);
+      // Si la session vient de "missed" (sessions à replanifier)
+      if (draggedSession.fromDay === 'missed') {
+        // Trouver la session dans l'état actuel
+        setMissedSessions(prev => {
+          const session = prev.find(s => s.id === draggedSession.sessionId);
+          if (session) {
+            // Créer une nouvelle session avec status 'upcoming' dans le calendrier
+            const newSession = {
+              id: draggedSession.sessionId,
+              trackTitle: session.trackTitle,
+              lessonTitle: session.lessonTitle,
+              status: 'upcoming' as const
+            };
+            newSessions[toDayIndex].sessions.push(newSession);
+          }
+          // Retirer la session des sessions manquées
+          return prev.filter(s => s.id !== draggedSession.sessionId);
+        });
+      } else {
+        // Trouver et retirer la session du jour source
+        const fromDayIndex = newSessions.findIndex(d => d.day === draggedSession.fromDay);
+        
+        if (fromDayIndex === -1) return prev;
+        
+        const sessionIndex = newSessions[fromDayIndex].sessions.findIndex(s => s.id === draggedSession.sessionId);
+        if (sessionIndex === -1) return prev;
+        
+        const [session] = newSessions[fromDayIndex].sessions.splice(sessionIndex, 1);
+        newSessions[toDayIndex].sessions.push(session);
+      }
       
       return newSessions;
     });
@@ -586,7 +614,7 @@ export function StrategicPlannerCompact({
     { id: 3, title: 'Échéances', icon: Calendar, description: 'Dates d\'examen' },
   ];
 
-  const missedCount = mockMissedSessions.length;
+  const missedCount = missedSessions.length;
   const tracksWithDelay = mockLearningTracks.filter(t => !t.isOnTrack).length;
 
   return (
@@ -738,58 +766,58 @@ export function StrategicPlannerCompact({
                         {/* LEFT COLUMN: Lessons */}
                         <div className="space-y-4">
                           {/* Unscheduled lessons - À PLANIFIER */}
-                          {unscheduledLessons.length > 0 && (
+                        {unscheduledLessons.length > 0 && (
                             <div className="mb-6">
-                              <div className="flex items-center gap-3 mb-3">
-                                <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-orange-100 text-orange-600">
-                                  À planifier
-                                </div>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                {unscheduledLessons.map((lesson) => (
-                                  <div 
-                                    key={lesson.id}
-                                    className="flex items-center gap-4 p-4 rounded-xl bg-orange-50 border border-orange-200"
-                                  >
-                                    <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 bg-orange-100">
-                                      <AlertTriangle size={18} className="text-orange-500" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-base font-semibold text-gray-800">{lesson.title}</p>
-                                      <p className="text-sm text-gray-500">Leçon {lesson.lessonNumber} • {lesson.duration}</p>
-                                    </div>
-                                    <button className="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors">
-                                      Planifier
-                                    </button>
-                                  </div>
-                                ))}
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-orange-100 text-orange-600">
+                                À planifier
                               </div>
                             </div>
-                          )}
+                            
+                              <div className="space-y-2">
+                              {unscheduledLessons.map((lesson) => (
+                                <div 
+                                  key={lesson.id}
+                                  className="flex items-center gap-4 p-4 rounded-xl bg-orange-50 border border-orange-200"
+                                >
+                                    <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 bg-orange-100">
+                                    <AlertTriangle size={18} className="text-orange-500" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                      <p className="text-base font-semibold text-gray-800">{lesson.title}</p>
+                                      <p className="text-sm text-gray-500">Leçon {lesson.lessonNumber} • {lesson.duration}</p>
+                                  </div>
+                                  <button className="px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors">
+                                    Planifier
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                           {/* Scheduled lessons - Option A style with date */}
-                          {Object.entries(groupedByWeek).sort(([a], [b]) => a.localeCompare(b)).map(([weekKey, weekLessons]) => (
-                            <div key={weekKey}>
-                              {/* Week header */}
-                              <div className="flex items-center gap-3 mb-3">
-                                <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-gray-100 text-gray-600">
-                                  {formatWeekLabel(weekKey)}
-                                </div>
+                        {Object.entries(groupedByWeek).sort(([a], [b]) => a.localeCompare(b)).map(([weekKey, weekLessons]) => (
+                          <div key={weekKey}>
+                            {/* Week header */}
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-gray-100 text-gray-600">
+                                {formatWeekLabel(weekKey)}
                               </div>
-                              
+                            </div>
+                            
                               {/* Lessons - Clean style like planningbis */}
                               <div className="divide-y divide-gray-100 rounded-xl overflow-hidden bg-white border border-gray-200">
-                                {weekLessons.sort((a, b) => (a.scheduledDate?.getTime() || 0) - (b.scheduledDate?.getTime() || 0)).map((lesson) => (
-                                  <div 
-                                    key={lesson.id}
-                                    onClick={() => {
-                                      if (onNavigateToCourse && selectedTrackPlanning) {
-                                        onNavigateToCourse(selectedTrackPlanning);
-                                      }
-                                    }}
+                              {weekLessons.sort((a, b) => (a.scheduledDate?.getTime() || 0) - (b.scheduledDate?.getTime() || 0)).map((lesson) => (
+                                <div 
+                                  key={lesson.id}
+                                  onClick={() => {
+                                    if (onNavigateToCourse && selectedTrackPlanning) {
+                                      onNavigateToCourse(selectedTrackPlanning);
+                                    }
+                                  }}
                                     className={`flex items-center gap-5 px-5 py-4 cursor-pointer transition-all ${
-                                      lesson.status === 'current' 
+                                    lesson.status === 'current' 
                                         ? 'bg-[#00c2ff]/5' 
                                         : 'hover:bg-gray-50'
                                     }`}
@@ -815,75 +843,75 @@ export function StrategicPlannerCompact({
 
                                     {/* Status Indicator */}
                                     <div className="flex-shrink-0">
-                                      <div 
+                                  <div 
                                         className="w-10 h-10 rounded-full flex items-center justify-center"
-                                        style={{
-                                          backgroundColor: lesson.status === 'completed' 
+                                    style={{
+                                      backgroundColor: lesson.status === 'completed' 
                                             ? '#1f2937' 
-                                            : lesson.status === 'current'
+                                        : lesson.status === 'current'
                                             ? '#00c2ff'
                                             : '#f3f4f6',
                                           border: lesson.status === 'upcoming' ? '2px solid #e5e7eb' : 'none'
-                                        }}
-                                      >
-                                        {lesson.status === 'completed' ? (
+                                    }}
+                                  >
+                                    {lesson.status === 'completed' ? (
                                           <Check size={18} className="text-white" />
-                                        ) : lesson.status === 'current' ? (
+                                    ) : lesson.status === 'current' ? (
                                           <Play size={16} className="text-white ml-0.5" fill="white" />
-                                        ) : (
+                                    ) : (
                                           <Clock size={14} className="text-gray-400" />
-                                        )}
+                                    )}
                                       </div>
-                                    </div>
+                                  </div>
 
                                     {/* Lesson Info */}
-                                    <div className="flex-1 min-w-0">
+                                  <div className="flex-1 min-w-0">
                                       <p className={`font-semibold mb-0.5 ${
                                         lesson.status === 'completed' ? 'text-gray-400' : 'text-gray-900'
                                       }`}>
-                                        {lesson.title}
-                                      </p>
-                                      <p className="text-sm text-gray-500">
+                                      {lesson.title}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
                                         Leçon {lesson.lessonNumber} · {lesson.duration}
-                                      </p>
-                                    </div>
+                                    </p>
+                                  </div>
 
                                     {/* CTA */}
                                     <div className="flex-shrink-0">
-                                      {lesson.status === 'current' && (
-                                        <button 
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (onNavigateToCourse && selectedTrackPlanning) {
-                                              onNavigateToCourse(selectedTrackPlanning);
-                                            }
-                                          }}
+                                    {lesson.status === 'current' && (
+                                      <button 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (onNavigateToCourse && selectedTrackPlanning) {
+                                            onNavigateToCourse(selectedTrackPlanning);
+                                          }
+                                        }}
                                           className="px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:brightness-110"
                                           style={{ backgroundColor: '#00c2ff', color: '#ffffff' }}
-                                        >
-                                          <Play size={14} fill="#ffffff" />
-                                          Continuer
-                                        </button>
-                                      )}
-                                      {lesson.status === 'completed' && (
-                                        <button 
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (onNavigateToCourse && selectedTrackPlanning) {
-                                              onNavigateToCourse(selectedTrackPlanning);
-                                            }
-                                          }}
+                                      >
+                                        <Play size={14} fill="#ffffff" />
+                                        Continuer
+                                      </button>
+                                    )}
+                                    {lesson.status === 'completed' && (
+                                      <button 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (onNavigateToCourse && selectedTrackPlanning) {
+                                            onNavigateToCourse(selectedTrackPlanning);
+                                          }
+                                        }}
                                           className="px-5 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all"
-                                        >
-                                          Revoir
-                                        </button>
-                                      )}
-                                    </div>
+                                      >
+                                        Revoir
+                                      </button>
+                                    )}
                                   </div>
-                                ))}
-                              </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          </div>
+                        ))}
                         </div>
 
                         {/* RIGHT COLUMN: Sidebar - Dark with subtle blue touches */}
@@ -895,7 +923,7 @@ export function StrategicPlannerCompact({
                               <div className="flex items-center gap-2 mb-3">
                                 <Target size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
                                 <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.85)' }}>Objectif</span>
-                              </div>
+                      </div>
                               <div className="flex items-baseline gap-2 mb-2">
                                 <span className="text-4xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
                                   {Math.max(0, Math.ceil((track.examDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))}
@@ -1296,19 +1324,17 @@ export function StrategicPlannerCompact({
                             <ChevronRight size={18} style={{ color: 'rgba(255,255,255,0.6)' }} />
                           </button>
                         </div>
-                        <div>
+                      <div>
                           <h2 className="text-2xl font-bold" style={{ color: '#f5f5f5' }}>
                             {currentWeekOffset === 0 ? 'Cette semaine' : currentWeekOffset === 1 ? 'Semaine prochaine' : currentWeekOffset === -1 ? 'Semaine dernière' : `Semaine ${currentWeekOffset > 0 ? '+' : ''}${currentWeekOffset}`}
                           </h2>
-                          {/* Week summary macro view */}
+                        {/* Week summary macro view */}
                           <p className="text-base mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
                             <span style={{ fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>{weekSessions.reduce((acc, d) => acc + d.sessions.length, 0)} leçons prévues</span>
-                            <span className="mx-2" style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
+                          <span className="mx-2" style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
                             <span style={{ color: 'rgba(72,198,237,0.9)', fontWeight: 500 }}>{weekSessions.reduce((acc, d) => acc + d.sessions.filter(s => s.status === 'completed').length, 0)} déjà terminées</span>
-                            <span className="mx-2" style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
-                            <span style={{ color: 'rgba(255,255,255,0.4)' }}>{missedCount} en retard</span>
-                          </p>
-                        </div>
+                        </p>
+                      </div>
                       </div>
                       <div className="flex items-center gap-3">
                         {currentWeekOffset !== 0 && (
@@ -1320,20 +1346,20 @@ export function StrategicPlannerCompact({
                             Aujourd'hui
                           </button>
                         )}
-                        <div className="flex items-center gap-1 p-1 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
-                          {(['day', 'week', 'month'] as const).map((view) => (
-                            <button
-                              key={view}
-                              onClick={() => setCalendarView(view)}
-                              className="px-4 py-2 rounded-full text-sm font-medium transition-all"
-                              style={{
-                                backgroundColor: calendarView === view ? '#ffffff' : 'transparent',
-                                color: calendarView === view ? '#0d1317' : 'rgba(255,255,255,0.6)'
-                              }}
-                            >
-                              {view === 'day' ? 'Jour' : view === 'week' ? 'Sem' : 'Mois'}
-                            </button>
-                          ))}
+                      <div className="flex items-center gap-1 p-1 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+                        {(['day', 'week', 'month'] as const).map((view) => (
+                          <button
+                            key={view}
+                            onClick={() => setCalendarView(view)}
+                            className="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            style={{
+                              backgroundColor: calendarView === view ? '#ffffff' : 'transparent',
+                              color: calendarView === view ? '#0d1317' : 'rgba(255,255,255,0.6)'
+                            }}
+                          >
+                            {view === 'day' ? 'Jour' : view === 'week' ? 'Sem' : 'Mois'}
+                          </button>
+                        ))}
                         </div>
                       </div>
                     </div>
@@ -1343,8 +1369,8 @@ export function StrategicPlannerCompact({
                     <div className="grid grid-cols-7 gap-4 mb-4">
                       {weekSessions.map((day, idx) => (
                         <div key={day.day} className="text-center">
-                          <p className="text-base font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>{day.day}</p>
-                          <p className="text-2xl font-bold" style={{ color: idx === 0 ? '#f5f5f5' : 'rgba(255,255,255,0.7)' }}>{day.date}</p>
+                          <p className="text-base font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{day.day}</p>
+                          <p className="text-2xl font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>{day.date}</p>
                           {idx === 0 && (
                             <span 
                               className="inline-block px-3 py-1 text-sm font-semibold rounded-full mt-2"
@@ -1415,18 +1441,18 @@ export function StrategicPlannerCompact({
                                     )}
                                     <span 
                                       className="text-sm font-semibold uppercase"
-                                      style={{ color: session.status === 'completed' ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.5)' }}
+                                      style={{ color: 'rgba(255,255,255,0.9)' }}
                                     >
                                       {session.status === 'completed' ? 'Fait' : 'À faire'}
                                     </span>
                                   </div>
                                   <p 
                                     className="text-base font-semibold line-clamp-2"
-                                    style={{ color: session.status === 'completed' ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.95)' }}
+                                    style={{ color: '#ffffff' }}
                                   >
                                     {session.lessonTitle}
                                   </p>
-                                  <p className="text-sm mt-1 truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{session.trackTitle}</p>
+                                  <p className="text-sm mt-1 truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>{session.trackTitle}</p>
                                   
                                   {/* Play button for incomplete sessions */}
                                   {session.status !== 'completed' && (
@@ -1466,26 +1492,21 @@ export function StrategicPlannerCompact({
                     {/* Sessions à replanifier - Draggable */}
                     {missedCount > 0 && (
                       <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(249,115,22,0.15)' }}>
-                              <AlertTriangle size={16} style={{ color: '#f97316' }} />
-                            </div>
-                            <div>
-                              <h3 className="text-base font-semibold" style={{ color: '#f5f5f5' }}>Sessions à replanifier</h3>
-                              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>Drag&drop pour rattraper ton retard</p>
-                            </div>
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(249,115,22,0.15)' }}>
+                            <AlertTriangle size={16} style={{ color: '#f97316' }} />
                           </div>
-                          <span className="px-2.5 py-1 rounded-full text-sm font-semibold" style={{ backgroundColor: 'rgba(249,115,22,0.15)', color: '#f97316' }}>
-                            {missedCount} session{missedCount > 1 ? 's' : ''}
-                          </span>
+                          <div className="flex items-center gap-4">
+                            <h3 className="text-base font-semibold" style={{ color: '#ffffff' }}>Sessions à replanifier</h3>
+                            <span className="px-2.5 py-1 rounded-full text-sm font-semibold" style={{ backgroundColor: '#f97316', color: '#ffffff' }}>
+                              {missedCount} session{missedCount > 1 ? 's' : ''}
+                            </span>
+                          </div>
+                          <div className="flex-1" />
                         </div>
+                        <p className="text-sm mb-3 ml-11" style={{ color: 'rgba(255,255,255,0.8)' }}>Drag&drop pour rattraper ton retard</p>
                         <div className="flex flex-wrap gap-3">
-                          {/* Mock missed sessions - would come from real data */}
-                          {[
-                            { id: 'missed-1', lessonTitle: 'Diffraction des ondes', trackTitle: 'Ondes mécaniques' },
-                            { id: 'missed-2', lessonTitle: 'Théorème de comparaison', trackTitle: 'Suites et Limites' },
-                          ].slice(0, missedCount).map((session) => (
+                          {missedSessions.map((session) => (
                             <div
                               key={session.id}
                               draggable
@@ -1498,7 +1519,7 @@ export function StrategicPlannerCompact({
                               }}
                             >
                               <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>{session.lessonTitle}</p>
-                              <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{session.trackTitle}</p>
+                              <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.85)' }}>{session.trackTitle}</p>
                             </div>
                           ))}
                         </div>
@@ -1705,8 +1726,8 @@ export function StrategicPlannerCompact({
               {/* LEARNING TRACKS - Light mode, Grid 3 columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {mockLearningTracks.map((track, idx) => (
-                  <motion.div
-                    key={track.id}
+                      <motion.div
+                        key={track.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.08, duration: 0.4 }}
@@ -1730,9 +1751,9 @@ export function StrategicPlannerCompact({
                       }}
                     />
                     
-                    <div className="p-5">
+                        <div className="p-5">
                       {/* Header row - Title left, Progress ring right */}
-                      <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-start justify-between mb-4">
                         {/* Left side - Title & info */}
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="text-lg font-bold text-gray-900 mb-0.5 truncate">
@@ -1741,7 +1762,7 @@ export function StrategicPlannerCompact({
                           <p className="text-sm text-gray-500 mb-3">
                             {track.programme}
                           </p>
-                          
+
                           {/* Status badge */}
                           <div className="mb-3">
                             {!track.isOnTrack ? (
@@ -1763,19 +1784,19 @@ export function StrategicPlannerCompact({
 
                           {/* Info row */}
                           <div className="flex items-center gap-3 text-xs text-gray-500">
-                            {track.examDate && (
+                              {track.examDate && (
                               <div className="flex items-center gap-1.5">
                                 <Calendar size={12} className="text-gray-400" />
                                 <span>
                                   <span className="font-semibold text-gray-700">{formatDate(track.examDate)}</span>
                                 </span>
                               </div>
-                            )}
-                            {track.sessionsThisWeek > 0 && (
+                              )}
+                              {track.sessionsThisWeek > 0 && (
                               <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600">
                                 {track.sessionsThisWeek}/sem
-                              </span>
-                            )}
+                                </span>
+                              )}
                           </div>
                         </div>
 
@@ -1803,9 +1824,9 @@ export function StrategicPlannerCompact({
                               {track.progress}
                             </span>
                             <span className="text-[9px] text-gray-400">%</span>
-                          </div>
-                        </div>
-                      </div>
+                                      </div>
+                                      </div>
+                                    </div>
 
                       {/* Separator */}
                       <div className="border-t border-gray-100 pt-4 mb-4"></div>
@@ -1819,46 +1840,46 @@ export function StrategicPlannerCompact({
                           <p className="text-sm font-medium truncate text-gray-700">
                             {track.currentChapter}
                           </p>
-                        </div>
-                      )}
+                                    </div>
+                                  )}
 
                       {/* CTAs - Two buttons */}
                       <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (onNavigateToCourse) onNavigateToCourse(track.id);
-                          }}
+                            <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (onNavigateToCourse) onNavigateToCourse(track.id);
+                                    }}
                           className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-gray-900 text-white hover:bg-gray-800"
-                        >
+                                  >
                           <Play size={15} />
-                          {track.progress > 0 ? 'Continuer' : 'Commencer'}
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTrackPlanning(track.id);
-                            setTimeout(() => {
-                              const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
-                              if (scrollContainer) {
-                                scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
-                              }
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }, 50);
-                          }}
+                                    {track.progress > 0 ? 'Continuer' : 'Commencer'}
+                                  </button>
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedTrackPlanning(track.id);
+                                      setTimeout(() => {
+                                        const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
+                                        if (scrollContainer) {
+                                          scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }
+                                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                                      }, 50);
+                                    }}
                           className="px-5 py-3 rounded-full text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-90"
                           style={{
                             backgroundColor: '#00c2ff',
                             color: '#ffffff'
                           }}
-                        >
+                                  >
                           Planification
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
               </>
               )}
             </motion.div>

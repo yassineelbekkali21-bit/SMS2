@@ -51,7 +51,9 @@ import {
   Paperclip,
   Mic,
   Send,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Rocket,
+  ArrowRight
 } from 'lucide-react';
 import { 
   DndContext, 
@@ -115,9 +117,11 @@ import { ProgressionBonusService } from '@/lib/progression-bonus-service';
 import { StudyRoomButton } from './StudyRoomButton';
 import { TrendBadgeComponent } from './TrendBadge';
 import { NetflixCatalogSection } from './NetflixCatalogSection';
+import { CleanHomeHero } from './CleanHomeHero';
 import { smartSortFacultyCourses, CourseWithTrend } from '@/lib/faculty-sorting';
 import { FilterBar } from './FilterBar';
 import { OnboardingPopup } from './OnboardingPopup';
+import DiagnosticFlow from './DiagnosticFlow';
 import { 
   FilterState, 
   SubjectFilter,
@@ -2135,6 +2139,24 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   // 🎯 État pour l'onboarding popup (première visite)
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingInitialPhase, setOnboardingInitialPhase] = useState<'loading' | 'results' | 'membership-intro' | 'membership-plans'>('loading');
+  
+  // 🚀 État pour le nouveau flow : diagnostic completed + popup diagnostic
+  const [hasDiagnosticCompleted, setHasDiagnosticCompleted] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('sms_user');
+      if (userData) {
+        try {
+          const parsed = JSON.parse(userData);
+          return parsed.hasCompletedDiagnostic === true;
+        } catch {
+          return false;
+        }
+      }
+    }
+    return false;
+  });
+  const [showDiagnosticPopup, setShowDiagnosticPopup] = useState(false);
+  const [diagnosticPopupPhase, setDiagnosticPopupPhase] = useState<'questions' | 'loading-flow'>('questions');
 
   // 🎯 États pour le système XP et gamification
   const [userXPProfile, setUserXPProfile] = useState<UserXPProfile | null>(null);
@@ -2159,17 +2181,62 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   }, []); // Une seule fois au montage
 
   // 🎯 Vérifier si c'est la première visite pour afficher l'onboarding
+  // NOUVEAU FLOW: Si l'utilisateur a créé un compte (sms_user existe), ne PAS auto-ouvrir l'ancien onboarding
+  // L'utilisateur doit cliquer sur "Commencer l'aventure" pour lancer le diagnostic
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem('sms_onboarding_completed');
+    const hasCreatedAccount = localStorage.getItem('sms_user');
+    
+    // Nouveau flow: si compte créé, pas d'auto-open de l'ancien onboarding
+    if (hasCreatedAccount) {
+      // L'utilisateur a créé un compte via le nouveau flow
+      // Ne pas ouvrir l'ancien onboarding - il verra l'état vide avec le CTA
+      return;
+    }
+    
+    // Ancien flow: ouvrir l'onboarding automatiquement si pas encore vu
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
     }
   }, []);
 
+  // 🚀 Auto-ouvrir le diagnostic popup après création de compte
+  useEffect(() => {
+    const shouldAutoOpen = sessionStorage.getItem('sms_auto_open_diagnostic') === 'true';
+    
+    if (shouldAutoOpen && !hasDiagnosticCompleted) {
+      // Délai pour laisser le dashboard se rendre en arrière-plan
+      const timer = setTimeout(() => {
+        setShowDiagnosticPopup(true);
+        // Nettoyer le flag pour éviter de rouvrir si l'utilisateur revient
+        sessionStorage.removeItem('sms_auto_open_diagnostic');
+      }, 800); // 800ms pour que le dashboard soit visible en arrière-plan
+      
+      return () => clearTimeout(timer);
+    }
+  }, [hasDiagnosticCompleted]);
+
   // 🎯 Handler pour fermer l'onboarding
   const handleOnboardingComplete = () => {
     localStorage.setItem('sms_onboarding_completed', 'true');
     setShowOnboarding(false);
+  };
+
+  // 🚀 Handler pour le nouveau flow - Diagnostic Popup complété
+  const handleDiagnosticPopupComplete = () => {
+    // Marquer le diagnostic comme complété
+    const userData = localStorage.getItem('sms_user');
+    if (userData) {
+      try {
+        const parsed = JSON.parse(userData);
+        parsed.hasCompletedDiagnostic = true;
+        localStorage.setItem('sms_user', JSON.stringify(parsed));
+      } catch {
+        // Ignorer les erreurs de parsing
+      }
+    }
+    setHasDiagnosticCompleted(true);
+    setShowDiagnosticPopup(false);
   };
 
   // 🎯 Initialiser le profil XP
@@ -2738,10 +2805,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
     return () => clearInterval(timer);
   }, [showUrgencyBanner]);
   
-  // Exit intent detection
+  // Exit intent detection - uniquement après avoir complété le diagnostic
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY < 10 && !exitIntentShown && !showOnboarding) {
+      // Ne montrer que si: diagnostic complété, pas encore montré, pas en onboarding
+      if (e.clientY < 10 && !exitIntentShown && !showOnboarding && hasDiagnosticCompleted) {
         setShowExitIntent(true);
         setExitIntentShown(true);
       }
@@ -4223,6 +4291,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           }
         `
       }} />
+      
       {/* Vue escalier - Remplace complètement l'interface */}
       {selectedCourse && showStaircaseView ? (
         <CourseStaircaseView
@@ -4858,7 +4927,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 exit={{ height: 0, opacity: 0 }}
                 className="bg-[#00c2ff] overflow-hidden"
               >
-                <div className="flex items-center justify-center gap-3 sm:gap-6 py-4 sm:py-5 px-4" style={{ fontSize: '16px' }}>
+                <div className="flex items-center justify-center gap-3 sm:gap-6 py-3 sm:py-3 px-4" style={{ fontSize: '16px' }}>
                   {/* OFFRE NOUVELLE ANNÉE */}
                   <span className="text-white font-bold tracking-wide uppercase whitespace-nowrap text-xs sm:text-[16px]">
                     OFFRE NOUVELLE ANNÉE
@@ -5443,8 +5512,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               {/* Header fixe avec container blanc */}
               <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 md:px-6 lg:px-8 py-4 md:py-6 flex-shrink-0">
                 <h1 className="font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'var(--font-parafina)', fontSize: '64px', lineHeight: '1.1' }}>
-                  Débloque un accès à vie.<br />
-                  Génère autant de parcours que nécessaire.
+                  Débloque un accès à vie.
                 </h1>
               </div>
 
@@ -5455,6 +5523,8 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   ownedProgramIds={Array.from(purchasedItems || []).filter(id => 
                     ['physics', 'mathematics', 'chemistry', 'biology', 'economics', 'accounting', 'statistics'].includes(id)
                   )}
+                  onOpenCourse={handleOpenCourse}
+                  allCourses={[...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]}
                   onPurchase={(programIds) => {
                     // Navigate to payment with selected programs
                     const params = new URLSearchParams();
@@ -5523,13 +5593,82 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
             )}
 
             {/* ================================================================ */}
-            {/* NOUVEAU CATALOGUE NETFLIX */}
+            {/* NOUVEAU CATALOGUE NETFLIX ou ÉTAT VIDE */}
             {/* ================================================================ */}
-            <NetflixCatalogSection
-              onCourseClick={handleOpenCourse}
-              onToggleFavorite={handleToggleFavorite}
-              onNavigateToSectionWithContext={navigateToSectionWithContext}
-            />
+            {hasDiagnosticCompleted ? (
+              /* Diagnostic complété: Catalogue complet */
+              <NetflixCatalogSection
+                onCourseClick={handleOpenCourse}
+                onToggleFavorite={handleToggleFavorite}
+                onNavigateToSectionWithContext={navigateToSectionWithContext}
+              />
+            ) : (
+              /* État vide - Pas encore de diagnostic */
+              <div className="w-full">
+                {/* Hero Section - même style que NetflixCatalogSection */}
+                <div className="flex flex-col items-center justify-start px-4 pt-4 pb-8">
+                  <CleanHomeHero
+                    userName={safeData.user?.name?.split(' ')[0] || 'Étudiant'}
+                    onCourseSelect={() => {
+                      // Non interactif - le diagnostic n'est pas complété
+                      setShowDiagnosticPopup(true);
+                    }}
+                  />
+                </div>
+                {/* Header - identique à CourseRow mais SANS navigation */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-gray-900">Learning tracks conçus pour toi</h3>
+                    <span className="text-sm text-gray-500">(0)</span>
+                  </div>
+                  {/* Navigation masquée */}
+                </div>
+
+                {/* Container avec cartes vides et overlay CTA */}
+                <div className="relative">
+                  {/* Scroll Container - cartes squelettes identiques aux vraies */}
+                  <div 
+                    className="flex gap-5 pt-4 pb-3 pl-4 pr-8 overflow-hidden"
+                    style={{ fontFamily: 'DM Sans, sans-serif' }}
+                  >
+                    {/* 8 Cartes squelettes - style identique aux vraies cartes */}
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                      <div 
+                        key={i}
+                        className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[220px] lg:w-[200px] xl:w-[200px] 2xl:w-[220px]"
+                      >
+                        {/* Thumbnail - style éclairci */}
+                        <div className="relative aspect-[4/3] rounded-xl bg-gray-400/60 overflow-hidden mb-3">
+                          {/* Heart icon en haut à droite */}
+                          <div className="absolute top-3 right-3">
+                            <Heart size={18} className="text-gray-500/50" />
+                          </div>
+                        </div>
+                        {/* Texte squelette */}
+                        <div className="space-y-2">
+                          <div className="h-4 bg-gray-200 rounded w-3/4" />
+                          <div className="h-3 bg-gray-100 rounded w-1/2" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA géré par l'overlay fixe au-dessus */}
+                </div>
+
+                {/* Arrow to expand - Découvrir tout le catalogue (non-cliquable) */}
+                <motion.div
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="mt-4 mb-4 flex flex-col items-center gap-2 text-gray-300 mx-auto cursor-not-allowed opacity-60"
+                >
+                  <span className="text-sm font-medium">Découvrir tout le catalogue</span>
+                  <div className="w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center">
+                    <ChevronDown size={24} />
+                  </div>
+                </motion.div>
+              </div>
+            )}
 
             {/* ================================================================ */}
             {/* ANCIENNES SECTIONS - MASQUÉES */}
@@ -6614,12 +6753,96 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
         </div>
       )}
 
-      {/* 🎓 Onboarding Popup (première visite - style MasterClass) */}
-      <OnboardingPopup
-        isOpen={showOnboarding}
-        onComplete={handleOnboardingComplete}
-        initialPhase={onboardingInitialPhase}
-      />
+      {/* 🎓 Onboarding Popup (90% - format popup) */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center"
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            
+            {/* Popup 90% */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="relative w-[90vw] h-[90vh] rounded-3xl overflow-hidden shadow-2xl bg-[#0d1317]"
+            >
+              <OnboardingPopup
+                isOpen={true}
+                onComplete={handleOnboardingComplete}
+                initialPhase={onboardingInitialPhase}
+                embedded={true}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🚀 Diagnostic Popup (90% - nouveau flow) */}
+      <AnimatePresence>
+        {showDiagnosticPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center"
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            
+            {/* Popup 90% */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="relative w-[90vw] h-[90vh] rounded-3xl overflow-hidden shadow-2xl bg-[#0d1317]"
+            >
+              {/* Phase 1: Questions du diagnostic */}
+              {diagnosticPopupPhase === 'questions' && (
+                <DiagnosticFlow
+                  isOpen={true}
+                  onClose={() => {
+                    setShowDiagnosticPopup(false);
+                    setDiagnosticPopupPhase('questions');
+                  }}
+                  onComplete={(data) => {
+                    console.log('Diagnostic questions completed:', data);
+                    // Stocker les données du diagnostic dans localStorage
+                    if (typeof window !== 'undefined') {
+                      localStorage.setItem('sms_diagnostic_data', JSON.stringify(data));
+                    }
+                    // Passer à la phase loading/scanning/reveal/video
+                    setDiagnosticPopupPhase('loading-flow');
+                  }}
+                  embedded={true}
+                />
+              )}
+              
+              {/* Phase 2: Loading → Scanning → Reveal → Video */}
+              {diagnosticPopupPhase === 'loading-flow' && (
+                <OnboardingPopup
+                  isOpen={true}
+                  onComplete={() => {
+                    // Fermer le popup et marquer comme complété
+                    handleDiagnosticPopupComplete();
+                    setDiagnosticPopupPhase('questions');
+                  }}
+                  initialPhase="loading"
+                  flowType="diagnostic"
+                  embedded={true}
+                />
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 🎁 Modal Guest Pass / Pass amis */}
       <AnimatePresence>

@@ -483,48 +483,48 @@ function ResultsPhase({ programs, tracks, totalChapters, totalTracks, totalPrice
       >
         {/* Colonne gauche (2/3) */}
         <div className="lg:col-span-2">
-          {/* Header avec 15 + Titre */}
-          <div className="flex items-center gap-5 mb-6">
-            <div className="w-20 h-20 rounded-2xl border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
-              <span className="text-4xl font-black text-white leading-none" style={{ fontFamily: 'var(--font-parafina)' }}>
-                {totalTracks}
-              </span>
-            </div>
-            <div>
-              <h2 className="text-[28px] font-black !text-white uppercase leading-tight" style={{ fontFamily: 'var(--font-parafina)' }}>
-                Parcours pour toi
-              </h2>
-              <p className="text-[16px]" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                générés depuis nos {programs.length} Mastery Programs
-              </p>
-            </div>
+        {/* Header avec 15 + Titre */}
+        <div className="flex items-center gap-5 mb-6">
+          <div className="w-20 h-20 rounded-2xl border-[3px] border-[#00c2ff] flex items-center justify-center flex-shrink-0">
+            <span className="text-4xl font-black text-white leading-none" style={{ fontFamily: 'var(--font-parafina)' }}>
+              {totalTracks}
+            </span>
           </div>
-          
+          <div>
+            <h2 className="text-[28px] font-black !text-white uppercase leading-tight" style={{ fontFamily: 'var(--font-parafina)' }}>
+              Parcours pour toi
+            </h2>
+            <p className="text-[16px]" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+              générés depuis nos {programs.length} Mastery Programs
+            </p>
+          </div>
+        </div>
+        
           {/* Programmes empilés verticalement */}
           <div className="space-y-3 max-w-lg">
-            {programs.map(program => {
-              const programTracks = tracks.filter(t => t.programId === program.id);
-              return (
-                <div 
-                  key={program.id} 
+          {programs.map(program => {
+            const programTracks = tracks.filter(t => t.programId === program.id);
+            return (
+              <div 
+                key={program.id} 
                   className="p-4 bg-[#1a1f24] rounded-xl border border-gray-700/50 hover:bg-white/5 transition-colors cursor-pointer"
-                  onClick={() => {
-                    const element = document.getElementById(`program-${program.id}`);
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }}
-                >
+                onClick={() => {
+                  const element = document.getElementById(`program-${program.id}`);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-lg font-semibold !text-white">{program.name}</span>
-                    <span className="text-lg font-bold text-white">{program.price}€</span>
-                  </div>
-                  <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                    {program.totalChapters} chapitres • {programTracks.length} parcours créés pour toi
-                  </p>
+                  <span className="text-lg font-semibold !text-white">{program.name}</span>
+                  <span className="text-lg font-bold text-white">{program.price}€</span>
                 </div>
-              );
-            })}
+                <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                  {program.totalChapters} chapitres • {programTracks.length} parcours créés pour toi
+                </p>
+              </div>
+            );
+          })}
           </div>
         </div>
 
@@ -545,27 +545,27 @@ function ResultsPhase({ programs, tracks, totalChapters, totalTracks, totalPrice
                 <Check size={14} className="text-[#00c2ff]" />
                 <span>14 jours satisfait ou remboursé</span>
               </div>
-            </div>
-            
+        </div>
+
             {/* Primary CTA */}
-            <button 
-              onClick={() => setShowLeadCapture(true)}
+          <button 
+            onClick={() => setShowLeadCapture(true)}
               className="w-full py-4 bg-[#00c2ff] hover:bg-[#3ab5dc] text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2 mb-3"
-            >
+          >
               Teste ton parcours – 10h offertes
-              <ArrowRight size={18} />
-            </button>
-            
+            <ArrowRight size={18} />
+          </button>
+          
             {/* Secondary CTA */}
             <button className="w-full py-3 bg-transparent border border-gray-600 hover:border-gray-500 text-white/80 font-medium rounded-full transition-all flex items-center justify-center gap-2 mb-4">
-              Finaliser mon inscription
-              <ArrowRight size={16} />
-            </button>
-            
-            {/* Social proof */}
+            Finaliser mon inscription
+            <ArrowRight size={16} />
+          </button>
+
+          {/* Social proof */}
             <div className="flex items-center justify-center gap-2 text-sm">
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>
-              <span className="text-white/60"><strong className="text-white">127</strong> étudiants ont rejoint cette semaine</span>
+            <span className="w-2 h-2 rounded-full bg-green-500"></span>
+            <span className="text-white/60"><strong className="text-white">127</strong> étudiants ont rejoint cette semaine</span>
             </div>
           </div>
         </div>
@@ -631,7 +631,7 @@ function ResultsPhase({ programs, tracks, totalChapters, totalTracks, totalPrice
                           {track.subtitle}
                         </p>
                       </div>
-
+                      
                       {/* Play Button on Hover */}
                       <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl">

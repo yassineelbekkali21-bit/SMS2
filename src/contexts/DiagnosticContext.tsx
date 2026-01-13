@@ -1,7 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import DiagnosticFlow from '@/components/DiagnosticFlow';
+import { AccountCreationModal } from '@/components/AccountCreationModal';
 
 interface DiagnosticContextType {
   isOpen: boolean;
@@ -18,7 +20,9 @@ interface DiagnosticProviderProps {
 }
 
 export function DiagnosticProvider({ children, onComplete, onEnterApp }: DiagnosticProviderProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
 
   // Auto-open diagnostic if URL has ?diagnostic=true
   useEffect(() => {
@@ -26,7 +30,8 @@ export function DiagnosticProvider({ children, onComplete, onEnterApp }: Diagnos
       const urlParams = new URLSearchParams(window.location.search);
       const shouldOpenDiagnostic = urlParams.get('diagnostic') === 'true';
       if (shouldOpenDiagnostic) {
-        setIsOpen(true);
+        // NEW FLOW: Show account creation modal instead of diagnostic
+        setShowAccountModal(true);
         // Clean up URL without refreshing
         const url = new URL(window.location.href);
         url.searchParams.delete('diagnostic');
@@ -36,11 +41,13 @@ export function DiagnosticProvider({ children, onComplete, onEnterApp }: Diagnos
   }, []);
 
   const openDiagnostic = useCallback(() => {
-    setIsOpen(true);
+    // NEW FLOW: Open account creation modal instead of diagnostic
+    setShowAccountModal(true);
   }, []);
 
   const closeDiagnostic = useCallback(() => {
     setIsOpen(false);
+    setShowAccountModal(false);
   }, []);
 
   const handleComplete = useCallback((data: Record<string, unknown>) => {
@@ -53,13 +60,28 @@ export function DiagnosticProvider({ children, onComplete, onEnterApp }: Diagnos
     }
   }, [onComplete, onEnterApp]);
 
+  const handleAccountCreated = useCallback(() => {
+    setShowAccountModal(false);
+    // Redirect to Simple Dashboard (white version)
+    router.push('/dashboard');
+  }, [router]);
+
   return (
     <DiagnosticContext.Provider value={{ isOpen, openDiagnostic, closeDiagnostic }}>
       {children}
+      
+      {/* OLD FLOW: DiagnosticFlow (hidden in new flow) */}
       <DiagnosticFlow
         isOpen={isOpen}
         onClose={closeDiagnostic}
         onComplete={handleComplete}
+      />
+      
+      {/* NEW FLOW: AccountCreationModal */}
+      <AccountCreationModal
+        isOpen={showAccountModal}
+        onClose={() => setShowAccountModal(false)}
+        onSuccess={handleAccountCreated}
       />
     </DiagnosticContext.Provider>
   );

@@ -71,22 +71,22 @@ const createCourse = (
 ): Course => {
   const isTrial = LEGACY_TRIAL_SUBJECTS.includes(subject);
   return {
-    id,
-    title,
-    description: `Cours complet sur ${title}`,
-    faculty: 'Sciences',
-    year: '2024',
-    totalLessons,
-    completedLessons: Math.floor((progress / 100) * totalLessons),
-    duration: `${Math.round(totalLessons * 0.75)}h`,
+  id,
+  title,
+  description: `Cours complet sur ${title}`,
+  faculty: 'Sciences',
+  year: '2024',
+  totalLessons,
+  completedLessons: Math.floor((progress / 100) * totalLessons),
+  duration: `${Math.round(totalLessons * 0.75)}h`,
     isOwned: isTrial ? false : progress > 0,
-    isPrimary: progress > 50,
+  isPrimary: progress > 50,
     progress: isTrial ? 0 : progress,
-    price: 49,
-    thumbnail: '',
-    previewAvailable: true,
-    tags: [subject],
-    difficulty: 'intermediate',
+  price: 49,
+  thumbnail: '',
+  previewAvailable: true,
+  tags: [subject],
+  difficulty: 'intermediate',
     isTrial,
   };
 };
@@ -361,7 +361,7 @@ export function NetflixCatalogSection({
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               onClick={handleExpand}
-              className="mt-8 mb-4 flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors group"
+              className="mt-4 mb-4 flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors group"
             >
               <span className="text-sm font-medium">Découvrir tout le catalogue</span>
               <div className="w-12 h-12 rounded-full border-2 border-gray-200 group-hover:border-gray-400 flex items-center justify-center transition-colors">

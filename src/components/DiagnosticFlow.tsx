@@ -45,6 +45,7 @@ interface DiagnosticFlowProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (data: DiagnosticData) => void;
+  embedded?: boolean; // Si true, s'adapte au container parent au lieu de fullscreen
 }
 
 interface DiagnosticData {
@@ -235,7 +236,7 @@ const NOTION_KEYWORDS: Record<string, string[]> = {
   'complexite': ['complexité', 'big o', 'o(n)', 'algorithme'],
 };
 
-export default function DiagnosticFlow({ isOpen, onClose, onComplete }: DiagnosticFlowProps) {
+export default function DiagnosticFlow({ isOpen, onClose, onComplete, embedded = false }: DiagnosticFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [schoolSearch, setSchoolSearch] = useState('');
   const [showSchoolResults, setShowSchoolResults] = useState(false);
@@ -1068,11 +1069,11 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-[#0d1317] overflow-y-auto flex flex-col"
+        className={`${embedded ? 'absolute inset-0' : 'fixed inset-0 z-[100]'} bg-[#0d1317] overflow-y-auto flex flex-col`}
       >
         {/* Header */}
         <header className="sticky top-0 bg-[#0d1317]/95 backdrop-blur-sm border-b border-gray-800 px-6 py-4 z-20">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="max-w-7xl mx-auto relative flex items-center">
             {/* Logo */}
             <Image 
               src="/brand/onboarding-logo.svg" 
@@ -1081,8 +1082,8 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
               height={85}
             />
 
-            {/* Progress Steps - Simplifié */}
-            <div className="flex items-center gap-2">
+            {/* Progress Steps - Centré */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
               {[
                 { label: 'Profil', step: 0 },
                 { label: 'Objectif', step: 1 },
@@ -1124,14 +1125,6 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
                 );
               })}
             </div>
-
-            {/* Close */}
-            <button
-              onClick={onClose}
-              className="!text-white opacity-70 hover:opacity-100 transition-opacity"
-            >
-              <X size={24} />
-            </button>
           </div>
         </header>
 
@@ -1188,13 +1181,13 @@ export default function DiagnosticFlow({ isOpen, onClose, onComplete }: Diagnost
           </div>
         </div>
 
-        {/* Bouton WhatsApp Fixe */}
+        {/* Bouton WhatsApp - adapté au mode embedded */}
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           onClick={() => window.open('https://wa.me/32477025622', '_blank')}
-          className="fixed bottom-32 md:bottom-40 right-6 z-50 flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-5 py-4 rounded-full shadow-lg shadow-green-500/30 transition-all hover:scale-105 font-medium text-base"
+          className={`${embedded ? 'absolute' : 'fixed'} bottom-32 md:bottom-40 right-6 z-50 flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-5 py-4 rounded-full shadow-lg shadow-green-500/30 transition-all hover:scale-105 font-medium text-base`}
         >
           <MessageCircle size={22} className="flex-shrink-0" />
           <span>On t'écoute</span>

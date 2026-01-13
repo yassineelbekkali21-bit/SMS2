@@ -18,7 +18,14 @@ interface DiagnosticData {
 }
 
 export default function Home() {
-  const [showDashboard, setShowDashboard] = useState(false);
+  // Check if user has account (new flow)
+  const [showDashboard, setShowDashboard] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('sms_user');
+      return !!userData; // Show dashboard if user account exists
+    }
+    return false;
+  });
   const [diagnosticData, setDiagnosticData] = useState<DiagnosticData | null>(null);
 
   const handleEnterApp = () => {
@@ -31,11 +38,17 @@ export default function Home() {
     setShowDashboard(true);
   };
 
-  // Listen for dashboard widget click
+  // Listen for dashboard widget click + check for user account on mount
   useEffect(() => {
     const handleShowDashboard = () => {
       setShowDashboard(true);
     };
+
+    // Check if user was redirected after account creation
+    const userData = localStorage.getItem('sms_user');
+    if (userData) {
+      setShowDashboard(true);
+    }
 
     window.addEventListener('showDashboard', handleShowDashboard);
     return () => window.removeEventListener('showDashboard', handleShowDashboard);

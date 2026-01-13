@@ -524,7 +524,7 @@ export function CleanHomeHero({
       {/* Header - Parafina fonts */}
       <div className="text-center mb-5 w-full">
         <p 
-          className="font-title tracking-wide mb-1"
+          className="font-title tracking-wide mb-0"
           style={{ 
             fontSize: '24px',
             color: '#111827'
@@ -533,15 +533,14 @@ export function CleanHomeHero({
           Bonjour {userName},
         </p>
         <h1 
-          className="font-title tracking-tight mb-3"
+          className="font-title tracking-tight mb-3 max-w-5xl mx-auto"
           style={{ 
             fontSize: '48px',
             color: '#111827',
             lineHeight: 1.0
           }}
         >
-          Des parcours d&apos;apprentissage,<br />
-          portés par une communauté.
+          Qu&apos;est-ce qu&apos;on apprend aujourd&apos;hui ?
         </h1>
         <p className="max-w-4xl mx-auto" style={{ fontSize: '18px', lineHeight: 1.5, color: '#111827' }}>
           Recherche un concept précis et avance avec des étudiants sur le même sujet.
@@ -550,7 +549,7 @@ export function CleanHomeHero({
 
       {/* Search Bar with integrated import button - 10% smaller */}
       <div 
-        className={`relative bg-white rounded-xl border-2 transition-all duration-300 max-w-2xl mx-auto ${
+        className={`relative bg-white rounded-full border-2 transition-all duration-300 max-w-2xl mx-auto ${
           isFocused 
             ? 'border-[#00c2ff] shadow-[0_0_24px_rgba(34,211,238,0.35)]' 
             : 'border-gray-200 shadow-md hover:shadow-lg'
