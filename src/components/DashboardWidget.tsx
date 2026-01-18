@@ -6,6 +6,9 @@ import { LayoutDashboard } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function DashboardWidget() {
+  // Masqué temporairement
+  return null;
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: 100 }}

@@ -47,16 +47,6 @@ export function CurriculumSectionMultilang() {
       id: 'stats',
       key: 'curriculum.stats',
       stats: { units: 30, hours: 40, cases: 8 }
-    },
-    {
-      id: 'eco',
-      key: 'curriculum.eco',
-      stats: { units: 40, hours: 50, cases: 10 }
-    },
-    {
-      id: 'accounting',
-      key: 'curriculum.accounting',
-      stats: { units: 30, hours: 40, cases: 8 }
     }
   ];
 

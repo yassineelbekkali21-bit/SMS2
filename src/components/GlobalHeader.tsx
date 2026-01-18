@@ -6,7 +6,7 @@
  * 3 blocs distincts flottants :
  * - Gauche : Avatar utilisateur
  * - Centre : Logo SMS + Navigation principale
- * - Droite : Actions (Cadeau, Sign Up)
+ * - Droite : Actions (Cadeau, Débloquer)
  * 
  * Responsive :
  * - Desktop : Layout original
@@ -17,26 +17,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { 
-  BookOpen, 
-  Calendar, 
-  Users, 
-  Target, 
-  Video, 
   Gift, 
   User,
   Settings,
   LogOut,
-  Star,
-  Zap,
   Menu,
   X,
   ChevronRight,
-  Clock,
-  Shield,
-  Moon,
   HelpCircle,
-  FileText,
-  CheckCircle,
   ExternalLink
 } from 'lucide-react';
 
@@ -55,6 +43,7 @@ interface GlobalHeaderProps {
   userXP?: number;
   isSubscribed?: boolean;
   isIdentityVerified?: boolean;
+  allProgramsUnlocked?: boolean; // NEW: Hide unlock button only when ALL programs are unlocked
   onOpenGuestPass?: () => void;
   onFinishSignup?: () => void;
   onOpenProfile?: () => void;
@@ -95,6 +84,7 @@ export function GlobalHeader({
   userXP = 0,
   isSubscribed = false,
   isIdentityVerified = false,
+  allProgramsUnlocked = false,
   onOpenGuestPass,
   onFinishSignup,
   onOpenProfile,
@@ -271,62 +261,55 @@ export function GlobalHeader({
 
           {/* ========== DESKTOP HEADER (Visible >= md) ========== */}
 
-          {/* 1. BLOC GAUCHE — AVATAR + CADEAU (positionné à gauche) */}
+          {/* 1. BLOC GAUCHE — AVATAR + NIVEAU/XP (positionné à gauche) */}
           <div className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 items-center gap-3" ref={userMenuRef}>
             {/* Avatar */}
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="group"
-            >
-              <div 
-                className="w-[85px] h-[85px] rounded-full flex items-center justify-center text-xl font-semibold transition-all duration-200 group-hover:ring-2 group-hover:ring-white/40 overflow-hidden"
-                style={{ 
-                  background: userAvatar ? 'transparent' : `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%)`,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                }}
-              >
-                {userAvatar ? (
-                  <Image
-                    src={userAvatar}
-                    alt={userName}
-                    width={85}
-                    height={85}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-white">{userInitials}</span>
-                )}
-              </div>
-            </button>
-
-            {/* Bouton Cadeau - à droite de l'avatar */}
-            <button
-              onClick={onOpenGuestPass}
-              className="w-14 h-14 rounded-full flex items-center justify-center text-white hover:opacity-80 transition-all duration-200"
-              style={{
-                background: 'rgba(13, 19, 23, 0.95)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          <button
+            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            className="group"
+          >
+            <div 
+              className="w-[85px] h-[85px] rounded-full flex items-center justify-center text-xl font-semibold transition-all duration-200 group-hover:ring-2 group-hover:ring-white/40 overflow-hidden"
+              style={{ 
+                background: userAvatar ? 'transparent' : `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%)`,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
               }}
-              title="Inviter un ami"
             >
-              <Gift size={20} />
-            </button>
+              {userAvatar ? (
+                <Image
+                  src={userAvatar}
+                  alt={userName}
+                  width={85}
+                  height={85}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-white">{userInitials}</span>
+              )}
+            </div>
+          </button>
+
+            {/* Level/XP - Texte simple à droite de l'avatar */}
+            <div className="flex items-center gap-3">
+              <span className="text-base font-semibold text-gray-900">
+                Niveau {userLevel}
+              </span>
+              <span className="text-base text-gray-600">{userXP} XP</span>
+            </div>
 
             {/* Menu déroulant utilisateur - Style Spotify */}
-            <AnimatePresence>
-              {isUserMenuOpen && (
-                <motion.div
+          <AnimatePresence>
+            {isUserMenuOpen && (
+              <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.15 }}
+                transition={{ duration: 0.15 }}
                   className="absolute top-full left-0 mt-2 w-52 py-1 rounded-md shadow-xl"
-                  style={{
-                    background: 'rgba(13, 19, 23, 0.98)',
-                    backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                style={{
+                  background: 'rgba(13, 19, 23, 0.98)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   }}
                 >
                   {/* Compte - avec lien externe */}
@@ -355,18 +338,38 @@ export function GlobalHeader({
                     <ExternalLink size={16} className="text-white/70" />
                   </button>
 
-                  {/* Session d'écoute privée (Mode focus) */}
-                  <button
-                    onClick={() => {
-                      setSocialStatus(socialStatus === 'focus' ? 'available' : 'focus');
-                    }}
-                    className="w-full px-3 py-3 flex items-center justify-between text-white/90 hover:text-white hover:bg-white/10 transition-colors"
-                  >
-                    <span className="text-sm">Session d'écoute privée</span>
-                    {socialStatus === 'focus' && (
-                      <CheckCircle size={16} className="text-green-500" />
-                    )}
-                  </button>
+                  {/* Statut social */}
+                  <div className="px-3 py-2">
+                    <div className="text-xs font-medium text-white/50 mb-2 flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${
+                        socialStatus === 'available' ? 'bg-green-500' :
+                        socialStatus === 'busy' ? 'bg-orange-500' :
+                        socialStatus === 'focus' ? 'bg-red-500' :
+                        'bg-gray-400'
+                      }`} />
+                      Statut
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {SOCIAL_STATUSES.map((status) => (
+                        <button
+                          key={status.id}
+                          onClick={() => setSocialStatus(status.id)}
+                          className={`p-2 rounded-lg text-left transition-all ${
+                            socialStatus === status.id
+                              ? 'bg-white/20 text-white'
+                              : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs">{status.icon}</span>
+                            <span className="text-xs font-medium">{status.label}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="my-1 border-t border-white/10" />
 
                   {/* Préférences */}
                   <button
@@ -379,114 +382,108 @@ export function GlobalHeader({
                   {/* Séparateur */}
                   <div className="my-1 border-t border-white/10" />
 
-                  {/* Déconnexion */}
+                {/* Déconnexion */}
                   <button
                     onClick={() => { setIsUserMenuOpen(false); onLogout?.(); }}
                     className="w-full px-3 py-3 flex items-center text-white/90 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     <span className="text-sm">Déconnexion</span>
                   </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
           {/* 2. BLOC CENTRAL — NAVIGATION PRINCIPALE */}
-          <nav 
+        <nav 
             className="hidden md:flex items-center gap-2 px-4 py-8 rounded-full"
+          style={{
+            background: 'rgba(13, 19, 23, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          }}
+        >
+          {/* Logo SMS - à gauche de la navigation - agrandi avec marge négative pour ne pas augmenter la hauteur du header */}
+          <div className="flex items-center pr-4 mr-2 -my-16 lg:-my-20">
+            <div className="w-44 h-44 lg:w-52 lg:h-52 relative">
+              <Image
+                src="/brand/sms-logo.svg"
+                alt="SMS"
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Items de navigation */}
+          {navigationItems.map((item) => {
+            const isActive = activeSection === item.id;
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => onNavigate(item.id)}
+                className={`
+                  relative px-5 py-2.5 rounded-full font-medium
+                  transition-all duration-200 ease-out
+                  ${isActive 
+                    ? 'text-white' 
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }
+                `}
+                  style={{ fontSize: '17px' }}
+              >
+                {/* Background actif avec animation */}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeNavBg"
+                    className="absolute inset-0 rounded-full"
+                    style={{ backgroundColor: themeColor }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                
+                {/* Label */}
+                <span className="relative z-10">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+          {/* 3. BLOC DROIT — ACTIONS (positionné à droite) */}
+          <div className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 items-center gap-4">
+            {/* Bouton Cadeau */}
+          <button
+            onClick={onOpenGuestPass}
+              className="w-14 h-14 rounded-full flex items-center justify-center text-white hover:opacity-80 transition-all duration-200"
             style={{
               background: 'rgba(13, 19, 23, 0.95)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
               boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
             }}
+            title="Inviter un ami"
           >
-            {/* Logo SMS - à gauche de la navigation - agrandi avec marge négative pour ne pas augmenter la hauteur du header */}
-            <div className="flex items-center pr-4 mr-2 -my-16 lg:-my-20">
-              <div className="w-44 h-44 lg:w-52 lg:h-52 relative">
-                <Image
-                  src="/brand/sms-logo.svg"
-                  alt="SMS"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            </div>
+              <Gift size={20} />
+          </button>
 
-            {/* Items de navigation */}
-            {navigationItems.map((item) => {
-              const isActive = activeSection === item.id;
-              
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onNavigate(item.id)}
-                  className={`
-                    relative px-5 py-2.5 rounded-full font-medium
-                    transition-all duration-200 ease-out
-                    ${isActive 
-                      ? 'text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }
-                  `}
-                  style={{ fontSize: '17px' }}
-                >
-                  {/* Background actif avec animation */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNavBg"
-                      className="absolute inset-0 rounded-full"
-                      style={{ backgroundColor: themeColor }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  
-                  {/* Label */}
-                  <span className="relative z-10">
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* 3. BLOC DROIT — ACTIONS (positionné à droite) */}
-          <div className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 items-center gap-3">
-            {/* Timer heures gratuites disponibles */}
-            <div className="hidden items-center gap-3 px-5 py-2.5 bg-white rounded-full shadow-sm border border-gray-200">
-              <Clock size={20} className="text-gray-900" />
-              <span className="text-lg font-bold text-gray-900 tabular-nums tracking-tight">10:00:00</span>
-            </div>
-
-            {/* Débloquer OU Level/XP */}
-            {!isSubscribed ? (
-              <button
-                onClick={onFinishSignup}
-                className="px-5 py-2.5 rounded-full font-semibold transition-all duration-200 hover:opacity-90"
-                style={{
-                  background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 100%)`,
-                  color: 'white',
-                  fontSize: '14px',
-                  boxShadow: `0 4px 15px ${themeColor}30`,
-                }}
-              >
+            {/* Débloquer - Visible sauf si TOUS les programmes sont débloqués */}
+            {!allProgramsUnlocked && (
+            <button
+              onClick={onFinishSignup}
+                className="px-6 py-3 rounded-full font-semibold transition-all duration-200 hover:opacity-90"
+              style={{
+                background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 100%)`,
+                color: 'white',
+                  fontSize: '18px',
+                boxShadow: `0 4px 15px ${themeColor}30`,
+              }}
+            >
                 Débloquer
-              </button>
-            ) : (
-              <div 
-                className="flex items-center gap-2 px-4 py-2 rounded-full"
-                style={{
-                  background: 'rgba(13, 19, 23, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                }}
-              >
-                <Zap size={16} style={{ color: themeColor }} />
-                <span className="text-sm font-medium text-white/80">
-                  Niv. {userLevel}
-                </span>
-                <span className="text-sm text-white/50">·</span>
-                <span className="text-sm text-white/60">{userXP} XP</span>
-              </div>
+            </button>
             )}
 
           </div>
@@ -557,8 +554,8 @@ export function GlobalHeader({
                 })}
               </nav>
 
-              {/* CTA Débloquer (si non inscrit) */}
-              {!isSubscribed && (
+              {/* CTA Débloquer - Visible sauf si TOUS les programmes sont débloqués */}
+              {!allProgramsUnlocked && (
                 <div className="mt-8 pt-6 border-t border-white/10">
                   <button
                     onClick={() => { setIsMobileMenuOpen(false); onFinishSignup?.(); }}
@@ -568,9 +565,9 @@ export function GlobalHeader({
                     <span>Débloquer</span>
                     <ChevronRight size={20} />
                   </button>
-                </div>
-              )}
             </div>
+          )}
+        </div>
           </motion.div>
         )}
       </AnimatePresence>

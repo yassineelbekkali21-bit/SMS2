@@ -175,6 +175,9 @@ interface OnboardingPopupProps {
   initialPhase?: OnboardingPhase;
   flowType?: 'new' | 'old' | 'diagnostic'; // 'new' = blurred-dashboard, 'old' = results page, 'diagnostic' = direct to dashboard after video
   embedded?: boolean; // Si true, utilise absolute au lieu de fixed pour rester dans le parent
+  ownedProgramIds?: string[]; // Programs already owned - will be filtered out from selection
+  onPurchaseComplete?: (programIds: string[]) => void; // Callback when purchase is completed (simulated)
+  initialSelectedProgramId?: string; // Pre-select this program when opening membership plans
 }
 
 // Mock data for recommended courses
@@ -208,7 +211,10 @@ export function OnboardingPopup({
   interests = defaultInterests,
   initialPhase = 'loading',
   flowType = 'new',
-  embedded = false
+  embedded = false,
+  ownedProgramIds = [],
+  onPurchaseComplete,
+  initialSelectedProgramId
 }: OnboardingPopupProps) {
   const router = useRouter();
   const [phase, setPhase] = useState<OnboardingPhase>(initialPhase);
@@ -216,22 +222,32 @@ export function OnboardingPopup({
   const [carouselIndex, setCarouselIndex] = useState(0);
   
   // Récupérer les programmes prescrits du diagnostic depuis localStorage
-  const getPrescribedPrograms = (): string[] => {
+  // ET filtrer ceux qui sont déjà débloqués
+  const getInitialSelectedPrograms = (): string[] => {
+    // Si un programme spécifique est passé et qu'il n'est pas déjà owned, le pré-sélectionner
+    if (initialSelectedProgramId && !ownedProgramIds.includes(initialSelectedProgramId)) {
+      return [initialSelectedProgramId];
+    }
+    
+    // Sinon, récupérer les programmes prescrits du diagnostic
     if (typeof window !== 'undefined') {
       const diagnosticData = localStorage.getItem('sms_diagnostic_data');
       if (diagnosticData) {
         try {
           const parsed = JSON.parse(diagnosticData);
-          return parsed.prescribedPrograms || ['physics', 'mathematics', 'chemistry'];
+          const prescribed = parsed.prescribedPrograms || [];
+          // Filtrer les programmes déjà owned
+          const filtered = prescribed.filter((id: string) => !ownedProgramIds.includes(id));
+          return filtered.length > 0 ? filtered : [];
         } catch {
-          return ['physics', 'mathematics', 'chemistry'];
+          return [];
         }
       }
     }
-    return ['physics', 'mathematics', 'chemistry'];
+    return [];
   };
   
-  const [selectedPrograms, setSelectedPrograms] = useState<string[]>(getPrescribedPrograms());
+  const [selectedPrograms, setSelectedPrograms] = useState<string[]>(getInitialSelectedPrograms());
   const [boostersEnabled, setBoostersEnabled] = useState<boolean>(false);
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
   const [showLeadCapture, setShowLeadCapture] = useState(false);
@@ -284,6 +300,9 @@ export function OnboardingPopup({
   }, 0);
   
   const boostersMonthly = 45; // $45/month for all boosters
+
+  // Filter out owned programs - only show programs that haven't been purchased
+  const availablePrograms = programs.filter(p => !ownedProgramIds.includes(p.id));
 
   // Simulated social proof notifications
   const [currentNotification, setCurrentNotification] = useState(0);
@@ -1420,8 +1439,13 @@ export function OnboardingPopup({
                   <section>
                     <h2 className="text-3xl font-bold !text-white mb-6">Choisis tes programmes</h2>
                     
+                    {availablePrograms.length === 0 ? (
+                      <div className="p-6 bg-[#12161a] rounded-xl border border-white/10 text-center">
+                        <p className="text-white/70">Tu as déjà débloqué tous les programmes disponibles ! 🎉</p>
+                      </div>
+                    ) : (
                     <div className="grid grid-cols-2 gap-3">
-                      {programs.map((program) => {
+                      {availablePrograms.map((program) => {
                         const discountedPrice = Math.round(program.price * 0.6);
                         const discount = 40;
                         return (
@@ -1458,6 +1482,7 @@ export function OnboardingPopup({
                         );
                       })}
                     </div>
+                    )}
                   </section>
 
                   {/* Boosters - Alone on one line */}
@@ -1647,13 +1672,19 @@ export function OnboardingPopup({
                       <div className="p-5">
               <button
                 onClick={() => {
-                  // Save selected programs and boosters to localStorage for payment page
+                  // Save selected programs and boosters to localStorage
                   if (typeof window !== 'undefined') {
                     localStorage.setItem('sms_selected_programs', JSON.stringify(selectedPrograms));
                     localStorage.setItem('sms_boosters_enabled', JSON.stringify(boostersEnabled));
                   }
-                  // Redirect to payment page
-                  router.push('/payment');
+                  // If onPurchaseComplete callback is provided, simulate purchase
+                  if (onPurchaseComplete) {
+                    onPurchaseComplete(selectedPrograms);
+                    onComplete(); // Close the popup
+                  } else {
+                    // Redirect to payment page
+                    router.push('/payment');
+                  }
                 }}
                 disabled={selectedPrograms.length === 0}
                           className={`w-full py-4 font-bold text-lg rounded-full flex items-center justify-center gap-2 transition-all ${

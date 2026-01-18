@@ -1295,13 +1295,6 @@ export function ProgramsShop({
                 <span className="flex items-center gap-2 px-5 py-3 bg-gray-900 rounded-full font-medium text-white text-base">
                   <Video size={18} /> {selectedProgram.stats.hours}h vidéo
                 </span>
-                <button
-                  onClick={() => setShowBoostersModal(true)}
-                  className="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-full font-medium text-gray-700 text-sm transition-colors flex items-center gap-2"
-                >
-                  <Sparkles size={16} className="text-[#00c2ff]" />
-                  Boosters
-                </button>
                 {!selectedProgram.owned && (
                   <button
                     onClick={() => handlePurchase(selectedProgram.id)}

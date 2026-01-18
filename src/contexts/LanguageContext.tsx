@@ -66,8 +66,8 @@ const translations: Record<Language, Record<string, string>> = {
     'target.cta': 'Rejoins le mouvement',
 
     // Curriculum Section (Augment Style)
-    'curriculum.title': 'Paiement unique.',
-    'curriculum.title.highlight': 'Accès à vie à tous nos programmes.',
+    'curriculum.title': 'Accès à vie',
+    'curriculum.title.highlight': 'à tous nos programmes.',
     'curriculum.stats.classes': 'Cours',
     'curriculum.stats.students': 'Étudiants',
     'curriculum.stats.resources': 'Supports PDF',

@@ -19,6 +19,8 @@ import { MasteryBoostersSection } from './sections/MasteryBoostersSection';
 import { WhoIsSMSSectionMultilang } from './sections/WhoIsSMSSectionMultilang';
 import { DiagnosticSectionMultilang } from './sections/DiagnosticSectionMultilang';
 import { ExploreSectionMultilang } from './sections/ExploreSectionMultilang';
+import { PromisesSectionMultilang } from './sections/PromisesSectionMultilang';
+import { ZakChatBubble } from './ZakChatBubble';
 
 /**
  * Landing Page B - Version avec nouvel ordre optimisé
@@ -116,7 +118,7 @@ function LandingContentB({ onEnterApp }: { onEnterApp?: () => void }) {
         </AnimatePresence>
       )}
 
-      {/* 1. HERO - Accroche + promesse */}
+      {/* 1. HERO - Accroche + promesse + VSL */}
       <HeroSectionMultilang 
         onEnterApp={onEnterApp}
         isMenuOpen={isMenuOpen}
@@ -125,35 +127,41 @@ function LandingContentB({ onEnterApp }: { onEnterApp?: () => void }) {
         urgencyBannerBelow={bannerPosition === 'below' && showUrgencyBanner ? <UrgencyBannerContent /> : undefined}
       />
       
-      {/* 2. ZAK - Confiance humaine immédiate */}
-      <MentorSectionMultilang />
-      
-      {/* 3. PROGRAM - Montrer le contenu */}
-      <CurriculumSectionMultilang />
-      
-      {/* 4. FORYOU - Qualification "c'est pour moi" */}
+      {/* 2. FORYOU - "SMS est fait pour toi si" - juste après VSL */}
       <WhoIsSMSSectionMultilang />
       
-      {/* 5. DIAGNOSTIC - "On commence par toi" - Engagement actif */}
-      <DiagnosticSectionMultilang />
-      
-      {/* 6. SOCIAL - Preuve sociale */}
-      <TestimonialsSectionMultilang />
-      
-      {/* 7. BOOSTERS - Valeur ajoutée */}
-      <MasteryBoostersSection />
-      
-      {/* 8. CTA - Premier push conversion */}
-      <StartJourneySectionMultilang />
-      
-      {/* 8.5. EXPLORE - Explorer les programmes */}
-      <ExploreSectionMultilang />
-      
-      {/* 9. WHY - Renforcer la décision */}
+      {/* 3. PROMESSES - Fil conducteur avec 5 promesses fortes */}
+      <PromisesSectionMultilang />
+
+      {/* 3.5. WHY - Renforcer la décision (ADN méthode) - Déplacé ici */}
       <WhyUsSectionMultilang />
       
-      {/* 10. OFFRE - Détail pricing */}
-      <OfferModelSectionMultilang />
+      {/* 4. SOCIAL - Preuve sociale (témoignages) */}
+      <TestimonialsSectionMultilang />
+      
+      {/* 5. PROGRAM - Montrer le contenu */}
+      <CurriculumSectionMultilang />
+      
+      {/* 6. DIAGNOSTIC - "On commence par toi" - Engagement actif */}
+      <DiagnosticSectionMultilang />
+      
+      {/* 7. BOOSTERS - Valeur ajoutée (masqué) */}
+      {/* <MasteryBoostersSection /> */}
+      
+      {/* ZAK - Confiance humaine (masqué pour repositionnement) */}
+      {/* <MentorSectionMultilang /> */}
+      
+      {/* 8. CTA - Premier push conversion (masqué) */}
+      {/* <StartJourneySectionMultilang /> */}
+      
+      {/* 8.5. EXPLORE - Explorer les programmes (masqué) */}
+      {/* <ExploreSectionMultilang /> */}
+      
+      {/* 9. WHY - Renforcer la décision (Déplacé plus haut) */}
+      {/* <WhyUsSectionMultilang /> */}
+      
+      {/* 10. OFFRE - Détail pricing (masqué) */}
+      {/* <OfferModelSectionMultilang /> */}
       
       {/* 11. CONTACT - Rassurer hésitants */}
       <WhatsAppContactFormMultilang />
@@ -163,6 +171,9 @@ function LandingContentB({ onEnterApp }: { onEnterApp?: () => void }) {
       
       {/* Footer */}
       <FooterMultilang />
+      
+      {/* Zak Chat Bubble - Floating */}
+      <ZakChatBubble />
     </div>
   );
 }

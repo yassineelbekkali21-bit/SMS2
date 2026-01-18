@@ -549,13 +549,13 @@ export function CleanHomeHero({
 
       {/* Search Bar with integrated import button - 10% smaller */}
       <div 
-        className={`relative bg-white rounded-full border-2 transition-all duration-300 max-w-2xl mx-auto ${
+        className={`relative bg-white rounded-full border-2 transition-all duration-300 max-w-3xl mx-auto ${
           isFocused 
             ? 'border-[#00c2ff] shadow-[0_0_24px_rgba(34,211,238,0.35)]' 
             : 'border-gray-200 shadow-md hover:shadow-lg'
         }`}
       >
-        <div className="px-5 pt-4 pb-3">
+        <div className="px-5 pt-5 pb-4">
           {/* Path text or input */}
           {pathText ? (
             <div className="flex items-center gap-2">
@@ -588,7 +588,7 @@ export function CleanHomeHero({
           )}
         </div>
 
-        <div className="flex items-center justify-between px-5 pb-4">
+        <div className="flex items-center justify-between px-5 pb-5">
           <button
             onClick={() => fileInputRef.current?.click()}
             className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"

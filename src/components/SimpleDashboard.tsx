@@ -152,6 +152,8 @@ import { BuddyOnboarding } from './BuddyOnboarding';
 import { ParentReportsSettings } from './ParentReportsSettings';
 import { BuddyInviteModal } from './BuddyInviteModal';
 import { ProgramsShop } from './ProgramsShop';
+import { PlanningInvitePopup } from './PlanningInvitePopup';
+import { PlanningSetupPopup } from './PlanningSetupPopup';
 
 interface SimpleDashboardProps {
   data: DashboardData;
@@ -2139,6 +2141,12 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   // 🎯 État pour l'onboarding popup (première visite)
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingInitialPhase, setOnboardingInitialPhase] = useState<'loading' | 'results' | 'membership-intro' | 'membership-plans'>('loading');
+  const [onboardingInitialProgramId, setOnboardingInitialProgramId] = useState<string | undefined>(undefined);
+  
+  // 📅 État pour le flow de planification après unlock
+  const [showPlanningInvite, setShowPlanningInvite] = useState(false);
+  const [showPlanningSetup, setShowPlanningSetup] = useState(false);
+  const [lastUnlockedPrograms, setLastUnlockedPrograms] = useState<string[]>([]);
   
   // 🚀 État pour le nouveau flow : diagnostic completed + popup diagnostic
   const [hasDiagnosticCompleted, setHasDiagnosticCompleted] = useState<boolean>(() => {
@@ -2220,6 +2228,7 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
   const handleOnboardingComplete = () => {
     localStorage.setItem('sms_onboarding_completed', 'true');
     setShowOnboarding(false);
+    setOnboardingInitialProgramId(undefined); // Reset pre-selected program
   };
 
   // 🚀 Handler pour le nouveau flow - Diagnostic Popup complété
@@ -4381,9 +4390,18 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
               userXP={userXPProfile?.currentXP || 0}
               isSubscribed={(purchasedItems && purchasedItems.size > 0) || false}
               isIdentityVerified={false}
+              allProgramsUnlocked={(() => {
+                // Check if all 7 programs are unlocked
+                const allPrograms = ['physics', 'mathematics', 'chemistry', 'biology', 'economics', 'accounting', 'statistics'];
+                const defaultUnlocked = ['physics', 'mathematics', 'economics'];
+                const purchased = Array.from(purchasedItems || []);
+                const allOwned = [...new Set([...defaultUnlocked, ...purchased])];
+                return allPrograms.every(p => allOwned.includes(p));
+              })()}
               onOpenGuestPass={() => setShowGuestPassModal(true)}
               onFinishSignup={() => {
                 setOnboardingInitialPhase('membership-plans');
+                setOnboardingInitialProgramId(undefined); // Don't pre-select any program from header
                 setShowOnboarding(true);
               }}
               onOpenProfile={() => setActiveSection('profile')}
@@ -5526,10 +5544,11 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                   onOpenCourse={handleOpenCourse}
                   allCourses={[...primaryCourses, ...safeData.suggestedCourses.map(s => s.course)]}
                   onPurchase={(programIds) => {
-                    // Navigate to payment with selected programs
-                    const params = new URLSearchParams();
-                    params.set('programs', programIds.join(','));
-                    window.location.href = `/payment?${params.toString()}`;
+                    // Open OnboardingPopup with membership plans
+                    // Pre-select the clicked program
+                    setOnboardingInitialPhase('membership-plans');
+                    setOnboardingInitialProgramId(programIds[0]); // Pre-select the clicked program
+                    setShowOnboarding(true);
                   }}
                   onOpenProgram={(programId) => {
                     // Navigate back to courses filtered by this program
@@ -6778,6 +6797,36 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
                 onComplete={handleOnboardingComplete}
                 initialPhase={onboardingInitialPhase}
                 embedded={true}
+                initialSelectedProgramId={onboardingInitialProgramId}
+                ownedProgramIds={(() => {
+                  // Default unlocked programs (same as ProgramsShop)
+                  const defaultUnlockedPrograms = ['physics', 'mathematics', 'economics'];
+                  // Combine default + purchased
+                  const fromPurchased = Array.from(purchasedItems || []).filter(id => 
+                    ['physics', 'mathematics', 'chemistry', 'biology', 'economics', 'accounting', 'statistics'].includes(id)
+                  );
+                  return [...new Set([...defaultUnlockedPrograms, ...fromPurchased])];
+                })()}
+                onPurchaseComplete={(programIds) => {
+                  // Simulate purchase: add programs to purchasedItems
+                  const newPurchasedItems = new Set(purchasedItems);
+                  programIds.forEach(id => newPurchasedItems.add(id));
+                  setPurchasedItems(newPurchasedItems);
+                  // Save to localStorage
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('purchasedItems', JSON.stringify(Array.from(newPurchasedItems)));
+                  }
+                  console.log('✅ SIMULATED PURCHASE: Programs unlocked:', programIds);
+                  
+                  // 📅 Trigger planning flow after unlock
+                  setLastUnlockedPrograms(programIds);
+                  setShowOnboarding(false);
+                  setOnboardingInitialProgramId(undefined); // Reset pre-selected program
+                  // Small delay to let the onboarding close smoothly
+                  setTimeout(() => {
+                    setShowPlanningInvite(true);
+                  }, 300);
+                }}
               />
             </motion.div>
           </motion.div>
@@ -7216,6 +7265,52 @@ export function SimpleDashboard(props: SimpleDashboardProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ========== PLANNING FLOW POPUPS ========== */}
+      
+      {/* Planning Invite Popup - petit modal après unlock */}
+      <PlanningInvitePopup
+        isOpen={showPlanningInvite}
+        onClose={() => setShowPlanningInvite(false)}
+        onPlanNow={() => {
+          setShowPlanningInvite(false);
+          setShowPlanningSetup(true);
+        }}
+        onPlanLater={() => {
+          setShowPlanningInvite(false);
+          // Navigate to dashboard
+          setActiveSection('courses');
+        }}
+        programName={lastUnlockedPrograms.length === 1 
+          ? lastUnlockedPrograms[0].charAt(0).toUpperCase() + lastUnlockedPrograms[0].slice(1)
+          : `${lastUnlockedPrograms.length} programmes`
+        }
+      />
+      
+      {/* Planning Setup Popup - 90% screen */}
+      <PlanningSetupPopup
+        isOpen={showPlanningSetup}
+        onClose={() => {
+          setShowPlanningSetup(false);
+          setActiveSection('courses');
+        }}
+        onComplete={(config) => {
+          console.log('📅 Planning config:', config);
+          // Save planning config to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('sms_planning_config', JSON.stringify(config));
+          }
+          setShowPlanningSetup(false);
+          // Navigate to planning section
+          setActiveSection('planning');
+        }}
+        programId={lastUnlockedPrograms[0] || 'physics'}
+        programName={lastUnlockedPrograms.length === 1 
+          ? lastUnlockedPrograms[0].charAt(0).toUpperCase() + lastUnlockedPrograms[0].slice(1)
+          : 'Mes programmes'
+        }
+        userId={user?.id || safeData.user?.id || 'user_test'}
+      />
     </>
   );
 }

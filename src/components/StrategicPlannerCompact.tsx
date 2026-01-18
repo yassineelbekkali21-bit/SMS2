@@ -22,7 +22,9 @@ import {
   TrendingUp,
   Flame,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  Pencil,
+  Zap
 } from 'lucide-react';
 import { PlannerAccess, StudyPreferences, StudyPlan, BuddySystem, Course } from '@/types/index';
 import { SocialPlannerIntegration } from './SocialPlannerIntegration';
@@ -385,6 +387,45 @@ export function StrategicPlannerCompact({
     { id: 'missed-1', lessonTitle: 'Diffraction des ondes', trackTitle: 'Ondes mécaniques' },
     { id: 'missed-2', lessonTitle: 'Théorème de comparaison', trackTitle: 'Suites et Limites' },
   ]);
+  
+  // État pour la configuration des tracks (date d'échéance et intensité)
+  const [trackConfigs, setTrackConfigs] = useState<Record<string, { targetDate: string | null; intensity: 'light' | 'moderate' | 'intense' }>>({});
+  const [isEditingObjectif, setIsEditingObjectif] = useState(false);
+  const [tempTargetDate, setTempTargetDate] = useState<string>('');
+  const [tempIntensity, setTempIntensity] = useState<'light' | 'moderate' | 'intense'>('moderate');
+  
+  // Fonction pour mettre à jour la configuration d'un track
+  const updateTrackConfig = (trackId: string, config: { targetDate?: string | null; intensity?: 'light' | 'moderate' | 'intense' }) => {
+    setTrackConfigs(prev => ({
+      ...prev,
+      [trackId]: {
+        ...prev[trackId],
+        targetDate: config.targetDate !== undefined ? config.targetDate : prev[trackId]?.targetDate || null,
+        intensity: config.intensity !== undefined ? config.intensity : prev[trackId]?.intensity || 'moderate'
+      }
+    }));
+  };
+  
+  // Helper pour obtenir la config d'un track (avec fallback sur examDate existant)
+  const getTrackConfig = (trackId: string, existingExamDate?: Date | null) => {
+    const config = trackConfigs[trackId];
+    if (config?.targetDate) {
+      return {
+        targetDate: new Date(config.targetDate),
+        intensity: config.intensity || 'moderate'
+      };
+    }
+    if (existingExamDate) {
+      return {
+        targetDate: existingExamDate,
+        intensity: config?.intensity || 'moderate'
+      };
+    }
+    return {
+      targetDate: null,
+      intensity: config?.intensity || 'moderate'
+    };
+  };
   // Helper function to map course to track ID
   const mapCourseToTrackId = (course: Course | null | undefined): string | null => {
     if (!course) return null;
@@ -917,33 +958,179 @@ export function StrategicPlannerCompact({
                         {/* RIGHT COLUMN: Sidebar - Dark with subtle blue touches */}
                         <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
                           
-                          {/* Countdown to Exam */}
-                          {track?.examDate && (
-                            <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
-                              <div className="flex items-center gap-2 mb-3">
-                                <Target size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
-                                <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.85)' }}>Objectif</span>
-                      </div>
-                              <div className="flex items-baseline gap-2 mb-2">
-                                <span className="text-4xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                                  {Math.max(0, Math.ceil((track.examDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))}
-                                </span>
-                                <span style={{ color: 'rgba(255,255,255,0.85)' }}>jours restants</span>
+                          {/* OBJECTIF - Always visible with editable date & intensity */}
+                          {(() => {
+                            const config = track ? getTrackConfig(track.id, track.examDate) : null;
+                            const hasTargetDate = config?.targetDate !== null;
+                            const daysRemaining = hasTargetDate 
+                              ? Math.max(0, Math.ceil((config!.targetDate!.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+                              : null;
+                            const currentIntensity = config?.intensity || 'moderate';
+                            const intensityLabels: Record<string, string> = {
+                              light: 'Tranquille',
+                              moderate: 'Modéré',
+                              intense: 'Intense'
+                            };
+                            
+                            return (
+                              <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Target size={18} style={{ color: 'rgba(255,255,255,0.85)' }} />
+                                  <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.85)' }}>Objectif</span>
+                                </div>
+                                
+                                {/* Mode édition */}
+                                {isEditingObjectif && track ? (
+                                  <div className="space-y-4">
+                                    {/* Date picker */}
+                                    <div>
+                                      <label className="text-xs mb-2 block" style={{ color: 'rgba(255,255,255,0.6)' }}>Date d'échéance</label>
+                                      <input 
+                                        type="date"
+                                        value={tempTargetDate}
+                                        onChange={(e) => setTempTargetDate(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl text-sm"
+                                        style={{
+                                          backgroundColor: 'rgba(255,255,255,0.05)',
+                                          border: '1px solid rgba(255,255,255,0.1)',
+                                          color: '#fff'
+                                        }}
+                                      />
+                                    </div>
+                                    
+                                    {/* Intensity picker */}
+                                    <div>
+                                      <label className="text-xs mb-2 block" style={{ color: 'rgba(255,255,255,0.6)' }}>Intensité</label>
+                                      <div className="grid grid-cols-3 gap-2">
+                                        {(['light', 'moderate', 'intense'] as const).map((level) => (
+                                          <button
+                                            key={level}
+                                            onClick={() => setTempIntensity(level)}
+                                            className="px-3 py-2 rounded-lg text-xs font-medium transition-all"
+                                            style={{
+                                              backgroundColor: tempIntensity === level ? '#00c2ff' : 'rgba(255,255,255,0.05)',
+                                              color: tempIntensity === level ? '#fff' : 'rgba(255,255,255,0.6)'
+                                            }}
+                                          >
+                                            {intensityLabels[level]}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Action buttons */}
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => {
+                                          if (tempTargetDate) {
+                                            updateTrackConfig(track.id, { targetDate: tempTargetDate, intensity: tempIntensity });
+                                          }
+                                          setIsEditingObjectif(false);
+                                        }}
+                                        className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                                        style={{ backgroundColor: '#00c2ff', color: '#fff' }}
+                                      >
+                                        Enregistrer
+                                      </button>
+                                      <button
+                                        onClick={() => setIsEditingObjectif(false)}
+                                        className="px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+                                        style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)' }}
+                                      >
+                                        Annuler
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : hasTargetDate ? (
+                                  /* Mode affichage avec date */
+                                  <>
+                                    <div className="flex items-baseline gap-2 mb-2">
+                                      <span className="text-4xl font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                                        {daysRemaining}
+                                      </span>
+                                      <span style={{ color: 'rgba(255,255,255,0.85)' }}>jours restants</span>
+                                    </div>
+                                    <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                                      {totalCount - completedCount} leçons à terminer avant le {config!.targetDate!.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                                    </p>
+                                    <div className="mt-3 w-full h-1.5 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                                      <div 
+                                        className="h-full rounded-full transition-all"
+                                        style={{ 
+                                          width: `${(completedCount / totalCount) * 100}%`,
+                                          backgroundColor: '#00c2ff'
+                                        }}
+                                      />
+                                    </div>
+                                    
+                                    {/* Date & Intensity row - clickable */}
+                                    <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                      <div className="flex items-center justify-between gap-3">
+                                        {/* Date with pencil on hover */}
+                                        <button
+                                          onClick={() => {
+                                            setTempTargetDate(config!.targetDate!.toISOString().split('T')[0]);
+                                            setTempIntensity(currentIntensity);
+                                            setIsEditingObjectif(true);
+                                          }}
+                                          className="group flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
+                                          style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                                        >
+                                          <Calendar size={14} style={{ color: 'rgba(255,255,255,0.5)' }} />
+                                          <span className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                                            {config!.targetDate!.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                          </span>
+                                          <Pencil size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#00c2ff' }} />
+                                        </button>
+                                        
+                                        {/* Intensity badge - clickable */}
+                                        <button
+                                          onClick={() => {
+                                            setTempTargetDate(config!.targetDate!.toISOString().split('T')[0]);
+                                            setTempIntensity(currentIntensity);
+                                            setIsEditingObjectif(true);
+                                          }}
+                                          className="group flex items-center gap-2 px-3 py-2 rounded-lg transition-all"
+                                          style={{ backgroundColor: 'rgba(0,194,255,0.1)' }}
+                                        >
+                                          <Zap size={14} style={{ color: '#00c2ff' }} />
+                                          <span className="text-sm font-medium" style={{ color: '#00c2ff' }}>
+                                            {intensityLabels[currentIntensity]}
+                                          </span>
+                                          <Pencil size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#00c2ff' }} />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  /* Mode sans date - CTA pour configurer */
+                                  <div className="text-center py-3">
+                                    <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                                      <Calendar size={24} style={{ color: 'rgba(255,255,255,0.4)' }} />
+                                    </div>
+                                    <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                                      Définis une date d'échéance pour planifier tes révisions
+                                    </p>
+                                    <button
+                                      onClick={() => {
+                                        // Default to 2 months from now
+                                        const defaultDate = new Date();
+                                        defaultDate.setMonth(defaultDate.getMonth() + 2);
+                                        setTempTargetDate(defaultDate.toISOString().split('T')[0]);
+                                        setTempIntensity('moderate');
+                                        setIsEditingObjectif(true);
+                                      }}
+                                      className="w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
+                                      style={{ backgroundColor: '#00c2ff', color: '#fff' }}
+                                    >
+                                      <Target size={16} />
+                                      Définir mon objectif
+                                    </button>
+                                  </div>
+                                )}
                               </div>
-                              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
-                                {totalCount - completedCount} leçons à terminer avant le {track.examDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                              </p>
-                              <div className="mt-3 w-full h-1.5 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                                <div 
-                                  className="h-full rounded-full transition-all"
-                                  style={{ 
-                                    width: `${(completedCount / totalCount) * 100}%`,
-                                    backgroundColor: '#00c2ff'
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          )}
+                            );
+                          })()}
 
                           {/* Study Room - Community */}
                           <div className="rounded-2xl p-5" style={{ backgroundColor: '#0d1317' }}>
