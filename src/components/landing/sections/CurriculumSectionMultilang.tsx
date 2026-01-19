@@ -12,6 +12,7 @@ export function CurriculumSectionMultilang() {
   const { openDiagnostic } = useDiagnostic();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
   const [isMuted, setIsMuted] = useState(true);
+  const [showAllSubjects, setShowAllSubjects] = useState<Record<string, boolean>>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -31,22 +32,98 @@ export function CurriculumSectionMultilang() {
     {
       id: 'physics',
       key: 'curriculum.physics',
-      stats: { units: 45, hours: 60, cases: 12 }
+      stats: { subjects: 60, hours: 350 },
+      price: 599,
+      originalPrice: 998,
+      topics: [
+        'Mécanique du point', 'Cinématique', 'Dynamique newtonienne', 'Travail & Énergie',
+        'Oscillations', 'Ondes mécaniques', 'Optique géométrique', 'Optique ondulatoire',
+        'Électrostatique', 'Électrocinétique', 'Magnétostatique', 'Induction électromagnétique',
+        'Thermodynamique', 'Transferts thermiques', 'Mécanique des fluides', 'Hydrostatique',
+        'Physique quantique', 'Dualité onde-corpuscule', 'Atome de Bohr', 'Radioactivité',
+        'Relativité restreinte', 'Astrophysique', 'Gravitation', 'Lois de Kepler',
+        'Moment cinétique', 'Solide en rotation', 'Pendules', 'Ressorts',
+        'Interférences', 'Diffraction', 'Polarisation', 'Effet Doppler',
+        'Circuits RLC', 'Régime transitoire', 'Régime sinusoïdal', 'Filtres',
+        'Champ électrique', 'Potentiel électrique', 'Condensateurs', 'Diélectriques',
+        'Champ magnétique', 'Force de Laplace', 'Force de Lorentz', 'Solénoïdes',
+        'Premier principe', 'Second principe', 'Machines thermiques', 'Entropie',
+        'Équation de Bernoulli', 'Viscosité', 'Écoulements', 'Tension superficielle',
+        'Fonction d\'onde', 'Équation de Schrödinger', 'Effet tunnel', 'Spin',
+        'Fission nucléaire', 'Fusion nucléaire', 'Décroissance radioactive', 'Dosimétrie'
+      ]
     },
     {
       id: 'math',
       key: 'curriculum.math',
-      stats: { units: 55, hours: 80, cases: 15 }
+      stats: { subjects: 60, hours: 350 },
+      price: 659,
+      originalPrice: 1098,
+      topics: [
+        'Suites numériques', 'Limites de suites', 'Suites récurrentes', 'Séries numériques',
+        'Fonctions continues', 'Dérivabilité', 'Théorème des accroissements finis', 'Fonctions usuelles',
+        'Intégration', 'Primitives', 'Intégrales généralisées', 'Calcul d\'aires',
+        'Équations différentielles', 'EDO linéaires', 'EDO non linéaires', 'Systèmes différentiels',
+        'Algèbre linéaire', 'Espaces vectoriels', 'Applications linéaires', 'Matrices',
+        'Réduction des endomorphismes', 'Diagonalisation', 'Trigonalisation', 'Valeurs propres',
+        'Géométrie analytique', 'Droites et plans', 'Coniques', 'Quadriques',
+        'Nombres complexes', 'Forme trigonométrique', 'Racines n-ièmes', 'Exponentielle complexe',
+        'Polynômes', 'Fractions rationnelles', 'Décomposition en éléments simples', 'Racines',
+        'Développements limités', 'Taylor', 'Asymptotes', 'Équivalents',
+        'Probabilités', 'Variables aléatoires', 'Lois usuelles', 'Espérance et variance',
+        'Statistiques', 'Estimation', 'Tests d\'hypothèses', 'Intervalles de confiance',
+        'Calcul matriciel', 'Déterminants', 'Systèmes linéaires', 'Méthode de Gauss',
+        'Produit scalaire', 'Produit vectoriel', 'Orthogonalité', 'Projections',
+        'Topologie', 'Compacité', 'Connexité', 'Complétude'
+      ]
     },
     {
       id: 'chem',
       key: 'curriculum.chem',
-      stats: { units: 35, hours: 45, cases: 10 }
+      stats: { subjects: 60, hours: 350 },
+      price: 479,
+      originalPrice: 798,
+      topics: [
+        'Structure atomique', 'Configuration électronique', 'Tableau périodique', 'Propriétés périodiques',
+        'Liaisons chimiques', 'Liaison covalente', 'Liaison ionique', 'Liaison métallique',
+        'Géométrie moléculaire', 'VSEPR', 'Hybridation', 'Orbitales moléculaires',
+        'Thermochimie', 'Enthalpie', 'Entropie', 'Énergie libre de Gibbs',
+        'Cinétique chimique', 'Vitesse de réaction', 'Ordre de réaction', 'Catalyse',
+        'Équilibres chimiques', 'Constante d\'équilibre', 'Principe de Le Chatelier', 'Quotient réactionnel',
+        'Acides et bases', 'pH', 'Tampons', 'Titrages acido-basiques',
+        'Oxydo-réduction', 'Potentiels standard', 'Piles électrochimiques', 'Électrolyse',
+        'Chimie organique', 'Nomenclature', 'Groupes fonctionnels', 'Isomérie',
+        'Réactions organiques', 'Substitution', 'Addition', 'Élimination',
+        'Stéréochimie', 'Chiralité', 'Énantiomérie', 'Diastéréoisomérie',
+        'Spectroscopie', 'RMN', 'IR', 'Spectrométrie de masse',
+        'Chimie des solutions', 'Solubilité', 'Précipitation', 'Complexation',
+        'Chimie nucléaire', 'Radioactivité', 'Fission', 'Fusion',
+        'Chimie verte', 'Développement durable', 'Catalyse verte', 'Biomasse'
+      ]
     },
     {
       id: 'stats',
       key: 'curriculum.stats',
-      stats: { units: 30, hours: 40, cases: 8 }
+      stats: { subjects: 60, hours: 350 },
+      price: 449,
+      originalPrice: 748,
+      topics: [
+        'Statistiques descriptives', 'Moyenne', 'Médiane', 'Écart-type',
+        'Représentations graphiques', 'Histogrammes', 'Boîtes à moustaches', 'Diagrammes',
+        'Probabilités', 'Événements', 'Probabilités conditionnelles', 'Indépendance',
+        'Variables aléatoires discrètes', 'Loi binomiale', 'Loi de Poisson', 'Loi géométrique',
+        'Variables aléatoires continues', 'Loi normale', 'Loi exponentielle', 'Loi uniforme',
+        'Estimation', 'Estimateurs', 'Biais', 'Convergence',
+        'Intervalles de confiance', 'Pour la moyenne', 'Pour la proportion', 'Pour la variance',
+        'Tests d\'hypothèses', 'Test de Student', 'Test du Chi-deux', 'Test de Fisher',
+        'Régression linéaire', 'Moindres carrés', 'Corrélation', 'Coefficient R²',
+        'ANOVA', 'Analyse de variance', 'Comparaisons multiples', 'Tests post-hoc',
+        'Séries temporelles', 'Tendance', 'Saisonnalité', 'Prévision',
+        'Statistiques non paramétriques', 'Test de Wilcoxon', 'Test de Mann-Whitney', 'Test de Kruskal-Wallis',
+        'Échantillonnage', 'Méthodes d\'échantillonnage', 'Taille d\'échantillon', 'Erreur d\'échantillonnage',
+        'Analyse multivariée', 'ACP', 'AFC', 'Classification',
+        'Statistiques bayésiennes', 'Théorème de Bayes', 'Prior et posterior', 'Inférence bayésienne'
+      ]
     }
   ];
 
@@ -122,26 +199,33 @@ export function CurriculumSectionMultilang() {
                       {/* Mobile Layout */}
                       <div className="md:hidden py-6">
                         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                          {/* Header with number and close button */}
-                          <div className="flex items-center justify-between px-6 pt-6 pb-4">
-                            <span className="text-xl font-mono text-gray-400">
-                              {number}
-                            </span>
+                          {/* Header with number, title, price and close button */}
+                          <div className="flex items-start justify-between px-6 pt-6 pb-4">
+                            <div className="flex items-start gap-4">
+                              <span className="text-xl font-mono text-gray-400">
+                                {number}
+                              </span>
+                              <div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                                  {t(`${subject.key}.title`)}
+                                </h3>
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-base text-gray-400 line-through">{subject.originalPrice}€</span>
+                                  <span className="text-2xl font-bold text-gray-900">{subject.price}€</span>
+                                  <span className="text-gray-500" style={{ fontSize: '12px' }}>{language === 'fr' ? 'accès à vie' : 'lifetime access'}</span>
+                                </div>
+                              </div>
+                            </div>
                             <button
                               onClick={() => setExpandedIndex(null)}
-                              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600"
+                              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 flex-shrink-0"
                             >
                               <ChevronDown size={20} className="rotate-180" />
                             </button>
                           </div>
-                          
-                          {/* Title */}
-                          <h3 className="text-3xl font-bold text-gray-900 px-6 mb-2">
-                            {t(`${subject.key}.title`)}
-                          </h3>
 
                           {/* Description */}
-                          <p className="text-gray-600 leading-relaxed px-6 mb-6" style={{ fontSize: '18px' }}>
+                          <p className="text-gray-600 leading-relaxed px-6 mb-6" style={{ fontSize: '16px' }}>
                             {t(`${subject.key}.desc`)}
                           </p>
 
@@ -177,28 +261,42 @@ export function CurriculumSectionMultilang() {
                           {/* Badges */}
                           <div className="flex flex-wrap gap-2 px-6 mb-6">
                             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full font-medium text-gray-700" style={{ fontSize: '14px' }}>
-                                <FileText size={14} /> {subject.stats.units} Units
+                                <FileText size={14} /> {subject.stats.subjects} Sujets
                               </span>
-                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full font-medium text-gray-700" style={{ fontSize: '14px' }}>
-                              <FileText size={14} /> {subject.stats.cases} Cases
-                            </span>
                             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 rounded-full font-medium text-white" style={{ fontSize: '14px' }}>
                                 <Video size={14} /> {subject.stats.hours}h Video
                               </span>
                           </div>
 
-                          {/* Bullet Points */}
+                          {/* Topics - 2 columns on mobile */}
                           <div className="px-6 pb-6">
-                            <ul className="space-y-3">
-                              {[1, 2, 3, 4].map((i) => (
-                                <li key={i} className="flex items-start gap-3">
-                                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                                  <span className="text-gray-700 font-medium" style={{ fontSize: '14px' }}>
-                                    {t(`${subject.key}.outcomes.${i}`)}
-                              </span>
+                            <h4 className="font-bold text-gray-500 uppercase tracking-widest mb-4" style={{ fontSize: '14px' }}>
+                              {language === 'fr' ? 'Sujets couverts' : 'Topics Covered'}
+                            </h4>
+                            <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
+                              {(showAllSubjects[subject.id] ? subject.topics : subject.topics.slice(0, 8)).map((topic, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <CheckCircle2 className="w-3 h-3 text-[#00c2ff] flex-shrink-0 mt-1" />
+                                  <span className="text-gray-700" style={{ fontSize: '13px' }}>
+                                    {topic}
+                                  </span>
                                 </li>
                               ))}
                             </ul>
+                            {/* Voir plus button */}
+                            {subject.topics.length > 8 && (
+                              <button
+                                onClick={() => setShowAllSubjects(prev => ({ ...prev, [subject.id]: !prev[subject.id] }))}
+                                className="mt-4 flex items-center gap-2 text-[#00c2ff] font-semibold"
+                                style={{ fontSize: '14px' }}
+                              >
+                                {showAllSubjects[subject.id] 
+                                  ? (language === 'fr' ? 'Voir moins' : 'See less')
+                                  : (language === 'fr' ? `Voir les ${subject.topics.length} sujets` : `See all ${subject.topics.length} topics`)
+                                }
+                                <ChevronDown size={16} className={`transition-transform ${showAllSubjects[subject.id] ? 'rotate-180' : ''}`} />
+                              </button>
+                            )}
                           </div>
                         </div>
                             </div>
@@ -207,23 +305,31 @@ export function CurriculumSectionMultilang() {
                       <div className="hidden md:flex min-h-[500px]">
                         {/* Left Column: Header + Content */}
                         <div className="flex-1 py-8 pr-8">
-                          {/* Header */}
-                          <button
-                            onClick={() => setExpandedIndex(null)}
-                            className="flex items-start gap-6 md:gap-10 mb-8 group text-left"
-                          >
-                            <span className="text-2xl md:text-3xl font-mono text-gray-900">
-                              {number}
-                            </span>
-                            <h3 className="text-2xl md:text-4xl font-bold text-gray-900">
-                              {t(`${subject.key}.title`)}
-                            </h3>
-                          </button>
+                          {/* Header with Price */}
+                          <div className="flex items-center justify-between mb-8">
+                            <button
+                              onClick={() => setExpandedIndex(null)}
+                              className="flex items-start gap-6 md:gap-10 group text-left"
+                            >
+                              <span className="text-2xl md:text-3xl font-mono text-gray-900">
+                                {number}
+                              </span>
+                              <h3 className="text-2xl md:text-4xl font-bold text-gray-900">
+                                {t(`${subject.key}.title`)}
+                              </h3>
+                            </button>
+                            {/* Price on the right */}
+                            <div className="flex items-baseline gap-3">
+                              <span className="text-xl text-gray-400 line-through">{subject.originalPrice}€</span>
+                              <span className="text-3xl font-bold text-gray-900">{subject.price}€</span>
+                              <span className="text-gray-500" style={{ fontSize: '14px' }}>{language === 'fr' ? 'accès à vie' : 'lifetime access'}</span>
+                            </div>
+                          </div>
 
                           {/* Badges + Test Button */}
                           <div className="flex flex-wrap items-center gap-4 mb-6 pl-16 md:pl-20">
                             <span className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full font-medium text-gray-600" style={{ fontSize: '14px' }}>
-                              <FileText size={16} /> {subject.stats.units} Units
+                              <FileText size={16} /> {subject.stats.subjects} Sujets
                             </span>
                             <span className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-full font-medium text-white" style={{ fontSize: '14px' }}>
                               <Video size={16} /> {subject.stats.hours}h Video
@@ -243,23 +349,37 @@ export function CurriculumSectionMultilang() {
                             {t(`${subject.key}.desc`)}
                           </p>
 
-                          {/* Trending Topics - 2 columns */}
+                          {/* Trending Topics - 3 columns */}
                           <div className="pl-16 md:pl-20">
                             <h4 className="font-bold text-gray-500 uppercase tracking-widest mb-5" style={{ fontSize: '16px' }}>
-                              {language === 'fr' ? 'Sujets tendances' : 'Trending Topics'}
+                              {language === 'fr' ? 'Sujets couverts' : 'Topics Covered'}
                             </h4>
-                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4">
-                              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <ul className="grid grid-cols-3 gap-x-6 gap-y-3">
+                              {(showAllSubjects[subject.id] ? subject.topics : subject.topics.slice(0, 12)).map((topic, i) => (
                                 <li key={i} className="flex items-center group/item">
-                                  <div className="flex items-start gap-3">
-                                    <CheckCircle2 className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5 group-hover/item:text-gray-900 transition-colors" />
+                                  <div className="flex items-start gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5 group-hover/item:text-[#00c2ff] transition-colors" />
                                     <span className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors" style={{ fontSize: '14px' }}>
-                                      {t(`${subject.key}.outcomes.${i}`)}
+                                      {topic}
                                     </span>
                                   </div>
                                 </li>
                               ))}
                             </ul>
+                            {/* Voir plus button */}
+                            {subject.topics.length > 12 && (
+                              <button
+                                onClick={() => setShowAllSubjects(prev => ({ ...prev, [subject.id]: !prev[subject.id] }))}
+                                className="mt-6 flex items-center gap-2 text-[#00c2ff] font-semibold hover:text-[#00a8e0] transition-colors"
+                                style={{ fontSize: '16px' }}
+                              >
+                                {showAllSubjects[subject.id] 
+                                  ? (language === 'fr' ? 'Voir moins' : 'See less')
+                                  : (language === 'fr' ? `Voir les ${subject.topics.length} sujets` : `See all ${subject.topics.length} topics`)
+                                }
+                                <ChevronDown size={18} className={`transition-transform ${showAllSubjects[subject.id] ? 'rotate-180' : ''}`} />
+                              </button>
+                            )}
                           </div>
                           </div>
 

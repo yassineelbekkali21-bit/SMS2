@@ -407,9 +407,9 @@ export function TestimonialsSectionMultilang() {
                 </div>
                 
                 {/* CTA below video */}
-                <button className="mt-3 flex items-center gap-1 text-gray-800 font-medium hover:text-[#00c2ff] transition-colors group/cta">
-                  <span style={{ fontSize: '15px' }}>{language === 'fr' ? video.ctaFr : video.ctaEn}</span>
-                  <ArrowRight size={16} className="group-hover/cta:translate-x-1 transition-transform" />
+                <button className="mt-3 flex items-center gap-2 text-gray-800 font-medium hover:text-[#00c2ff] transition-colors group/cta">
+                  <span style={{ fontSize: '18px' }}>{language === 'fr' ? video.ctaFr : video.ctaEn}</span>
+                  <ArrowRight size={18} className="group-hover/cta:translate-x-1 transition-transform" />
                 </button>
               </div>
             ))}
@@ -523,9 +523,9 @@ export function TestimonialsSectionMultilang() {
                 </div>
                 
                 {/* CTA below */}
-                <button className="mt-3 flex items-center gap-1 text-gray-800 font-medium hover:text-[#00c2ff] transition-colors group/cta">
-                  <span style={{ fontSize: '15px' }}>{screenshot.subject}</span>
-                  <ArrowRight size={16} className="group-hover/cta:translate-x-1 transition-transform" />
+                <button className="mt-3 flex items-center gap-2 text-gray-800 font-medium hover:text-[#00c2ff] transition-colors group/cta">
+                  <span style={{ fontSize: '18px' }}>{screenshot.subject}</span>
+                  <ArrowRight size={18} className="group-hover/cta:translate-x-1 transition-transform" />
                 </button>
               </div>
             ))}

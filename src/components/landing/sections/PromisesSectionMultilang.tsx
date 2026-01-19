@@ -492,7 +492,7 @@ export function PromisesSectionMultilang() {
         </motion.h2>
 
         {/* Two Column Layout */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 lg:gap-12 items-start">
           
           {/* Left: Accordion */}
           <div className="space-y-0 divide-y divide-gray-200">
@@ -547,6 +547,7 @@ export function PromisesSectionMultilang() {
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3 }}
                             className="text-gray-600 mt-2 pr-4 leading-relaxed overflow-hidden"
+                            style={{ fontSize: '16px' }}
                           >
                             {language === 'fr' ? promise.descFr : promise.descEn}
                           </motion.p>
